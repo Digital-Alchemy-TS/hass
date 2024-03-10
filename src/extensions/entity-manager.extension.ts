@@ -9,10 +9,10 @@ import {
   TBlackHole,
   TServiceParams,
   ZCC,
-  ZCC_Testing,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import EventEmitter from "events";
+import { exit } from "process";
 import { Get } from "type-fest";
 
 import {
@@ -209,7 +209,7 @@ export function EntityManager({ logger, hass, lifecycle }: TServiceParams) {
         logger.fatal(
           `failed to load service list from Home Assistant. Validate configuration`,
         );
-        ZCC_Testing.FailFast();
+        exit();
       }
       logger.warn(
         "failed to retrieve entity list. Retrying {%s}/[%s]",
