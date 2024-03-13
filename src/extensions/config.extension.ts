@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { is, TServiceParams, ZCC } from "@digital-alchemy/core";
+import { is, TServiceParams } from "@digital-alchemy/core";
 import { env, exit } from "process";
 
 import { PostConfigPriorities } from "..";
@@ -38,7 +38,7 @@ export function Configure({
     if (!config.hass.VALIDATE_CONFIGURATION) {
       return;
     }
-    ZCC.logger.setLogLevel("trace");
+    internal.logger.setLogLevel("trace");
     logger.info(`validating credentials`);
     try {
       const result = await hass.fetch.checkCredentials();

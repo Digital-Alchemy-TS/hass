@@ -8,7 +8,6 @@ import {
   TAnyFunction,
   TBlackHole,
   TServiceParams,
-  ZCC,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import EventEmitter from "events";
@@ -52,7 +51,12 @@ const FAILED_LOAD_DELAY = 5;
 const UNLIMITED = 0;
 const RECENT = 5;
 
-export function EntityManager({ logger, hass, lifecycle }: TServiceParams) {
+export function EntityManager({
+  logger,
+  hass,
+  lifecycle,
+  internal,
+}: TServiceParams) {
   // # Local vars
   /**
    * MASTER_STATE.switch.desk_light = {entity_id,state,attributes,...}
@@ -75,7 +79,7 @@ export function EntityManager({ logger, hass, lifecycle }: TServiceParams) {
     entity_id: ENTITY_ID,
     // 🖕 TS
   ): NonNullable<ENTITY_STATE<ENTITY_ID>> {
-    return ZCC.utils.object.get(
+    return internal.utils.object.get(
       MASTER_STATE,
       entity_id,
     ) as ENTITY_STATE<ENTITY_ID>;
@@ -107,7 +111,7 @@ export function EntityManager({ logger, hass, lifecycle }: TServiceParams) {
         `proxyGetLogic cannot find entity`,
       );
     }
-    return ZCC.utils.object.get(current, property) || defaultValue;
+    return internal.utils.object.get(current, property) || defaultValue;
   }
 
   // ## Retrieve a proxy by id
@@ -117,7 +121,7 @@ export function EntityManager({ logger, hass, lifecycle }: TServiceParams) {
     if (!ENTITY_PROXIES.has(entity_id)) {
       ENTITY_PROXIES.set(
         entity_id,
-        new Proxy({ entity_id } as ByIdProxy<ENTITY_ID>, {
+        new Proxy(getCurrentState(entity_id) as ByIdProxy<ENTITY_ID>, {
           // things that shouldn't be needed: this extract
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
             if (property === "onUpdate") {
@@ -231,16 +235,16 @@ export function EntityManager({ logger, hass, lifecycle }: TServiceParams) {
     states.forEach(entity => {
       // ? Set first, ensure data is populated
       // `nextTick` will fire AFTER loop finishes
-      ZCC.utils.object.set(
+      internal.utils.object.set(
         MASTER_STATE,
         entity.entity_id,
         entity,
-        is.undefined(ZCC.utils.object.get(oldState, entity.entity_id)),
+        is.undefined(internal.utils.object.get(oldState, entity.entity_id)),
       );
       if (!init) {
         return;
       }
-      const old = ZCC.utils.object.get(oldState, entity.entity_id);
+      const old = internal.utils.object.get(oldState, entity.entity_id);
       if (is.equal(old, entity)) {
         logger.trace({ name: entity.entity_id }, `no change on refresh`);
         return;
@@ -257,7 +261,7 @@ export function EntityManager({ logger, hass, lifecycle }: TServiceParams) {
           await EntityUpdateReceiver(
             entity.entity_id,
             entity as ENTITY_STATE<PICK_ENTITY>,
-            ZCC.utils.object.get(oldState, entity.entity_id),
+            internal.utils.object.get(oldState, entity.entity_id),
           ),
       );
     });
@@ -267,7 +271,7 @@ export function EntityManager({ logger, hass, lifecycle }: TServiceParams) {
   // ## is.entity definition
   // Actually tie the type casting to real state
   is.entity = (entityId: PICK_ENTITY): entityId is PICK_ENTITY =>
-    is.undefined(ZCC.utils.object.get(MASTER_STATE, entityId));
+    is.undefined(internal.utils.object.get(MASTER_STATE, entityId));
 
   // ## Receiver function for incoming entity updates
   function EntityUpdateReceiver<ENTITY extends PICK_ENTITY = PICK_ENTITY>(
@@ -280,11 +284,13 @@ export function EntityManager({ logger, hass, lifecycle }: TServiceParams) {
         { name: entity_id },
         `removing deleted entity from {MASTER_STATE}`,
       );
-      ZCC.utils.object.del(MASTER_STATE, entity_id);
+      internal.utils.object.del(MASTER_STATE, entity_id);
       return;
     }
-    ZCC.utils.object.set(MASTER_STATE, entity_id, new_state);
-    event.emit(entity_id, new_state, old_state);
+    internal.utils.object.set(MASTER_STATE, entity_id, new_state);
+    if (!hass.socket.pauseMessages) {
+      event.emit(entity_id, new_state, old_state);
+    }
   }
 
   lifecycle.onPostConfig(async () => {

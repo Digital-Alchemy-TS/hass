@@ -6,7 +6,6 @@ import {
   START,
   TBlackHole,
   TServiceParams,
-  ZCC,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import EventEmitter from "events";
@@ -28,7 +27,6 @@ import {
 
 let connection: WS;
 const CONNECTION_OPEN = 1;
-let CONNECTION_ACTIVE = false;
 const CLEANUP_INTERVAL = 5;
 const PING_INTERVAL = 10;
 const UNLIMITED = 0;
@@ -40,6 +38,7 @@ export function WebsocketAPI({
   event,
   hass,
   config,
+  internal,
   lifecycle,
   logger,
   scheduler,
@@ -89,7 +88,7 @@ export function WebsocketAPI({
   });
 
   async function ping() {
-    if (!CONNECTION_ACTIVE) {
+    if (!hass.socket.connectionActive) {
       return;
     }
     try {
@@ -115,7 +114,7 @@ export function WebsocketAPI({
     }
     if (connection.readyState === CONNECTION_OPEN) {
       logger.debug(`closing current connection`);
-      CONNECTION_ACTIVE = false;
+      hass.socket.connectionActive = false;
       connection.close();
     }
     connection = undefined;
@@ -141,9 +140,12 @@ export function WebsocketAPI({
       await init();
       return undefined;
     }
+    if (hass.socket.pauseMessages && data.type !== HASSIO_WS_COMMAND.ping) {
+      return undefined;
+    }
     countMessage();
     if (data.type !== HASSIO_WS_COMMAND.auth) {
-      if (!CONNECTION_ACTIVE) {
+      if (!hass.socket.connectionActive) {
         logger.error({ data }, `cannot send message, connection is not open`);
         return undefined;
       }
@@ -211,7 +213,7 @@ export function WebsocketAPI({
     connecting = now;
     logger.debug(`CONNECTION_ACTIVE = {false}`);
     const url = getUrl();
-    CONNECTION_ACTIVE = false;
+    hass.socket.connectionActive = false;
     try {
       messageCount = START;
       connection = new WS(url);
@@ -219,7 +221,7 @@ export function WebsocketAPI({
         try {
           await onMessage(JSON.parse(message.toString()));
         } catch (error) {
-          // My expectation is `ZCC.safeExec` should trap any application errors
+          // My expectation is `internal.safeExec` should trap any application errors
           // This try/catch should actually be excessive
           // If this error happens, something weird is happening
           logger.error(
@@ -231,7 +233,7 @@ export function WebsocketAPI({
 
       connection.on("error", async (error: Error) => {
         logger.error({ error: error.message || error }, "Socket error");
-        if (!CONNECTION_ACTIVE) {
+        if (!hass.socket.connectionActive) {
           await sleep(config.hass.RETRY_INTERVAL);
           await teardown();
           logger.info("🪃 on error re-init");
@@ -290,7 +292,7 @@ export function WebsocketAPI({
       case HassSocketMessageTypes.auth_ok:
         logger.debug(`CONNECTION_ACTIVE = {true}`);
         // * Flag as valid connection
-        CONNECTION_ACTIVE = true;
+        hass.socket.connectionActive = true;
         connecting = undefined;
         event.emit(SOCKET_CONNECTED);
         clearTimeout(AUTH_TIMEOUT);
@@ -316,7 +318,7 @@ export function WebsocketAPI({
 
       case HassSocketMessageTypes.auth_invalid:
         logger.debug(`CONNECTION_ACTIVE = {false}`);
-        CONNECTION_ACTIVE = false;
+        hass.socket.connectionActive = false;
         logger.fatal(message.message);
         return;
 
@@ -348,6 +350,10 @@ export function WebsocketAPI({
         logger.debug({ message }, `no new state for entity, what caused this?`);
         return;
       }
+    }
+
+    if (hass.socket.pauseMessages) {
+      return;
     }
     if (waitingCallback.has(id)) {
       const f = waitingCallback.get(id);
@@ -389,7 +395,7 @@ export function WebsocketAPI({
   }: OnHassEventOptions<DATA>) {
     logger.trace({ context, event }, `attaching socket event listener`);
     const callback = async (data: EntityUpdateEvent) => {
-      await ZCC.safeExec({
+      await internal.safeExec({
         duration: SOCKET_EVENT_EXECUTION_TIME,
         errors: SOCKET_EVENT_ERRORS,
         exec: async () => await exec(data as DATA),
@@ -409,12 +415,12 @@ export function WebsocketAPI({
   }
 
   return {
+    connectionActive: false,
+
     /**
      * Convenient wrapper for sendMessage
      */
     fireEvent,
-
-    getConnectionActive: () => CONNECTION_ACTIVE,
     /**
      * Set up a new websocket connection to home assistant
      *
@@ -422,17 +428,29 @@ export function WebsocketAPI({
      */
     init,
 
+    /**
+     * run a callback when the socket finishes connecting
+     */
     onConnect: (callback: () => TBlackHole) => {
       event.on(SOCKET_CONNECTED, async () => {
-        await ZCC.safeExec(async () => await callback());
+        await internal.safeExec(async () => await callback());
       });
     },
+
     /**
      * Attach to the incoming stream of socket events. Do your own filtering and processing from there
      *
      * Returns removal function
      */
     onEvent,
+
+    /**
+     * when true:
+     * - outgoing socket messages are blocked
+     * - entities don't emit updates
+     */
+    pauseMessages: false,
+
     /**
      * Send a message to home assistant via the socket connection
      *

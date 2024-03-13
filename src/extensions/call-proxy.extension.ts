@@ -2,6 +2,7 @@ import {
   INCREMENT,
   InternalError,
   is,
+  noop,
   SECOND,
   sleep,
   START,
@@ -32,6 +33,7 @@ export function CallProxy({
 }: TServiceParams) {
   let domains: string[];
   let services: HassServiceDTO[];
+  const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
    * Describe the current services, and build up a proxy api based on that.
    *
@@ -75,6 +77,9 @@ export function CallProxy({
     );
   }
 
+  /**
+   * perform the initial load for the
+   */
   async function loadServiceList(recursion = START): Promise<void> {
     logger.info(`fetching service list`);
     services = await hass.fetch.listServices();
@@ -96,11 +101,9 @@ export function CallProxy({
     }
     domains = services.map(i => i.domain);
     services.forEach(value => {
-      logger.trace(
-        { services: Object.keys(value.services) },
-        `loaded domain [%s]`,
-        value.domain,
-      );
+      const services = Object.keys(value.services);
+      rawProxy[value.domain] = Object.fromEntries(services.map(i => [i, noop]));
+      logger.trace({ services }, `loaded domain [%s]`, value.domain);
     });
   }
 
@@ -111,30 +114,24 @@ export function CallProxy({
     serviceName: SERVICE,
     service_data: PICK_SERVICE_PARAMETERS<SERVICE>,
   ) {
-    if (!hass.socket.getConnectionActive()) {
+    if (!hass.socket.connectionActive) {
       return await hass.fetch.callService(serviceName, service_data);
     }
     const [domain, service] = serviceName.split(".");
+    const type = HASSIO_WS_COMMAND.call_service;
     // User can just not await this call if they don't care about the "waitForChange"
 
     return await hass.socket.sendMessage(
-      {
-        domain,
-        service,
-        service_data,
-        type: HASSIO_WS_COMMAND.call_service,
-      },
+      { domain, service, service_data, type },
       true,
     );
   }
 
   function buildCallProxy(): iCallService {
-    return new Proxy({} as iCallService, {
+    return new Proxy(rawProxy as iCallService, {
       get: (_, domain: ALL_DOMAINS) => getDomain(domain),
     });
   }
 
   return buildCallProxy();
 }
-
-export default CallProxy;
