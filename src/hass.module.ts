@@ -1,4 +1,4 @@
-import { CreateLibrary } from "@digital-alchemy/core";
+import { CreateLibrary, StringConfig } from "@digital-alchemy/core";
 
 import {
   CallProxy,
@@ -8,6 +8,8 @@ import {
   Utilities,
   WebsocketAPI,
 } from "./extensions";
+
+type AllowRestOptions = "prefer" | "allow" | "forbid";
 
 export const LIB_HASS = CreateLibrary({
   configuration: {
@@ -27,9 +29,30 @@ export const LIB_HASS = CreateLibrary({
       description: "Url to reach Home Assistant at",
       type: "string",
     },
+    CALL_PROXY_ALLOW_REST: {
+      default: "allow",
+      description: [
+        "Send commands from hass.call via rest instead of socket",
+        "Allow = only if socket is not connected",
+      ],
+      enum: ["prefer", "forbid", "allow"],
+      type: "string",
+    } as StringConfig<AllowRestOptions>,
+    EXPECT_RESPONSE_AFTER: {
+      default: 5,
+      description:
+        "If sendMessage was set to expect a response, a warning will be emitted after this delay if one is not received",
+      type: "number",
+    },
     RETRY_INTERVAL: {
-      default: 5000,
+      default: 5,
       description: "How often to retry connecting on connection failure (ms).",
+      type: "number",
+    },
+    SOCKET_AVG_DURATION: {
+      default: 5,
+      description:
+        "How many seconds worth of requests to use in avg for math in REQ_PER_SEC calculations",
       type: "number",
     },
     SOCKET_CRASH_REQUESTS_PER_SEC: {

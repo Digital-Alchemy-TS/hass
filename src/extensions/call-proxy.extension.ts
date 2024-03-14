@@ -77,17 +77,12 @@ export function CallProxy({
     );
   }
 
-  /**
-   * perform the initial load for the
-   */
   async function loadServiceList(recursion = START): Promise<void> {
     logger.info(`fetching service list`);
     services = await hass.fetch.listServices();
     if (is.empty(services)) {
       if (recursion > MAX_ATTEMPTS) {
-        logger.fatal(
-          `Failed to load service list from Home Assistant. Validate configuration`,
-        );
+        logger.fatal(`failed to load service list from Home Assistant`);
         exit(FAILED);
       }
       logger.warn(
@@ -114,7 +109,15 @@ export function CallProxy({
     serviceName: SERVICE,
     service_data: PICK_SERVICE_PARAMETERS<SERVICE>,
   ) {
-    if (!hass.socket.connectionActive) {
+    // pause for rest also
+    if (hass.socket.pauseMessages) {
+      return undefined;
+    }
+    const sendViaRest =
+      (config.hass.CALL_PROXY_ALLOW_REST === "allow" &&
+        hass.socket.connectionState !== "connected") ||
+      config.hass.CALL_PROXY_ALLOW_REST === "prefer";
+    if (sendViaRest) {
       return await hass.fetch.callService(serviceName, service_data);
     }
     const [domain, service] = serviceName.split(".");

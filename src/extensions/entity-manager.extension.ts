@@ -79,10 +79,8 @@ export function EntityManager({
     entity_id: ENTITY_ID,
     // 🖕 TS
   ): NonNullable<ENTITY_STATE<ENTITY_ID>> {
-    return internal.utils.object.get(
-      MASTER_STATE,
-      entity_id,
-    ) as ENTITY_STATE<ENTITY_ID>;
+    const out = internal.utils.object.get(MASTER_STATE, entity_id) ?? {};
+    return out as ENTITY_STATE<ENTITY_ID>;
   }
 
   // ## Proxy version of the logic

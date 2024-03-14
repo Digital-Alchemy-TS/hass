@@ -4,5 +4,7 @@ dictionaryDefinitions: []
 dictionaries: []
 words:
   - hass
+  - hassio
+  - entites
 ignoreWords: []
 import: []
