@@ -215,10 +215,8 @@ export function WebsocketAPI({
 
   async function teardown() {
     if (!connection) {
-      logger.trace("HIT1");
       return;
     }
-    logger.trace("HIT2");
     if (connection.readyState === CONNECTION_OPEN) {
       logger.debug(`closing current connection`);
       connection.close();
@@ -271,7 +269,7 @@ export function WebsocketAPI({
     }
     return new Promise<RESPONSE_VALUE>(async done => {
       waitingCallback.set(id, done as (result: unknown) => TBlackHole);
-      await sleep(config.hass.EXPECT_RESPONSE_AFTER);
+      await sleep(config.hass.EXPECT_RESPONSE_AFTER * SECOND);
       if (!waitingCallback.has(id)) {
         return;
       }
