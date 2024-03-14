@@ -20,7 +20,10 @@ export function Configure({
     if (is.empty(token)) {
       return;
     }
-    logger.debug(`auto configuring from addon environment`);
+    logger.debug(
+      { name: "onPreInit" },
+      `auto configuring from addon environment`,
+    );
     internal.config.set(
       "hass",
       "BASE_URL",
@@ -39,20 +42,20 @@ export function Configure({
       return;
     }
     internal.logger.setLogLevel("trace");
-    logger.info(`validating credentials`);
+    logger.info({ name: "onPostConfig" }, `validating credentials`);
     try {
       const result = await hass.fetch.checkCredentials();
       if (is.object(result)) {
         // * all good
-        logger.info(result.message);
+        logger.info({ name: "onPostConfig" }, result.message);
         exit(1);
       }
       // * bad token
-      logger.error(String(result));
+      logger.error({ name: "onPostConfig" }, String(result));
       exit(0);
     } catch (error) {
       // * bad BASE_URL
-      logger.error({ error }, "failed to send request");
+      logger.error({ error, name: "onPostConfig" }, "failed to send request");
       exit(0);
     }
   }, PostConfigPriorities.VALIDATE);

@@ -95,7 +95,10 @@ export function EntityManager({
       property.startsWith(i),
     );
     if (!valid) {
-      logger.error({ entity, property }, `invalid property lookup`);
+      logger.error(
+        { entity, name: proxyGetLogic, property },
+        `invalid property lookup`,
+      );
       return undefined;
     }
     const current = getCurrentState(entity);
@@ -209,11 +212,13 @@ export function EntityManager({
     if (is.empty(states)) {
       if (recursion > MAX_ATTEMPTS) {
         logger.fatal(
+          { name: refresh },
           `failed to load service list from Home Assistant. Validate configuration`,
         );
         exit();
       }
       logger.warn(
+        { name: refresh },
         "failed to retrieve entity list. Retrying {%s}/[%s]",
         recursion,
         MAX_ATTEMPTS,
@@ -244,7 +249,10 @@ export function EntityManager({
       }
       const old = internal.utils.object.get(oldState, entity.entity_id);
       if (is.equal(old, entity)) {
-        logger.trace({ name: entity.entity_id }, `no change on refresh`);
+        // logger.trace(
+        //   { entity_id: entity.entity_id, name: refresh },
+        //   `no change on refresh`,
+        // );
         return;
       }
       emitUpdates.push(entity);
@@ -279,8 +287,9 @@ export function EntityManager({
   ) {
     if (new_state === null) {
       logger.warn(
-        { name: entity_id },
-        `removing deleted entity from {MASTER_STATE}`,
+        { name: EntityUpdateReceiver },
+        `removing deleted entity [%s] from {MASTER_STATE}`,
+        entity_id,
       );
       internal.utils.object.del(MASTER_STATE, entity_id);
       return;
@@ -292,7 +301,7 @@ export function EntityManager({
   }
 
   lifecycle.onPostConfig(async () => {
-    logger.debug(`pre populate {MASTER_STATE}`);
+    logger.debug({ name: "onPostConfig" }, `pre populate {MASTER_STATE}`);
     await refresh();
   });
 

@@ -34,7 +34,10 @@ If your code is running within a Home Assistant addon environment, it will autom
 
 ### Manual
 
-For code running elsewhere, manual configuration is required. You will need a **Long Lived Access Token**, which can be generated on your user profile.
+For code running elsewhere, manual configuration is required. You will need a **Long Lived Access Token**, which can be generated on your user profile. You can store your config at `./.{app_name}` or `~/.config/{app_name}` in **INI** format.
+
+> Don't forget to configure "`type_writer`" also!
+
 ```ini
 [hass]
   BASE_URL=http://localhost:8123

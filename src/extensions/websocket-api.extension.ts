@@ -72,7 +72,7 @@ export function WebsocketAPI({
   // Start the socket
   lifecycle.onBootstrap(async () => {
     if (config.hass.AUTO_CONNECT_SOCKET) {
-      logger.debug(`auto starting connection`);
+      logger.debug({ name: "onBootstrap" }, `auto starting connection`);
       await ManageConnection();
       attachScheduledFunctions();
     }
@@ -92,7 +92,7 @@ export function WebsocketAPI({
 
   async function ManageConnection() {
     const now = dayjs();
-    const name = "CheckSocket";
+    const name = ManageConnection;
     const threshold = config.hass.RETRY_INTERVAL * CONNECTION_FAILED;
     switch (hass.socket.connectionState) {
       case "connected":
@@ -172,7 +172,7 @@ export function WebsocketAPI({
         try {
           await init();
           setConnectionState("connected");
-          logger.info("socket connected");
+          logger.info({ name }, "auth success {connecting} => {connected}");
         } catch (error) {
           logger.error(
             { error, name },
@@ -185,6 +185,7 @@ export function WebsocketAPI({
       case "invalid":
         // ### error
         logger.error(
+          { name },
           "socket received error, check credentials and restart application",
         );
         return;
@@ -192,7 +193,10 @@ export function WebsocketAPI({
   }
 
   function attachScheduledFunctions() {
-    logger.trace(`attaching interval schedules`);
+    logger.trace(
+      { name: attachScheduledFunctions },
+      `attaching interval schedules`,
+    );
     scheduler.interval({
       exec: async () => await ManageConnection(),
       interval: config.hass.RETRY_INTERVAL * SECOND,
@@ -218,7 +222,7 @@ export function WebsocketAPI({
       return;
     }
     if (connection.readyState === CONNECTION_OPEN) {
-      logger.debug(`closing current connection`);
+      logger.debug({ name: teardown }, `closing current connection`);
       connection.close();
     }
     connection = undefined;
@@ -246,7 +250,10 @@ export function WebsocketAPI({
     subscription?: () => void,
   ): Promise<RESPONSE_VALUE> {
     if (hass.socket.connectionState === "offline") {
-      logger.error("socket is closed, cannot send message");
+      logger.error(
+        { name: sendMessage },
+        "socket is closed, cannot send message",
+      );
       return undefined;
     }
 
@@ -280,7 +287,7 @@ export function WebsocketAPI({
       logger.warn(
         {
           message: data,
-          name: "sendMessage",
+          name: sendMessage,
           sentAt: internal.utils.relativeDate(sentAt),
         },
         `sent message, did not receive reply`,
@@ -307,6 +314,7 @@ export function WebsocketAPI({
 
     if (perSecondAverage > crashCount) {
       logger.fatal(
+        { name: countMessage },
         `exceeded {CRASH_REQUESTS_PER_MIN} ([%s]) threshold`,
         crashCount,
       );
@@ -314,6 +322,7 @@ export function WebsocketAPI({
     }
     if (perSecondAverage > warnCount) {
       logger.warn(
+        { name: countMessage },
         `message traffic [%s] > [%s] > [%s]`,
         crashCount,
         perSecondAverage,
@@ -335,14 +344,12 @@ export function WebsocketAPI({
 
   async function init(): Promise<void> {
     if (connection) {
-      // logger.error({ connection });
       throw new InternalError(
         context,
         "ExistingConnection",
         `Destroy the current connection before creating a new one`,
       );
     }
-    logger.debug(`CONNECTION_ACTIVE = {false}`);
     const url = getUrl();
     try {
       messageCount = START;
@@ -358,27 +365,27 @@ export function WebsocketAPI({
           // This try/catch should actually be excessive
           // If this error happens, something weird is happening
           logger.error(
-            { error },
+            { error, name: init },
             `💣 error bubbled up from websocket message event handler`,
           );
         }
       });
 
       connection.on("error", async (error: Error) => {
-        logger.error({ error: error }, "Socket error");
+        logger.error({ error: error, name: init }, "socket error");
         if (hass.socket.connectionState === "connected") {
           setConnectionState("unknown");
         }
       });
 
       connection.on("close", async () => {
-        logger.warn("connection closed");
+        logger.warn({ name: init }, "connection closed");
         await teardown();
       });
 
       return await new Promise(done => (onSocketReady = done));
     } catch (error) {
-      logger.error({ error, url }, `initConnection error`);
+      logger.error({ error, name: init, url }, `initConnection error`);
       setConnectionState("offline");
     }
   }
@@ -404,7 +411,7 @@ export function WebsocketAPI({
     SOCKET_RECEIVED_MESSAGES.labels({ type: message.type }).inc();
     switch (message.type as HassSocketMessageTypes) {
       case HassSocketMessageTypes.auth_required:
-        logger.debug(`sending authentication`);
+        logger.trace({ name: onMessage }, `sending authentication`);
         sendMessage(
           { access_token: config.hass.TOKEN, type: HASSIO_WS_COMMAND.auth },
           false,
@@ -412,9 +419,8 @@ export function WebsocketAPI({
         return;
 
       case HassSocketMessageTypes.auth_ok:
-        logger.debug(`CONNECTION_ACTIVE = {true}`);
         // * Flag as valid connection
-        logger.debug(`event subscriptions starting`);
+        logger.trace({ name: onMessage }, `event subscriptions starting`);
         await sendMessage({ type: HASSIO_WS_COMMAND.subscribe_events }, false);
         onSocketReady();
         event.emit(SOCKET_CONNECTED);
@@ -432,14 +438,20 @@ export function WebsocketAPI({
 
       case HassSocketMessageTypes.auth_invalid:
         setConnectionState("invalid");
-        logger.fatal({ message }, "auth_invalid");
+        logger.fatal(
+          { message, name: onMessage },
+          "received auth invalid {connecting} => {invalid}",
+        );
         // ? If you have a use case for making this exit configurable, open a ticket
         exit();
         return;
 
       default:
         // Code error probably
-        logger.error(`unknown websocket message type: ${message.type}`);
+        logger.error(
+          { name: onMessage },
+          `unknown websocket message type: ${message.type}`,
+        );
     }
   }
 
@@ -462,7 +474,10 @@ export function WebsocketAPI({
         // FIXME: probably removal / rename?
         // It's an edge case for sure, and not positive this code should handle it
         // If you have thoughts, chime in somewhere and we can do more sane things
-        logger.debug({ message }, `no new state for entity, what caused this?`);
+        logger.debug(
+          { message, name: onMessageEvent },
+          `no new state for entity, what caused this?`,
+        );
         return;
       }
     }
@@ -481,7 +496,7 @@ export function WebsocketAPI({
   function onMessageResult(id: number, message: SocketMessageDTO) {
     if (waitingCallback.has(id)) {
       if (message.error) {
-        logger.error({ message });
+        logger.error({ message, name: onMessageResult });
       }
       const f = waitingCallback.get(id);
       waitingCallback.delete(id);
@@ -496,7 +511,10 @@ export function WebsocketAPI({
     once,
     exec,
   }: OnHassEventOptions<DATA>) {
-    logger.trace({ context, event }, `attaching socket event listener`);
+    logger.trace(
+      { context, event, name: onEvent },
+      `attaching socket event listener`,
+    );
     const callback = async (data: EntityUpdateEvent) => {
       await internal.safeExec({
         duration: SOCKET_EVENT_EXECUTION_TIME,
@@ -512,7 +530,10 @@ export function WebsocketAPI({
       socketEvents.on(event, callback);
     }
     return () => {
-      logger.trace({ context, event }, `removing socket event listener`);
+      logger.trace(
+        { context, event, name: onEvent },
+        `removing socket event listener`,
+      );
       socketEvents.removeListener(event, callback);
     };
   }
@@ -543,7 +564,8 @@ export function WebsocketAPI({
       };
       if (hass.socket.connectionState === "connected") {
         logger.warn(
-          `added [onConnect] callback after socket was already connected, running immediately`,
+          { name: "onConnect" },
+          `added callback after socket was already connected, running immediately`,
         );
         setImmediate(wrapped);
         // attach anyways, for restarts or whatever

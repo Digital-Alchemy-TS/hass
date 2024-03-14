@@ -77,7 +77,7 @@ export function FetchAPI({
       url: `/api/calendars/${calendar}`,
     });
     logger.trace(
-      { ...params },
+      { name: calendarSearch, params },
       `%s search found %s events`,
       calendar,
       events.length,
@@ -102,7 +102,7 @@ export function FetchAPI({
   }
 
   async function checkConfig(): Promise<CheckConfigResult> {
-    logger.trace(`check config`);
+    logger.trace({ name: checkConfig }, `send`);
     return await fetch({
       method: `post`,
       url: `/api/config/core/check_config`,
@@ -113,6 +113,7 @@ export function FetchAPI({
     destination: string,
     fetchWith: FilteredFetchArguments,
   ): Promise<void> {
+    logger.trace({ name: download }, `send`);
     await downloader({
       ...fetchWith,
       baseUrl: config.hass.BASE_URL,
@@ -127,6 +128,7 @@ export function FetchAPI({
       Record<string, string>
     >,
   >(entityId: string | string[]): Promise<T> {
+    logger.trace({ name: fetchEntityCustomizations }, `send`);
     return await fetch<T>({
       url: `/api/config/customize/config/${entityId}`,
     });
@@ -142,7 +144,12 @@ export function FetchAPI({
     extra: { minimal_response?: "" } = {},
   ): Promise<T[]> {
     logger.info(
-      { entity_id, from: from.toISOString(), to: to.toISOString() },
+      {
+        entity_id,
+        from: from.toISOString(),
+        name: fetchEntityHistory,
+        to: to.toISOString(),
+      },
       `fetch entity history`,
     );
     const result = await fetch<[T[]]>({
@@ -154,7 +161,10 @@ export function FetchAPI({
       url: `/api/history/period/${from.toISOString()}`,
     });
     if (!Array.isArray(result)) {
-      logger.error({ result }, `unexpected return result`);
+      logger.error(
+        { name: fetchEntityHistory, result },
+        `unexpected return result`,
+      );
       return [];
     }
     const [out] = result;
@@ -165,7 +175,7 @@ export function FetchAPI({
     event: string,
     data?: DATA,
   ): Promise<void> {
-    logger.trace({ name: event, ...data }, `Firing event`);
+    logger.trace({ data, event, name: fireEvent }, `firing event`);
     const response = await fetch<{ message: string }>({
       // body: data,
       body: {},
@@ -173,22 +183,25 @@ export function FetchAPI({
       url: `/api/events/${event}`,
     });
     if (response?.message !== `Event ${event} fired.`) {
-      logger.debug({ response }, `unexpected response from firing event`);
+      logger.debug(
+        { name: fetchEntityHistory, response },
+        `unexpected response from firing event`,
+      );
     }
   }
 
   async function getAllEntities(): Promise<ENTITY_STATE<PICK_ENTITY>[]> {
-    logger.trace(`get all entities`);
+    logger.trace({ name: getAllEntities }, `send`);
     return await fetch<ENTITY_STATE<PICK_ENTITY>[]>({ url: `/api/states` });
   }
 
   async function getHassConfig(): Promise<HassConfig> {
-    logger.trace(`get config`);
+    logger.trace({ name: getHassConfig }, `send`);
     return await fetch({ url: `/api/config` });
   }
 
   async function getLogs(): Promise<HomeAssistantServerLogItem[]> {
-    logger.trace(`get logs`);
+    logger.trace({ name: getLogs }, `send`);
     const results = await fetch<HomeAssistantServerLogItem[]>({
       url: `/api/error/all`,
     });
@@ -200,12 +213,12 @@ export function FetchAPI({
   }
 
   async function getRawLogs(): Promise<string> {
-    logger.trace(`get raw logs`);
+    logger.trace({ name: getRawLogs }, `send`);
     return await fetch<string>({ process: "text", url: `/api/error_log` });
   }
 
   async function listServices(): Promise<HassServiceDTO[]> {
-    logger.trace(`list services`);
+    logger.trace({ name: listServices }, `send`);
     return await fetch<HassServiceDTO[]>({ url: `/api/services` });
   }
 
@@ -223,22 +236,28 @@ export function FetchAPI({
     if (!is.empty(attributes)) {
       body.attributes = attributes;
     }
-    logger.trace({ ...body, name: entity_id }, `set entity state`);
+    logger.trace(
+      { ...body, entity_id, name: updateEntity },
+      `set entity state`,
+    );
     await fetch({ body, method: "post", url: `/api/states/${entity_id}` });
   }
 
-  async function webhook(name: string, data: object = {}): Promise<void> {
-    logger.trace({ ...data, name }, `webhook`);
+  async function webhook(
+    webhook_name: string,
+    data: object = {},
+  ): Promise<void> {
+    logger.trace({ data, name: webhook, webhook_name }, `send`);
     await fetch({
       body: data,
       method: "post",
       process: "text",
-      url: `/api/webhook/${name}`,
+      url: `/api/webhook/${webhook_name}`,
     });
   }
 
   async function checkCredentials(): Promise<{ message: string } | string> {
-    logger.trace(`check credentials`);
+    logger.trace({ name: checkCredentials }, `send`);
     return await fetch({
       url: `/api/`,
     });

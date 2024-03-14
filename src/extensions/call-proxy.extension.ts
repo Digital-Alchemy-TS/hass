@@ -41,17 +41,20 @@ export function CallProxy({
    */
   lifecycle.onBootstrap(async () => {
     if (!config.hass.AUTO_SCAN_CALL_PROXY) {
-      logger.debug(`skip service populate`);
+      logger.debug({ name: "onBootstrap" }, `skip service populate`);
       return;
     }
-    logger.debug(`runtime populate service interfaces`);
+    logger.debug(
+      { name: "onBootstrap" },
+      `runtime populate service interfaces`,
+    );
     await loadServiceList();
   });
 
   function getDomain(domain: ALL_DOMAINS) {
     if (!domains || !domains?.includes(domain)) {
       if (!NOT_A_DOMAIN.has(domain)) {
-        logger.error({ domain }, `unknown domain`);
+        logger.error({ domain, name: getDomain }, `unknown domain`);
       }
       return undefined;
     }
@@ -78,14 +81,18 @@ export function CallProxy({
   }
 
   async function loadServiceList(recursion = START): Promise<void> {
-    logger.info(`fetching service list`);
+    logger.info({ name: loadServiceList }, `fetching service list`);
     services = await hass.fetch.listServices();
     if (is.empty(services)) {
       if (recursion > MAX_ATTEMPTS) {
-        logger.fatal(`failed to load service list from Home Assistant`);
+        logger.fatal(
+          { name: loadServiceList },
+          `failed to load service list from Home Assistant`,
+        );
         exit(FAILED);
       }
       logger.warn(
+        { name: loadServiceList },
         "failed to retrieve {service} list. Retrying {%s}/[%s]",
         recursion,
         MAX_ATTEMPTS,
@@ -98,7 +105,11 @@ export function CallProxy({
     services.forEach(value => {
       const services = Object.keys(value.services);
       rawProxy[value.domain] = Object.fromEntries(services.map(i => [i, noop]));
-      logger.trace({ services }, `loaded domain [%s]`, value.domain);
+      logger.trace(
+        { name: loadServiceList, services },
+        `loaded domain [%s]`,
+        value.domain,
+      );
     });
   }
 
