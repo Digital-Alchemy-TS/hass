@@ -40,7 +40,7 @@ export function FetchAPI({
   internal,
   config,
 }: TServiceParams) {
-  const fetcher = internal.createFetcher({ context });
+  const fetcher = internal.boilerplate.fetch({ context });
   const { fetch, download: downloader } = fetcher;
 
   // Load configurations

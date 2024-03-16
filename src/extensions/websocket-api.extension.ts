@@ -212,8 +212,11 @@ export function WebsocketAPI({
     });
   }
 
-  lifecycle.onShutdownComplete(async () => {
-    logger.debug(`shutdown - tearing down connection`);
+  lifecycle.onShutdownStart(async () => {
+    logger.debug(
+      { name: "onShutdownStart" },
+      `shutdown - tearing down connection`,
+    );
     await teardown();
   });
 

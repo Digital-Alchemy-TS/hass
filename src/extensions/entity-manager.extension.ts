@@ -213,13 +213,13 @@ export function EntityManager({
       if (recursion > MAX_ATTEMPTS) {
         logger.fatal(
           { name: refresh },
-          `failed to load service list from Home Assistant. Validate configuration`,
+          `failed to load service list from Home Assistant. validate configuration`,
         );
         exit();
       }
       logger.warn(
         { name: refresh },
-        "failed to retrieve entity list. Retrying {%s}/[%s]",
+        "failed to retrieve entity list. retrying {%s}/[%s]",
         recursion,
         MAX_ATTEMPTS,
       );

@@ -24,12 +24,12 @@ export function Configure({
       { name: "onPreInit" },
       `auto configuring from addon environment`,
     );
-    internal.config.set(
+    internal.boilerplate.config.set(
       "hass",
       "BASE_URL",
       env.HASS_SERVER || "http://supervisor/core",
     );
-    internal.config.set("hass", "TOKEN", token);
+    internal.boilerplate.config.set("hass", "TOKEN", token);
   });
 
   /**
@@ -41,7 +41,7 @@ export function Configure({
     if (!config.hass.VALIDATE_CONFIGURATION) {
       return;
     }
-    internal.logger.setLogLevel("trace");
+    internal.boilerplate.logger.setLogLevel("trace");
     logger.info({ name: "onPostConfig" }, `validating credentials`);
     try {
       const result = await hass.fetch.checkCredentials();
