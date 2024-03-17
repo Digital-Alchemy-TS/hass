@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { is, TServiceParams } from "@digital-alchemy/core";
+import { asyncNoop, is, TServiceParams } from "@digital-alchemy/core";
 import { env, exit } from "process";
 
 import { PostConfigPriorities } from "..";
@@ -24,12 +24,12 @@ export function Configure({
       { name: "onPreInit" },
       `auto configuring from addon environment`,
     );
-    internal.boilerplate.config.set(
+    internal.boilerplate.configuration.set(
       "hass",
       "BASE_URL",
       env.HASS_SERVER || "http://supervisor/core",
     );
-    internal.boilerplate.config.set("hass", "TOKEN", token);
+    internal.boilerplate.configuration.set("hass", "TOKEN", token);
   });
 
   /**
@@ -41,7 +41,8 @@ export function Configure({
     if (!config.hass.VALIDATE_CONFIGURATION) {
       return;
     }
-    internal.boilerplate.logger.setLogLevel("trace");
+    internal.boilerplate.configuration.set("boilerplate", "LOG_LEVEL", "trace");
+    await asyncNoop();
     logger.info({ name: "onPostConfig" }, `validating credentials`);
     try {
       const result = await hass.fetch.checkCredentials();

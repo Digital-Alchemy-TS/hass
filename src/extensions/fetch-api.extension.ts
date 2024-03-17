@@ -176,9 +176,8 @@ export function FetchAPI({
     data?: DATA,
   ): Promise<void> {
     logger.trace({ data, event, name: fireEvent }, `firing event`);
-    const response = await fetch<{ message: string }>({
-      // body: data,
-      body: {},
+    const response = await fetch<{ message: string }, DATA>({
+      body: data,
       method: "post",
       url: `/api/events/${event}`,
     });
