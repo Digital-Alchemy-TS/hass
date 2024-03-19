@@ -3,6 +3,7 @@
 This repository contains generic extensions for interacting with Home Assistant, including websocket & REST API adapters, entity & event management, backup workflows, and more.
 
 > See more at the [extended docs](https://docs.digital-alchemy.app/02-Home-Automation/02.01-hass/%F0%9F%A7%AD-Hass-Overview)
+> Ask questions on [Discord](https://discord.digital-alchemy.app)
 
 ## ⭐ Features
 ### 📝 First-class Editor Experiences
@@ -17,6 +18,30 @@ Create references to entities that will always reflect their current state. Get 
 ### 🌐 Managed Websocket
 
 Don't worry about all the complexities of dealing with Home Assistant. Let the library help by handling all the connection logic, keeping track of events for you, formatting requests, and more.
+
+## Install
+
+Add as a dependency, and add to your imports. Nice and easy
+
+```bash
+npm i @digital-alchemy/hass
+```
+
+```typescript
+import { LIB_HASS } from "@digital-alchemy/hass";
+
+// application
+const MY_APP = CreateApplication({
+  libraries: [LIB_HASS],
+  name: "home_automation",
+})
+
+// library
+export const MY_LIBRARY = CreateLibrary({
+  depends: [LIB_HASS],
+  name: "special_logic",
+})
+```
 
 ## ⚙️ Configuration
 ### 🛠 Custom Types
