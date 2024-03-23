@@ -32,18 +32,28 @@ export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
      * Run callback
      */
     onUpdate: (
-      callback: (state: NonNullable<ENTITY_STATE<ENTITY_ID>>) => TBlackHole,
+      callback: (
+        new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
+        old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
+      ) => TBlackHole,
     ) => void;
     /**
      * Run callback once, for next update
      */
     once: (
-      callback: (state: NonNullable<ENTITY_STATE<ENTITY_ID>>) => TBlackHole,
+      callback: (
+        new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
+        old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
+      ) => TBlackHole,
     ) => void;
     /**
      * Will resolve with the next state of the next value. No time limit
      */
     nextState: () => Promise<ENTITY_STATE<ENTITY_ID>>;
+    /**
+     * Access the immediate previous entity state
+     */
+    previous: ENTITY_STATE<ENTITY_ID>;
   };
 
 const MAX_ATTEMPTS = 50;
@@ -65,6 +75,7 @@ export function EntityManager({
     Record<ALL_DOMAINS, Record<string, ENTITY_STATE<PICK_ENTITY>>>
   >;
   const ENTITY_PROXIES = new Map<PICK_ENTITY, ByIdProxy<PICK_ENTITY>>();
+  const PREVIOUS_STATE = new Map<PICK_ENTITY, ENTITY_STATE<PICK_ENTITY>>();
   let lastRefresh: Dayjs;
 
   // * Local event emitter for coordination of socket events
@@ -135,6 +146,9 @@ export function EntityManager({
             }
             if (property === "entity_id") {
               return entity_id;
+            }
+            if (property === "previous") {
+              return PREVIOUS_STATE.get(entity_id);
             }
             if (property === "nextState") {
               return new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
@@ -285,6 +299,7 @@ export function EntityManager({
     new_state: ENTITY_STATE<ENTITY>,
     old_state: ENTITY_STATE<ENTITY>,
   ) {
+    PREVIOUS_STATE.set(entity_id, old_state);
     if (new_state === null) {
       logger.warn(
         { name: EntityUpdateReceiver },
