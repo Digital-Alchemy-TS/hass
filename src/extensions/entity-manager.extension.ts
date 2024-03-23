@@ -159,6 +159,43 @@ export function EntityManager({
             }
             return proxyGetLogic(entity_id, property);
           },
+          set(
+            _,
+            property: Extract<keyof ByIdProxy<ENTITY_ID>, string>,
+            value: unknown,
+          ) {
+            if (property === "state") {
+              setImmediate(async () => {
+                logger.debug(
+                  { entity_id, state: value },
+                  `emitting set state via rest`,
+                );
+                await hass.fetch.updateEntity(entity_id, {
+                  state: value as string | number,
+                });
+              });
+              return true;
+            }
+            if (property === "attributes") {
+              if (!is.object(value)) {
+                logger.error(`can only provide objects as attributes`);
+                return false;
+              }
+              setImmediate(async () => {
+                logger.debug(
+                  { attributes: Object.keys(value), entity_id },
+                  `updating attributes via rest`,
+                );
+                await hass.fetch.updateEntity(entity_id, { attributes: value });
+              });
+              return true;
+            }
+            logger.error(
+              { entity_id, property },
+              `cannot set property on entity`,
+            );
+            return false;
+          },
         }),
       );
     }
