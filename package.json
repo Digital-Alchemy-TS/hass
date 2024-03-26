@@ -6,6 +6,7 @@
   "scripts": {
     "build": "rm -rf dist/; tsc",
     "lint": "eslint src",
+    "test": "./scripts/test.sh",
     "prepublishOnly": "npm run build",
     "upgrade": "ncu -u; npm i"
   },
