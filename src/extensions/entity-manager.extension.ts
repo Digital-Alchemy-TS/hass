@@ -63,6 +63,7 @@ const RECENT = 5;
 
 export function EntityManager({
   logger,
+  config,
   hass,
   lifecycle,
   internal,
@@ -353,6 +354,9 @@ export function EntityManager({
   }
 
   lifecycle.onPostConfig(async () => {
+    if (!config.hass.AUTO_CONNECT_SOCKET) {
+      return;
+    }
     logger.debug({ name: "onPostConfig" }, `pre populate {MASTER_STATE}`);
     await refresh();
   });
