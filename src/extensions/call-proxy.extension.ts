@@ -12,6 +12,7 @@ import { exit } from "process";
 
 import {
   ALL_DOMAINS,
+  CALL_PROXY_SERVICE_CALL,
   HASSIO_WS_COMMAND,
   HassServiceDTO,
   iCallService,
@@ -132,6 +133,7 @@ export function CallProxy({
       return await hass.fetch.callService(serviceName, service_data);
     }
     const [domain, service] = serviceName.split(".");
+    CALL_PROXY_SERVICE_CALL.labels({ domain, service }).inc();
     const type = HASSIO_WS_COMMAND.call_service;
     // User can just not await this call if they don't care about the "waitForChange"
 

@@ -7,8 +7,8 @@ import {
 } from "@digital-alchemy/core";
 import { env } from "process";
 
-import { LIB_HASS } from "..";
-import { LIB_HASS_TESTING } from "./hass-testing.module";
+import { LIB_HASS, SILENT_BOOT } from "..";
+import { LIB_HASS_TESTING } from "./lib/hass-testing.module";
 
 const DEFAULTS = "DEFAULTS";
 
@@ -55,17 +55,14 @@ describe("Config", () => {
           },
         },
       });
-      await application.bootstrap({
-        configuration: {
-          boilerplate: {
-            LOG_LEVEL: "silent",
-          },
+      await application.bootstrap(
+        SILENT_BOOT({
           hass: {
             BASE_URL: URL,
             TOKEN: DEFAULTS,
           },
-        },
-      });
+        }),
+      );
     });
 
     it("should set BASE_URL & TOKEN if provided env", async () => {
@@ -84,17 +81,14 @@ describe("Config", () => {
           },
         },
       });
-      await application.bootstrap({
-        configuration: {
-          boilerplate: {
-            LOG_LEVEL: "silent",
-          },
+      await application.bootstrap(
+        SILENT_BOOT({
           hass: {
             BASE_URL: "http://localhost:9123",
             TOKEN: DEFAULTS,
           },
-        },
-      });
+        }),
+      );
     });
 
     it("should use HASSIO_TOKEN over SUPERVISOR_TOKEN", async () => {
@@ -113,14 +107,7 @@ describe("Config", () => {
           },
         },
       });
-      await application.bootstrap({
-        configuration: {
-          boilerplate: {
-            LOG_LEVEL: "silent",
-          },
-          hass: {},
-        },
-      });
+      await application.bootstrap(SILENT_BOOT());
     });
 
     it("should allow SUPERVISOR_TOKEN", async () => {
@@ -138,14 +125,7 @@ describe("Config", () => {
           },
         },
       });
-      await application.bootstrap({
-        configuration: {
-          boilerplate: {
-            LOG_LEVEL: "silent",
-          },
-          hass: {},
-        },
-      });
+      await application.bootstrap(SILENT_BOOT());
     });
 
     it("should allow HASS_SERVER", async () => {
@@ -165,14 +145,7 @@ describe("Config", () => {
           },
         },
       });
-      await application.bootstrap({
-        configuration: {
-          boilerplate: {
-            LOG_LEVEL: "silent",
-          },
-          hass: {},
-        },
-      });
+      await application.bootstrap(SILENT_BOOT());
     });
   });
 
@@ -190,16 +163,7 @@ describe("Config", () => {
           test() {},
         },
       });
-      await application.bootstrap({
-        configuration: {
-          boilerplate: {
-            LOG_LEVEL: "silent",
-          },
-          hass: {
-            TOKEN: "TEST",
-          },
-        },
-      });
+      await application.bootstrap(SILENT_BOOT({ hass: { TOKEN: "TEST" } }));
       expect(exitSpy).not.toHaveBeenCalled();
     });
 
@@ -208,8 +172,6 @@ describe("Config", () => {
         .spyOn(process, "exit")
         // @ts-expect-error testing
         .mockImplementation(() => {});
-      jest.spyOn(console, "log").mockImplementation(() => {});
-      jest.spyOn(console, "error").mockImplementation(() => {});
       application = CreateApplication({
         libraries: [LIB_HASS, LIB_HASS_TESTING],
         // @ts-expect-error testing
@@ -224,17 +186,9 @@ describe("Config", () => {
           },
         },
       });
-      await application.bootstrap({
-        configuration: {
-          boilerplate: {
-            LOG_LEVEL: "silent",
-          },
-          hass: {
-            TOKEN: "TEST",
-            VALIDATE_CONFIGURATION: true,
-          },
-        },
-      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { VALIDATE_CONFIGURATION: true } }),
+      );
       expect(exitSpy).toHaveBeenCalledWith(1);
       expect(spy).toHaveBeenCalledWith(
         "hass:configure",
@@ -265,17 +219,14 @@ describe("Config", () => {
           },
         },
       });
-      await application.bootstrap({
-        configuration: {
-          boilerplate: {
-            LOG_LEVEL: "silent",
-          },
+      await application.bootstrap(
+        SILENT_BOOT({
           hass: {
             TOKEN: "TEST",
             VALIDATE_CONFIGURATION: true,
           },
-        },
-      });
+        }),
+      );
       expect(exitSpy).toHaveBeenCalledWith(0);
       expect(spy).toHaveBeenCalledWith(
         "hass:configure",
@@ -309,17 +260,14 @@ describe("Config", () => {
           },
         },
       });
-      await application.bootstrap({
-        configuration: {
-          boilerplate: {
-            LOG_LEVEL: "silent",
-          },
+      await application.bootstrap(
+        SILENT_BOOT({
           hass: {
             TOKEN: "TEST",
             VALIDATE_CONFIGURATION: true,
           },
-        },
-      });
+        }),
+      );
       expect(exitSpy).toHaveBeenCalledWith(0);
       expect(spy).toHaveBeenCalledWith(
         "hass:configure",
