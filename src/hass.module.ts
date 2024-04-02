@@ -72,6 +72,12 @@ export const LIB_HASS = CreateLibrary({
       required: true,
       type: "string",
     },
+    TRACK_ENTITIES: {
+      default: true,
+      description:
+        "Set to false to not fetch entity info at boot, and maintain states",
+      type: "boolean",
+    },
     VALIDATE_CONFIGURATION: {
       default: false,
       description: "Validate the credentials, then quit",

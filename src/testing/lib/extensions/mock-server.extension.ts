@@ -1,30 +1,32 @@
-import { is, TServiceParams } from "@digital-alchemy/core";
-import { createServer } from "http";
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { TServiceParams } from "@digital-alchemy/core";
 import { Server, WebSocket } from "ws";
 
+import { getFreePort } from "..";
 import { HassTestLifecycle } from "../helpers/lifecycle";
 
-async function getFreePort(): Promise<number> {
-  return new Promise(done => {
-    const server = createServer();
-    server.listen(undefined, () => {
-      const address = server.address();
-      if (is.string(address)) {
-        return;
-      }
-      server.close(() => done(address.port));
-    });
-  });
-}
-
-export function MockServer({ internal, logger, lifecycle }: TServiceParams) {
+let port: number;
+export function MockServer({
+  internal,
+  logger,
+  lifecycle,
+  config,
+}: TServiceParams) {
   let server: Server;
-  let port: number;
   let last: WebSocket;
 
   lifecycle.onPreInit(async () => {
-    //
+    if (config.hass_testing.CONNECT_MODE !== "server") {
+      return;
+    }
+    logger.info("starting server");
+    await Init();
+    logger.info("done");
   }, HassTestLifecycle.setupMockServer);
+
+  lifecycle.onShutdownStart(() => {
+    server.close();
+  }, -1);
 
   async function nextReply<T>() {
     return await new Promise<T>(done => {
@@ -36,22 +38,14 @@ export function MockServer({ internal, logger, lifecycle }: TServiceParams) {
 
   async function Init() {
     port = await getFreePort();
+    mock.port = port;
     logger.info({ port }, `setting up mock server`);
-    internal.boilerplate.configuration.set(
-      "hass",
-      "BASE_URL",
-      `http://localhost:${port}`,
-    );
-    internal.boilerplate.configuration.set(
-      "hass",
-      "BASE_URL",
-      `http://localhost:${port}`,
-    );
     server = new Server({ port });
 
     server.on("connection", connection => {
       last = connection;
       logger.debug(`incoming connection`);
+      sendAuthOk();
     });
   }
 
@@ -75,6 +69,7 @@ export function MockServer({ internal, logger, lifecycle }: TServiceParams) {
 
   const mock = {
     Init,
+    port,
     quickAuth,
     respond,
     sendAuthOk,

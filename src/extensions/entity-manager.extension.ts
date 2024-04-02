@@ -337,6 +337,9 @@ export function EntityManager({
     new_state: ENTITY_STATE<ENTITY>,
     old_state: ENTITY_STATE<ENTITY>,
   ) {
+    if (!config.hass.TRACK_ENTITIES) {
+      return;
+    }
     PREVIOUS_STATE.set(entity_id, old_state);
     if (new_state === null) {
       logger.warn(
@@ -354,7 +357,7 @@ export function EntityManager({
   }
 
   lifecycle.onPostConfig(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET) {
+    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.TRACK_ENTITIES) {
       return;
     }
     logger.debug({ name: "onPostConfig" }, `pre populate {MASTER_STATE}`);
@@ -366,6 +369,7 @@ export function EntityManager({
      * Internal library use only
      */
     [ENTITY_UPDATE_RECEIVER]: EntityUpdateReceiver,
+
     /**
      * Retrieves a proxy object for a specified entity. This proxy object
      * provides current values and event hooks for the entity.

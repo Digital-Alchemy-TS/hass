@@ -245,7 +245,7 @@ export function WebsocketAPI({
 
   async function sendMessage<RESPONSE_VALUE extends unknown = unknown>(
     data: {
-      type: `${HASSIO_WS_COMMAND}`;
+      type: string;
       id?: number;
       [key: string]: unknown;
     },
@@ -357,6 +357,7 @@ export function WebsocketAPI({
     try {
       messageCount = START;
       connection = new WS(url);
+      let initFinished = false;
       connection.on("message", async (message: string) => {
         try {
           lastReceivedMessage = dayjs();
@@ -381,12 +382,20 @@ export function WebsocketAPI({
         }
       });
 
-      connection.on("close", async () => {
-        logger.warn({ name: init }, "connection closed");
+      connection.on("close", async (code, reason) => {
+        if (!initFinished) {
+          logger.error("trying again");
+          return await init();
+        }
+        logger.warn(
+          { code, name: init, reason: reason.toString() },
+          "connection closed",
+        );
         await teardown();
       });
 
-      return await new Promise(done => (onSocketReady = done));
+      await new Promise<void>(done => (onSocketReady = done));
+      initFinished = true;
     } catch (error) {
       logger.error({ error, name: init, url }, `initConnection error`);
       setConnectionState("offline");

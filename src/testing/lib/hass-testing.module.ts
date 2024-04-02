@@ -8,9 +8,9 @@ export const LIB_HASS_TESTING = CreateLibrary({
     CONNECT_MODE: {
       default: "none",
       description: "Update config defaults for hass to not attempt connections",
-      enum: ["none", "testing", "remote"],
+      enum: ["none", "testing", "remote", "server"],
       type: "string",
-    } as StringConfig<"none" | "testing" | "remote">,
+    } as StringConfig<"none" | "testing" | "remote" | "server">,
   },
   depends: [LIB_HASS],
   name: "hass_testing",
