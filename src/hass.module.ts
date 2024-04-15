@@ -5,6 +5,7 @@ import {
   Configure,
   EntityManager,
   FetchAPI,
+  Registry,
   Utilities,
   WebsocketAPI,
 } from "./extensions";
@@ -105,6 +106,11 @@ export const LIB_HASS = CreateLibrary({
      * rest api commands
      */
     fetch: FetchAPI,
+
+    /**
+     * Interact with the home assistant registry
+     */
+    registry: Registry,
 
     /**
      * websocket interface

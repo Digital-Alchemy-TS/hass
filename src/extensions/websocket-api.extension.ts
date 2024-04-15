@@ -245,7 +245,7 @@ export function WebsocketAPI({
 
   async function sendMessage<RESPONSE_VALUE extends unknown = unknown>(
     data: {
-      type: `${HASSIO_WS_COMMAND}`;
+      type: string;
       id?: number;
       [key: string]: unknown;
     },
