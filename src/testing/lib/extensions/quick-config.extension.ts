@@ -28,9 +28,3 @@ export function QuickConfiguration({
     }
   });
 }
-function Example({ hass }: TServiceParams) {
-  const entity = hass.entity.byId("binary_sensor.test");
-  entity.onUpdate(() => {
-    //
-  });
-}

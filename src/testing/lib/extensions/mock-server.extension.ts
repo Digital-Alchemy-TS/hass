@@ -6,12 +6,7 @@ import { getFreePort } from "..";
 import { HassTestLifecycle } from "../helpers/lifecycle";
 
 let port: number;
-export function MockServer({
-  internal,
-  logger,
-  lifecycle,
-  config,
-}: TServiceParams) {
+export function MockServer({ logger, lifecycle, config }: TServiceParams) {
   let server: Server;
   let last: WebSocket;
 
