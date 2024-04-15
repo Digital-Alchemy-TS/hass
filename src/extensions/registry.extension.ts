@@ -1,6 +1,7 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
 import {
+  ConfigEntry,
   HassConfig,
   ManifestItem,
   UpdateCoreOptions,
@@ -27,8 +28,15 @@ export function Registry({ hass }: TServiceParams) {
     });
   }
 
+  async function GetConfigEntries() {
+    return await hass.socket.sendMessage<ConfigEntry[]>({
+      type: "config_entries/get",
+    });
+  }
+
   return {
     getConfig: GetConfig,
+    getConfigEntries: GetConfigEntries,
     manifestList: ManifestList,
     updateCore: UpdateCore,
   };

@@ -2,12 +2,20 @@ import { TServiceParams } from "@digital-alchemy/core";
 
 import { AreaCreate, AreaDetails, TAreaId } from "../helpers";
 
-export function Area({ hass, lifecycle, config }: TServiceParams) {
-  lifecycle.onBootstrap(async () => {
+export function Area({ hass, context, config, logger }: TServiceParams) {
+  hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }
-    hass.floor.current = await hass.floor.list();
+    hass.area.current = await hass.area.list();
+    hass.socket.subscribe({
+      context,
+      event_type: "area_registry_updated",
+      async exec() {
+        hass.area.current = await hass.area.list();
+        logger.debug(`area registry updated`);
+      },
+    });
   });
 
   return {

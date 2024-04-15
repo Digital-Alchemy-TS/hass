@@ -82,7 +82,9 @@ export type ZoneOptions = {
   icon: string;
   passive: boolean;
 };
-export type ZoneDetails = ZoneOptions & { id: string };
+export type TZoneId = string & { zone: true };
+
+export type ZoneDetails = ZoneOptions & { id: TZoneId };
 
 export interface ManifestItem {
   domain: string;

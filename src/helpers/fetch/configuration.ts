@@ -53,3 +53,25 @@ export type AreaCreate = {
 };
 
 export type TAreaId = string & { area: true };
+
+export interface ConfigEntry {
+  entry_id: string;
+  domain: string;
+  title: string;
+  source: string;
+  state: State;
+  supports_options: boolean;
+  supports_remove_device: boolean;
+  supports_unload: boolean;
+  supports_reconfigure: boolean;
+  pref_disable_new_entities: boolean;
+  pref_disable_polling: boolean;
+  disabled_by: null;
+  reason: null | string;
+}
+
+export enum State {
+  Loaded = "loaded",
+  NotLoaded = "not_loaded",
+  SetupRetry = "setup_retry",
+}

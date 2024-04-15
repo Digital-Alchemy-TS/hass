@@ -1,18 +1,19 @@
 import { CreateLibrary, StringConfig } from "@digital-alchemy/core";
 
 import {
+  Area,
+  Backup,
   CallProxy,
   Configure,
+  Device,
   EntityManager,
   FetchAPI,
+  Floor,
+  Label,
   Registry,
-  Utilities,
   WebsocketAPI,
+  Zone,
 } from "./extensions";
-import { Area } from "./extensions/area.extension";
-import { Device } from "./extensions/device.extension";
-import { Floor } from "./extensions/floor.extension";
-import { Label } from "./extensions/label.extension";
 
 type AllowRestOptions = "prefer" | "allow" | "forbid";
 
@@ -94,9 +95,12 @@ export const LIB_HASS = CreateLibrary({
   },
   name: "hass",
   // no internal dependency ones first
-  priorityInit: ["fetch", "utils"],
+  priorityInit: ["fetch"],
   services: {
     area: Area,
+
+    backup: Backup,
+
     /**
      * general service calling interface
      */
@@ -118,6 +122,7 @@ export const LIB_HASS = CreateLibrary({
      */
     fetch: FetchAPI,
     floor: Floor,
+
     label: Label,
 
     /**
@@ -129,11 +134,7 @@ export const LIB_HASS = CreateLibrary({
      * websocket interface
      */
     socket: WebsocketAPI,
-
-    /**
-     * extra helper functions for interacting with home assistant
-     */
-    utils: Utilities,
+    zone: Zone,
   },
 });
 

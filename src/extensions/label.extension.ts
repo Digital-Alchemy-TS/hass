@@ -1,14 +1,31 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import { is, TServiceParams } from "@digital-alchemy/core";
 
 import { LabelDefinition, LabelOptions, TLabelId } from "../helpers";
 
-export function Label({ hass, lifecycle, config }: TServiceParams) {
+export function Label({
+  hass,
+  lifecycle,
+  config,
+  logger,
+  context,
+}: TServiceParams) {
   lifecycle.onBootstrap(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }
-    hass.floor.current = await hass.floor.list();
+    hass.label.current = await hass.label.list();
+    hass.socket.subscribe({
+      context,
+      event_type: "label_registry_updated",
+      async exec() {
+        hass.label.current = await hass.label.list();
+        logger.debug(`label registry updated`);
+      },
+    });
   });
+
+  is.label = (label: TLabelId): label is TLabelId =>
+    hass.label.current.some(i => i.label_id === label);
 
   return {
     async create(details: LabelOptions) {
@@ -36,4 +53,10 @@ export function Label({ hass, lifecycle, config }: TServiceParams) {
       });
     },
   };
+}
+
+declare module "@digital-alchemy/core" {
+  export interface IsIt {
+    label(label: string): label is TLabelId;
+  }
 }
