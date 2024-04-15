@@ -9,6 +9,10 @@ import {
   Utilities,
   WebsocketAPI,
 } from "./extensions";
+import { Area } from "./extensions/area.extension";
+import { Device } from "./extensions/device.extension";
+import { Floor } from "./extensions/floor.extension";
+import { Label } from "./extensions/label.extension";
 
 type AllowRestOptions = "prefer" | "allow" | "forbid";
 
@@ -44,6 +48,11 @@ export const LIB_HASS = CreateLibrary({
       description:
         "If sendMessage was set to expect a response, a warning will be emitted after this delay if one is not received",
       type: "number",
+    },
+    MANAGE_REGISTRY: {
+      default: true,
+      description: "Live track registry data",
+      type: "boolean",
     },
     RETRY_INTERVAL: {
       default: 5,
@@ -87,6 +96,7 @@ export const LIB_HASS = CreateLibrary({
   // no internal dependency ones first
   priorityInit: ["fetch", "utils"],
   services: {
+    area: Area,
     /**
      * general service calling interface
      */
@@ -97,15 +107,18 @@ export const LIB_HASS = CreateLibrary({
      */
     configure: Configure,
 
+    device: Device,
+
     /**
      * retrieve and interact with home assistant entities
      */
     entity: EntityManager,
-
     /**
      * rest api commands
      */
     fetch: FetchAPI,
+    floor: Floor,
+    label: Label,
 
     /**
      * Interact with the home assistant registry

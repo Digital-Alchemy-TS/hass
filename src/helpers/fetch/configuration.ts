@@ -1,3 +1,5 @@
+import { TFloorId, TLabelId } from "../registry";
+
 export interface HassUnitSystem {
   length: "mi";
   mass: "lb";
@@ -36,3 +38,18 @@ export type CheckConfigResult =
       errors: string;
       result: "invalid";
     };
+
+export type AreaDetails = AreaCreate & {
+  area_id: TAreaId;
+};
+
+export type AreaCreate = {
+  floor_id: TFloorId;
+  aliases?: string[];
+  icon: string;
+  labels: TLabelId[];
+  name: string;
+  picture: string;
+};
+
+export type TAreaId = string & { area: true };

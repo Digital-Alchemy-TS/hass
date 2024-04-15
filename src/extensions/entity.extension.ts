@@ -16,11 +16,14 @@ import { Get } from "type-fest";
 
 import {
   ALL_DOMAINS,
+  EditLabelOptions,
   ENTITY_STATE,
   EntityHistoryDTO,
   EntityHistoryResult,
+  EntityRegistryItem,
   HASSIO_WS_COMMAND,
   PICK_ENTITY,
+  UPDATE_REGISTRY,
 } from "..";
 
 type EntityHistoryItem = { a: object; s: unknown; lu: number };
@@ -357,11 +360,58 @@ export function EntityManager({
     await refresh();
   });
 
+  async function AddLabel({ entity, label }: EditLabelOptions) {
+    const current = await EntityGet(entity);
+    if (current?.labels?.includes(label)) {
+      logger.debug({ name: entity }, `already has label {%s}`, label);
+      return;
+    }
+    await hass.socket.sendMessage({
+      entity_id: entity,
+      labels: [...current.labels, label],
+      type: UPDATE_REGISTRY,
+    });
+  }
+
+  async function EntitySource() {
+    return await hass.socket.sendMessage<
+      Record<PICK_ENTITY, { domain: string }>
+    >({ type: "entity/source" });
+  }
+
+  async function EntityList() {
+    await hass.socket.sendMessage({
+      type: "config/entity_registry/list_for_display",
+    });
+  }
+
+  async function RemoveLabel({ entity, label }: EditLabelOptions) {
+    const current = await EntityGet(entity);
+    if (!current?.labels?.includes(label)) {
+      logger.debug({ name: entity }, `does not have label {%s}`, label);
+      return;
+    }
+    logger.debug({ name: entity }, `removing label [%s]`, label);
+    await hass.socket.sendMessage({
+      entity_id: entity,
+      labels: current.labels.filter(i => i !== label),
+      type: UPDATE_REGISTRY,
+    });
+  }
+
+  async function EntityGet<ENTITY extends PICK_ENTITY>(entity_id: ENTITY) {
+    return await hass.socket.sendMessage<EntityRegistryItem<ENTITY>>({
+      entity_id: entity_id,
+      type: "config/entity_registry/get",
+    });
+  }
+
   return {
     /**
      * Internal library use only
      */
     [ENTITY_UPDATE_RECEIVER]: EntityUpdateReceiver,
+
     /**
      * Retrieves a proxy object for a specified entity. This proxy object
      * provides current values and event hooks for the entity.
@@ -397,6 +447,14 @@ export function EntityManager({
      * synchronization with the latest state data from Home Assistant.
      */
     refresh,
+
+    registry: {
+      addLabel: AddLabel,
+      get: EntityGet,
+      list: EntityList,
+      removeLabel: RemoveLabel,
+      source: EntitySource,
+    },
   };
 }
 
