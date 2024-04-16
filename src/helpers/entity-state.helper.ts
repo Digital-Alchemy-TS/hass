@@ -1,6 +1,4 @@
-import { TDeviceId } from "./device.helper";
-import { TAreaId } from "./fetch";
-import { TLabelId } from "./registry";
+import { TAreaId, TDeviceId, TLabelId } from "../dynamic";
 import { ENTITY_STATE, PICK_ENTITY } from "./utility.helper";
 
 export enum HassEvents {
