@@ -16,11 +16,19 @@ import { Get } from "type-fest";
 
 import {
   ALL_DOMAINS,
+  EditLabelOptions,
   ENTITY_STATE,
+  EntityDetails,
   EntityHistoryDTO,
   EntityHistoryResult,
+  EntityRegistryItem,
   HASSIO_WS_COMMAND,
   PICK_ENTITY,
+  TAreaId,
+  TDeviceId,
+  TFloorId,
+  TLabelId,
+  UPDATE_REGISTRY,
 } from "..";
 
 type EntityHistoryItem = { a: object; s: unknown; lu: number };
@@ -64,10 +72,12 @@ const RECENT = 5;
 export function EntityManager({
   logger,
   hass,
+  config,
   lifecycle,
+  context,
   internal,
 }: TServiceParams) {
-  // # Local vars
+  // #MARK: Local vars
   /**
    * MASTER_STATE.switch.desk_light = {entity_id,state,attributes,...}
    */
@@ -84,8 +94,7 @@ export function EntityManager({
   event.setMaxListeners(UNLIMITED);
   let init = false;
 
-  // # Methods
-  // ## Retrieve raw state object for entity
+  // #MARK: getCurrentState
   function getCurrentState<ENTITY_ID extends PICK_ENTITY>(
     entity_id: ENTITY_ID,
     // 🖕 TS
@@ -94,7 +103,7 @@ export function EntityManager({
     return out as ENTITY_STATE<ENTITY_ID>;
   }
 
-  // ## Proxy version of the logic
+  // #MARK:proxyGetLogic
   function proxyGetLogic<
     ENTITY extends PICK_ENTITY = PICK_ENTITY,
     PROPERTY extends string = string,
@@ -126,7 +135,7 @@ export function EntityManager({
     return internal.utils.object.get(current, property) || defaultValue;
   }
 
-  // ## Retrieve a proxy by id
+  // #MARK: byId
   function byId<ENTITY_ID extends PICK_ENTITY>(
     entity_id: ENTITY_ID,
   ): ByIdProxy<ENTITY_ID> {
@@ -202,7 +211,7 @@ export function EntityManager({
     return ENTITY_PROXIES.get(entity_id) as ByIdProxy<ENTITY_ID>;
   }
 
-  // ## Retrieve entity history (via socket)
+  // #MARK: history
   async function history<ENTITES extends PICK_ENTITY[]>(
     payload: Omit<EntityHistoryDTO<ENTITES>, "type">,
   ) {
@@ -231,7 +240,7 @@ export function EntityManager({
     );
   }
 
-  // ## Build a string array of all known entity ids
+  // #MARK: listEntities
   function listEntities(): PICK_ENTITY[] {
     return Object.keys(MASTER_STATE).flatMap(domain =>
       Object.keys(MASTER_STATE[domain as ALL_DOMAINS]).map(
@@ -240,14 +249,14 @@ export function EntityManager({
     );
   }
 
-  // ## Gather all entity proxies for a domain
+  // #MARK: findByDomain
   function findByDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
     return Object.keys(MASTER_STATE[domain] ?? {}).map(i =>
       byId(`${domain}.${i}` as PICK_ENTITY),
     );
   }
 
-  // ## Load all entity state information from hass
+  // #MARK: refresh
   async function refresh(recursion = START): Promise<void> {
     const now = dayjs();
     if (lastRefresh) {
@@ -325,12 +334,12 @@ export function EntityManager({
     init = true;
   }
 
-  // ## is.entity definition
+  // #MARK: is.entity
   // Actually tie the type casting to real state
   is.entity = (entityId: PICK_ENTITY): entityId is PICK_ENTITY =>
     is.undefined(internal.utils.object.get(MASTER_STATE, entityId));
 
-  // ## Receiver function for incoming entity updates
+  // #MARK: EntityUpdateReceiver
   function EntityUpdateReceiver<ENTITY extends PICK_ENTITY = PICK_ENTITY>(
     entity_id: PICK_ENTITY,
     new_state: ENTITY_STATE<ENTITY>,
@@ -357,16 +366,112 @@ export function EntityManager({
     await refresh();
   });
 
+  // #region Registry
+  async function AddLabel({ entity, label }: EditLabelOptions) {
+    const current = await EntityGet(entity);
+    if (current?.labels?.includes(label)) {
+      logger.debug({ name: entity }, `already has label {%s}`, label);
+      return;
+    }
+    await hass.socket.sendMessage({
+      entity_id: entity,
+      labels: [...current.labels, label],
+      type: UPDATE_REGISTRY,
+    });
+  }
+
+  async function EntitySource() {
+    return await hass.socket.sendMessage<
+      Record<PICK_ENTITY, { domain: string }>
+    >({ type: "entity/source" });
+  }
+
+  async function EntityList() {
+    return await hass.socket.sendMessage<EntityDetails[]>({
+      type: "config/entity_registry/list_for_display",
+    });
+  }
+
+  async function RemoveLabel({ entity, label }: EditLabelOptions) {
+    const current = await EntityGet(entity);
+    if (!current?.labels?.includes(label)) {
+      logger.debug({ name: entity }, `does not have label {%s}`, label);
+      return;
+    }
+    logger.debug({ name: entity }, `removing label [%s]`, label);
+    await hass.socket.sendMessage({
+      entity_id: entity,
+      labels: current.labels.filter(i => i !== label),
+      type: UPDATE_REGISTRY,
+    });
+  }
+
+  async function EntityGet<ENTITY extends PICK_ENTITY>(entity_id: ENTITY) {
+    return await hass.socket.sendMessage<EntityRegistryItem<ENTITY>>({
+      entity_id: entity_id,
+      type: "config/entity_registry/get",
+    });
+  }
+
+  hass.socket.onConnect(async () => {
+    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
+      return;
+    }
+    hass.entity.registry.current = await hass.entity.registry.list();
+    hass.socket.subscribe({
+      context,
+      event_type: "entity_registry_updated",
+      async exec() {
+        logger.debug("entity registry updated");
+        hass.entity.registry.current = await hass.entity.registry.list();
+      },
+    });
+  });
+
+  // #endregion
+  function byLabel(label: TLabelId): PICK_ENTITY[] {
+    return hass.entity.registry.current
+      .filter(i => i.labels.includes(label))
+      .map(i => i.entity_id);
+  }
+
+  function byArea(area: TAreaId): PICK_ENTITY[] {
+    return hass.entity.registry.current
+      .filter(i => i.area_id === area)
+      .map(i => i.entity_id);
+  }
+
+  function byDevice(device: TDeviceId): PICK_ENTITY[] {
+    return hass.entity.registry.current
+      .filter(i => i.device_id === device)
+      .map(i => i.entity_id);
+  }
+
+  function byFloor(floor: TFloorId): PICK_ENTITY[] {
+    const areas = new Set(
+      hass.area.current.filter(i => i.floor_id === floor).map(i => i.area_id),
+    );
+    return hass.entity.registry.current
+      .filter(i => areas.has(i.area_id))
+      .map(i => i.entity_id);
+  }
+
+  // #MARK: return object
   return {
     /**
      * Internal library use only
      */
     [ENTITY_UPDATE_RECEIVER]: EntityUpdateReceiver,
+
+    byArea,
+    byDevice,
+
+    byFloor,
     /**
      * Retrieves a proxy object for a specified entity. This proxy object
      * provides current values and event hooks for the entity.
-     */
-    byId,
+     */ byId,
+    byLabel,
 
     /**
      * Lists all entities within a specified domain. This is useful for
@@ -397,11 +502,23 @@ export function EntityManager({
      * synchronization with the latest state data from Home Assistant.
      */
     refresh,
+
+    /**
+     * Interact with the entity registry
+     */
+    registry: {
+      addLabel: AddLabel,
+      current: [] as EntityDetails[],
+      get: EntityGet,
+      list: EntityList,
+      removeLabel: RemoveLabel,
+      source: EntitySource,
+    },
   };
 }
 
 declare module "@digital-alchemy/core" {
   export interface IsIt {
-    entity(entity: PICK_ENTITY): entity is PICK_ENTITY;
+    entity(entity: string): entity is PICK_ENTITY;
   }
 }

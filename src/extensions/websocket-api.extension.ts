@@ -15,7 +15,6 @@ import WS from "ws";
 import {
   ENTITY_UPDATE_RECEIVER,
   EntityUpdateEvent,
-  HASSIO_WS_COMMAND,
   HassSocketMessageTypes,
   OnHassEventOptions,
   SOCKET_CONNECTION_STATE,
@@ -25,6 +24,7 @@ import {
   SOCKET_RECEIVED_MESSAGES,
   SOCKET_SENT_MESSAGES,
   SocketMessageDTO,
+  SocketSubscribeOptions,
 } from "..";
 
 let connection: WS;
@@ -118,7 +118,7 @@ export function WebsocketAPI({
         lastPingAttempt = now;
 
         // emit a ping, do not wait for reply (inline)
-        sendMessage({ type: HASSIO_WS_COMMAND.ping }, false);
+        sendMessage({ type: "ping" }, false);
 
         // reply will be captured by this, waiting at most a second
         pingSleep = sleep(SECOND);
@@ -245,7 +245,7 @@ export function WebsocketAPI({
 
   async function sendMessage<RESPONSE_VALUE extends unknown = unknown>(
     data: {
-      type: `${HASSIO_WS_COMMAND}`;
+      type: string;
       id?: number;
       [key: string]: unknown;
     },
@@ -260,12 +260,12 @@ export function WebsocketAPI({
       return undefined;
     }
 
-    if (hass.socket.pauseMessages && data.type !== HASSIO_WS_COMMAND.ping) {
+    if (hass.socket.pauseMessages && data.type !== "ping") {
       return undefined;
     }
     countMessage(data.type);
     const id = messageCount;
-    if (data.type !== HASSIO_WS_COMMAND.auth) {
+    if (data.type !== "auth") {
       data.id = id;
     }
     const json = JSON.stringify(data);
@@ -415,16 +415,13 @@ export function WebsocketAPI({
     switch (message.type as HassSocketMessageTypes) {
       case HassSocketMessageTypes.auth_required:
         logger.trace({ name: onMessage }, `sending authentication`);
-        sendMessage(
-          { access_token: config.hass.TOKEN, type: HASSIO_WS_COMMAND.auth },
-          false,
-        );
+        sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
         return;
 
       case HassSocketMessageTypes.auth_ok:
         // * Flag as valid connection
         logger.trace({ name: onMessage }, `event subscriptions starting`);
-        await sendMessage({ type: HASSIO_WS_COMMAND.subscribe_events }, false);
+        await sendMessage({ type: "subscribe_events" }, false);
         onSocketReady();
         event.emit(SOCKET_CONNECTED);
         return;
@@ -541,6 +538,22 @@ export function WebsocketAPI({
     };
   }
 
+  function subscribe<EVENT extends string>({
+    event_type,
+    context,
+    exec,
+  }: SocketSubscribeOptions<EVENT>) {
+    hass.socket.sendMessage({
+      event_type,
+      type: "subscribe_events",
+    });
+    hass.socket.onEvent({
+      context,
+      event: event_type,
+      exec,
+    });
+  }
+
   return {
     /**
      * the current state of the websocket
@@ -596,6 +609,8 @@ export function WebsocketAPI({
      * Applications probably want a higher level function than this
      */
     sendMessage,
+
+    subscribe,
     /**
      * remove the current socket connection to home assistant
      *

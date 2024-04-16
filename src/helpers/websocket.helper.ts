@@ -5,46 +5,6 @@ import { HASSIO_WS_COMMAND, HassSocketMessageTypes } from "./constants.helper";
 import { EntityUpdateEvent } from "./entity-state.helper";
 import { ALL_DOMAINS, ENTITY_STATE, PICK_ENTITY } from "./utility.helper";
 
-export interface AreaDTO {
-  area_id: string;
-  name: string;
-}
-
-export interface EntityRegistryItem {
-  area_id: string;
-  config_entry_id: string;
-  device_id: string;
-  disabled_by: string;
-  entity_id: string;
-  icon: string;
-  name: string;
-  platform: string;
-}
-
-export interface DeviceListItemDTO {
-  area_id: string;
-  config_entries: string[];
-  connections: string[][];
-  disabled_by: null;
-  entry_type: null;
-  id: string;
-  identifiers: string[];
-  manufacturer: string;
-  model: string;
-  name: string;
-  name_by_user: null;
-  sw_version: string;
-  via_device_id: null;
-}
-
-export interface HassNotificationDTO {
-  created_at: string;
-  message: string;
-  notification_id: string;
-  status: "unread";
-  title: string;
-}
-
 export interface SignRequestResponse {
   path: string;
 }
@@ -57,6 +17,16 @@ export interface SocketMessageDTO {
   result?: Record<string, unknown>;
   type: HassSocketMessageTypes;
 }
+
+export type SocketSubscribeOptions<EVENT extends string> = {
+  event_type: EVENT;
+  context: TContext;
+  exec: (data: SocketSubscribeData<EVENT>) => TBlackHole;
+};
+
+export type SocketSubscribeData<EVENT extends string> = {
+  event_type: EVENT;
+};
 
 export interface SendSocketMessageDTO {
   access_token?: string;
@@ -120,7 +90,7 @@ export interface SignPathDTO {
 
 export interface RemoveBackupDTO {
   slug: string;
-  type: HASSIO_WS_COMMAND.remove_backup;
+  type: "backup/remove";
 }
 
 export interface EntityHistoryDTO<
@@ -131,7 +101,7 @@ export interface EntityHistoryDTO<
   minimal_response?: boolean;
   no_attributes?: boolean;
   start_time: Date | string | Dayjs;
-  type: HASSIO_WS_COMMAND.history_during_period;
+  type: "history/history_during_period";
 }
 
 export type EntityHistoryResult<
@@ -143,20 +113,6 @@ export type EntityHistoryResult<
 > & {
   date: Date;
 };
-
-export type SOCKET_MESSAGES = { id?: number } & (
-  | FindRelatedDTO
-  | RegistryGetDTO
-  | RemoveBackupDTO
-  | RenderTemplateDTO
-  | RemoveEntityMessageDTO
-  | SendSocketMessageDTO
-  | SignPathDTO
-  | SubscribeTriggerDTO
-  | UnsubscribeEventsDTO
-  | UpdateEntityMessageDTO
-  | EntityHistoryDTO
-);
 
 export type OnHassEventCallback<T = object> = (event: T) => TBlackHole;
 

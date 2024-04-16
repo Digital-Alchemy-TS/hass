@@ -1,8 +1,8 @@
 import { HALF, SECOND, sleep, TServiceParams } from "@digital-alchemy/core";
 
-import { BackupResponse, HASSIO_WS_COMMAND, HomeAssistantBackup } from "..";
+import { BackupResponse, HomeAssistantBackup } from "../helpers";
 
-export function Utilities({ logger, hass }: TServiceParams) {
+export function Backup({ logger, hass }: TServiceParams) {
   async function generate(): Promise<HomeAssistantBackup> {
     let current = await list();
     // const originalLength = current.backups.length;
@@ -13,9 +13,7 @@ export function Utilities({ logger, hass }: TServiceParams) {
       );
     } else {
       logger.info({ name: generate }, "initiating new backup");
-      hass.socket.sendMessage({
-        type: HASSIO_WS_COMMAND.generate_backup,
-      });
+      hass.socket.sendMessage({ type: "backup/generate" });
       while (current.backing_up === false) {
         logger.debug({ name: generate }, "... waiting");
         await sleep(HALF * SECOND);
@@ -34,17 +32,14 @@ export function Utilities({ logger, hass }: TServiceParams) {
   async function list(): Promise<BackupResponse> {
     logger.trace({ name: list }, "send");
     return await hass.socket.sendMessage<BackupResponse>({
-      type: HASSIO_WS_COMMAND.backup_info,
+      type: "backup/info",
     });
   }
 
   async function remove(slug: string): Promise<void> {
     logger.trace({ name: remove }, "send");
-    await hass.socket.sendMessage(
-      { slug, type: HASSIO_WS_COMMAND.remove_backup },
-      false,
-    );
+    await hass.socket.sendMessage({ slug, type: "backup/remove" }, false);
   }
 
-  return { backup: { generate, list, remove } };
+  return { generate, list, remove };
 }
