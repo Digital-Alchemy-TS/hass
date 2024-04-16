@@ -1,4 +1,4 @@
-import { TFloorId, TLabelId, TZoneId } from "../dynamic";
+import { TAreaId, TDeviceId, TFloorId, TLabelId, TZoneId } from "../dynamic";
 import { PICK_ENTITY } from "./utility.helper";
 
 export type LabelOptions = {
@@ -32,10 +32,10 @@ export type ToggleExpose = {
 };
 
 export type EntityRegistryItem<ENTITY extends PICK_ENTITY> = {
-  area_id?: string;
+  area_id?: TAreaId;
   categories: object;
   config_entry_id?: string;
-  device_id?: string;
+  device_id?: TDeviceId;
   disabled_by?: string;
   entity_category?: string;
   entity_id: ENTITY;

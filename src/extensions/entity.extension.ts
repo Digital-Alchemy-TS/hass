@@ -18,7 +18,6 @@ import {
   ALL_DOMAINS,
   EditLabelOptions,
   ENTITY_STATE,
-  EntityDetails,
   EntityHistoryDTO,
   EntityHistoryResult,
   EntityRegistryItem,
@@ -387,8 +386,8 @@ export function EntityManager({
   }
 
   async function EntityList() {
-    return await hass.socket.sendMessage<EntityDetails[]>({
-      type: "config/entity_registry/list_for_display",
+    return await hass.socket.sendMessage<EntityRegistryItem<PICK_ENTITY>[]>({
+      type: "config/entity_registry/list",
     });
   }
 
@@ -429,31 +428,71 @@ export function EntityManager({
   });
 
   // #endregion
-  function byLabel(label: TLabelId): PICK_ENTITY[] {
-    return hass.entity.registry.current
-      .filter(i => i.labels.includes(label))
-      .map(i => i.entity_id);
+  function byLabel<DOMAIN extends ALL_DOMAINS>(
+    label: TLabelId,
+    ...domains: DOMAIN[]
+  ): PICK_ENTITY<DOMAIN>[] {
+    const raw = hass.entity.registry.current.filter(i =>
+      i.labels.includes(label),
+    );
+    if (is.empty(domains)) {
+      return raw.map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+    }
+    return raw
+      .filter(entity =>
+        domains.some(domain => is.domain(entity.entity_id, domain)),
+      )
+      .map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
   }
 
-  function byArea(area: TAreaId): PICK_ENTITY[] {
-    return hass.entity.registry.current
-      .filter(i => i.area_id === area)
-      .map(i => i.entity_id);
+  function byArea<DOMAIN extends ALL_DOMAINS>(
+    area: TAreaId,
+    ...domains: DOMAIN[]
+  ): PICK_ENTITY<DOMAIN>[] {
+    const raw = hass.entity.registry.current.filter(i => i.area_id === area);
+    if (is.empty(domains)) {
+      return raw.map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+    }
+    return raw
+      .filter(entity =>
+        domains.some(domain => is.domain(entity.entity_id, domain)),
+      )
+      .map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
   }
 
-  function byDevice(device: TDeviceId): PICK_ENTITY[] {
-    return hass.entity.registry.current
-      .filter(i => i.device_id === device)
-      .map(i => i.entity_id);
+  function byDevice<DOMAIN extends ALL_DOMAINS>(
+    device: TDeviceId,
+    ...domains: DOMAIN[]
+  ): PICK_ENTITY<DOMAIN>[] {
+    const raw = hass.entity.registry.current.filter(
+      i => i.device_id === device,
+    );
+    if (is.empty(domains)) {
+      return raw.map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+    }
+    return raw
+      .filter(entity =>
+        domains.some(domain => is.domain(entity.entity_id, domain)),
+      )
+      .map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
   }
 
-  function byFloor(floor: TFloorId): PICK_ENTITY[] {
-    const areas = new Set(
+  function byFloor<DOMAIN extends ALL_DOMAINS>(
+    floor: TFloorId,
+    ...domains: DOMAIN[]
+  ): PICK_ENTITY<DOMAIN>[] {
+    const areas = new Set<TAreaId>(
       hass.area.current.filter(i => i.floor_id === floor).map(i => i.area_id),
     );
-    return hass.entity.registry.current
-      .filter(i => areas.has(i.area_id))
-      .map(i => i.entity_id);
+    const raw = hass.entity.registry.current.filter(i => areas.has(i.area_id));
+    if (is.empty(domains)) {
+      return raw.map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+    }
+    return raw
+      .filter(entity =>
+        domains.some(domain => is.domain(entity.entity_id, domain)),
+      )
+      .map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
   }
 
   // #MARK: return object
@@ -508,7 +547,7 @@ export function EntityManager({
      */
     registry: {
       addLabel: AddLabel,
-      current: [] as EntityDetails[],
+      current: [] as EntityRegistryItem<PICK_ENTITY>[],
       get: EntityGet,
       list: EntityList,
       removeLabel: RemoveLabel,
