@@ -58,3 +58,5 @@ export enum HassSocketMessageTypes {
 
 export const HOME_ASSISTANT_MODULE_CONFIGURATION =
   "HOME_ASSISTANT_MODULE_CONFIGURATION";
+
+export const EARLY_ON_READY = 1;

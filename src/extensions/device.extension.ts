@@ -1,13 +1,24 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { DeviceDetails } from "../helpers";
+import { DeviceDetails, EARLY_ON_READY } from "../helpers";
 
-export function Device({ hass, config, context, logger }: TServiceParams) {
+export function Device({
+  hass,
+  config,
+  context,
+  logger,
+  lifecycle,
+}: TServiceParams) {
   hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }
-    hass.device.current = await hass.device.list();
+    let loading = new Promise<void>(async done => {
+      hass.device.current = await hass.device.list();
+      loading = undefined;
+      done();
+    });
+    lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
     hass.socket.subscribe({
       context,
       event_type: "device_registry_updated",

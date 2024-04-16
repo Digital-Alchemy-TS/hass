@@ -83,6 +83,7 @@ export function WebsocketAPI({
   let lastConnectAttempt: Dayjs;
   let lastPingAttempt: Dayjs;
 
+  // #MARK: setConnectionState
   function setConnectionState(state: ConnectionState) {
     hass.socket.connectionState = state;
     SOCKET_CONNECTION_STATE.labels({ state }).set(
@@ -90,6 +91,7 @@ export function WebsocketAPI({
     );
   }
 
+  // #MARK: ManageConnection
   async function ManageConnection() {
     const now = dayjs();
     const name = ManageConnection;
@@ -192,6 +194,7 @@ export function WebsocketAPI({
     }
   }
 
+  // #MARK: attachScheduledFunctions
   function attachScheduledFunctions() {
     logger.trace(
       { name: attachScheduledFunctions },
@@ -220,6 +223,7 @@ export function WebsocketAPI({
     await teardown();
   });
 
+  // #MARK: teardown
   async function teardown() {
     if (!connection) {
       return;
@@ -232,6 +236,7 @@ export function WebsocketAPI({
     setConnectionState("offline");
   }
 
+  // #MARK: fireEvent
   async function fireEvent(
     event_type: string,
     event_data?: object,
@@ -243,6 +248,7 @@ export function WebsocketAPI({
     );
   }
 
+  // #MARK: sendMessage
   async function sendMessage<RESPONSE_VALUE extends unknown = unknown>(
     data: {
       type: string;
@@ -298,6 +304,7 @@ export function WebsocketAPI({
     });
   }
 
+  // #MARK: countMessage
   function countMessage(type: string): void | never {
     messageCount++;
     const now = Date.now();
@@ -334,6 +341,7 @@ export function WebsocketAPI({
     }
   }
 
+  // #MARK: getUrl
   function getUrl() {
     const url = new URL(config.hass.BASE_URL);
     const protocol = url.protocol === `http:` ? `ws:` : `wss:`;
@@ -345,6 +353,7 @@ export function WebsocketAPI({
     );
   }
 
+  // #MARK: init
   async function init(): Promise<void> {
     if (connection) {
       throw new InternalError(
@@ -393,6 +402,7 @@ export function WebsocketAPI({
     }
   }
 
+  // #MARK: onMessage
   /**
    * Called on incoming message.
    * Intended to interpret the basic concept of the message,
@@ -455,6 +465,7 @@ export function WebsocketAPI({
     }
   }
 
+  // #MARK: onMessageEvent
   function onMessageEvent(id: number, message: SocketMessageDTO) {
     if (message.event.event_type === "state_changed") {
       const { new_state, old_state } = message.event.data;
@@ -504,6 +515,7 @@ export function WebsocketAPI({
     }
   }
 
+  // #MARK: onEvent
   function onEvent<DATA extends object>({
     context,
     label,
@@ -538,6 +550,7 @@ export function WebsocketAPI({
     };
   }
 
+  // #MARK: subscribe
   function subscribe<EVENT extends string>({
     event_type,
     context,
@@ -554,6 +567,23 @@ export function WebsocketAPI({
     });
   }
 
+  // #MARK: onConnect
+  function onConnect(callback: () => TBlackHole) {
+    const wrapped = async () => {
+      await internal.safeExec(async () => await callback());
+    };
+    if (hass.socket.connectionState === "connected") {
+      logger.warn(
+        { name: "onConnect" },
+        `added callback after socket was already connected, running immediately`,
+      );
+      setImmediate(wrapped);
+      // attach anyways, for restarts or whatever
+    }
+    event.on(SOCKET_CONNECTED, wrapped);
+  }
+
+  // #MARK: return object
   return {
     /**
      * the current state of the websocket
@@ -564,6 +594,7 @@ export function WebsocketAPI({
      * Convenient wrapper for sendMessage
      */
     fireEvent,
+
     /**
      * Set up a new websocket connection to home assistant
      *
@@ -574,20 +605,7 @@ export function WebsocketAPI({
     /**
      * run a callback when the socket finishes connecting
      */
-    onConnect: (callback: () => TBlackHole) => {
-      const wrapped = async () => {
-        await internal.safeExec(async () => await callback());
-      };
-      if (hass.socket.connectionState === "connected") {
-        logger.warn(
-          { name: "onConnect" },
-          `added callback after socket was already connected, running immediately`,
-        );
-        setImmediate(wrapped);
-        // attach anyways, for restarts or whatever
-      }
-      event.on(SOCKET_CONNECTED, wrapped);
-    },
+    onConnect,
 
     /**
      * Attach to the incoming stream of socket events. Do your own filtering and processing from there
@@ -610,7 +628,13 @@ export function WebsocketAPI({
      */
     sendMessage,
 
+    /**
+     * Subscribe to hass core registry updates.
+     *
+     * Not the same as `onEvent` (you probably want that)
+     */
     subscribe,
+
     /**
      * remove the current socket connection to home assistant
      *

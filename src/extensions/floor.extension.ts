@@ -1,14 +1,25 @@
 import { is, TServiceParams } from "@digital-alchemy/core";
 
 import { TFloorId } from "../dynamic";
-import { FloorCreate, FloorDetails } from "../helpers";
+import { EARLY_ON_READY, FloorCreate, FloorDetails } from "../helpers";
 
-export function Floor({ hass, config, context, logger }: TServiceParams) {
+export function Floor({
+  hass,
+  config,
+  context,
+  logger,
+  lifecycle,
+}: TServiceParams) {
   hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }
-    hass.floor.current = await hass.floor.list();
+    let loading = new Promise<void>(async done => {
+      hass.floor.current = await hass.floor.list();
+      loading = undefined;
+      done();
+    });
+    lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
     hass.socket.subscribe({
       context,
       event_type: "floor_registry_updated",

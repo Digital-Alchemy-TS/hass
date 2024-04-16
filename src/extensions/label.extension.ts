@@ -1,14 +1,25 @@
 import { is, TServiceParams } from "@digital-alchemy/core";
 
 import { TLabelId } from "../dynamic";
-import { LabelDefinition, LabelOptions } from "../helpers";
+import { EARLY_ON_READY, LabelDefinition, LabelOptions } from "../helpers";
 
-export function Label({ hass, config, logger, context }: TServiceParams) {
+export function Label({
+  hass,
+  config,
+  logger,
+  lifecycle,
+  context,
+}: TServiceParams) {
   hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }
-    hass.label.current = await hass.label.list();
+    let loading = new Promise<void>(async done => {
+      hass.label.current = await hass.label.list();
+      loading = undefined;
+      done();
+    });
+    lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
     hass.socket.subscribe({
       context,
       event_type: "label_registry_updated",
