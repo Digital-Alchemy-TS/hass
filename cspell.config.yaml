@@ -12,6 +12,9 @@ words:
   - macaddress
   - quickboot
   - ssdp
-  - SYSTYPE
+  - systype
+  - zeroconf
+  - homeassistant
+  - rrule
 ignoreWords: []
 import: []
