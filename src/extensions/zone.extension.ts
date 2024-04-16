@@ -1,15 +1,10 @@
 import { is, TServiceParams } from "@digital-alchemy/core";
 
-import { ManifestItem, TZoneId, ZoneDetails, ZoneOptions } from "../helpers";
+import { TZoneId } from "../dynamic";
+import { ManifestItem, ZoneDetails, ZoneOptions } from "../helpers";
 
-export function Zone({
-  lifecycle,
-  config,
-  hass,
-  logger,
-  context,
-}: TServiceParams) {
-  lifecycle.onBootstrap(async () => {
+export function Zone({ config, hass, logger, context }: TServiceParams) {
+  hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }
@@ -24,8 +19,8 @@ export function Zone({
     });
   });
 
-  is.zone = (floor: string): floor is TZoneId =>
-    hass.zone.current.some(i => i.id === floor);
+  is.zone = (zone: string): zone is TZoneId =>
+    hass.zone.current.some(i => i.id === zone);
 
   async function ZoneCreate(options: ZoneOptions) {
     await hass.socket.sendMessage<ManifestItem[]>({
@@ -44,7 +39,7 @@ export function Zone({
 
   async function ZoneList() {
     return await hass.socket.sendMessage<ZoneDetails[]>({
-      type: "manifest/list",
+      type: "zone/list",
     });
   }
   return {
@@ -57,6 +52,6 @@ export function Zone({
 
 declare module "@digital-alchemy/core" {
   export interface IsIt {
-    zone(floor: string): floor is TZoneId;
+    zone(zone: string): zone is TZoneId;
   }
 }

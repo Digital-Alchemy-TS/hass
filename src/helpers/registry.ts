@@ -1,3 +1,4 @@
+import { TFloorId, TLabelId, TZoneId } from "../dynamic";
 import { PICK_ENTITY } from "./utility.helper";
 
 export type LabelOptions = {
@@ -15,8 +16,6 @@ export type EditAliasOptions = {
   entity: PICK_ENTITY;
   alias: string;
 };
-
-export type TLabelId = string & { label: string };
 
 export type LabelDefinition = {
   color: string;
@@ -82,7 +81,6 @@ export type ZoneOptions = {
   icon: string;
   passive: boolean;
 };
-export type TZoneId = string & { zone: true };
 
 export type ZoneDetails = ZoneOptions & { id: TZoneId };
 
@@ -168,8 +166,6 @@ export type FloorCreate = {
   level: number;
   aliases: string[];
 };
-
-export type TFloorId = string & { floor: boolean };
 
 export type FloorDetails = FloorCreate & {
   floor_id: TFloorId;

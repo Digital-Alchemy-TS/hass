@@ -1,15 +1,10 @@
 import { is, TServiceParams } from "@digital-alchemy/core";
 
-import { LabelDefinition, LabelOptions, TLabelId } from "../helpers";
+import { TLabelId } from "../dynamic";
+import { LabelDefinition, LabelOptions } from "../helpers";
 
-export function Label({
-  hass,
-  lifecycle,
-  config,
-  logger,
-  context,
-}: TServiceParams) {
-  lifecycle.onBootstrap(async () => {
+export function Label({ hass, config, logger, context }: TServiceParams) {
+  hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }

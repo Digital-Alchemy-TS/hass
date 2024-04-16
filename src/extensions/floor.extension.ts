@@ -1,15 +1,10 @@
 import { is, TServiceParams } from "@digital-alchemy/core";
 
-import { FloorCreate, FloorDetails, TFloorId } from "../helpers";
+import { TFloorId } from "../dynamic";
+import { FloorCreate, FloorDetails } from "../helpers";
 
-export function Floor({
-  hass,
-  lifecycle,
-  config,
-  context,
-  logger,
-}: TServiceParams) {
-  lifecycle.onBootstrap(async () => {
+export function Floor({ hass, config, context, logger }: TServiceParams) {
+  hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }

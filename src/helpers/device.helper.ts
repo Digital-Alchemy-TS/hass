@@ -1,3 +1,5 @@
+import { TDeviceId } from "../dynamic";
+
 export interface DeviceDetails {
   area_id: null | string;
   configuration_url: null | string;
@@ -21,4 +23,3 @@ export interface DeviceDetails {
 export enum EntryType {
   Service = "service",
 }
-export type TDeviceId = string & { device: true };

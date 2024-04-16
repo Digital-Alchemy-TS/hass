@@ -1,4 +1,4 @@
-import { TFloorId, TLabelId } from "../registry";
+import { TAreaId, TFloorId, TLabelId } from "../../dynamic";
 
 export interface HassUnitSystem {
   length: "mi";
@@ -51,8 +51,6 @@ export type AreaCreate = {
   name: string;
   picture: string;
 };
-
-export type TAreaId = string & { area: true };
 
 export interface ConfigEntry {
   entry_id: string;

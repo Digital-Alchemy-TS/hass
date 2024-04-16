@@ -1,6 +1,7 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { AreaCreate, AreaDetails, TAreaId } from "../helpers";
+import { TAreaId } from "../dynamic";
+import { AreaCreate, AreaDetails } from "../helpers";
 
 export function Area({ hass, context, config, logger }: TServiceParams) {
   hass.socket.onConnect(async () => {

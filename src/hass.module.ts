@@ -95,7 +95,7 @@ export const LIB_HASS = CreateLibrary({
   },
   name: "hass",
   // no internal dependency ones first
-  priorityInit: ["fetch"],
+  priorityInit: ["fetch", "socket"],
   services: {
     area: Area,
 

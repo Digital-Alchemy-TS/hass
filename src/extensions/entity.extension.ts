@@ -413,7 +413,7 @@ export function EntityManager({
     });
   }
 
-  lifecycle.onBootstrap(async () => {
+  hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }

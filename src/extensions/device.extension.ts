@@ -2,14 +2,8 @@ import { TServiceParams } from "@digital-alchemy/core";
 
 import { DeviceDetails } from "../helpers";
 
-export function Device({
-  hass,
-  config,
-  lifecycle,
-  context,
-  logger,
-}: TServiceParams) {
-  lifecycle.onBootstrap(async () => {
+export function Device({ hass, config, context, logger }: TServiceParams) {
+  hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }

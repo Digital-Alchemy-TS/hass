@@ -5,6 +5,12 @@
 // @ts-nocheck
 import { PICK_ENTITY } from "./helpers";
 
+export type TFloorId = string & { floor: boolean };
+export type TAreaId = string & { area: true };
+export type TLabelId = string & { label: string };
+export type TDeviceId = string & { device: true };
+export type TZoneId = string & { zone: true };
+
 /**
  * ## THIS FILE IS INTENDED TO BE REPLACED
  *
