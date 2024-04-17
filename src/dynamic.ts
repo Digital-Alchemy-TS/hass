@@ -6,10 +6,10 @@
 // @ts-nocheck
 import { PICK_ENTITY } from "./helpers";
 
-export type TFloorId = "example_floor";
+export type TFloorId = "example_floor" | "example_floor_2";
 export type TAreaId = "example_area" | "empty_area";
-export type TLabelId = "example_label";
-export type TDeviceId = "example_device";
+export type TLabelId = "example_label" | "example_label_2";
+export type TDeviceId = "example_device" | "example_device_2";
 export type TZoneId = string & { zone: true };
 
 // ## THIS FILE IS INTENDED TO BE REPLACED
@@ -143,12 +143,15 @@ export type REGISTRY_SETUP = {
     _empty_area: never;
   };
   label: {
+    _example_label_2: "switch.example_switch";
     _example_label: "switch.example_switch";
   };
   floor: {
+    _example_floor_2: "button.example_button" | "button.example_button";
     _example_floor: "button.example_button" | "button.example_button";
   };
   device: {
+    _example_device_2: "button.example_button" | "button.example_button";
     _example_device: "button.example_button" | "button.example_button";
   };
 };
