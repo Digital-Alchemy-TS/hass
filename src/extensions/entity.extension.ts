@@ -23,6 +23,10 @@ import {
   EntityRegistryItem,
   HASSIO_WS_COMMAND,
   PICK_ENTITY,
+  PICK_FROM_AREA,
+  PICK_FROM_DEVICE,
+  PICK_FROM_FLOOR,
+  PICK_FROM_LABEL,
   TAreaId,
   TDeviceId,
   TFloorId,
@@ -428,71 +432,71 @@ export function EntityManager({
   });
 
   // #endregion
-  function byLabel<DOMAIN extends ALL_DOMAINS>(
-    label: TLabelId,
+  function byLabel<LABEL extends TLabelId, DOMAIN extends ALL_DOMAINS>(
+    label: LABEL,
     ...domains: DOMAIN[]
-  ): PICK_ENTITY<DOMAIN>[] {
+  ): PICK_FROM_LABEL<LABEL, DOMAIN>[] {
     const raw = hass.entity.registry.current.filter(i =>
       i.labels.includes(label),
     );
     if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+      return raw.map(i => i.entity_id as PICK_FROM_LABEL<LABEL, DOMAIN>);
     }
     return raw
       .filter(entity =>
         domains.some(domain => is.domain(entity.entity_id, domain)),
       )
-      .map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+      .map(i => i.entity_id) as PICK_FROM_LABEL<LABEL, DOMAIN>[];
   }
 
-  function byArea<DOMAIN extends ALL_DOMAINS>(
-    area: TAreaId,
+  function byArea<AREA extends TAreaId, DOMAIN extends ALL_DOMAINS>(
+    area: AREA,
     ...domains: DOMAIN[]
-  ): PICK_ENTITY<DOMAIN>[] {
+  ): PICK_FROM_AREA<AREA, DOMAIN>[] {
     const raw = hass.entity.registry.current.filter(i => i.area_id === area);
     if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+      return raw.map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>);
     }
     return raw
       .filter(entity =>
         domains.some(domain => is.domain(entity.entity_id, domain)),
       )
-      .map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+      .map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>);
   }
 
-  function byDevice<DOMAIN extends ALL_DOMAINS>(
-    device: TDeviceId,
+  function byDevice<DEVICE extends TDeviceId, DOMAIN extends ALL_DOMAINS>(
+    device: DEVICE,
     ...domains: DOMAIN[]
-  ): PICK_ENTITY<DOMAIN>[] {
+  ): PICK_FROM_DEVICE<DEVICE, DOMAIN>[] {
     const raw = hass.entity.registry.current.filter(
       i => i.device_id === device,
     );
     if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+      return raw.map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>);
     }
     return raw
       .filter(entity =>
         domains.some(domain => is.domain(entity.entity_id, domain)),
       )
-      .map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+      .map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>);
   }
 
-  function byFloor<DOMAIN extends ALL_DOMAINS>(
-    floor: TFloorId,
+  function byFloor<FLOOR extends TFloorId, DOMAIN extends ALL_DOMAINS>(
+    floor: FLOOR,
     ...domains: DOMAIN[]
-  ): PICK_ENTITY<DOMAIN>[] {
+  ): PICK_FROM_FLOOR<FLOOR, DOMAIN>[] {
     const areas = new Set<TAreaId>(
       hass.area.current.filter(i => i.floor_id === floor).map(i => i.area_id),
     );
     const raw = hass.entity.registry.current.filter(i => areas.has(i.area_id));
     if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+      return raw.map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
     }
     return raw
       .filter(entity =>
         domains.some(domain => is.domain(entity.entity_id, domain)),
       )
-      .map(i => i.entity_id as PICK_ENTITY<DOMAIN>);
+      .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
   }
 
   // #MARK: return object

@@ -1,8 +1,20 @@
 import { is, TBlackHole } from "@digital-alchemy/core";
 import { Get } from "type-fest";
 
-import { ENTITY_SETUP, iCallService } from "../dynamic";
+import {
+  ENTITY_SETUP,
+  iCallService,
+  REGISTRY_SETUP,
+  TAreaId,
+  TDeviceId,
+  TFloorId,
+  TLabelId,
+  TRawDomains,
+  TRawEntityIds,
+} from "../dynamic";
 import { HassEntityContext } from ".";
+
+export type ANY_ENTITY = TRawEntityIds;
 
 /**
  * Pick any valid entity, optionally limiting by domain
@@ -63,7 +75,7 @@ export type ENTITY_STATE<ENTITY_ID extends PICK_ENTITY> = Omit<
 /**
  * Union of all domains that contain entities
  */
-export type ALL_DOMAINS = keyof typeof ENTITY_SETUP;
+export type ALL_DOMAINS = TRawDomains;
 
 /**
  * Union of all services with callable methods
@@ -91,5 +103,25 @@ declare module "@digital-alchemy/core" {
 }
 export const PostConfigPriorities = {
   FETCH: 1,
-  VALIDATE: 2,
+  VALIDATE: -1,
 } as const;
+
+export type PICK_FROM_AREA<
+  ID extends TAreaId,
+  DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
+> = Extract<REGISTRY_SETUP["area"][`_${ID}`], PICK_ENTITY<DOMAIN>>;
+
+export type PICK_FROM_LABEL<
+  ID extends TLabelId,
+  DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
+> = Extract<REGISTRY_SETUP["label"][`_${ID}`], PICK_ENTITY<DOMAIN>>;
+
+export type PICK_FROM_FLOOR<
+  ID extends TFloorId,
+  DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
+> = Extract<REGISTRY_SETUP["floor"][`_${ID}`], PICK_ENTITY<DOMAIN>>;
+
+export type PICK_FROM_DEVICE<
+  ID extends TDeviceId,
+  DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
+> = Extract<REGISTRY_SETUP["device"][`_${ID}`], PICK_ENTITY<DOMAIN>>;

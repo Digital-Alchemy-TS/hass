@@ -8,7 +8,7 @@ export interface DeviceDetails {
   disabled_by: null;
   entry_type: EntryType | null;
   hw_version: null | string;
-  id: string;
+  id: TDeviceId;
   identifiers: Array<Array<number | string>>;
   labels: string[];
   manufacturer: null | string;
