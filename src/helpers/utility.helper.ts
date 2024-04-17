@@ -103,7 +103,7 @@ declare module "@digital-alchemy/core" {
 }
 export const PostConfigPriorities = {
   FETCH: 1,
-  VALIDATE: 2,
+  VALIDATE: -1,
 } as const;
 
 export type PICK_FROM_AREA<
