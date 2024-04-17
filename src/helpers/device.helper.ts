@@ -23,6 +23,3 @@ export interface DeviceDetails {
 export enum EntryType {
   Service = "service",
 }
-export type REGISTRY_SETUP = {
-  area: ["a", "b", "c"];
-};
