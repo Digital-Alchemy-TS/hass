@@ -3,9 +3,19 @@ ignorePaths: []
 dictionaryDefinitions: []
 dictionaries: []
 words:
-  - hass
-  - quickboot
-  - hassio
+  - codeowners
   - entites
+  - hass
+  - hassio
+  - homekit
+  - endregion
+  - macaddress
+  - quickboot
+  - ssdp
+  - systype
+  - zeroconf
+  - homeassistant
+  - sonarjs
+  - rrule
 ignoreWords: []
 import: []

@@ -1,3 +1,4 @@
+import { TAreaId, TDeviceId, TLabelId } from "../dynamic";
 import { ENTITY_STATE, PICK_ENTITY } from "./utility.helper";
 
 export enum HassEvents {
@@ -56,3 +57,47 @@ export type EntityUpdateEvent<
   time_fired: Date;
   variables: Record<string, unknown>;
 };
+
+export interface EntityDetails {
+  area_id: TAreaId;
+  categories: Categories;
+  config_entry_id: null | string;
+  device_id: TDeviceId;
+  disabled_by: string | null;
+  entity_category: string | null;
+  entity_id: PICK_ENTITY;
+  has_entity_name: boolean;
+  hidden_by: string | null;
+  icon: null;
+  id: string;
+  labels: TLabelId[];
+  name: null | string;
+  options: Options;
+  original_name: null | string;
+  platform: TPlatform;
+  translation_key: null | string;
+  unique_id: string;
+}
+
+export interface Categories {}
+
+export interface Options {
+  conversation: Conversation;
+  "sensor.private"?: SensorPrivate;
+  sensor?: Sensor;
+}
+
+export interface Conversation {
+  should_expose: boolean;
+}
+
+export interface Sensor {
+  suggested_display_precision?: number;
+  display_precision?: null;
+}
+
+export interface SensorPrivate {
+  suggested_unit_of_measurement: string;
+}
+
+export type TPlatform = string;
