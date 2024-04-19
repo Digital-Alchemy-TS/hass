@@ -8,7 +8,7 @@
     "lint": "eslint src",
     "test": "./scripts/test.sh",
     "prepublishOnly": "npm run build",
-    "upgrade": "ncu -u; npm i"
+    "upgrade": "ncu -f '@digital-alchemy/*' -u; npm i"
   },
   "author": {
     "url": "https://github.com/zoe-codez",
@@ -25,7 +25,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@digital-alchemy/core": "^0.3.9",
+    "@digital-alchemy/core": "^0.3.11",
     "dayjs": "^1.11.10",
     "prom-client": "^15.1.1",
     "ws": "^8.16.0"
