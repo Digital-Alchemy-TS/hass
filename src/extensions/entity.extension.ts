@@ -17,6 +17,7 @@ import { Get } from "type-fest";
 import {
   ALL_DOMAINS,
   EditLabelOptions,
+  ENTITY_REGISTRY_UPDATED,
   ENTITY_STATE,
   EntityHistoryDTO,
   EntityHistoryResult,
@@ -77,6 +78,7 @@ export function EntityManager({
   hass,
   config,
   lifecycle,
+  event,
   context,
   internal,
 }: TServiceParams) {
@@ -93,8 +95,8 @@ export function EntityManager({
 
   // * Local event emitter for coordination of socket events
   // Other libraries will internally take advantage of this eventemitter
-  const event = new EventEmitter();
-  event.setMaxListeners(UNLIMITED);
+  const ENTITY_EVENTS = new EventEmitter();
+  ENTITY_EVENTS.setMaxListeners(UNLIMITED);
   let init = false;
 
   // #MARK: getCurrentState
@@ -150,11 +152,11 @@ export function EntityManager({
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
             if (property === "onUpdate") {
               return (callback: TAnyFunction) =>
-                event.on(entity_id, async (a, b) => callback(a, b));
+                ENTITY_EVENTS.on(entity_id, async (a, b) => callback(a, b));
             }
             if (property === "once") {
               return (callback: TAnyFunction) =>
-                event.once(entity_id, async (a, b) => callback(a, b));
+                ENTITY_EVENTS.once(entity_id, async (a, b) => callback(a, b));
             }
             if (property === "entity_id") {
               return entity_id;
@@ -164,8 +166,10 @@ export function EntityManager({
             }
             if (property === "nextState") {
               return new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
-                event.once(entity_id, (entity: ENTITY_STATE<ENTITY_ID>) =>
-                  done(entity as ENTITY_STATE<ENTITY_ID>),
+                ENTITY_EVENTS.once(
+                  entity_id,
+                  (entity: ENTITY_STATE<ENTITY_ID>) =>
+                    done(entity satisfies ENTITY_STATE<ENTITY_ID>),
                 );
               });
             }
@@ -329,7 +333,7 @@ export function EntityManager({
         async entity =>
           await EntityUpdateReceiver(
             entity.entity_id,
-            entity as ENTITY_STATE<PICK_ENTITY>,
+            entity satisfies ENTITY_STATE<PICK_ENTITY>,
             internal.utils.object.get(oldState, entity.entity_id),
           ),
       );
@@ -340,7 +344,7 @@ export function EntityManager({
   // #MARK: is.entity
   // Actually tie the type casting to real state
   is.entity = (entityId: PICK_ENTITY): entityId is PICK_ENTITY =>
-    is.undefined(internal.utils.object.get(MASTER_STATE, entityId));
+    !is.undefined(internal.utils.object.get(MASTER_STATE, entityId));
 
   // #MARK: EntityUpdateReceiver
   function EntityUpdateReceiver<ENTITY extends PICK_ENTITY = PICK_ENTITY>(
@@ -360,7 +364,7 @@ export function EntityManager({
     }
     internal.utils.object.set(MASTER_STATE, entity_id, new_state);
     if (!hass.socket.pauseMessages) {
-      event.emit(entity_id, new_state, old_state);
+      ENTITY_EVENTS.emit(entity_id, new_state, old_state);
     }
   }
 
@@ -376,10 +380,13 @@ export function EntityManager({
       logger.debug({ name: entity }, `already has label {%s}`, label);
       return;
     }
-    await hass.socket.sendMessage({
-      entity_id: entity,
-      labels: [...current.labels, label],
-      type: UPDATE_REGISTRY,
+    return await new Promise<void>(async done => {
+      event.once(ENTITY_REGISTRY_UPDATED, done);
+      await hass.socket.sendMessage({
+        entity_id: entity,
+        labels: [...current.labels, label],
+        type: UPDATE_REGISTRY,
+      });
     });
   }
 
@@ -402,10 +409,13 @@ export function EntityManager({
       return;
     }
     logger.debug({ name: entity }, `removing label [%s]`, label);
-    await hass.socket.sendMessage({
-      entity_id: entity,
-      labels: current.labels.filter(i => i !== label),
-      type: UPDATE_REGISTRY,
+    return await new Promise<void>(async done => {
+      event.once(ENTITY_REGISTRY_UPDATED, done);
+      await hass.socket.sendMessage({
+        entity_id: entity,
+        labels: current.labels.filter(i => i !== label),
+        type: UPDATE_REGISTRY,
+      });
     });
   }
 
@@ -427,6 +437,7 @@ export function EntityManager({
       async exec() {
         logger.debug("entity registry updated");
         hass.entity.registry.current = await hass.entity.registry.list();
+        event.emit(ENTITY_REGISTRY_UPDATED);
       },
     });
   });
@@ -560,6 +571,7 @@ export function EntityManager({
   };
 }
 
+// mental note: stop changing this from string
 declare module "@digital-alchemy/core" {
   export interface IsIt {
     entity(entity: string): entity is PICK_ENTITY;

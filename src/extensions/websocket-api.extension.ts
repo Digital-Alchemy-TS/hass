@@ -15,7 +15,6 @@ import WS from "ws";
 import {
   ENTITY_UPDATE_RECEIVER,
   EntityUpdateEvent,
-  HassSocketMessageTypes,
   OnHassEventOptions,
   SOCKET_CONNECTION_STATE,
   SOCKET_EVENT_ERRORS,
@@ -97,7 +96,8 @@ export function WebsocketAPI({
     const name = ManageConnection;
     const threshold = config.hass.RETRY_INTERVAL * CONNECTION_FAILED;
     switch (hass.socket.connectionState) {
-      case "connected":
+      // * connected
+      case "connected": {
         if (!isOld(lastReceivedMessage)) {
           // if hass is actively sending messages, don't do anything
           return;
@@ -108,9 +108,11 @@ export function WebsocketAPI({
           { name },
           "no replies in a while {connected} => {unknown}",
         );
+      }
 
+      // * unknown
       // fall through
-      case "unknown":
+      case "unknown": {
         if (!isOld(lastPingAttempt)) {
           // if we very recently attempted a ping, do nothing
           return;
@@ -144,8 +146,10 @@ export function WebsocketAPI({
         await teardown();
         logger.warn({ name }, "hass stopped replying {unknown} => {offline}");
         return;
+      }
 
-      case "connecting":
+      // * connecting
+      case "connecting": {
         if (!isOld(lastConnectAttempt)) {
           // schedule happened in the middle of a connect attempt
           // weird but possible
@@ -159,9 +163,10 @@ export function WebsocketAPI({
         logger.warn({ name }, "connection failed {connecting} => {offline}");
         await ManageConnection();
         return;
+      }
 
       // fall through
-      case "offline":
+      case "offline": {
         // ### offline
         // * connection identifies as offline, let's attempt to fix that
         messageCount = START;
@@ -183,14 +188,16 @@ export function WebsocketAPI({
           await teardown();
         }
         return;
+      }
 
-      case "invalid":
+      case "invalid": {
         // ### error
         logger.error(
           { name },
           "socket received error, check credentials and restart application",
         );
         return;
+      }
     }
   }
 
@@ -422,31 +429,35 @@ export function WebsocketAPI({
   async function onMessage(message: SocketMessageDTO) {
     const id = Number(message.id);
     SOCKET_RECEIVED_MESSAGES.labels({ type: message.type }).inc();
-    switch (message.type as HassSocketMessageTypes) {
-      case HassSocketMessageTypes.auth_required:
+    switch (message.type) {
+      case "auth_required": {
         logger.trace({ name: onMessage }, `sending authentication`);
         sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
         return;
-
-      case HassSocketMessageTypes.auth_ok:
+      }
+      case "auth_ok": {
         // * Flag as valid connection
         logger.trace({ name: onMessage }, `event subscriptions starting`);
         await sendMessage({ type: "subscribe_events" }, false);
         onSocketReady();
         event.emit(SOCKET_CONNECTED);
         return;
-
-      case HassSocketMessageTypes.event:
+      }
+      case "event": {
         return await onMessageEvent(id, message);
+      }
 
-      case HassSocketMessageTypes.pong:
-        // 🏓
+      // 👾
+      case "pong": {
+        // nothing in particular needs to be done, just don't log an error (default)
         return;
+      }
 
-      case HassSocketMessageTypes.result:
+      case "result": {
         return await onMessageResult(id, message);
+      }
 
-      case HassSocketMessageTypes.auth_invalid:
+      case "auth_invalid": {
         setConnectionState("invalid");
         logger.fatal(
           { message, name: onMessage },
@@ -455,13 +466,15 @@ export function WebsocketAPI({
         // ? If you have a use case for making this exit configurable, open a ticket
         exit();
         return;
+      }
 
-      default:
-        // Code error probably
+      default: {
+        // Code error probably?
         logger.error(
           { name: onMessage },
           `unknown websocket message type: ${message.type}`,
         );
+      }
     }
   }
 

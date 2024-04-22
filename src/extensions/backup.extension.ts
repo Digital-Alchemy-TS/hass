@@ -1,8 +1,25 @@
-import { HALF, SECOND, sleep, TServiceParams } from "@digital-alchemy/core";
+import { HALF, is, SECOND, sleep, TServiceParams } from "@digital-alchemy/core";
 
-import { BackupResponse, HomeAssistantBackup } from "../helpers";
+import {
+  BackupResponse,
+  HomeAssistantBackup,
+  SignRequestResponse,
+} from "../helpers";
 
 export function Backup({ logger, hass }: TServiceParams) {
+  async function download(slug: string, destination: string): Promise<void> {
+    const result = await hass.socket.sendMessage<SignRequestResponse>({
+      path: `/api/backup/download/${slug}`,
+      type: "auth/sign_path",
+    });
+    if (!is.object(result) || !("path" in result)) {
+      return;
+    }
+    await hass.fetch.download(destination, {
+      url: result.path,
+    });
+  }
+
   async function generate(): Promise<HomeAssistantBackup> {
     let current = await list();
     // const originalLength = current.backups.length;
@@ -41,5 +58,5 @@ export function Backup({ logger, hass }: TServiceParams) {
     await hass.socket.sendMessage({ slug, type: "backup/remove" }, false);
   }
 
-  return { generate, list, remove };
+  return { download, generate, list, remove };
 }

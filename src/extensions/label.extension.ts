@@ -1,13 +1,19 @@
 import { is, TServiceParams } from "@digital-alchemy/core";
 
 import { TLabelId } from "../dynamic";
-import { EARLY_ON_READY, LabelDefinition, LabelOptions } from "../helpers";
+import {
+  EARLY_ON_READY,
+  LABEL_REGISTRY_UPDATED,
+  LabelDefinition,
+  LabelOptions,
+} from "../helpers";
 
 export function Label({
   hass,
   config,
   logger,
   lifecycle,
+  event,
   context,
 }: TServiceParams) {
   hass.socket.onConnect(async () => {
@@ -26,6 +32,7 @@ export function Label({
       async exec() {
         hass.label.current = await hass.label.list();
         logger.debug(`label registry updated`);
+        event.emit(LABEL_REGISTRY_UPDATED);
       },
     });
   });
@@ -35,16 +42,22 @@ export function Label({
 
   return {
     async create(details: LabelOptions) {
-      await hass.socket.sendMessage({
-        type: "config/label_registry/create",
-        ...details,
+      return await new Promise<void>(async done => {
+        event.once(LABEL_REGISTRY_UPDATED, done);
+        await hass.socket.sendMessage({
+          type: "config/label_registry/create",
+          ...details,
+        });
       });
     },
     current: [] as LabelDefinition[],
     async delete(area_id: TLabelId) {
-      await hass.socket.sendMessage({
-        area_id,
-        type: "config/label_registry/delete",
+      return await new Promise<void>(async done => {
+        event.once(LABEL_REGISTRY_UPDATED, done);
+        await hass.socket.sendMessage({
+          area_id,
+          type: "config/label_registry/delete",
+        });
       });
     },
     async list() {
@@ -53,9 +66,12 @@ export function Label({
       });
     },
     async update(details: LabelDefinition) {
-      await hass.socket.sendMessage({
-        type: "config/label_registry/update",
-        ...details,
+      return await new Promise<void>(async done => {
+        event.once(LABEL_REGISTRY_UPDATED, done);
+        await hass.socket.sendMessage({
+          type: "config/label_registry/update",
+          ...details,
+        });
       });
     },
   };
