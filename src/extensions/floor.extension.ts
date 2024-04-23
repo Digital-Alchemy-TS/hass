@@ -1,12 +1,18 @@
 import { is, TServiceParams } from "@digital-alchemy/core";
 
 import { TFloorId } from "../dynamic";
-import { EARLY_ON_READY, FloorCreate, FloorDetails } from "../helpers";
+import {
+  EARLY_ON_READY,
+  FLOOR_REGISTRY_UPDATED,
+  FloorCreate,
+  FloorDetails,
+} from "../helpers";
 
 export function Floor({
   hass,
   config,
   context,
+  event,
   logger,
   lifecycle,
 }: TServiceParams) {
@@ -26,6 +32,7 @@ export function Floor({
       async exec() {
         hass.floor.current = await hass.floor.list();
         logger.debug(`floor registry updated`);
+        event.emit(FLOOR_REGISTRY_UPDATED);
       },
     });
   });
@@ -35,16 +42,22 @@ export function Floor({
 
   return {
     async create(details: FloorCreate) {
-      await hass.socket.sendMessage({
-        type: "config/floor_registry/create",
-        ...details,
+      return await new Promise<void>(async done => {
+        event.once(FLOOR_REGISTRY_UPDATED, done);
+        await hass.socket.sendMessage({
+          type: "config/floor_registry/create",
+          ...details,
+        });
       });
     },
     current: [] as FloorDetails[],
     async delete(floor_id: TFloorId) {
-      await hass.socket.sendMessage({
-        floor_id,
-        type: "config/floor_registry/delete",
+      return await new Promise<void>(async done => {
+        event.once(FLOOR_REGISTRY_UPDATED, done);
+        await hass.socket.sendMessage({
+          floor_id,
+          type: "config/floor_registry/delete",
+        });
       });
     },
     async list() {
@@ -53,9 +66,12 @@ export function Floor({
       });
     },
     async update(details: FloorDetails) {
-      await hass.socket.sendMessage({
-        type: "config/floor_registry/update",
-        ...details,
+      return await new Promise<void>(async done => {
+        event.once(FLOOR_REGISTRY_UPDATED, done);
+        await hass.socket.sendMessage({
+          type: "config/floor_registry/update",
+          ...details,
+        });
       });
     },
   };
