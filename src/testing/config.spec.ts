@@ -49,7 +49,14 @@ describe("Config", () => {
       });
 
       await application.bootstrap(
-        SILENT_BOOT({ hass: { BASE_URL: URL, TOKEN: DEFAULTS } }),
+        SILENT_BOOT({
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL: URL,
+            TOKEN: DEFAULTS,
+          },
+        }),
       );
     });
 
@@ -67,7 +74,12 @@ describe("Config", () => {
       });
       await application.bootstrap(
         SILENT_BOOT({
-          hass: { BASE_URL: "http://localhost:9123", TOKEN: DEFAULTS },
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL: "http://localhost:9123",
+            TOKEN: DEFAULTS,
+          },
         }),
       );
     });
@@ -84,7 +96,14 @@ describe("Config", () => {
           });
         },
       });
-      await application.bootstrap(SILENT_BOOT());
+      await application.bootstrap(
+        SILENT_BOOT({
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+          },
+        }),
+      );
     });
 
     // # Should allow SUPERVISOR_TOKEN
@@ -98,7 +117,14 @@ describe("Config", () => {
           });
         },
       });
-      await application.bootstrap(SILENT_BOOT());
+      await application.bootstrap(
+        SILENT_BOOT({
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+          },
+        }),
+      );
     });
 
     // # Should allow HASS_SERVER
@@ -114,7 +140,14 @@ describe("Config", () => {
           });
         },
       });
-      await application.bootstrap(SILENT_BOOT());
+      await application.bootstrap(
+        SILENT_BOOT({
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+          },
+        }),
+      );
     });
   });
 
@@ -128,7 +161,15 @@ describe("Config", () => {
       application = CreateTestingApplication({
         Test() {},
       });
-      await application.bootstrap(SILENT_BOOT({ hass: { TOKEN: "TEST" } }));
+      await application.bootstrap(
+        SILENT_BOOT({
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            TOKEN: "TEST",
+          },
+        }),
+      );
       expect(exitSpy).not.toHaveBeenCalled();
     });
 
@@ -149,7 +190,13 @@ describe("Config", () => {
         },
       });
       await application.bootstrap(
-        SILENT_BOOT({ hass: { VALIDATE_CONFIGURATION: true } }),
+        SILENT_BOOT({
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            VALIDATE_CONFIGURATION: true,
+          },
+        }),
       );
       expect(exitSpy).toHaveBeenCalledWith(1);
       expect(spy).toHaveBeenCalledWith(
@@ -177,7 +224,14 @@ describe("Config", () => {
         },
       });
       await application.bootstrap(
-        SILENT_BOOT({ hass: { TOKEN: "TEST", VALIDATE_CONFIGURATION: true } }),
+        SILENT_BOOT({
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            TOKEN: "TEST",
+            VALIDATE_CONFIGURATION: true,
+          },
+        }),
       );
       expect(exitSpy).toHaveBeenCalledWith(0);
       expect(spy).toHaveBeenCalledWith(
@@ -210,7 +264,14 @@ describe("Config", () => {
         },
       });
       await application.bootstrap(
-        SILENT_BOOT({ hass: { TOKEN: "TEST", VALIDATE_CONFIGURATION: true } }),
+        SILENT_BOOT({
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            TOKEN: "TEST",
+            VALIDATE_CONFIGURATION: true,
+          },
+        }),
       );
       expect(exitSpy).toHaveBeenCalledWith(0);
       expect(spy).toHaveBeenCalledWith(

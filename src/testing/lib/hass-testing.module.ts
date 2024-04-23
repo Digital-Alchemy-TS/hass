@@ -1,7 +1,13 @@
 import { CreateLibrary, StringConfig } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "../..";
-import { MockServer, QuickConfiguration } from ".";
+import {
+  MockEntity,
+  MockRegistry,
+  MockServer,
+  QuickConfiguration,
+  Reset,
+} from ".";
 
 export const LIB_HASS_TESTING = CreateLibrary({
   configuration: {
@@ -16,7 +22,10 @@ export const LIB_HASS_TESTING = CreateLibrary({
   name: "hass_testing",
   services: {
     QuickConfiguration,
+    entity: MockEntity,
     mock_server: MockServer,
+    registry: MockRegistry,
+    reset: Reset,
   },
 });
 

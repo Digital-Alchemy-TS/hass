@@ -23,8 +23,12 @@ export type PICK_ENTITY<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> = {
   [key in DOMAIN]: `${key}.${keyof (typeof ENTITY_SETUP)[key] & string}`;
 }[DOMAIN];
 
+// export type ENTITY_STATE = {
+//   //
+// };
+
 /**
- * Pick any valid entity, optionally limiting by domain
+ * Pick any valid service call, optionally limiting by domain
  */
 export type PICK_SERVICE<
   DOMAIN extends ALL_SERVICE_DOMAINS = ALL_SERVICE_DOMAINS,
@@ -58,6 +62,11 @@ export function domain(
   }
   return entity_split(entity).shift() as ALL_DOMAINS;
 }
+
+export type ENTITY_PROP<
+  ENTITY_ID extends PICK_ENTITY,
+  PROP extends "state" | "attributes",
+> = Get<typeof ENTITY_SETUP, `${ENTITY_ID}.${PROP}`>;
 
 /**
  * Type definitions to match a specific entity.
