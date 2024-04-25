@@ -11,9 +11,8 @@ import {
 import { exit } from "process";
 
 import {
-  ALL_DOMAINS,
+  ALL_SERVICE_DOMAINS,
   CALL_PROXY_SERVICE_CALL,
-  HASSIO_WS_COMMAND,
   HassServiceDTO,
   iCallService,
   PICK_SERVICE,
@@ -52,7 +51,7 @@ export function CallProxy({
     await loadServiceList();
   });
 
-  function getDomain(domain: ALL_DOMAINS) {
+  function getDomain<DOMAIN extends ALL_SERVICE_DOMAINS>(domain: DOMAIN) {
     if (!domains || !domains?.includes(domain)) {
       if (!NOT_A_DOMAIN.has(domain)) {
         logger.error({ domain, name: getDomain }, `unknown domain`);
@@ -70,13 +69,13 @@ export function CallProxy({
     return Object.fromEntries(
       Object.entries(domainItem.services).map(([key]) => [
         key,
-        async <SERVICE extends PICK_SERVICE>(parameters: object) =>
-          await sendMessage(
-            `${domain}.${key}` as SERVICE,
-            {
-              ...parameters,
-            } as PICK_SERVICE_PARAMETERS<SERVICE>,
-          ),
+        async <SERVICE extends PICK_SERVICE<DOMAIN>>(parameters: object) => {
+          const service = `${domain}.${key}` as SERVICE;
+
+          await sendMessage(service, {
+            ...parameters,
+          } as PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>);
+        },
       ]),
     );
   }
@@ -117,9 +116,12 @@ export function CallProxy({
   /**
    * Prefer sending via socket, if available.
    */
-  async function sendMessage<SERVICE extends PICK_SERVICE>(
+  async function sendMessage<
+    DOMAIN extends ALL_SERVICE_DOMAINS,
+    SERVICE extends PICK_SERVICE<DOMAIN>,
+  >(
     serviceName: SERVICE,
-    service_data: PICK_SERVICE_PARAMETERS<SERVICE>,
+    service_data: PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>,
   ) {
     // pause for rest also
     if (hass.socket.pauseMessages) {
@@ -134,18 +136,17 @@ export function CallProxy({
     }
     const [domain, service] = serviceName.split(".");
     CALL_PROXY_SERVICE_CALL.labels({ domain, service }).inc();
-    const type = HASSIO_WS_COMMAND.call_service;
     // User can just not await this call if they don't care about the "waitForChange"
 
     return await hass.socket.sendMessage(
-      { domain, service, service_data, type },
+      { domain, service, service_data, type: "call_service" },
       true,
     );
   }
 
   function buildCallProxy(): iCallService {
     return new Proxy(rawProxy as iCallService, {
-      get: (_, domain: ALL_DOMAINS) => getDomain(domain),
+      get: (_, domain: ALL_SERVICE_DOMAINS) => getDomain(domain),
     });
   }
 

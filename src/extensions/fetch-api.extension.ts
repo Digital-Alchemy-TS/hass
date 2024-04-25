@@ -11,6 +11,7 @@ import {
 import dayjs from "dayjs";
 
 import {
+  ALL_SERVICE_DOMAINS,
   CalendarEvent,
   CalendarFetchOptions,
   CheckConfigResult,
@@ -89,9 +90,12 @@ export function FetchAPI({
     }));
   }
 
-  async function callService<SERVICE extends PICK_SERVICE>(
+  async function callService<
+    DOMAIN extends ALL_SERVICE_DOMAINS,
+    SERVICE extends PICK_SERVICE<DOMAIN>,
+  >(
     serviceName: SERVICE,
-    data: PICK_SERVICE_PARAMETERS<SERVICE>,
+    data: PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>,
   ): Promise<ENTITY_STATE<PICK_ENTITY>[]> {
     const [domain, service] = serviceName.split(".");
     return await fetch({

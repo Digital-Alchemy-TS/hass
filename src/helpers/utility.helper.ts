@@ -23,10 +23,6 @@ export type PICK_ENTITY<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> = {
   [key in DOMAIN]: `${key}.${keyof (typeof ENTITY_SETUP)[key] & string}`;
 }[DOMAIN];
 
-// export type ENTITY_STATE = {
-//   //
-// };
-
 /**
  * Pick any valid service call, optionally limiting by domain
  */
@@ -36,7 +32,10 @@ export type PICK_SERVICE<
   [key in DOMAIN]: `${key}.${keyof iCallService[key] & string}`;
 }[DOMAIN];
 
-export type PICK_SERVICE_PARAMETERS<SERVICE extends PICK_SERVICE> =
+export type PICK_SERVICE_PARAMETERS<
+  DOMAINS extends ALL_SERVICE_DOMAINS,
+  SERVICE extends PICK_SERVICE<DOMAINS>,
+> =
   Get<iCallService, SERVICE> extends (
     serviceParams: infer ServiceParams,
   ) => TBlackHole

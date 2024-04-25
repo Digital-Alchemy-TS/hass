@@ -42,7 +42,9 @@ describe("Websocket", () => {
       },
     });
     await host.bootstrap(
-      SILENT_BOOT({ hass_testing: { CONNECT_MODE: "server" } }),
+      SILENT_BOOT({
+        hass_testing: { CONNECT_MODE: "server" },
+      }),
     );
   });
 
