@@ -1,6 +1,7 @@
 export interface ServiceListSelectorTarget {
   domain?: string;
   integration?: string;
+  multiple?: boolean;
 }
 export interface ServiceListSelector {
   boolean?: null;
