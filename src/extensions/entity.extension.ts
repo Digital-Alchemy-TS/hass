@@ -48,7 +48,7 @@ export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
         new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
         old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
       ) => TBlackHole,
-    ) => void;
+    ) => { remove: () => void };
     /**
      * Run callback once, for next update
      */
@@ -66,6 +66,12 @@ export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
      * Access the immediate previous entity state
      */
     previous: ENTITY_STATE<ENTITY_ID>;
+    /**
+     * Remove all `.onUpdate` listeners for this entity
+     *
+     * If you want to remove a particular one, use use the return value of the `.onUpdate` call instead
+     */
+    removeAllListeners: () => void;
   };
 
 const MAX_ATTEMPTS = 50;
@@ -151,8 +157,19 @@ export function EntityManager({
           // things that shouldn't be needed: this extract
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
             if (property === "onUpdate") {
-              return (callback: TAnyFunction) =>
-                ENTITY_EVENTS.on(entity_id, async (a, b) => callback(a, b));
+              return (callback: TAnyFunction) => {
+                ENTITY_EVENTS.on(entity_id, callback);
+                return {
+                  remove() {
+                    ENTITY_EVENTS.removeListener(entity_id, callback);
+                  },
+                };
+              };
+            }
+            if (property === "removeAllListeners") {
+              return function () {
+                ENTITY_EVENTS.removeAllListeners(entity_id);
+              };
             }
             if (property === "once") {
               return (callback: TAnyFunction) =>
