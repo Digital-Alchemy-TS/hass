@@ -2,7 +2,7 @@
   "name": "@digital-alchemy/hass",
   "repository": "https://github.com/Digital-Alchemy-TS/hass",
   "homepage": "https://docs.digital-alchemy.app/Hass",
-  "version": "0.3.16",
+  "version": "0.3.18",
   "scripts": {
     "build": "rm -rf dist/; tsc",
     "lint": "eslint src",
