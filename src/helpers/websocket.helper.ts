@@ -1,7 +1,7 @@
 import { TBlackHole, TContext } from "@digital-alchemy/core";
 import { Dayjs } from "dayjs";
 
-import { HASSIO_WS_COMMAND, HassSocketMessageTypes } from "./constants.helper";
+import { HassSocketMessageTypes } from "./constants.helper";
 import { EntityUpdateEvent } from "./entity-state.helper";
 import { ALL_DOMAINS, ENTITY_STATE, PICK_ENTITY } from "./utility.helper";
 
@@ -35,7 +35,7 @@ export interface SendSocketMessageDTO {
   hidden_by?: "user";
   service?: string;
   service_data?: unknown;
-  type: HASSIO_WS_COMMAND | `${HASSIO_WS_COMMAND}`;
+  type: string;
 }
 
 export interface UpdateEntityMessageDTO<
@@ -48,44 +48,44 @@ export interface UpdateEntityMessageDTO<
   icon?: string;
   name: string;
   new_entity_id: PICK_ENTITY<DOMAIN>;
-  type: HASSIO_WS_COMMAND.registry_update;
+  type: "config/entity_registry/update";
 }
 
 export interface RemoveEntityMessageDTO {
   entity_id: PICK_ENTITY;
-  type: HASSIO_WS_COMMAND.entity_remove;
+  type: "config/entity_registry/remove";
 }
 
 export interface FindRelatedDTO {
   item_id: string;
   item_type: string;
-  type: HASSIO_WS_COMMAND.search_related;
+  type: "search/related";
 }
 
 export interface RegistryGetDTO {
   entity_id: string;
-  type: HASSIO_WS_COMMAND.registry_get;
+  type: "config/entity_registry/get";
 }
 
 export interface RenderTemplateDTO {
   template: string;
   timeout: number;
-  type: HASSIO_WS_COMMAND.render_template;
+  type: "render_template";
 }
 
 export interface SubscribeTriggerDTO {
   trigger: Record<string, unknown>;
-  type: HASSIO_WS_COMMAND.subscribe_trigger;
+  type: "subscribe_trigger";
 }
 
 export interface UnsubscribeEventsDTO {
   subscription: number;
-  type: HASSIO_WS_COMMAND.unsubscribe_events;
+  type: "unsubscribe_events";
 }
 
 export interface SignPathDTO {
   path: string;
-  type: HASSIO_WS_COMMAND.download_backup;
+  type: "auth/sign_path";
 }
 
 export interface RemoveBackupDTO {

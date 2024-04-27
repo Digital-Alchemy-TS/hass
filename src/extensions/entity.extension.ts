@@ -22,7 +22,6 @@ import {
   EntityHistoryDTO,
   EntityHistoryResult,
   EntityRegistryItem,
-  HASSIO_WS_COMMAND,
   PICK_ENTITY,
   PICK_FROM_AREA,
   PICK_FROM_DEVICE,
@@ -32,7 +31,6 @@ import {
   TDeviceId,
   TFloorId,
   TLabelId,
-  UPDATE_REGISTRY,
 } from "..";
 
 type EntityHistoryItem = { a: object; s: unknown; lu: number };
@@ -244,7 +242,7 @@ export function EntityManager({
       ...payload,
       end_time: dayjs(payload.end_time).toISOString(),
       start_time: dayjs(payload.start_time).toISOString(),
-      type: HASSIO_WS_COMMAND.history_during_period,
+      type: "history/history_during_period",
     })) as Record<PICK_ENTITY, EntityHistoryItem[]>;
 
     const entities = Object.keys(result) as PICK_ENTITY[];
@@ -406,7 +404,7 @@ export function EntityManager({
       await hass.socket.sendMessage({
         entity_id: entity,
         labels: [...current.labels, label],
-        type: UPDATE_REGISTRY,
+        type: "config/entity_registry/update",
       });
     });
   }
@@ -438,7 +436,7 @@ export function EntityManager({
       await hass.socket.sendMessage({
         entity_id: entity,
         labels: current.labels.filter(i => i !== label),
-        type: UPDATE_REGISTRY,
+        type: "config/entity_registry/update",
       });
     });
   }
