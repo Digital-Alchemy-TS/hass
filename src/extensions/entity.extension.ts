@@ -159,10 +159,14 @@ export function EntityManager({
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
             if (property === "onUpdate") {
               return (callback: TAnyFunction) => {
+                const removableCallback = (
+                  a: ENTITY_STATE<ENTITY_ID>,
+                  b: ENTITY_STATE<ENTITY_ID>,
+                ) => callback(a, b, remove);
                 function remove() {
-                  ENTITY_EVENTS.removeListener(entity_id, callback);
+                  ENTITY_EVENTS.removeListener(entity_id, removableCallback);
                 }
-                ENTITY_EVENTS.on(entity_id, (a, b) => callback(a, b, remove));
+                ENTITY_EVENTS.on(entity_id, removableCallback);
                 return { remove };
               };
             }
