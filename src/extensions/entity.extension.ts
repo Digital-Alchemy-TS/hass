@@ -527,6 +527,15 @@ export function EntityManager({
       .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
   }
 
+  /**
+   * experimental
+   */
+  function byPlatform(platform: string) {
+    return hass.entity.registry.current
+      .filter(i => i.platform === platform)
+      .map(i => i.entity_id);
+  }
+
   async function RemoveEntity(entity_id: PICK_ENTITY) {
     logger.debug({ name: entity_id }, `removing entity`);
     await hass.socket.sendMessage({
@@ -557,6 +566,11 @@ export function EntityManager({
      * provides current values and event hooks for the entity.
      */ byId,
     byLabel,
+
+    /**
+     * search out ids by platform
+     */
+    byPlatform,
 
     /**
      * Lists all entities within a specified domain. This is useful for
