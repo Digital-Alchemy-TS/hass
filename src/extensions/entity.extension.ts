@@ -47,6 +47,7 @@ export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
       callback: (
         new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
         old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
+        remove: () => TBlackHole,
       ) => TBlackHole,
     ) => { remove: () => void };
     /**
@@ -158,12 +159,11 @@ export function EntityManager({
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
             if (property === "onUpdate") {
               return (callback: TAnyFunction) => {
-                ENTITY_EVENTS.on(entity_id, callback);
-                return {
-                  remove() {
-                    ENTITY_EVENTS.removeListener(entity_id, callback);
-                  },
-                };
+                function remove() {
+                  ENTITY_EVENTS.removeListener(entity_id, callback);
+                }
+                ENTITY_EVENTS.on(entity_id, (a, b) => callback(a, b, remove));
+                return { remove };
               };
             }
             if (property === "removeAllListeners") {
@@ -527,6 +527,20 @@ export function EntityManager({
       .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
   }
 
+  async function RemoveEntity(entity_id: PICK_ENTITY) {
+    logger.debug({ name: entity_id }, `removing entity`);
+    await hass.socket.sendMessage({
+      entity_id,
+      type: "config/entity_registry/remove",
+    });
+  }
+
+  async function RegistryList() {
+    await hass.socket.sendMessage({
+      type: "config/entity_registry/list",
+    });
+  }
+
   // #MARK: return object
   return {
     /**
@@ -582,6 +596,8 @@ export function EntityManager({
       current: [] as EntityRegistryItem<PICK_ENTITY>[],
       get: EntityGet,
       list: EntityList,
+      registryList: RegistryList,
+      removeEntity: RemoveEntity,
       removeLabel: RemoveLabel,
       source: EntitySource,
     },
