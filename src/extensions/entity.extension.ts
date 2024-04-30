@@ -1,5 +1,6 @@
 import {
   each,
+  eachSeries,
   INCREMENT,
   is,
   SECOND,
@@ -16,6 +17,7 @@ import { Get } from "type-fest";
 
 import {
   ALL_DOMAINS,
+  domain,
   EditLabelOptions,
   ENTITY_REGISTRY_UPDATED,
   ENTITY_STATE,
@@ -32,6 +34,7 @@ import {
   TDeviceId,
   TFloorId,
   TLabelId,
+  TPlatformId,
   UPDATE_REGISTRY,
 } from "..";
 
@@ -531,20 +534,27 @@ export function EntityManager({
       .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
   }
 
-  /**
-   * experimental
-   */
-  function byPlatform(platform: string) {
-    return hass.entity.registry.current
+  function byPlatform<PLATFORM extends TPlatformId, DOMAIN extends ALL_DOMAINS>(
+    platform: PLATFORM,
+    ...domains: DOMAIN[]
+  ) {
+    const raw = hass.entity.registry.current
+      .filter(i => i.platform === platform)
       .filter(i => i.platform === platform)
       .map(i => i.entity_id);
+    if (is.empty(domains)) {
+      return raw;
+    }
+    return raw.filter(i => domains.includes(domain(i) as DOMAIN));
   }
 
-  async function RemoveEntity(entity_id: PICK_ENTITY) {
-    logger.debug({ name: entity_id }, `removing entity`);
-    await hass.socket.sendMessage({
-      entity_id,
-      type: "config/entity_registry/remove",
+  async function RemoveEntity(entity_id: PICK_ENTITY | PICK_ENTITY[]) {
+    await eachSeries([entity_id].flat(), async entity_id => {
+      logger.debug({ name: entity_id }, `removing entity`);
+      await hass.socket.sendMessage({
+        entity_id,
+        type: "config/entity_registry/remove",
+      });
     });
   }
 

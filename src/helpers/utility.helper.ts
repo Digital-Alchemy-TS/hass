@@ -9,6 +9,7 @@ import {
   TDeviceId,
   TFloorId,
   TLabelId,
+  TPlatformId,
   TRawDomains,
   TRawEntityIds,
 } from "../dynamic";
@@ -132,3 +133,8 @@ export type PICK_FROM_DEVICE<
   ID extends TDeviceId,
   DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
 > = Extract<REGISTRY_SETUP["device"][`_${ID}`], PICK_ENTITY<DOMAIN>>;
+
+export type PICK_FROM_PLATFORM<
+  ID extends TPlatformId,
+  DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
+> = Extract<REGISTRY_SETUP["platform"][`_${ID}`], PICK_ENTITY<DOMAIN>>;
