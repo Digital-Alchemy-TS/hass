@@ -1,4 +1,11 @@
-import { TAreaId, TDeviceId, TFloorId, TLabelId, TZoneId } from "../dynamic";
+import {
+  TAreaId,
+  TDeviceId,
+  TFloorId,
+  TLabelId,
+  TPlatformId,
+  TZoneId,
+} from "../dynamic";
 import { PICK_ENTITY } from "./utility.helper";
 
 export type LabelOptions = {
@@ -51,7 +58,7 @@ export type EntityRegistryItem<ENTITY extends PICK_ENTITY> = {
     };
   };
   original_name: string;
-  platform: string;
+  platform: TPlatformId;
   translation_key?: string;
   unique_id: string;
   aliases: string[];
