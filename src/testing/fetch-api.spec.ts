@@ -13,7 +13,10 @@ describe("FetchAPI", () => {
     ServiceMap,
     OptionalModuleConfiguration
   >;
-  const BASE_URL = "http://homeassistant.local:8123";
+  const BASE_URL = "http://homeassistant.some.domain:9123";
+  const TOKEN =
+    // eslint-disable-next-line @cspell/spellchecker
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6Imh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dhdGNoP3Y9ZFF3NHc5V2dYY1EifQ.gPIttZEaLZgov3VZziu3LovcgtDbj8H0-XfBg4f08Y0";
 
   // values are hard coded into tests, update carefully
   const start = dayjs("2024-01-01 00:00:00:00");
@@ -25,6 +28,47 @@ describe("FetchAPI", () => {
       application = undefined;
     }
     jest.restoreAllMocks();
+  });
+
+  describe("Meta", () => {
+    it("Should send the correct headers", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          const spy = jest
+            .spyOn(global, "fetch")
+            .mockImplementation(async () => {
+              return {
+                text: () => "[]",
+              } as unknown as Response;
+            });
+          lifecycle.onReady(async () => {
+            // Calling the base level fetch provided by service
+            // The same call is wrapped internally to power everything else
+            await hass.fetch.fetch({ url: "/api/" });
+            expect(spy).toHaveBeenCalledWith(
+              `${BASE_URL}/api/`,
+              expect.objectContaining({
+                headers: {
+                  Authorization: "Bearer " + TOKEN,
+                },
+                method: "get",
+              }),
+            );
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
+          },
+        }),
+      );
+    });
   });
 
   describe("API Operations", () => {
@@ -59,6 +103,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -96,6 +142,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -128,6 +176,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -162,6 +212,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -198,6 +250,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -232,6 +286,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -264,6 +320,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -296,6 +354,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -328,6 +388,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -360,6 +422,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -392,6 +456,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -433,6 +499,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -469,6 +537,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
@@ -501,6 +571,8 @@ describe("FetchAPI", () => {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
+            BASE_URL,
+            TOKEN,
           },
         }),
       );
