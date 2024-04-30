@@ -8,7 +8,7 @@ import {
   TServiceParams,
   UP,
 } from "@digital-alchemy/core";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 import {
   ALL_SERVICE_DOMAINS,
@@ -131,7 +131,7 @@ export function FetchAPI({
       "global" | "local",
       Record<string, string>
     >,
-  >(entityId: string | string[]): Promise<T> {
+  >(entityId: PICK_ENTITY): Promise<T> {
     logger.trace({ name: fetchEntityCustomizations }, `send`);
     return await fetch<T>({
       url: `/api/config/customize/config/${entityId}`,
@@ -143,16 +143,16 @@ export function FetchAPI({
     T extends ENTITY_STATE<ENTITY> = ENTITY_STATE<ENTITY>,
   >(
     entity_id: ENTITY,
-    from: Date,
-    to: Date,
+    from: Date | Dayjs,
+    to: Date | Dayjs,
     extra: { minimal_response?: "" } = {},
   ): Promise<T[]> {
     logger.info(
       {
         entity_id,
-        from: from.toISOString(),
+        from: dayjs(from).toISOString(),
         name: fetchEntityHistory,
-        to: to.toISOString(),
+        to: dayjs(to).toISOString(),
       },
       `fetch entity history`,
     );
@@ -198,8 +198,8 @@ export function FetchAPI({
     return await fetch<ENTITY_STATE<PICK_ENTITY>[]>({ url: `/api/states` });
   }
 
-  async function getHassConfig(): Promise<HassConfig> {
-    logger.trace({ name: getHassConfig }, `send`);
+  async function getConfig(): Promise<HassConfig> {
+    logger.trace({ name: getConfig }, `send`);
     return await fetch({ url: `/api/config` });
   }
 
@@ -233,11 +233,13 @@ export function FetchAPI({
     { attributes, state }: SendBody<STATE, ATTRIBUTES>,
   ): Promise<void> {
     const body: SendBody<STATE> = {};
-    if (state !== undefined) {
-      body.state = state;
-    }
+    // ! ORDER MATTERS FOR APPLYING
+    // Must be applied in alphabetical order for unit test reasons
     if (!is.empty(attributes)) {
       body.attributes = attributes;
+    }
+    if (state !== undefined) {
+      body.state = state;
     }
     logger.trace(
       { ...body, entity_id, name: updateEntity },
@@ -277,7 +279,7 @@ export function FetchAPI({
     fetchEntityHistory,
     fireEvent,
     getAllEntities,
-    getConfig: getHassConfig,
+    getConfig,
     getLogs,
     getRawLogs,
     listServices,

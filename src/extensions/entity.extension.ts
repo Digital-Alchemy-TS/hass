@@ -34,7 +34,6 @@ import {
   TFloorId,
   TLabelId,
   TPlatformId,
-  UPDATE_REGISTRY,
 } from "..";
 
 type EntityHistoryItem = { a: object; s: unknown; lu: number };
@@ -638,6 +637,11 @@ export function EntityManager({
      * and quick reference to all available entities.
      */
     listEntities,
+
+    /**
+     * Retrieve the raw entity data for this point in time
+     */
+    raw: (id: PICK_ENTITY) => utils.object.get(MASTER_STATE, id),
 
     /**
      * Initiates a refresh of the current entity states. Useful for ensuring
