@@ -10,6 +10,7 @@ export type TFloorId = "example_floor" | "example_floor_2";
 export type TAreaId = "example_area" | "empty_area";
 export type TLabelId = "example_label" | "example_label_2";
 export type TDeviceId = "example_device" | "example_device_2";
+export type TPlatformId = "synapse" | "sun";
 export type TZoneId = string & { zone: true };
 
 // ## THIS FILE IS INTENDED TO BE REPLACED
@@ -138,6 +139,10 @@ export type TRawEntityIds =
   | "switch.example_switch";
 
 export type REGISTRY_SETUP = {
+  platform: {
+    _synapse: "switch.example_switch";
+    _sun: "sun.sun";
+  };
   area: {
     _example_area: "sensor.example_sensor";
     _empty_area: never;

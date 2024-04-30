@@ -9,6 +9,7 @@ import {
   TDeviceId,
   TFloorId,
   TLabelId,
+  TPlatformId,
   TRawDomains,
   TRawEntityIds,
 } from "../dynamic";
@@ -72,10 +73,17 @@ export type ENTITY_PROP<
  */
 export type ENTITY_STATE<ENTITY_ID extends PICK_ENTITY> = Omit<
   Get<typeof ENTITY_SETUP, ENTITY_ID>,
-  "state" | "context" | "last_changed" | "last_updated"
+  | "state"
+  | "context"
+  | "last_changed"
+  | "last_updated"
+  | "entity_id"
+  | "attributes"
 > & {
   last_changed: string;
   last_updated: string;
+  attributes: Get<typeof ENTITY_SETUP, ENTITY_ID>["attributes"];
+  entity_id: ENTITY_ID;
   state: string;
   context: HassEntityContext;
 };
@@ -133,3 +141,8 @@ export type PICK_FROM_DEVICE<
   ID extends TDeviceId,
   DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
 > = Extract<REGISTRY_SETUP["device"][`_${ID}`], PICK_ENTITY<DOMAIN>>;
+
+export type PICK_FROM_PLATFORM<
+  ID extends TPlatformId,
+  DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
+> = Extract<REGISTRY_SETUP["platform"][`_${ID}`], PICK_ENTITY<DOMAIN>>;

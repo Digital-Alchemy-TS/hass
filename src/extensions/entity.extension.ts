@@ -1,5 +1,6 @@
 import {
   each,
+  eachSeries,
   INCREMENT,
   is,
   SECOND,
@@ -16,6 +17,7 @@ import { Get } from "type-fest";
 
 import {
   ALL_DOMAINS,
+  domain,
   EditLabelOptions,
   ENTITY_REGISTRY_UPDATED,
   ENTITY_STATE,
@@ -31,6 +33,8 @@ import {
   TDeviceId,
   TFloorId,
   TLabelId,
+  TPlatformId,
+  UPDATE_REGISTRY,
 } from "..";
 
 type EntityHistoryItem = { a: object; s: unknown; lu: number };
@@ -45,6 +49,7 @@ export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
       callback: (
         new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
         old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
+        remove: () => TBlackHole,
       ) => TBlackHole,
     ) => { remove: () => void };
     /**
@@ -156,12 +161,15 @@ export function EntityManager({
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
             if (property === "onUpdate") {
               return (callback: TAnyFunction) => {
-                ENTITY_EVENTS.on(entity_id, callback);
-                return {
-                  remove() {
-                    ENTITY_EVENTS.removeListener(entity_id, callback);
-                  },
-                };
+                const removableCallback = (
+                  a: ENTITY_STATE<ENTITY_ID>,
+                  b: ENTITY_STATE<ENTITY_ID>,
+                ) => callback(a, b, remove);
+                function remove() {
+                  ENTITY_EVENTS.removeListener(entity_id, removableCallback);
+                }
+                ENTITY_EVENTS.on(entity_id, removableCallback);
+                return { remove };
               };
             }
             if (property === "removeAllListeners") {
@@ -538,6 +546,36 @@ export function EntityManager({
       .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
   }
 
+  function byPlatform<PLATFORM extends TPlatformId, DOMAIN extends ALL_DOMAINS>(
+    platform: PLATFORM,
+    ...domains: DOMAIN[]
+  ) {
+    const raw = hass.entity.registry.current
+      .filter(i => i.platform === platform)
+      .filter(i => i.platform === platform)
+      .map(i => i.entity_id);
+    if (is.empty(domains)) {
+      return raw;
+    }
+    return raw.filter(i => domains.includes(domain(i) as DOMAIN));
+  }
+
+  async function RemoveEntity(entity_id: PICK_ENTITY | PICK_ENTITY[]) {
+    await eachSeries([entity_id].flat(), async entity_id => {
+      logger.debug({ name: entity_id }, `removing entity`);
+      await hass.socket.sendMessage({
+        entity_id,
+        type: "config/entity_registry/remove",
+      });
+    });
+  }
+
+  async function RegistryList() {
+    await hass.socket.sendMessage({
+      type: "config/entity_registry/list",
+    });
+  }
+
   // #MARK: return object
   return {
     /**
@@ -571,6 +609,11 @@ export function EntityManager({
      * Retrieve a list of entities that have a given label
      */
     byLabel,
+
+    /**
+     * search out ids by platform
+     */
+    byPlatform,
 
     /**
      * Lists all entities within a specified domain. This is useful for
@@ -610,6 +653,8 @@ export function EntityManager({
       current: [] as EntityRegistryItem<PICK_ENTITY>[],
       get: EntityGet,
       list: EntityList,
+      registryList: RegistryList,
+      removeEntity: RemoveEntity,
       removeLabel: RemoveLabel,
       source: EntitySource,
     },

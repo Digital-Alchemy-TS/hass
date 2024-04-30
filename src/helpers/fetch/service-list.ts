@@ -1,6 +1,9 @@
+import { TPlatformId } from "../../dynamic";
+import { ALL_DOMAINS } from "../utility.helper";
+
 export interface ServiceListSelectorTarget {
-  domain?: string;
-  integration?: string;
+  domain?: ALL_DOMAINS;
+  integration?: TPlatformId;
   multiple?: boolean;
 }
 export interface ServiceListSelector {
@@ -32,7 +35,8 @@ export interface ServiceListFieldDescription {
 }
 
 export type ServiceListEntityTarget = {
-  domain?: string[];
+  domain?: ALL_DOMAINS[];
+  integration?: TPlatformId;
   supported_features?: number[];
 };
 
@@ -50,6 +54,6 @@ export interface ServiceListField {
 }
 
 export interface HassServiceDTO {
-  domain: string;
+  domain: ALL_DOMAINS;
   services: Record<string, ServiceListField>;
 }
