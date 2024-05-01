@@ -108,7 +108,7 @@ export function WebsocketAPI({
       lastReceivedMessage = now;
     } else {
       // emit a ping, do not wait for reply (inline)
-      sendMessage({ type: "ping" }, false);
+      hass.socket.sendMessage({ type: "ping" }, false);
 
       // reply will be captured by this, waiting at most a second
       pingSleep = sleep(SECOND);
@@ -118,7 +118,7 @@ export function WebsocketAPI({
 
     if (!isOld(lastReceivedMessage)) {
       // received a least a pong
-      setConnectionState("connected");
+      hass.socket.setConnectionState("connected");
       logger.trace({ name }, `still there {unknown} => {connected}`);
       return;
     }
@@ -130,7 +130,7 @@ export function WebsocketAPI({
       return;
     }
     // 🪦 oof, get rid of the current connection and try again
-    await teardown();
+    await hass.socket.teardown();
     logger.warn({ name }, "hass stopped replying {unknown} => {offline}");
   }
 
@@ -146,7 +146,7 @@ export function WebsocketAPI({
           return;
         }
         // 🦗 haven't heard from hass in a while
-        setConnectionState("unknown");
+        hass.socket.setConnectionState("unknown");
         logger.trace(
           { name },
           "no replies in a while {connected} => {unknown}",
@@ -171,7 +171,7 @@ export function WebsocketAPI({
         // maybe we tried to connect before hass was actually ready for an incoming connection?
         //
         // reset and try again
-        await teardown();
+        await hass.socket.teardown();
         logger.warn({ name }, "connection failed {connecting} => {offline}");
         await ManageConnection();
         return;
@@ -183,21 +183,21 @@ export function WebsocketAPI({
         // * connection identifies as offline, let's attempt to fix that
         messageCount = START;
         lastConnectAttempt = now;
-        setConnectionState("connecting");
+        hass.socket.setConnectionState("connecting");
         logger.debug(
           { name },
           "initializing new socket {offline} => {connecting}",
         );
         try {
-          await init();
-          setConnectionState("connected");
+          await hass.socket.init();
+          hass.socket.setConnectionState("connected");
           logger.info({ name }, "auth success {connecting} => {connected}");
         } catch (error) {
           logger.error(
             { error, name },
             "init failed {connecting} => {offline}",
           );
-          await teardown();
+          await hass.socket.teardown();
         }
         return;
       }
@@ -239,7 +239,7 @@ export function WebsocketAPI({
       { name: "onShutdownStart" },
       `shutdown - tearing down connection`,
     );
-    await teardown();
+    await hass.socket.teardown();
   });
 
   // #MARK: teardown
@@ -252,19 +252,16 @@ export function WebsocketAPI({
       connection.close();
     }
     connection = undefined;
-    setConnectionState("offline");
+    hass.socket.setConnectionState("offline");
   }
 
   // #MARK: fireEvent
-  async function fireEvent(
-    event_type: string,
-    event_data?: object,
-    waitForResponse = true,
-  ) {
-    return await sendMessage(
-      { event_data, event_type, type: "fire_event" },
-      waitForResponse,
-    );
+  async function fireEvent(event_type: string, event_data?: object) {
+    return await hass.socket.sendMessage({
+      event_data,
+      event_type,
+      type: "fire_event",
+    });
   }
 
   // #MARK: sendMessage
@@ -295,7 +292,9 @@ export function WebsocketAPI({
     }
     const json = JSON.stringify(data);
     const sentAt = new Date();
-    connection.send(json);
+
+    // ? not defined for unit tests
+    connection?.send(json);
     if (subscription) {
       return data.id as RESPONSE_VALUE;
     }
@@ -303,6 +302,10 @@ export function WebsocketAPI({
       return undefined;
     }
     return new Promise<RESPONSE_VALUE>(async done => {
+      if (config.hass.MOCK_SOCKET) {
+        done(undefined); // do something else if you want a real value
+        return;
+      }
       waitingCallback.set(id, done as (result: unknown) => TBlackHole);
       await sleep(config.hass.EXPECT_RESPONSE_AFTER * SECOND);
       if (!waitingCallback.has(id)) {
@@ -383,7 +386,7 @@ export function WebsocketAPI({
     }
     messageCount = START;
     if (config.hass.MOCK_SOCKET) {
-      setConnectionState("connected");
+      hass.socket.setConnectionState("connected");
       setImmediate(() => event.emit(SOCKET_CONNECTED));
       return;
     }
@@ -411,7 +414,7 @@ export function WebsocketAPI({
       connection.on("error", async (error: Error) => {
         logger.error({ error: error, name: init }, "socket error");
         if (hass.socket.connectionState === "connected") {
-          setConnectionState("unknown");
+          hass.socket.setConnectionState("unknown");
         }
       });
 
@@ -424,14 +427,14 @@ export function WebsocketAPI({
           { code, name: init, reason: reason.toString() },
           "connection closed",
         );
-        await teardown();
+        await hass.socket.teardown();
       });
 
       await new Promise<void>(done => (onSocketReady = done));
       initFinished = true;
     } catch (error) {
       logger.error({ error, name: init, url }, `initConnection error`);
-      setConnectionState("offline");
+      hass.socket.setConnectionState("offline");
     }
   }
 
@@ -458,14 +461,17 @@ export function WebsocketAPI({
     switch (message.type) {
       case "auth_required": {
         logger.trace({ name: onMessage }, `sending authentication`);
-        sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
+        hass.socket.sendMessage(
+          { access_token: config.hass.TOKEN, type: "auth" },
+          false,
+        );
         return;
       }
 
       case "auth_ok": {
         // * Flag as valid connection
         logger.trace({ name: onMessage }, `event subscriptions starting`);
-        await sendMessage({ type: "subscribe_events" }, false);
+        await hass.socket.sendMessage({ type: "subscribe_events" }, false);
         onSocketReady?.();
         event.emit(SOCKET_CONNECTED);
         return;
@@ -485,7 +491,7 @@ export function WebsocketAPI({
       }
 
       case "auth_invalid": {
-        setConnectionState("invalid");
+        hass.socket.setConnectionState("invalid");
         logger.fatal(
           { message, name: onMessage },
           "received auth invalid {connecting} => {invalid}",
@@ -591,12 +597,12 @@ export function WebsocketAPI({
   }
 
   // #MARK: subscribe
-  function subscribe<EVENT extends string>({
+  async function subscribe<EVENT extends string>({
     event_type,
     context,
     exec,
   }: SocketSubscribeOptions<EVENT>) {
-    hass.socket.sendMessage({ event_type, type: "subscribe_events" }, false);
+    await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
     hass.socket.onEvent({
       context,
       event: event_type,

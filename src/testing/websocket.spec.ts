@@ -37,7 +37,23 @@ describe("Websocket", () => {
   });
 
   describe("API Interactions", () => {
-    it("Should send the correct headers", async () => {
+    it("should emit events onConnect", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          let hit = false;
+          hass.socket.onConnect(() => (hit = true));
+          lifecycle.onReady(() => {
+            expect(hit).toBe(true);
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("should emit a socket message with subscribeEvents", async () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass, context }: TServiceParams) {
@@ -45,7 +61,7 @@ describe("Websocket", () => {
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
-            hass.socket.subscribe({
+            await hass.socket.subscribe({
               context,
               event_type: "test",
               exec: () => {},
@@ -55,7 +71,31 @@ describe("Websocket", () => {
                 event_type: "test",
                 type: "subscribe_events",
               }),
-              false,
+            );
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("should emit a socket message with fireEvent", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          const spy = jest
+            .spyOn(hass.socket, "sendMessage")
+            .mockImplementation(async () => undefined);
+          lifecycle.onReady(async () => {
+            const data = { example: "data" };
+            await hass.socket.fireEvent("test_event", data);
+            expect(spy).toHaveBeenCalledWith(
+              expect.objectContaining({
+                event_data: data,
+                event_type: "test_event",
+                type: "fire_event",
+              }),
             );
           });
         },
