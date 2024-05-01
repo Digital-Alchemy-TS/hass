@@ -1,6 +1,10 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { DeviceDetails, EARLY_ON_READY } from "../helpers";
+import {
+  DEVICE_REGISTRY_UPDATED,
+  DeviceDetails,
+  EARLY_ON_READY,
+} from "../helpers";
 
 export function Device({
   hass,
@@ -8,6 +12,7 @@ export function Device({
   context,
   logger,
   lifecycle,
+  event,
 }: TServiceParams) {
   hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
@@ -25,6 +30,7 @@ export function Device({
       async exec() {
         hass.device.current = await hass.device.list();
         logger.debug(`device registry updated`);
+        event.emit(DEVICE_REGISTRY_UPDATED);
       },
     });
     await SubscribeUpdates();
