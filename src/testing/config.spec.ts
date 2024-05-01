@@ -6,7 +6,7 @@ import {
 } from "@digital-alchemy/core";
 import { env } from "process";
 
-import { CreateTestingApplication, SILENT_BOOT } from "./utils";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 const DEFAULTS = "DEFAULTS";
 

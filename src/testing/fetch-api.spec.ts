@@ -6,7 +6,10 @@ import {
 } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
-import { CreateTestingApplication, SILENT_BOOT } from "./utils";
+import {
+  CreateTestingApplication,
+  SILENT_BOOT,
+} from "../mock_assistant/helpers/utils";
 
 describe("FetchAPI", () => {
   let application: ApplicationDefinition<

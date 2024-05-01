@@ -122,4 +122,4 @@ bin/
 .nx/cache
 review.zip
 dynamic.d.ts
-/obsidian/.obsidian
+fixtures.json

@@ -90,11 +90,54 @@ export function WebsocketAPI({
     );
   }
 
+  // #MARK: handleUnknownConnectionState
+  async function handleUnknownConnectionState() {
+    const now = dayjs();
+    const name = handleUnknownConnectionState;
+    const threshold = config.hass.RETRY_INTERVAL * CONNECTION_FAILED;
+    if (!isOld(lastPingAttempt)) {
+      // if we very recently attempted a ping, do nothing
+      return;
+    }
+    // send a ping message to force a pong
+    logger.trace({ name }, `emitting ping`);
+    lastPingAttempt = now;
+
+    if (config.hass.MOCK_SOCKET) {
+      // artificial ping
+      lastReceivedMessage = now;
+    } else {
+      // emit a ping, do not wait for reply (inline)
+      sendMessage({ type: "ping" }, false);
+
+      // reply will be captured by this, waiting at most a second
+      pingSleep = sleep(SECOND);
+      await pingSleep;
+      pingSleep = undefined;
+    }
+
+    if (!isOld(lastReceivedMessage)) {
+      // received a least a pong
+      setConnectionState("connected");
+      logger.trace({ name }, `still there {unknown} => {connected}`);
+      return;
+    }
+
+    // 😨 hass didn't reply
+    if (lastReceivedMessage.diff(now, "s") < threshold) {
+      // take a deep breath, and try again
+      logger.warn({ name }, "failed to receive expected {pong}");
+      return;
+    }
+    // 🪦 oof, get rid of the current connection and try again
+    await teardown();
+    logger.warn({ name }, "hass stopped replying {unknown} => {offline}");
+  }
+
   // #MARK: ManageConnection
   async function ManageConnection() {
     const now = dayjs();
     const name = ManageConnection;
-    const threshold = config.hass.RETRY_INTERVAL * CONNECTION_FAILED;
     switch (hass.socket.connectionState) {
       // * connected
       case "connected": {
@@ -113,38 +156,7 @@ export function WebsocketAPI({
       // * unknown
       // fall through
       case "unknown": {
-        if (!isOld(lastPingAttempt)) {
-          // if we very recently attempted a ping, do nothing
-          return;
-        }
-        // send a ping message to force a pong
-        logger.trace({ name }, `emitting ping`);
-        lastPingAttempt = now;
-
-        // emit a ping, do not wait for reply (inline)
-        sendMessage({ type: "ping" }, false);
-
-        // reply will be captured by this, waiting at most a second
-        pingSleep = sleep(SECOND);
-        await pingSleep;
-        pingSleep = undefined;
-
-        if (!isOld(lastReceivedMessage)) {
-          // received a least a pong
-          setConnectionState("connected");
-          logger.trace({ name }, `still there {unknown} => {connected}`);
-          return;
-        }
-
-        // 😨 hass didn't reply
-        if (lastReceivedMessage.diff(now, "s") < threshold) {
-          // take a deep breath, and try again
-          logger.warn({ name }, "failed to receive expected {pong}");
-          return;
-        }
-        // 🪦 oof, get rid of the current connection and try again
-        await teardown();
-        logger.warn({ name }, "hass stopped replying {unknown} => {offline}");
+        await handleUnknownConnectionState();
         return;
       }
 
@@ -369,9 +381,14 @@ export function WebsocketAPI({
         `Destroy the current connection before creating a new one`,
       );
     }
+    messageCount = START;
+    if (config.hass.MOCK_SOCKET) {
+      setConnectionState("connected");
+      setImmediate(() => event.emit(SOCKET_CONNECTED));
+      return;
+    }
     const url = getUrl();
     try {
-      messageCount = START;
       connection = new WS(url);
       let initFinished = false;
       connection.on("message", async (message: string) => {
@@ -444,11 +461,12 @@ export function WebsocketAPI({
         sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
         return;
       }
+
       case "auth_ok": {
         // * Flag as valid connection
         logger.trace({ name: onMessage }, `event subscriptions starting`);
         await sendMessage({ type: "subscribe_events" }, false);
-        onSocketReady();
+        onSocketReady?.();
         event.emit(SOCKET_CONNECTED);
         return;
       }
@@ -578,10 +596,7 @@ export function WebsocketAPI({
     context,
     exec,
   }: SocketSubscribeOptions<EVENT>) {
-    hass.socket.sendMessage({
-      event_type,
-      type: "subscribe_events",
-    });
+    hass.socket.sendMessage({ event_type, type: "subscribe_events" }, false);
     hass.socket.onEvent({
       context,
       event: event_type,
@@ -637,6 +652,11 @@ export function WebsocketAPI({
     onEvent,
 
     /**
+     * for unit testing
+     */
+    onMessage,
+
+    /**
      * when true:
      * - outgoing socket messages are blocked
      * - entities don't emit updates
@@ -649,6 +669,11 @@ export function WebsocketAPI({
      * Applications probably want a higher level function than this
      */
     sendMessage,
+
+    /**
+     * internal
+     */
+    setConnectionState,
 
     /**
      * Subscribe to hass core registry updates.

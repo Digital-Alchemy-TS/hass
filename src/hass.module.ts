@@ -55,6 +55,14 @@ export const LIB_HASS = CreateLibrary({
       description: "Live track registry data",
       type: "boolean",
     },
+    MOCK_SOCKET: {
+      default: false,
+      description: [
+        "Operate with an artificial socket connection",
+        "For unit testing",
+      ],
+      type: "boolean",
+    },
     RETRY_INTERVAL: {
       default: 5,
       description: "How often to retry connecting on connection failure (ms).",

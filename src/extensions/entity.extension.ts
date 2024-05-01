@@ -396,7 +396,7 @@ export function EntityManager({
       return;
     }
     logger.debug({ name: "onPostConfig" }, `pre populate {MASTER_STATE}`);
-    await refresh();
+    await hass.entity.refresh();
   });
 
   // #MARK: AddLabel
@@ -472,7 +472,6 @@ export function EntityManager({
       },
     });
   });
-  // #endregion
 
   // #MARK: byLabel
   function byLabel<LABEL extends TLabelId, DOMAIN extends ALL_DOMAINS>(
@@ -545,6 +544,7 @@ export function EntityManager({
       .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
   }
 
+  // #MARK: byPlatform
   function byPlatform<PLATFORM extends TPlatformId, DOMAIN extends ALL_DOMAINS>(
     platform: PLATFORM,
     ...domains: DOMAIN[]
@@ -559,6 +559,7 @@ export function EntityManager({
     return raw.filter(i => domains.includes(domain(i) as DOMAIN));
   }
 
+  // #MARK: RemoveEntity
   async function RemoveEntity(entity_id: PICK_ENTITY | PICK_ENTITY[]) {
     await eachSeries([entity_id].flat(), async entity_id => {
       logger.debug({ name: entity_id }, `removing entity`);
@@ -569,6 +570,7 @@ export function EntityManager({
     });
   }
 
+  // #MARK: RegistryList
   async function RegistryList() {
     await hass.socket.sendMessage({
       type: "config/entity_registry/list",

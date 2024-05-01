@@ -21,7 +21,8 @@
     "node": ">=20"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./mock_assistant": "./dist/mock_assistant/index.js"
   },
   "license": "MIT",
   "dependencies": {
