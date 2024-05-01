@@ -23,17 +23,12 @@ describe("Websocket", () => {
     OptionalModuleConfiguration
   >;
 
-  beforeEach(async () => {
-    // jest.useFakeTimers();
-  });
-
   afterEach(async () => {
     if (application) {
       await application.teardown();
       application = undefined;
     }
     jest.restoreAllMocks();
-    // jest.useRealTimers();
   });
 
   describe("API Interactions", () => {

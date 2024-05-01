@@ -51,11 +51,11 @@ export function Label({
       });
     },
     current: [] as LabelDefinition[],
-    async delete(area_id: TLabelId) {
+    async delete(label_id: TLabelId) {
       return await new Promise<void>(async done => {
         event.once(LABEL_REGISTRY_UPDATED, done);
         await hass.socket.sendMessage({
-          area_id,
+          label_id,
           type: "config/label_registry/delete",
         });
       });
