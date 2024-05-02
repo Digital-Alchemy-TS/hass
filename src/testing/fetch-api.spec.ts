@@ -102,16 +102,16 @@ describe("FetchAPI", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({
+      await application.bootstrap({
+        configuration: {
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
             BASE_URL,
             TOKEN,
           },
-        }),
-      );
+        },
+      });
     });
 
     it("should format callService properly", async () => {
