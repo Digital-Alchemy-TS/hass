@@ -10,6 +10,8 @@
     "node_modules",
     "tmp",
     "dist",
+    "src/e2e/*",
+    "src/testing/*.spec.ts",
     "src/**/*.spec.ts"
   ]
 }

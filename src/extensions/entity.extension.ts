@@ -365,7 +365,7 @@ export function EntityManager({
 
   // #MARK: is.entity
   // Actually tie the type casting to real state
-  is.entity = (entityId: PICK_ENTITY): entityId is PICK_ENTITY =>
+  is.entity = (entityId: string): entityId is PICK_ENTITY =>
     !is.undefined(utils.object.get(MASTER_STATE, entityId));
 
   // #MARK: EntityUpdateReceiver
@@ -570,13 +570,6 @@ export function EntityManager({
     });
   }
 
-  // #MARK: RegistryList
-  async function RegistryList() {
-    await hass.socket.sendMessage({
-      type: "config/entity_registry/list",
-    });
-  }
-
   // #MARK: return object
   return {
     /**
@@ -659,7 +652,7 @@ export function EntityManager({
       current: [] as EntityRegistryItem<PICK_ENTITY>[],
       get: EntityGet,
       list: EntityList,
-      registryList: RegistryList,
+      registryList: EntityList,
       removeEntity: RemoveEntity,
       removeLabel: RemoveLabel,
       source: EntitySource,

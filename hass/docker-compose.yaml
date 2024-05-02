@@ -1,0 +1,9 @@
+---
+services:
+  homeassistant:
+    container_name: digital_alchemy_e2e_homeassistant
+    image: homeassistant/home-assistant:stable
+    network_mode: "host"
+    volumes:
+      - ./config:/config
+    restart: unless-stopped

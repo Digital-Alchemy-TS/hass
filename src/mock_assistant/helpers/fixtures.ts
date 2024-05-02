@@ -2,6 +2,7 @@ import {
   AreaDetails,
   DeviceDetails,
   ENTITY_STATE,
+  EntityRegistryItem,
   FloorDetails,
   HassServiceDTO as HassServiceDefinition,
   LabelDefinition,
@@ -15,4 +16,5 @@ export type ScannerCacheData = {
   floors: FloorDetails[];
   devices: DeviceDetails[];
   entities: ENTITY_STATE<PICK_ENTITY>[];
+  entity_registry: EntityRegistryItem<PICK_ENTITY>[];
 };

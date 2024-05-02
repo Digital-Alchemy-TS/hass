@@ -1,0 +1,350 @@
+import {
+  ApplicationDefinition,
+  OptionalModuleConfiguration,
+  ServiceMap,
+  sleep,
+  TServiceParams,
+} from "@digital-alchemy/core";
+
+import { PICK_ENTITY } from "../helpers";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import { BASE_URL, TOKEN } from "./utils";
+
+describe("Entity E2E", () => {
+  let application: ApplicationDefinition<
+    ServiceMap,
+    OptionalModuleConfiguration
+  >;
+
+  afterEach(async () => {
+    if (application) {
+      await application.teardown();
+      application = undefined;
+    }
+    jest.restoreAllMocks();
+  });
+
+  describe("Proxy Objects", () => {
+    it("should maintain accurate state", async () => {
+      expect.assertions(3);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const porch = hass.entity.byId("switch.porch_light");
+            const startRaw = hass.entity.raw("switch.porch_light");
+            expect(porch.state).toBe(startRaw.state);
+            hass.call.switch.toggle({ entity_id: "switch.porch_light" });
+            const updated = await porch.nextState();
+            const endRaw = hass.entity.raw("switch.porch_light");
+            expect(updated.state).toBe(porch.state);
+            expect(endRaw.state).toBe(porch.state);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it("should provide all the properties", async () => {
+      expect.assertions(3);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const porch = hass.entity.byId("switch.porch_light");
+            const raw = hass.entity.raw("switch.porch_light");
+            expect(porch.state).toBe(raw.state);
+            expect(porch.attributes).toEqual(raw.attributes);
+            expect(porch.last_changed).toBe(raw.last_changed);
+            expect(porch.last_updated).toBe(raw.last_updated);
+            expect(porch.last_reported).toBe(raw.last_reported);
+            expect(porch.entity_id).toBe(raw.entity_id);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it.only("should run callbacks onUpdate", async () => {
+      expect.assertions(1);
+      let counter = 0;
+      const expected = 3;
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const porch = hass.entity.byId("switch.porch_light");
+            porch.onUpdate(() => counter++);
+            for (let i = 0; i <= expected; i++) {
+              await hass.call.switch.toggle({
+                entity_id: "switch.porch_light",
+              });
+              await sleep(50);
+            }
+            expect(counter).toBe(expected);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it.only("should able to remove onUpdate via param", async () => {
+      expect.assertions(1);
+      let counter = 0;
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const porch = hass.entity.byId("switch.porch_light");
+            porch.onUpdate((_new_state, _old_state, remove) => {
+              remove();
+              counter++;
+            });
+            for (let i = 0; i <= 3; i++) {
+              await hass.call.switch.toggle({
+                entity_id: "switch.porch_light",
+              });
+              await sleep(50);
+            }
+            expect(counter).toBe(1);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it.only("should able to remove onUpdate via return", async () => {
+      expect.assertions(1);
+      let counter = 0;
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const porch = hass.entity.byId("switch.porch_light");
+            const { remove } = porch.onUpdate(() => {
+              remove();
+              counter++;
+            });
+            for (let i = 0; i <= 3; i++) {
+              await hass.call.switch.toggle({
+                entity_id: "switch.porch_light",
+              });
+              await sleep(50);
+            }
+            expect(counter).toBe(1);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it.only("should able to remove onUpdate via removeAll", async () => {
+      expect.assertions(1);
+      let counter = 0;
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const porch = hass.entity.byId("switch.porch_light");
+            porch.onUpdate(() => {
+              porch.removeAllListeners();
+              counter++;
+            });
+            for (let i = 0; i <= 3; i++) {
+              await hass.call.switch.toggle({
+                entity_id: "switch.porch_light",
+              });
+              await sleep(50);
+            }
+            expect(counter).toBe(1);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it.only("should run callbacks once", async () => {
+      expect.assertions(1);
+      let counter = 0;
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const porch = hass.entity.byId("switch.porch_light");
+            porch.once(() => counter++);
+            for (let i = 0; i <= 2; i++) {
+              await hass.call.switch.toggle({
+                entity_id: "switch.porch_light",
+              });
+              await sleep(50);
+            }
+            expect(counter).toBe(1);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it.only("should get next state", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const porch = hass.entity.byId("switch.porch_light");
+            setImmediate(async () => {
+              const next = await porch.nextState();
+              expect(next.state).toBe(porch.state);
+            });
+            await hass.call.switch.toggle({ entity_id: "switch.porch_light" });
+            await sleep(50);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it.only("should run callbacks onUpdate", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const porch = hass.entity.byId("switch.porch_light");
+            setImmediate(async () => {
+              const next = await porch.nextState();
+              expect(next.state).toBe(porch.state);
+            });
+            await hass.call.switch.toggle({ entity_id: "switch.porch_light" });
+            await sleep(50);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+  });
+
+  describe("Lifecycle", () => {
+    it("should have data available onReady", async () => {
+      expect.assertions(6);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            expect(hass.entity.listEntities().length).toEqual(18);
+            expect(hass.area.current.length).toEqual(3);
+            expect(hass.floor.current.length).toEqual(2);
+            expect(hass.device.current.length).toEqual(1);
+            expect(hass.label.current.length).toEqual(1);
+            expect(hass.entity.registry.current.length).toEqual(19);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+  });
+
+  describe("Querying", () => {
+    it("should return properly byArea", async () => {
+      expect.assertions(3);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            expect(hass.entity.byArea("bedroom")).toEqual([
+              "switch.bedroom_lamp",
+            ] as PICK_ENTITY[]);
+            expect(hass.entity.byArea("living_room")).toEqual([
+              "switch.living_room_mood_lights",
+            ] as PICK_ENTITY[]);
+            expect(hass.entity.byArea("kitchen")).toEqual([
+              "switch.kitchen_cabinets",
+            ] as PICK_ENTITY[]);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it("should return properly byFloor", async () => {
+      expect.assertions(3);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            expect(hass.entity.byFloor("upstairs")).toEqual([
+              "switch.bedroom_lamp",
+            ] as PICK_ENTITY[]);
+            expect(hass.entity.byFloor("downstairs")).toEqual([
+              "switch.kitchen_cabinets",
+              "switch.living_room_mood_lights",
+            ] as PICK_ENTITY[]);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it("should return properly byLabel", async () => {
+      expect.assertions(3);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            expect(hass.entity.byLabel("synapse")).toEqual([
+              "switch.bedroom_lamp",
+              "switch.porch_light",
+              "switch.kitchen_cabinets",
+              "switch.living_room_mood_lights",
+              "binary_sensor.hass_e2e_online",
+              "binary_sensor.toggles",
+            ] as PICK_ENTITY[]);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it("should return properly byPlatform", async () => {
+      expect.assertions(3);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            expect(hass.entity.byPlatform("synapse")).toEqual([
+              "switch.bedroom_lamp",
+              "switch.porch_light",
+              "switch.kitchen_cabinets",
+              "switch.living_room_mood_lights",
+              "binary_sensor.hass_e2e_online",
+              "binary_sensor.toggles",
+            ] as PICK_ENTITY[]);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+
+    it("should return properly byLabel", async () => {
+      expect.assertions(3);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            expect(
+              hass.entity.byDevice("308e39cf50a9fc6c30b4110724ed1f2e"),
+            ).toEqual([
+              "sensor.sun_next_dawn",
+              "sensor.sun_next_dusk",
+              "sensor.sun_next_midnight",
+              "sensor.sun_next_noon",
+              "sensor.sun_next_rising",
+              "sensor.sun_next_setting",
+            ] as PICK_ENTITY[]);
+            await application.teardown();
+          });
+        },
+      });
+      await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
+    });
+  });
+});
