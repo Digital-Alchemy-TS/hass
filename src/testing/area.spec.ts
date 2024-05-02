@@ -5,11 +5,9 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
+import { TAreaId } from "../dynamic";
 import { AREA_REGISTRY_UPDATED, AreaDetails } from "../helpers";
-import {
-  CreateTestingApplication,
-  SILENT_BOOT,
-} from "../mock_assistant/helpers/utils";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("Area", () => {
   let application: ApplicationDefinition<
@@ -17,7 +15,7 @@ describe("Area", () => {
     OptionalModuleConfiguration
   >;
   const EXAMPLE_AREA = {
-    area_id: "empty_area",
+    area_id: "empty_area" as TAreaId,
     floor_id: null,
     icon: null,
     labels: [],
@@ -211,7 +209,7 @@ describe("Area", () => {
               .spyOn(hass.socket, "sendMessage")
               .mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
-              const response = hass.area.delete("example_area");
+              const response = hass.area.delete("example_area" as TAreaId);
               let order = "";
               setTimeout(() => {
                 order += "a";

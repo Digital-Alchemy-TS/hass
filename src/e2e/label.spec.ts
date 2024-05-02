@@ -6,17 +6,17 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { TAreaId } from "../dynamic";
-import { AREA_REGISTRY_UPDATED } from "../helpers";
+import { TLabelId } from "../dynamic";
+import { LABEL_REGISTRY_UPDATED } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 import { BASE_URL, TOKEN } from "./utils";
 
-describe("Area E2E", () => {
+describe("Label E2E", () => {
   let application: ApplicationDefinition<
     ServiceMap,
     OptionalModuleConfiguration
   >;
-  const testArea = "test" as TAreaId;
+  const testLabel = "test" as TLabelId;
 
   afterEach(async () => {
     if (application) {
@@ -32,8 +32,8 @@ describe("Area E2E", () => {
       Test({ lifecycle, hass, event }: TServiceParams) {
         lifecycle.onReady(async () => {
           let hit = false;
-          event.on(AREA_REGISTRY_UPDATED, () => (hit = true));
-          await hass.socket.fireEvent("area_registry_updated");
+          event.on(LABEL_REGISTRY_UPDATED, () => (hit = true));
+          await hass.socket.fireEvent("label_registry_updated");
           await sleep(50);
           expect(hit).toBe(true);
           await application.teardown();
@@ -43,38 +43,38 @@ describe("Area E2E", () => {
     await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
   });
 
-  it("should create a area", async () => {
+  it("should create a label", async () => {
     expect.assertions(1);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          await hass.area.create({
-            floor_id: "downstairs",
-            name: "test",
+          await hass.label.create({
+            color: "accent",
+            icon: "mdi:account",
+            name: testLabel,
           });
-          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(
+          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(
             true,
           );
           await application.teardown();
         });
       },
     });
-
     await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
   });
 
-  it("should update a area", async () => {
+  it("should update a label", async () => {
     expect.assertions(1);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          const item = hass.area.current.find(i => i.area_id === testArea);
-          await hass.area.update({
+          const item = hass.label.current.find(i => i.label_id === testLabel);
+          await hass.label.update({
             ...item,
             name: "extra test",
           });
           expect(
-            hass.area.current.find(i => i.area_id === testArea)?.name,
+            hass.label.current.find(i => i.label_id === testLabel)?.name,
           ).toBe("extra test");
           await application.teardown();
         });
@@ -83,16 +83,16 @@ describe("Area E2E", () => {
     await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
   });
 
-  it("should delete a area", async () => {
+  it("should delete a label", async () => {
     expect.assertions(2);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(
+          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(
             true,
           );
-          await hass.area.delete(testArea);
-          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(
+          await hass.label.delete(testLabel);
+          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(
             false,
           );
           await application.teardown();

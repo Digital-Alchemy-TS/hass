@@ -66,6 +66,10 @@ export function Area({
     return await new Promise<void>(async done => {
       event.once(AREA_REGISTRY_UPDATED, done);
       await hass.socket.sendMessage({
+        floor_id: "",
+        icon: "",
+        labels: [],
+        picture: "",
         type: "config/area_registry/create",
         ...details,
       });
