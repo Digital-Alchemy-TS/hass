@@ -26,10 +26,6 @@ export function Area({
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
     }
-    initFlow();
-  });
-
-  function initFlow() {
     let loading = new Promise<void>(async done => {
       hass.area.current = await hass.area.list();
       loading = undefined;
@@ -45,7 +41,7 @@ export function Area({
         event.emit(AREA_REGISTRY_UPDATED);
       },
     });
-  }
+  });
 
   async function list() {
     return await hass.socket.sendMessage<AreaDetails[]>({
@@ -121,7 +117,6 @@ export function Area({
     create,
     current: [] as AreaDetails[],
     delete: deleteArea,
-    initFlow,
     list,
     update,
   };

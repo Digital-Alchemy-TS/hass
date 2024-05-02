@@ -6,11 +6,7 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import {
-  CreateTestingApplication,
-  LIB_MOCK_ASSISTANT,
-  SILENT_BOOT,
-} from "../mock_assistant";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 declare module "@digital-alchemy/core" {
   export interface LoadedModules {

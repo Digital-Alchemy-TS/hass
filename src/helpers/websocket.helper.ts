@@ -12,10 +12,10 @@ export interface SignRequestResponse {
 export interface SocketMessageDTO {
   error?: Record<string, unknown>;
   event?: EntityUpdateEvent;
-  id: string;
+  id: string | number;
   message?: string;
   result?: Record<string, unknown>;
-  type: HassSocketMessageTypes;
+  type: `${HassSocketMessageTypes}`;
 }
 
 export type SocketSubscribeOptions<EVENT extends string> = {

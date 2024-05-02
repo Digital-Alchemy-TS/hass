@@ -2,7 +2,7 @@ import { CreateLibrary } from "@digital-alchemy/core";
 import { join } from "path";
 import { cwd } from "process";
 
-import { Fixtures } from "./extensions";
+import { Events, Fixtures } from "./extensions";
 
 export const LIB_MOCK_ASSISTANT = CreateLibrary({
   configuration: {
@@ -14,6 +14,7 @@ export const LIB_MOCK_ASSISTANT = CreateLibrary({
   },
   name: "mock_assistant",
   services: {
+    events: Events,
     fixtures: Fixtures,
   },
 });

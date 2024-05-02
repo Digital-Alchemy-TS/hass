@@ -40,40 +40,48 @@ export function Label({
   is.label = (label: TLabelId): label is TLabelId =>
     hass.label.current.some(i => i.label_id === label);
 
+  async function create(details: LabelOptions) {
+    return await new Promise<void>(async done => {
+      event.once(LABEL_REGISTRY_UPDATED, done);
+      await hass.socket.sendMessage({
+        type: "config/label_registry/create",
+        ...details,
+      });
+    });
+  }
+
+  async function deleteLabel(label_id: TLabelId) {
+    return await new Promise<void>(async done => {
+      event.once(LABEL_REGISTRY_UPDATED, done);
+      await hass.socket.sendMessage({
+        label_id,
+        type: "config/label_registry/delete",
+      });
+    });
+  }
+
+  async function list() {
+    return await hass.socket.sendMessage<LabelDefinition[]>({
+      type: "config/label_registry/list",
+    });
+  }
+
+  async function update(details: LabelDefinition) {
+    return await new Promise<void>(async done => {
+      event.once(LABEL_REGISTRY_UPDATED, done);
+      await hass.socket.sendMessage({
+        type: "config/label_registry/update",
+        ...details,
+      });
+    });
+  }
+
   return {
-    async create(details: LabelOptions) {
-      return await new Promise<void>(async done => {
-        event.once(LABEL_REGISTRY_UPDATED, done);
-        await hass.socket.sendMessage({
-          type: "config/label_registry/create",
-          ...details,
-        });
-      });
-    },
+    create,
     current: [] as LabelDefinition[],
-    async delete(label_id: TLabelId) {
-      return await new Promise<void>(async done => {
-        event.once(LABEL_REGISTRY_UPDATED, done);
-        await hass.socket.sendMessage({
-          label_id,
-          type: "config/label_registry/delete",
-        });
-      });
-    },
-    async list() {
-      return await hass.socket.sendMessage<LabelDefinition[]>({
-        type: "config/label_registry/list",
-      });
-    },
-    async update(details: LabelDefinition) {
-      return await new Promise<void>(async done => {
-        event.once(LABEL_REGISTRY_UPDATED, done);
-        await hass.socket.sendMessage({
-          type: "config/label_registry/update",
-          ...details,
-        });
-      });
-    },
+    delete: deleteLabel,
+    list,
+    update,
   };
 }
 

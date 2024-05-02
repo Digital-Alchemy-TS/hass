@@ -13,7 +13,6 @@ import { exit } from "process";
 import WS from "ws";
 
 import {
-  ENTITY_UPDATE_RECEIVER,
   EntityUpdateEvent,
   OnHassEventOptions,
   SOCKET_CONNECTION_STATE,
@@ -476,6 +475,7 @@ export function WebsocketAPI({
         event.emit(SOCKET_CONNECTED);
         return;
       }
+
       case "event": {
         return await onMessageEvent(id, message);
       }

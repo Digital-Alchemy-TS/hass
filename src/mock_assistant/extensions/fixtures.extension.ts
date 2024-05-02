@@ -8,15 +8,21 @@ import { existsSync, readFileSync } from "fs";
 import { ScannerCacheData } from "../helpers";
 
 const MEGA_HIGH_PRIORITY = 1000;
-export function Fixtures({ hass, lifecycle, config, context }: TServiceParams) {
-  let fixturesData: ScannerCacheData;
-
-  hass.area.list = async () => fixturesData?.areas ?? [];
-  hass.floor.list = async () => fixturesData?.floors ?? [];
-  hass.label.list = async () => fixturesData?.labels ?? [];
-  hass.device.list = async () => fixturesData?.devices ?? [];
-  hass.fetch.getAllEntities = async () => fixturesData?.entities ?? [];
-  hass.fetch.listServices = async () => fixturesData?.services ?? [];
+export function Fixtures({
+  hass,
+  lifecycle,
+  config,
+  context,
+  mock_assistant,
+}: TServiceParams) {
+  hass.area.list = async () => mock_assistant.fixtures.data?.areas ?? [];
+  hass.floor.list = async () => mock_assistant.fixtures.data?.floors ?? [];
+  hass.label.list = async () => mock_assistant.fixtures.data?.labels ?? [];
+  hass.device.list = async () => mock_assistant.fixtures.data?.devices ?? [];
+  hass.fetch.getAllEntities = async () =>
+    mock_assistant.fixtures.data?.entities ?? [];
+  hass.fetch.listServices = async () =>
+    mock_assistant.fixtures.data?.services ?? [];
 
   lifecycle.onPreInit(() => {
     const { MOCK_SOCKET } = config.hass;
@@ -38,6 +44,12 @@ export function Fixtures({ hass, lifecycle, config, context }: TServiceParams) {
       );
     }
 
-    fixturesData = JSON.parse(readFileSync(FIXTURES_FILE, "utf8"));
+    mock_assistant.fixtures.data = JSON.parse(
+      readFileSync(FIXTURES_FILE, "utf8"),
+    );
   }, MEGA_HIGH_PRIORITY);
+
+  return {
+    data: undefined as ScannerCacheData,
+  };
 }
