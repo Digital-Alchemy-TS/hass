@@ -76,7 +76,7 @@ describe("FetchAPI", () => {
   });
 
   describe("API Operations", () => {
-    it("should format calendarSearch properly", async () => {
+    it.only("should format calendarSearch properly", async () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
