@@ -1,5 +1,6 @@
 import {
   ApplicationDefinition,
+  ARRAY_OFFSET,
   OptionalModuleConfiguration,
   ServiceMap,
   sleep,
@@ -46,7 +47,7 @@ describe("Entity E2E", () => {
     });
 
     it("should provide all the properties", async () => {
-      expect.assertions(3);
+      expect.assertions(6);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
@@ -65,7 +66,7 @@ describe("Entity E2E", () => {
       await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
     });
 
-    it.only("should run callbacks onUpdate", async () => {
+    it("should run callbacks onUpdate", async () => {
       expect.assertions(1);
       let counter = 0;
       const expected = 3;
@@ -74,7 +75,7 @@ describe("Entity E2E", () => {
           lifecycle.onReady(async () => {
             const porch = hass.entity.byId("switch.porch_light");
             porch.onUpdate(() => counter++);
-            for (let i = 0; i <= expected; i++) {
+            for (let i = 0; i < expected; i++) {
               await hass.call.switch.toggle({
                 entity_id: "switch.porch_light",
               });
@@ -88,7 +89,7 @@ describe("Entity E2E", () => {
       await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
     });
 
-    it.only("should able to remove onUpdate via param", async () => {
+    it("should able to remove onUpdate via param", async () => {
       expect.assertions(1);
       let counter = 0;
       application = CreateTestingApplication({
@@ -113,7 +114,7 @@ describe("Entity E2E", () => {
       await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
     });
 
-    it.only("should able to remove onUpdate via return", async () => {
+    it("should able to remove onUpdate via return", async () => {
       expect.assertions(1);
       let counter = 0;
       application = CreateTestingApplication({
@@ -138,7 +139,7 @@ describe("Entity E2E", () => {
       await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
     });
 
-    it.only("should able to remove onUpdate via removeAll", async () => {
+    it("should able to remove onUpdate via removeAll", async () => {
       expect.assertions(1);
       let counter = 0;
       application = CreateTestingApplication({
@@ -163,7 +164,7 @@ describe("Entity E2E", () => {
       await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
     });
 
-    it.only("should run callbacks once", async () => {
+    it("should run callbacks once", async () => {
       expect.assertions(1);
       let counter = 0;
       application = CreateTestingApplication({
@@ -185,7 +186,7 @@ describe("Entity E2E", () => {
       await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
     });
 
-    it.only("should get next state", async () => {
+    it("should get next state", async () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
@@ -204,7 +205,7 @@ describe("Entity E2E", () => {
       await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
     });
 
-    it.only("should run callbacks onUpdate", async () => {
+    it("should run callbacks onUpdate", async () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
@@ -267,7 +268,7 @@ describe("Entity E2E", () => {
     });
 
     it("should return properly byFloor", async () => {
-      expect.assertions(3);
+      expect.assertions(2);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
@@ -286,17 +287,18 @@ describe("Entity E2E", () => {
     });
 
     it("should return properly byLabel", async () => {
-      expect.assertions(3);
+      expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
             expect(hass.entity.byLabel("synapse")).toEqual([
+              "binary_sensor.hass_e2e_online",
+              "sensor.magic",
+              "binary_sensor.toggles",
               "switch.bedroom_lamp",
-              "switch.porch_light",
               "switch.kitchen_cabinets",
               "switch.living_room_mood_lights",
-              "binary_sensor.hass_e2e_online",
-              "binary_sensor.toggles",
+              "switch.porch_light",
             ] as PICK_ENTITY[]);
             await application.teardown();
           });
@@ -306,17 +308,18 @@ describe("Entity E2E", () => {
     });
 
     it("should return properly byPlatform", async () => {
-      expect.assertions(3);
+      expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
             expect(hass.entity.byPlatform("synapse")).toEqual([
+              "binary_sensor.hass_e2e_online",
+              "sensor.magic",
+              "binary_sensor.toggles",
               "switch.bedroom_lamp",
-              "switch.porch_light",
               "switch.kitchen_cabinets",
               "switch.living_room_mood_lights",
-              "binary_sensor.hass_e2e_online",
-              "binary_sensor.toggles",
+              "switch.porch_light",
             ] as PICK_ENTITY[]);
             await application.teardown();
           });
@@ -325,8 +328,8 @@ describe("Entity E2E", () => {
       await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
     });
 
-    it("should return properly byLabel", async () => {
-      expect.assertions(3);
+    it("should return properly byDevice", async () => {
+      expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
@@ -339,6 +342,9 @@ describe("Entity E2E", () => {
               "sensor.sun_next_noon",
               "sensor.sun_next_rising",
               "sensor.sun_next_setting",
+              "sensor.sun_solar_elevation",
+              "sensor.sun_solar_azimuth",
+              "sensor.sun_solar_rising",
             ] as PICK_ENTITY[]);
             await application.teardown();
           });

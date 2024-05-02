@@ -5,6 +5,7 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
+import { TFloorId } from "../dynamic";
 import { FLOOR_REGISTRY_UPDATED, FloorDetails } from "../helpers";
 import {
   CreateTestingApplication,
@@ -210,7 +211,7 @@ describe("Floor", () => {
               .spyOn(hass.socket, "sendMessage")
               .mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
-              const response = hass.floor.delete("example_floor");
+              const response = hass.floor.delete("example_floor" as TFloorId);
               let order = "";
               setTimeout(() => {
                 order += "a";

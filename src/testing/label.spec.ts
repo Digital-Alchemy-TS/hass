@@ -5,6 +5,7 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
+import { TLabelId } from "../dynamic";
 import { LABEL_REGISTRY_UPDATED, LabelDefinition } from "../helpers";
 import {
   CreateTestingApplication,
@@ -210,7 +211,7 @@ describe("Label", () => {
               .spyOn(hass.socket, "sendMessage")
               .mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
-              const response = hass.label.delete("example_label");
+              const response = hass.label.delete("example_label" as TLabelId);
               let order = "";
               setTimeout(() => {
                 order += "a";

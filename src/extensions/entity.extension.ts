@@ -187,13 +187,14 @@ export function EntityManager({
               return PREVIOUS_STATE.get(entity_id);
             }
             if (property === "nextState") {
-              return new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
-                ENTITY_EVENTS.once(
-                  entity_id,
-                  (entity: ENTITY_STATE<ENTITY_ID>) =>
-                    done(entity satisfies ENTITY_STATE<ENTITY_ID>),
-                );
-              });
+              return async () =>
+                await new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
+                  ENTITY_EVENTS.once(
+                    entity_id,
+                    (entity: ENTITY_STATE<ENTITY_ID>) =>
+                      done(entity satisfies ENTITY_STATE<ENTITY_ID>),
+                  );
+                });
             }
             return proxyGetLogic(entity_id, property);
           },

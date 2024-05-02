@@ -6,6 +6,7 @@ import {
 } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
+import { PICK_ENTITY } from "../helpers";
 import {
   CreateTestingApplication,
   SILENT_BOOT,
@@ -88,7 +89,7 @@ describe("FetchAPI", () => {
             });
           lifecycle.onReady(async () => {
             await hass.fetch.calendarSearch({
-              calendar: "calendar.example_calendar",
+              calendar: "calendar.example_calendar" as PICK_ENTITY,
               end,
               start,
             });
@@ -125,14 +126,14 @@ describe("FetchAPI", () => {
               } as unknown as Response;
             });
           lifecycle.onReady(async () => {
-            await hass.fetch.callService("light.toggle", {
-              entity_id: "light.example_light",
+            await hass.fetch.callService("switch.toggle", {
+              entity_id: "switch.porch_light",
             });
             expect(spy).toHaveBeenCalledWith(
-              `${BASE_URL}/api/services/light/toggle`,
+              `${BASE_URL}/api/services/switch/toggle`,
               expect.objectContaining({
                 body: JSON.stringify({
-                  entity_id: "light.example_light",
+                  entity_id: "switch.porch_light",
                 }),
                 method: "post",
               }),
@@ -198,11 +199,9 @@ describe("FetchAPI", () => {
               } as unknown as Response;
             });
           lifecycle.onReady(async () => {
-            await hass.fetch.fetchEntityCustomizations(
-              "calendar.example_calendar",
-            );
+            await hass.fetch.fetchEntityCustomizations("switch.porch_light");
             expect(spy).toHaveBeenCalledWith(
-              `${BASE_URL}/api/config/customize/config/calendar.example_calendar`,
+              `${BASE_URL}/api/config/customize/config/switch.porch_light`,
               expect.objectContaining({
                 method: "get",
               }),
@@ -235,12 +234,12 @@ describe("FetchAPI", () => {
             });
           lifecycle.onReady(async () => {
             await hass.fetch.fetchEntityHistory(
-              "calendar.example_calendar",
+              "switch.porch_light",
               start,
               end,
             );
             expect(spy).toHaveBeenCalledWith(
-              `${BASE_URL}/api/history/period/2024-01-01T06:00:00.000Z?end_time=2024-01-02T06%3A00%3A00.000Z&filter_entity_id=calendar.example_calendar`,
+              `${BASE_URL}/api/history/period/2024-01-01T06:00:00.000Z?end_time=2024-01-02T06%3A00%3A00.000Z&filter_entity_id=switch.porch_light`,
               expect.objectContaining({
                 method: "get",
               }),
@@ -478,12 +477,12 @@ describe("FetchAPI", () => {
               } as unknown as Response;
             });
           lifecycle.onReady(async () => {
-            await hass.fetch.updateEntity("light.example_light", {
+            await hass.fetch.updateEntity("switch.porch_light", {
               attributes: { something: "special" },
               state: "off",
             });
             expect(spy).toHaveBeenCalledWith(
-              `${BASE_URL}/api/states/light.example_light`,
+              `${BASE_URL}/api/states/switch.porch_light`,
               expect.objectContaining({
                 body: JSON.stringify({
                   // ! DO NOT CHANGE ORDER OF KEYS

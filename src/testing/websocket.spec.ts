@@ -47,10 +47,9 @@ describe("Websocket", () => {
           });
         },
       });
-      await application.bootstrap({
-        appendLibrary: LIB_MOCK_ASSISTANT,
-        configuration: { hass: { MOCK_SOCKET: true } },
-      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
     });
 
     it("should emit a socket message with subscribeEvents", async () => {
