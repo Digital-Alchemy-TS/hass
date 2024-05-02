@@ -21,30 +21,9 @@ export function Events({ mock_assistant, hass }: TServiceParams) {
     entity: ENTITY,
     new_state: Partial<ENTITY_STATE<ENTITY>>,
   ) {
-    const old_state = byId(entity);
-    new_state = replace(entity, new_state);
+    const old_state = mock_assistant.fixtures.byId(entity);
+    new_state = mock_assistant.fixtures.replace(entity, new_state);
     await emitEvent("state_changed", { new_state, old_state });
-  }
-
-  function replace<ENTITY extends PICK_ENTITY>(
-    entity: ENTITY,
-    new_state: Partial<ENTITY_STATE<ENTITY>>,
-  ): ENTITY_STATE<ENTITY> {
-    const old_state = byId(entity);
-    mock_assistant.fixtures.data.entities =
-      mock_assistant.fixtures.data.entities.filter(i => i.entity_id !== entity);
-    const updated = {
-      ...old_state,
-      ...new_state,
-    } as ENTITY_STATE<ENTITY>;
-    mock_assistant.fixtures.data.entities.push(updated);
-    return updated;
-  }
-
-  function byId(entity: PICK_ENTITY) {
-    return mock_assistant.fixtures.data.entities.find(
-      i => i.entity_id === entity,
-    );
   }
 
   return {

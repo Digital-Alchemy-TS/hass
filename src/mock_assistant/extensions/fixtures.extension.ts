@@ -5,9 +5,15 @@ import {
 } from "@digital-alchemy/core";
 import { existsSync, readFileSync } from "fs";
 
+import { ENTITY_STATE, PICK_ENTITY } from "../../helpers";
 import { ScannerCacheData } from "../helpers";
 
 const MEGA_HIGH_PRIORITY = 1000;
+
+type StateOptions = Partial<{
+  [entity in PICK_ENTITY]: Partial<ENTITY_STATE<entity>>;
+}>;
+
 export function Fixtures({
   hass,
   lifecycle,
@@ -49,7 +55,36 @@ export function Fixtures({
     );
   }, MEGA_HIGH_PRIORITY);
 
+  function setState(options: StateOptions) {
+    lifecycle.onPreInit(() => {
+      const entities = Object.keys(options) as PICK_ENTITY[];
+      entities.forEach(i => replace(i, options[i]));
+    });
+  }
+
+  function byId(entity: PICK_ENTITY) {
+    return mock_assistant.fixtures.data.entities.find(
+      i => i.entity_id === entity,
+    );
+  }
+
+  function replace<ENTITY extends PICK_ENTITY>(
+    entity: ENTITY,
+    new_state: Partial<ENTITY_STATE<ENTITY>>,
+  ): ENTITY_STATE<ENTITY> {
+    const old_state = byId(entity);
+    const { data } = mock_assistant.fixtures;
+    data.entities = data.entities.filter(i => i.entity_id !== entity);
+
+    const updated = { ...old_state, ...new_state } as ENTITY_STATE<ENTITY>;
+    mock_assistant.fixtures.data.entities.push(updated);
+    return updated;
+  }
+
   return {
+    byId,
     data: undefined as ScannerCacheData,
+    replace,
+    setState,
   };
 }
