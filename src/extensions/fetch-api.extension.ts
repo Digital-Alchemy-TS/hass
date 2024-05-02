@@ -76,7 +76,7 @@ export function FetchAPI({
     const params = { end: end.toISOString(), start: start.toISOString() };
     const events = await hass.fetch.fetch<RawCalendarEvent[]>({
       params,
-      url: `/api/calendars/${calendar}`,
+      url: `/api/calendars/${encodeURIComponent(calendar)}`,
     });
     logger.trace(
       { name: calendarSearch, params },
@@ -135,7 +135,7 @@ export function FetchAPI({
   >(entityId: PICK_ENTITY): Promise<T> {
     logger.trace({ name: fetchEntityCustomizations }, `send`);
     return await hass.fetch.fetch<T>({
-      url: `/api/config/customize/config/${entityId}`,
+      url: `/api/config/customize/config/${encodeURIComponent(entityId)}`,
     });
   }
 
@@ -163,7 +163,7 @@ export function FetchAPI({
         filter_entity_id: entity_id,
         ...extra,
       },
-      url: `/api/history/period/${from.toISOString()}`,
+      url: `/api/history/period/${encodeURIComponent(from.toISOString())}`,
     });
     if (!Array.isArray(result)) {
       logger.error(
@@ -184,7 +184,7 @@ export function FetchAPI({
     const response = await hass.fetch.fetch<{ message: string }, DATA>({
       body: data,
       method: "post",
-      url: `/api/events/${event}`,
+      url: `/api/events/${encodeURIComponent(event)}`,
     });
     if (response?.message !== `Event ${event} fired.`) {
       logger.debug(
@@ -254,7 +254,7 @@ export function FetchAPI({
     await hass.fetch.fetch({
       body,
       method: "post",
-      url: `/api/states/${entity_id}`,
+      url: `/api/states/${encodeURIComponent(entity_id)}`,
     });
   }
 
@@ -267,7 +267,7 @@ export function FetchAPI({
       body: data,
       method: "post",
       process: "text",
-      url: `/api/webhook/${webhook_name}`,
+      url: `/api/webhook/${encodeURIComponent(webhook_name)}`,
     });
   }
 

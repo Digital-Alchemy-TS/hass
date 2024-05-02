@@ -239,7 +239,7 @@ describe("FetchAPI", () => {
               end,
             );
             expect(spy).toHaveBeenCalledWith(
-              `${BASE_URL}/api/history/period/2024-01-01T06:00:00.000Z?end_time=2024-01-02T06%3A00%3A00.000Z&filter_entity_id=switch.porch_light`,
+              `${BASE_URL}/api/history/period/${encodeURIComponent(start.toISOString())}?end_time=${encodeURIComponent(end.toISOString())}&filter_entity_id=switch.porch_light`,
               expect.objectContaining({
                 method: "get",
               }),
