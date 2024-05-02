@@ -25,7 +25,7 @@ export type PICK_ENTITY<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> = {
 }[DOMAIN];
 
 /**
- * Pick any valid entity, optionally limiting by domain
+ * Pick any valid service call, optionally limiting by domain
  */
 export type PICK_SERVICE<
   DOMAIN extends ALL_SERVICE_DOMAINS = ALL_SERVICE_DOMAINS,
@@ -33,7 +33,10 @@ export type PICK_SERVICE<
   [key in DOMAIN]: `${key}.${keyof iCallService[key] & string}`;
 }[DOMAIN];
 
-export type PICK_SERVICE_PARAMETERS<SERVICE extends PICK_SERVICE> =
+export type PICK_SERVICE_PARAMETERS<
+  DOMAINS extends ALL_SERVICE_DOMAINS,
+  SERVICE extends PICK_SERVICE<DOMAINS>,
+> =
   Get<iCallService, SERVICE> extends (
     serviceParams: infer ServiceParams,
   ) => TBlackHole
@@ -59,6 +62,11 @@ export function domain(
   }
   return entity_split(entity).shift() as ALL_DOMAINS;
 }
+
+export type ENTITY_PROP<
+  ENTITY_ID extends PICK_ENTITY,
+  PROP extends "state" | "attributes",
+> = Get<typeof ENTITY_SETUP, `${ENTITY_ID}.${PROP}`>;
 
 /**
  * Type definitions to match a specific entity.
@@ -109,6 +117,7 @@ declare module "@digital-alchemy/core" {
     ) => entity is PICK_ENTITY<DOMAIN>;
   }
 }
+
 export const PostConfigPriorities = {
   FETCH: 1,
   VALIDATE: -1,

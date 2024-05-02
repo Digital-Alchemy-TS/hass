@@ -8,9 +8,10 @@ import {
   TServiceParams,
   UP,
 } from "@digital-alchemy/core";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 import {
+  ALL_SERVICE_DOMAINS,
   CalendarEvent,
   CalendarFetchOptions,
   CheckConfigResult,
@@ -37,11 +38,12 @@ export function FetchAPI({
   logger,
   lifecycle,
   context,
+  hass,
   internal,
   config,
 }: TServiceParams) {
   const fetcher = internal.boilerplate.fetch({ context });
-  const { fetch, download: downloader } = fetcher;
+  const { download: downloader } = fetcher;
 
   // Load configurations
   lifecycle.onPostConfig(() => {
@@ -72,9 +74,9 @@ export function FetchAPI({
     }
 
     const params = { end: end.toISOString(), start: start.toISOString() };
-    const events = await fetch<RawCalendarEvent[]>({
+    const events = await hass.fetch.fetch<RawCalendarEvent[]>({
       params,
-      url: `/api/calendars/${calendar}`,
+      url: `/api/calendars/${encodeURIComponent(calendar)}`,
     });
     logger.trace(
       { name: calendarSearch, params },
@@ -89,12 +91,15 @@ export function FetchAPI({
     }));
   }
 
-  async function callService<SERVICE extends PICK_SERVICE>(
+  async function callService<
+    DOMAIN extends ALL_SERVICE_DOMAINS,
+    SERVICE extends PICK_SERVICE<DOMAIN>,
+  >(
     serviceName: SERVICE,
-    data: PICK_SERVICE_PARAMETERS<SERVICE>,
+    data: PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>,
   ): Promise<ENTITY_STATE<PICK_ENTITY>[]> {
     const [domain, service] = serviceName.split(".");
-    return await fetch({
+    return await hass.fetch.fetch({
       body: data as TFetchBody,
       method: "post",
       url: `/api/services/${domain}/${service}`,
@@ -103,7 +108,7 @@ export function FetchAPI({
 
   async function checkConfig(): Promise<CheckConfigResult> {
     logger.trace({ name: checkConfig }, `send`);
-    return await fetch({
+    return await hass.fetch.fetch({
       method: `post`,
       url: `/api/config/core/check_config`,
     });
@@ -127,10 +132,10 @@ export function FetchAPI({
       "global" | "local",
       Record<string, string>
     >,
-  >(entityId: string | string[]): Promise<T> {
+  >(entityId: PICK_ENTITY): Promise<T> {
     logger.trace({ name: fetchEntityCustomizations }, `send`);
-    return await fetch<T>({
-      url: `/api/config/customize/config/${entityId}`,
+    return await hass.fetch.fetch<T>({
+      url: `/api/config/customize/config/${encodeURIComponent(entityId)}`,
     });
   }
 
@@ -139,26 +144,26 @@ export function FetchAPI({
     T extends ENTITY_STATE<ENTITY> = ENTITY_STATE<ENTITY>,
   >(
     entity_id: ENTITY,
-    from: Date,
-    to: Date,
+    from: Date | Dayjs,
+    to: Date | Dayjs,
     extra: { minimal_response?: "" } = {},
   ): Promise<T[]> {
     logger.info(
       {
         entity_id,
-        from: from.toISOString(),
+        from: dayjs(from).toISOString(),
         name: fetchEntityHistory,
-        to: to.toISOString(),
+        to: dayjs(to).toISOString(),
       },
       `fetch entity history`,
     );
-    const result = await fetch<[T[]]>({
+    const result = await hass.fetch.fetch<[T[]]>({
       params: {
         end_time: to.toISOString(),
         filter_entity_id: entity_id,
         ...extra,
       },
-      url: `/api/history/period/${from.toISOString()}`,
+      url: `/api/history/period/${encodeURIComponent(from.toISOString())}`,
     });
     if (!Array.isArray(result)) {
       logger.error(
@@ -176,10 +181,10 @@ export function FetchAPI({
     data?: DATA,
   ): Promise<void> {
     logger.trace({ data, event, name: fireEvent }, `firing event`);
-    const response = await fetch<{ message: string }, DATA>({
+    const response = await hass.fetch.fetch<{ message: string }, DATA>({
       body: data,
       method: "post",
-      url: `/api/events/${event}`,
+      url: `/api/events/${encodeURIComponent(event)}`,
     });
     if (response?.message !== `Event ${event} fired.`) {
       logger.debug(
@@ -191,17 +196,19 @@ export function FetchAPI({
 
   async function getAllEntities(): Promise<ENTITY_STATE<PICK_ENTITY>[]> {
     logger.trace({ name: getAllEntities }, `send`);
-    return await fetch<ENTITY_STATE<PICK_ENTITY>[]>({ url: `/api/states` });
+    return await hass.fetch.fetch<ENTITY_STATE<PICK_ENTITY>[]>({
+      url: `/api/states`,
+    });
   }
 
-  async function getHassConfig(): Promise<HassConfig> {
-    logger.trace({ name: getHassConfig }, `send`);
-    return await fetch({ url: `/api/config` });
+  async function getConfig(): Promise<HassConfig> {
+    logger.trace({ name: getConfig }, `send`);
+    return await hass.fetch.fetch({ url: `/api/config` });
   }
 
   async function getLogs(): Promise<HomeAssistantServerLogItem[]> {
     logger.trace({ name: getLogs }, `send`);
-    const results = await fetch<HomeAssistantServerLogItem[]>({
+    const results = await hass.fetch.fetch<HomeAssistantServerLogItem[]>({
       url: `/api/error/all`,
     });
     return results.map(i => {
@@ -213,12 +220,15 @@ export function FetchAPI({
 
   async function getRawLogs(): Promise<string> {
     logger.trace({ name: getRawLogs }, `send`);
-    return await fetch<string>({ process: "text", url: `/api/error_log` });
+    return await hass.fetch.fetch<string>({
+      process: "text",
+      url: `/api/error_log`,
+    });
   }
 
   async function listServices(): Promise<HassServiceDTO[]> {
     logger.trace({ name: listServices }, `send`);
-    return await fetch<HassServiceDTO[]>({ url: `/api/services` });
+    return await hass.fetch.fetch<HassServiceDTO[]>({ url: `/api/services` });
   }
 
   async function updateEntity<
@@ -229,17 +239,23 @@ export function FetchAPI({
     { attributes, state }: SendBody<STATE, ATTRIBUTES>,
   ): Promise<void> {
     const body: SendBody<STATE> = {};
-    if (state !== undefined) {
-      body.state = state;
-    }
+    // ! ORDER MATTERS FOR APPLYING
+    // Must be applied in alphabetical order for unit test reasons
     if (!is.empty(attributes)) {
       body.attributes = attributes;
+    }
+    if (state !== undefined) {
+      body.state = state;
     }
     logger.trace(
       { ...body, entity_id, name: updateEntity },
       `set entity state`,
     );
-    await fetch({ body, method: "post", url: `/api/states/${entity_id}` });
+    await hass.fetch.fetch({
+      body,
+      method: "post",
+      url: `/api/states/${encodeURIComponent(entity_id)}`,
+    });
   }
 
   async function webhook(
@@ -247,17 +263,17 @@ export function FetchAPI({
     data: object = {},
   ): Promise<void> {
     logger.trace({ data, name: webhook, webhook_name }, `send`);
-    await fetch({
+    await hass.fetch.fetch({
       body: data,
       method: "post",
       process: "text",
-      url: `/api/webhook/${webhook_name}`,
+      url: `/api/webhook/${encodeURIComponent(webhook_name)}`,
     });
   }
 
   async function checkCredentials(): Promise<{ message: string } | string> {
     logger.trace({ name: checkCredentials }, `send`);
-    return await fetch({
+    return await hass.fetch.fetch({
       url: `/api/`,
     });
   }
@@ -268,12 +284,12 @@ export function FetchAPI({
     checkConfig,
     checkCredentials,
     download,
-    fetch: fetch,
+    fetch: fetcher.fetch,
     fetchEntityCustomizations,
     fetchEntityHistory,
     fireEvent,
     getAllEntities,
-    getConfig: getHassConfig,
+    getConfig,
     getLogs,
     getRawLogs,
     listServices,

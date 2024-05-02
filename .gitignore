@@ -111,6 +111,7 @@ apps/**/artifacts
 !/.auto-config-testrc
 !/.prettierrc
 !/.entity-creationrc
+e2e/hass/config
 !/.scene-managerrc
 !/.pino-prettyrc
 /.storage
@@ -122,4 +123,5 @@ bin/
 .nx/cache
 review.zip
 dynamic.d.ts
-/obsidian/.obsidian
+hass/config
+test.d.ts

@@ -6,9 +6,7 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": [
-      "ESNext"
-    ],
+    "lib": ["ESNext"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "noImplicitAny": true,
@@ -27,12 +25,6 @@
     "target": "ESNext",
     "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "tmp",
-    "dist",
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "tmp", "dist"]
 }

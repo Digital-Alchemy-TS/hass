@@ -24,7 +24,6 @@ import {
   EntityHistoryDTO,
   EntityHistoryResult,
   EntityRegistryItem,
-  HASSIO_WS_COMMAND,
   PICK_ENTITY,
   PICK_FROM_AREA,
   PICK_FROM_DEVICE,
@@ -35,7 +34,6 @@ import {
   TFloorId,
   TLabelId,
   TPlatformId,
-  UPDATE_REGISTRY,
 } from "..";
 
 type EntityHistoryItem = { a: object; s: unknown; lu: number };
@@ -90,7 +88,7 @@ export function EntityManager({
   lifecycle,
   event,
   context,
-  internal,
+  internal: { utils },
 }: TServiceParams) {
   // #MARK: Local vars
   /**
@@ -114,7 +112,7 @@ export function EntityManager({
     entity_id: ENTITY_ID,
     // 🖕 TS
   ): NonNullable<ENTITY_STATE<ENTITY_ID>> {
-    const out = internal.utils.object.get(MASTER_STATE, entity_id) ?? {};
+    const out = utils.object.get(MASTER_STATE, entity_id) ?? {};
     return out as ENTITY_STATE<ENTITY_ID>;
   }
 
@@ -147,7 +145,7 @@ export function EntityManager({
         `proxyGetLogic cannot find entity`,
       );
     }
-    return internal.utils.object.get(current, property) || defaultValue;
+    return utils.object.get(current, property) || defaultValue;
   }
 
   // #MARK: byId
@@ -189,13 +187,14 @@ export function EntityManager({
               return PREVIOUS_STATE.get(entity_id);
             }
             if (property === "nextState") {
-              return new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
-                ENTITY_EVENTS.once(
-                  entity_id,
-                  (entity: ENTITY_STATE<ENTITY_ID>) =>
-                    done(entity satisfies ENTITY_STATE<ENTITY_ID>),
-                );
-              });
+              return async () =>
+                await new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
+                  ENTITY_EVENTS.once(
+                    entity_id,
+                    (entity: ENTITY_STATE<ENTITY_ID>) =>
+                      done(entity satisfies ENTITY_STATE<ENTITY_ID>),
+                  );
+                });
             }
             return proxyGetLogic(entity_id, property);
           },
@@ -251,7 +250,7 @@ export function EntityManager({
       ...payload,
       end_time: dayjs(payload.end_time).toISOString(),
       start_time: dayjs(payload.start_time).toISOString(),
-      type: HASSIO_WS_COMMAND.history_during_period,
+      type: "history/history_during_period",
     })) as Record<PICK_ENTITY, EntityHistoryItem[]>;
 
     const entities = Object.keys(result) as PICK_ENTITY[];
@@ -329,16 +328,16 @@ export function EntityManager({
     states.forEach(entity => {
       // ? Set first, ensure data is populated
       // `nextTick` will fire AFTER loop finishes
-      internal.utils.object.set(
+      utils.object.set(
         MASTER_STATE,
         entity.entity_id,
         entity,
-        is.undefined(internal.utils.object.get(oldState, entity.entity_id)),
+        is.undefined(utils.object.get(oldState, entity.entity_id)),
       );
       if (!init) {
         return;
       }
-      const old = internal.utils.object.get(oldState, entity.entity_id);
+      const old = utils.object.get(oldState, entity.entity_id);
       if (is.equal(old, entity)) {
         // logger.trace(
         //   { entity_id: entity.entity_id, name: refresh },
@@ -358,17 +357,12 @@ export function EntityManager({
           await EntityUpdateReceiver(
             entity.entity_id,
             entity satisfies ENTITY_STATE<PICK_ENTITY>,
-            internal.utils.object.get(oldState, entity.entity_id),
+            utils.object.get(oldState, entity.entity_id),
           ),
       );
     });
     init = true;
   }
-
-  // #MARK: is.entity
-  // Actually tie the type casting to real state
-  is.entity = (entityId: PICK_ENTITY): entityId is PICK_ENTITY =>
-    !is.undefined(internal.utils.object.get(MASTER_STATE, entityId));
 
   // #MARK: EntityUpdateReceiver
   function EntityUpdateReceiver<ENTITY extends PICK_ENTITY = PICK_ENTITY>(
@@ -383,21 +377,25 @@ export function EntityManager({
         `removing deleted entity [%s] from {MASTER_STATE}`,
         entity_id,
       );
-      internal.utils.object.del(MASTER_STATE, entity_id);
+      utils.object.del(MASTER_STATE, entity_id);
       return;
     }
-    internal.utils.object.set(MASTER_STATE, entity_id, new_state);
+    utils.object.set(MASTER_STATE, entity_id, new_state);
     if (!hass.socket.pauseMessages) {
       ENTITY_EVENTS.emit(entity_id, new_state, old_state);
     }
   }
 
+  // #MARK: onPostConfig
   lifecycle.onPostConfig(async () => {
+    if (!config.hass.AUTO_CONNECT_SOCKET) {
+      return;
+    }
     logger.debug({ name: "onPostConfig" }, `pre populate {MASTER_STATE}`);
-    await refresh();
+    await hass.entity.refresh();
   });
 
-  // #region Registry
+  // #MARK: AddLabel
   async function AddLabel({ entity, label }: EditLabelOptions) {
     const current = await EntityGet(entity);
     if (current?.labels?.includes(label)) {
@@ -409,23 +407,26 @@ export function EntityManager({
       await hass.socket.sendMessage({
         entity_id: entity,
         labels: [...current.labels, label],
-        type: UPDATE_REGISTRY,
+        type: "config/entity_registry/update",
       });
     });
   }
 
+  // #MARK: EntitySource
   async function EntitySource() {
     return await hass.socket.sendMessage<
       Record<PICK_ENTITY, { domain: string }>
     >({ type: "entity/source" });
   }
 
+  // #MARK: EntityList
   async function EntityList() {
     return await hass.socket.sendMessage<EntityRegistryItem<PICK_ENTITY>[]>({
       type: "config/entity_registry/list",
     });
   }
 
+  // #MARK: RemoveLabel
   async function RemoveLabel({ entity, label }: EditLabelOptions) {
     const current = await EntityGet(entity);
     if (!current?.labels?.includes(label)) {
@@ -438,11 +439,12 @@ export function EntityManager({
       await hass.socket.sendMessage({
         entity_id: entity,
         labels: current.labels.filter(i => i !== label),
-        type: UPDATE_REGISTRY,
+        type: "config/entity_registry/update",
       });
     });
   }
 
+  // #MARK: EntityGet
   async function EntityGet<ENTITY extends PICK_ENTITY>(entity_id: ENTITY) {
     return await hass.socket.sendMessage<EntityRegistryItem<ENTITY>>({
       entity_id: entity_id,
@@ -450,6 +452,7 @@ export function EntityManager({
     });
   }
 
+  // #MARK: onConnect
   hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
@@ -466,7 +469,7 @@ export function EntityManager({
     });
   });
 
-  // #endregion
+  // #MARK: byLabel
   function byLabel<LABEL extends TLabelId, DOMAIN extends ALL_DOMAINS>(
     label: LABEL,
     ...domains: DOMAIN[]
@@ -484,6 +487,7 @@ export function EntityManager({
       .map(i => i.entity_id) as PICK_FROM_LABEL<LABEL, DOMAIN>[];
   }
 
+  // #MARK: byArea
   function byArea<AREA extends TAreaId, DOMAIN extends ALL_DOMAINS>(
     area: AREA,
     ...domains: DOMAIN[]
@@ -499,6 +503,7 @@ export function EntityManager({
       .map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>);
   }
 
+  // #MARK: byDevice
   function byDevice<DEVICE extends TDeviceId, DOMAIN extends ALL_DOMAINS>(
     device: DEVICE,
     ...domains: DOMAIN[]
@@ -516,6 +521,7 @@ export function EntityManager({
       .map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>);
   }
 
+  // #MARK: byFloor
   function byFloor<FLOOR extends TFloorId, DOMAIN extends ALL_DOMAINS>(
     floor: FLOOR,
     ...domains: DOMAIN[]
@@ -534,6 +540,7 @@ export function EntityManager({
       .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
   }
 
+  // #MARK: byPlatform
   function byPlatform<PLATFORM extends TPlatformId, DOMAIN extends ALL_DOMAINS>(
     platform: PLATFORM,
     ...domains: DOMAIN[]
@@ -548,6 +555,7 @@ export function EntityManager({
     return raw.filter(i => domains.includes(domain(i) as DOMAIN));
   }
 
+  // #MARK: RemoveEntity
   async function RemoveEntity(entity_id: PICK_ENTITY | PICK_ENTITY[]) {
     await eachSeries([entity_id].flat(), async entity_id => {
       logger.debug({ name: entity_id }, `removing entity`);
@@ -558,33 +566,44 @@ export function EntityManager({
     });
   }
 
-  async function RegistryList() {
-    await hass.socket.sendMessage({
-      type: "config/entity_registry/list",
-    });
-  }
-
   // #MARK: return object
   return {
     /**
-     * Internal library use only
+     * Retrieve a list of entities listed as being part of a certain area
+     * Tracks area updates at runtime
      */
-    [ENTITY_UPDATE_RECEIVER]: EntityUpdateReceiver,
-
     byArea,
+
+    /**
+     * Retrieve a list of entities associated with a particular device id
+     */
     byDevice,
 
+    /**
+     * Retrieve a list of entities that have areas associated with a certain floor
+     */
     byFloor,
+
     /**
      * Retrieves a proxy object for a specified entity. This proxy object
      * provides current values and event hooks for the entity.
-     */ byId,
+     */
+    byId,
+
+    /**
+     * Retrieve a list of entities that have a given label
+     */
     byLabel,
 
     /**
      * search out ids by platform
      */
     byPlatform,
+
+    /**
+     * Internal library use only
+     */
+    entityUpdateReceiver: EntityUpdateReceiver,
 
     /**
      * Lists all entities within a specified domain. This is useful for
@@ -611,6 +630,11 @@ export function EntityManager({
     listEntities,
 
     /**
+     * Retrieve the raw entity data for this point in time
+     */
+    raw: (id: PICK_ENTITY) => utils.object.get(MASTER_STATE, id),
+
+    /**
      * Initiates a refresh of the current entity states. Useful for ensuring
      * synchronization with the latest state data from Home Assistant.
      */
@@ -624,17 +648,10 @@ export function EntityManager({
       current: [] as EntityRegistryItem<PICK_ENTITY>[],
       get: EntityGet,
       list: EntityList,
-      registryList: RegistryList,
+      registryList: EntityList,
       removeEntity: RemoveEntity,
       removeLabel: RemoveLabel,
       source: EntitySource,
     },
   };
-}
-
-// mental note: stop changing this from string
-declare module "@digital-alchemy/core" {
-  export interface IsIt {
-    entity(entity: string): entity is PICK_ENTITY;
-  }
 }

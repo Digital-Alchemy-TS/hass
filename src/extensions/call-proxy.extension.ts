@@ -1,8 +1,6 @@
 import {
   INCREMENT,
-  InternalError,
   is,
-  noop,
   SECOND,
   sleep,
   START,
@@ -11,8 +9,8 @@ import {
 import { exit } from "process";
 
 import {
-  ALL_DOMAINS,
-  HASSIO_WS_COMMAND,
+  ALL_SERVICE_DOMAINS,
+  CALL_PROXY_SERVICE_CALL,
   HassServiceDTO,
   iCallService,
   PICK_SERVICE,
@@ -22,16 +20,8 @@ import {
 const FAILED_LOAD_DELAY = 5;
 const MAX_ATTEMPTS = 50;
 const FAILED = 1;
-const NOT_A_DOMAIN = new Set(["then"]);
 
-export function CallProxy({
-  logger,
-  lifecycle,
-  context,
-  hass,
-  config,
-}: TServiceParams) {
-  let domains: string[];
+export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
   let services: HassServiceDTO[];
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
@@ -50,35 +40,6 @@ export function CallProxy({
     );
     await loadServiceList();
   });
-
-  function getDomain(domain: ALL_DOMAINS) {
-    if (!domains || !domains?.includes(domain)) {
-      if (!NOT_A_DOMAIN.has(domain)) {
-        logger.error({ domain, name: getDomain }, `unknown domain`);
-      }
-      return undefined;
-    }
-    const domainItem: HassServiceDTO = services.find(i => i.domain === domain);
-    if (!domainItem) {
-      throw new InternalError(
-        context,
-        "HALLUCINATED_DOMAIN",
-        `Cannot access call_service#${domain}. Home Assistant doesn't list it as a real domain.`,
-      );
-    }
-    return Object.fromEntries(
-      Object.entries(domainItem.services).map(([key]) => [
-        key,
-        async <SERVICE extends PICK_SERVICE>(parameters: object) =>
-          await sendMessage(
-            `${domain}.${key}` as SERVICE,
-            {
-              ...parameters,
-            } as PICK_SERVICE_PARAMETERS<SERVICE>,
-          ),
-      ]),
-    );
-  }
 
   async function loadServiceList(recursion = START): Promise<void> {
     logger.info({ name: loadServiceList }, `fetching service list`);
@@ -101,10 +62,22 @@ export function CallProxy({
       await loadServiceList(recursion + INCREMENT);
       return;
     }
-    domains = services.map(i => i.domain);
     services.forEach(value => {
       const services = Object.keys(value.services);
-      rawProxy[value.domain] = Object.fromEntries(services.map(i => [i, noop]));
+
+      rawProxy[value.domain] = Object.fromEntries(
+        Object.entries(value.services).map(([key]) => [
+          key,
+          async <SERVICE extends PICK_SERVICE<ALL_SERVICE_DOMAINS>>(
+            parameters: object,
+          ) => {
+            const service = `${value.domain}.${key}` as SERVICE;
+            await sendMessage(service, {
+              ...parameters,
+            } as PICK_SERVICE_PARAMETERS<ALL_SERVICE_DOMAINS, SERVICE>);
+          },
+        ]),
+      );
       logger.trace(
         { name: loadServiceList, services },
         `loaded domain [%s]`,
@@ -116,9 +89,12 @@ export function CallProxy({
   /**
    * Prefer sending via socket, if available.
    */
-  async function sendMessage<SERVICE extends PICK_SERVICE>(
+  async function sendMessage<
+    DOMAIN extends ALL_SERVICE_DOMAINS,
+    SERVICE extends PICK_SERVICE<DOMAIN>,
+  >(
     serviceName: SERVICE,
-    service_data: PICK_SERVICE_PARAMETERS<SERVICE>,
+    service_data: PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>,
   ) {
     // pause for rest also
     if (hass.socket.pauseMessages) {
@@ -132,18 +108,18 @@ export function CallProxy({
       return await hass.fetch.callService(serviceName, service_data);
     }
     const [domain, service] = serviceName.split(".");
-    const type = HASSIO_WS_COMMAND.call_service;
+    CALL_PROXY_SERVICE_CALL.labels({ domain, service }).inc();
     // User can just not await this call if they don't care about the "waitForChange"
 
     return await hass.socket.sendMessage(
-      { domain, service, service_data, type },
+      { domain, service, service_data, type: "call_service" },
       true,
     );
   }
 
   function buildCallProxy(): iCallService {
     return new Proxy(rawProxy as iCallService, {
-      get: (_, domain: ALL_DOMAINS) => getDomain(domain),
+      get: (_, domain: ALL_SERVICE_DOMAINS) => rawProxy[domain],
     });
   }
 

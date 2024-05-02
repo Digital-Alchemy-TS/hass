@@ -171,7 +171,7 @@ export interface Properties {
 export type FloorCreate = {
   name: string;
   level: number;
-  aliases: string[];
+  aliases?: string[];
 };
 
 export type FloorDetails = FloorCreate & {

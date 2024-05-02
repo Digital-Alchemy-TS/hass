@@ -1,6 +1,5 @@
-import { is, TServiceParams } from "@digital-alchemy/core";
+import { TServiceParams } from "@digital-alchemy/core";
 
-import { TZoneId } from "../dynamic";
 import {
   EARLY_ON_READY,
   ManifestItem,
@@ -35,9 +34,6 @@ export function Zone({
     });
   });
 
-  is.zone = (zone: string): zone is TZoneId =>
-    hass.zone.current.some(i => i.id === zone);
-
   async function ZoneCreate(options: ZoneOptions) {
     await hass.socket.sendMessage<ManifestItem[]>({
       ...options,
@@ -64,10 +60,4 @@ export function Zone({
     list: ZoneList,
     update: ZoneUpdate,
   };
-}
-
-declare module "@digital-alchemy/core" {
-  export interface IsIt {
-    zone(zone: string): zone is TZoneId;
-  }
 }

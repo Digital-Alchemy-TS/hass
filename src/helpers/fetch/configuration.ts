@@ -44,12 +44,12 @@ export type AreaDetails = AreaCreate & {
 };
 
 export type AreaCreate = {
-  floor_id: TFloorId;
+  floor_id?: TFloorId;
   aliases?: string[];
-  icon: string;
-  labels: TLabelId[];
+  icon?: string;
+  labels?: TLabelId[];
   name: string;
-  picture: string;
+  picture?: string;
 };
 
 export interface ConfigEntry {

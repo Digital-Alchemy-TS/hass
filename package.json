@@ -2,13 +2,16 @@
   "name": "@digital-alchemy/hass",
   "repository": "https://github.com/Digital-Alchemy-TS/hass",
   "homepage": "https://docs.digital-alchemy.app/Hass",
-  "version": "0.3.21",
+  "version": "0.3.22",
   "scripts": {
     "build": "rm -rf dist/; tsc",
     "lint": "eslint src",
     "test": "./scripts/test.sh",
     "prepublishOnly": "npm run build",
-    "upgrade": "ncu -u -f '@digital-alchemy/*'; npm i"
+    "upgrade": "ncu -f '@digital-alchemy/*' -u; npm i"
+  },
+  "bin": {
+    "mock-assistant": "./dist/mock_assistant/main.js"
   },
   "author": {
     "url": "https://github.com/zoe-codez",
@@ -21,17 +24,20 @@
     "node": ">=20"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./mock-assistant": "./dist/mock_assistant/index.js"
   },
   "license": "MIT",
   "dependencies": {
-    "@digital-alchemy/core": "^0.3.12",
-    "dayjs": "^1.11.10",
-    "prom-client": "^15.1.1",
-    "ws": "^8.16.0"
+    "@digital-alchemy/core": "^0.3.13",
+    "dayjs": "^1.11.11",
+    "prom-client": "^15.1.2",
+    "ws": "^8.17.0"
   },
   "devDependencies": {
     "@cspell/eslint-plugin": "^8.7.0",
+    "@digital-alchemy/synapse": "^0.3.5",
+    "@digital-alchemy/type-writer": "^0.3.11",
     "@types/figlet": "^1.5.8",
     "@types/jest": "^29.5.12",
     "@types/js-yaml": "^4.0.9",
@@ -40,8 +46,8 @@
     "@types/node": "^20.12.7",
     "@types/uuid": "^9.0.8",
     "@types/ws": "^8.5.10",
-    "@typescript-eslint/eslint-plugin": "7.6.0",
-    "@typescript-eslint/parser": "7.6.0",
+    "@typescript-eslint/eslint-plugin": "7.8.0",
+    "@typescript-eslint/parser": "7.8.0",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-import": "^2.29.1",
@@ -61,5 +67,26 @@
     "tsx": "^4.7.3",
     "type-fest": "^4.18.0",
     "typescript": "^5.4.5"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ],
+    "testMatch": [
+      "**/?(*.)+(spec|test).ts"
+    ],
+    "transform": {
+      "^.+\\.ts$": [
+        "ts-jest",
+        {
+          "tsconfig": "tsconfig.spec.json"
+        }
+      ]
+    }
   }
 }

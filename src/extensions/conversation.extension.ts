@@ -11,7 +11,7 @@ export function Conversation({ hass, logger }: TServiceParams) {
     }
     await hass.socket.sendMessage({
       entity_id: entity,
-      type: UPDATE_REGISTRY,
+      type: "config/entity_registry/update",
     });
   }
 
