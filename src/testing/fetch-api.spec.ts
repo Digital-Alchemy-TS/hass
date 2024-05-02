@@ -76,7 +76,7 @@ describe("FetchAPI", () => {
   });
 
   describe("API Operations", () => {
-    it.only("should format calendarSearch properly", async () => {
+    it("should format calendarSearch properly", async () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
@@ -94,7 +94,7 @@ describe("FetchAPI", () => {
               start,
             });
             expect(spy).toHaveBeenCalledWith(
-              `${BASE_URL}/api/calendars/calendar.example_calendar?end=2024-01-02T06%3A00%3A00.000Z&start=2024-01-01T06%3A00%3A00.000Z`,
+              `${BASE_URL}/api/calendars/calendar.example_calendar?end=${encodeURIComponent(end.toISOString())}&start=${encodeURIComponent(start.toISOString())}`,
               expect.objectContaining({
                 method: "get",
               }),
@@ -102,16 +102,16 @@ describe("FetchAPI", () => {
           });
         },
       });
-      await application.bootstrap({
-        configuration: {
+      await application.bootstrap(
+        SILENT_BOOT({
           hass: {
             AUTO_CONNECT_SOCKET: false,
             AUTO_SCAN_CALL_PROXY: false,
             BASE_URL,
             TOKEN,
           },
-        },
-      });
+        }),
+      );
     });
 
     it("should format callService properly", async () => {
