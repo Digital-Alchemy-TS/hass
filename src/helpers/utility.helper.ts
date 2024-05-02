@@ -117,6 +117,7 @@ declare module "@digital-alchemy/core" {
     ) => entity is PICK_ENTITY<DOMAIN>;
   }
 }
+
 export const PostConfigPriorities = {
   FETCH: 1,
   VALIDATE: -1,

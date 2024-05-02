@@ -364,11 +364,6 @@ export function EntityManager({
     init = true;
   }
 
-  // #MARK: is.entity
-  // Actually tie the type casting to real state
-  is.entity = (entityId: string): entityId is PICK_ENTITY =>
-    !is.undefined(utils.object.get(MASTER_STATE, entityId));
-
   // #MARK: EntityUpdateReceiver
   function EntityUpdateReceiver<ENTITY extends PICK_ENTITY = PICK_ENTITY>(
     entity_id: PICK_ENTITY,
@@ -659,11 +654,4 @@ export function EntityManager({
       source: EntitySource,
     },
   };
-}
-
-// mental note: stop changing this from string
-declare module "@digital-alchemy/core" {
-  export interface IsIt {
-    entity(entity: string): entity is PICK_ENTITY;
-  }
 }

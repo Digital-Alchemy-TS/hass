@@ -1,4 +1,4 @@
-import { is, TServiceParams } from "@digital-alchemy/core";
+import { TServiceParams } from "@digital-alchemy/core";
 
 import { TFloorId } from "../dynamic";
 import {
@@ -37,9 +37,6 @@ export function Floor({
     });
   });
 
-  is.floor = (floor: string): floor is TFloorId =>
-    hass.floor.current.some(i => i.floor_id === floor);
-
   return {
     async create(details: FloorCreate) {
       return await new Promise<void>(async done => {
@@ -76,10 +73,4 @@ export function Floor({
       });
     },
   };
-}
-
-declare module "@digital-alchemy/core" {
-  export interface IsIt {
-    floor(floor: string): floor is TFloorId;
-  }
 }

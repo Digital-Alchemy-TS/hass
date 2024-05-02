@@ -1,4 +1,4 @@
-import { is, TServiceParams } from "@digital-alchemy/core";
+import { TServiceParams } from "@digital-alchemy/core";
 
 import { TLabelId } from "../dynamic";
 import {
@@ -36,9 +36,6 @@ export function Label({
       },
     });
   });
-
-  is.label = (label: TLabelId): label is TLabelId =>
-    hass.label.current.some(i => i.label_id === label);
 
   async function create(details: LabelOptions) {
     return await new Promise<void>(async done => {
@@ -83,10 +80,4 @@ export function Label({
     list,
     update,
   };
-}
-
-declare module "@digital-alchemy/core" {
-  export interface IsIt {
-    label(label: string): label is TLabelId;
-  }
 }
