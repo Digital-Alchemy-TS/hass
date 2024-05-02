@@ -1,4 +1,4 @@
 #!/bin/sh
-cd docker/homeassistant || exit
+cd hass || exit
 rm ./reference.tar.gz
 tar -czvf ./reference.tar.gz ./config

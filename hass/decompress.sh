@@ -1,3 +1,3 @@
 #!/bin/sh
-cd docker/homeassistant || exit
+cd hass/ || exit
 tar -xzvf ./reference.tar.gz
