@@ -1,8 +1,6 @@
 import {
   INCREMENT,
-  InternalError,
   is,
-  noop,
   SECOND,
   sleep,
   START,
@@ -22,16 +20,8 @@ import {
 const FAILED_LOAD_DELAY = 5;
 const MAX_ATTEMPTS = 50;
 const FAILED = 1;
-const NOT_A_DOMAIN = new Set(["then"]);
 
-export function CallProxy({
-  logger,
-  lifecycle,
-  context,
-  hass,
-  config,
-}: TServiceParams) {
-  let domains: string[];
+export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
   let services: HassServiceDTO[];
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
@@ -50,35 +40,6 @@ export function CallProxy({
     );
     await loadServiceList();
   });
-
-  function getDomain<DOMAIN extends ALL_SERVICE_DOMAINS>(domain: DOMAIN) {
-    if (!domains || !domains?.includes(domain)) {
-      if (!NOT_A_DOMAIN.has(domain)) {
-        logger.error({ domain, name: getDomain }, `unknown domain`);
-      }
-      return undefined;
-    }
-    const domainItem: HassServiceDTO = services.find(i => i.domain === domain);
-    if (!domainItem) {
-      throw new InternalError(
-        context,
-        "HALLUCINATED_DOMAIN",
-        `Cannot access call_service#${domain}. Home Assistant doesn't list it as a real domain.`,
-      );
-    }
-    return Object.fromEntries(
-      Object.entries(domainItem.services).map(([key]) => [
-        key,
-        async <SERVICE extends PICK_SERVICE<DOMAIN>>(parameters: object) => {
-          const service = `${domain}.${key}` as SERVICE;
-
-          await sendMessage(service, {
-            ...parameters,
-          } as PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>);
-        },
-      ]),
-    );
-  }
 
   async function loadServiceList(recursion = START): Promise<void> {
     logger.info({ name: loadServiceList }, `fetching service list`);
@@ -101,10 +62,22 @@ export function CallProxy({
       await loadServiceList(recursion + INCREMENT);
       return;
     }
-    domains = services.map(i => i.domain);
     services.forEach(value => {
       const services = Object.keys(value.services);
-      rawProxy[value.domain] = Object.fromEntries(services.map(i => [i, noop]));
+
+      rawProxy[value.domain] = Object.fromEntries(
+        Object.entries(value.services).map(([key]) => [
+          key,
+          async <SERVICE extends PICK_SERVICE<ALL_SERVICE_DOMAINS>>(
+            parameters: object,
+          ) => {
+            const service = `${value.domain}.${key}` as SERVICE;
+            await sendMessage(service, {
+              ...parameters,
+            } as PICK_SERVICE_PARAMETERS<ALL_SERVICE_DOMAINS, SERVICE>);
+          },
+        ]),
+      );
       logger.trace(
         { name: loadServiceList, services },
         `loaded domain [%s]`,
@@ -146,7 +119,7 @@ export function CallProxy({
 
   function buildCallProxy(): iCallService {
     return new Proxy(rawProxy as iCallService, {
-      get: (_, domain: ALL_SERVICE_DOMAINS) => getDomain(domain),
+      get: (_, domain: ALL_SERVICE_DOMAINS) => rawProxy[domain],
     });
   }
 

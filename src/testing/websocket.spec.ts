@@ -6,7 +6,11 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import {
+  CreateTestingApplication,
+  LIB_MOCK_ASSISTANT,
+  SILENT_BOOT,
+} from "../mock_assistant";
 
 declare module "@digital-alchemy/core" {
   export interface LoadedModules {
@@ -43,9 +47,10 @@ describe("Websocket", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap({
+        appendLibrary: LIB_MOCK_ASSISTANT,
+        configuration: { hass: { MOCK_SOCKET: true } },
+      });
     });
 
     it("should emit a socket message with subscribeEvents", async () => {

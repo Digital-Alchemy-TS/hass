@@ -4,7 +4,7 @@ import { cwd } from "process";
 
 import { Fixtures } from "./extensions";
 
-export const MOCK_ASSISTANT = CreateLibrary({
+export const LIB_MOCK_ASSISTANT = CreateLibrary({
   configuration: {
     FIXTURES_FILE: {
       default: join(cwd(), "fixtures.json"),
@@ -20,6 +20,6 @@ export const MOCK_ASSISTANT = CreateLibrary({
 
 declare module "@digital-alchemy/core" {
   export interface LoadedModules {
-    mock_assistant: typeof MOCK_ASSISTANT;
+    mock_assistant: typeof LIB_MOCK_ASSISTANT;
   }
 }

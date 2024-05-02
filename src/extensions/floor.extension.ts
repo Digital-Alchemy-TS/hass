@@ -45,6 +45,7 @@ export function Floor({
       return await new Promise<void>(async done => {
         event.once(FLOOR_REGISTRY_UPDATED, done);
         await hass.socket.sendMessage({
+          aliases: [],
           type: "config/floor_registry/create",
           ...details,
         });

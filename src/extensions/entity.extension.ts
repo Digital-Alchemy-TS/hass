@@ -573,11 +573,6 @@ export function EntityManager({
   // #MARK: return object
   return {
     /**
-     * Internal library use only
-     */
-    [ENTITY_UPDATE_RECEIVER]: EntityUpdateReceiver,
-
-    /**
      * Retrieve a list of entities listed as being part of a certain area
      * Tracks area updates at runtime
      */
@@ -608,6 +603,11 @@ export function EntityManager({
      * search out ids by platform
      */
     byPlatform,
+
+    /**
+     * Internal library use only
+     */
+    entityUpdateReceiver: EntityUpdateReceiver,
 
     /**
      * Lists all entities within a specified domain. This is useful for

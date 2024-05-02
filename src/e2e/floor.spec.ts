@@ -6,17 +6,17 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { TAreaId } from "../dynamic";
-import { AREA_REGISTRY_UPDATED } from "../helpers";
+import { TFloorId } from "../dynamic";
+import { FLOOR_REGISTRY_UPDATED } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 import { BASE_URL, TOKEN } from "./utils";
 
-describe("Area E2E", () => {
+describe("Floor E2E", () => {
   let application: ApplicationDefinition<
     ServiceMap,
     OptionalModuleConfiguration
   >;
-  const testArea = "test" as TAreaId;
+  const testFloor = "test" as TFloorId;
 
   afterEach(async () => {
     if (application) {
@@ -32,8 +32,8 @@ describe("Area E2E", () => {
       Test({ lifecycle, hass, event }: TServiceParams) {
         lifecycle.onReady(async () => {
           let hit = false;
-          event.on(AREA_REGISTRY_UPDATED, () => (hit = true));
-          await hass.socket.fireEvent("area_registry_updated");
+          event.on(FLOOR_REGISTRY_UPDATED, () => (hit = true));
+          await hass.socket.fireEvent("floor_registry_updated");
           await sleep(50);
           expect(hit).toBe(true);
           await application.teardown();
@@ -43,16 +43,16 @@ describe("Area E2E", () => {
     await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
   });
 
-  it("should create a area", async () => {
+  it("should create a floor", async () => {
     expect.assertions(1);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          await hass.area.create({
-            floor_id: "downstairs",
+          await hass.floor.create({
+            level: 1,
             name: "test",
           });
-          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(
+          expect(hass.floor.current.some(i => i.floor_id === testFloor)).toBe(
             true,
           );
           await application.teardown();
@@ -63,18 +63,18 @@ describe("Area E2E", () => {
     await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
   });
 
-  it("should update a area", async () => {
+  it("should update a floor", async () => {
     expect.assertions(1);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          const item = hass.area.current.find(i => i.area_id === testArea);
-          await hass.area.update({
+          const item = hass.floor.current.find(i => i.floor_id === testFloor);
+          await hass.floor.update({
             ...item,
             name: "extra test",
           });
           expect(
-            hass.area.current.find(i => i.area_id === testArea)?.name,
+            hass.floor.current.find(i => i.floor_id === testFloor)?.name,
           ).toBe("extra test");
           await application.teardown();
         });
@@ -83,43 +83,16 @@ describe("Area E2E", () => {
     await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
   });
 
-  it("should add and remove from area", async () => {
-    expect.assertions(3);
-    application = CreateTestingApplication({
-      Test({ lifecycle, hass }: TServiceParams) {
-        lifecycle.onReady(async () => {
-          await hass.area.apply(testArea, ["switch.porch_light"]);
-          await sleep(10);
-          expect(
-            hass.entity.registry.current.find(
-              i => i.entity_id === "switch.porch_light",
-            )?.area_id,
-          ).toBe(testArea);
-          expect(hass.entity.byArea(testArea).length).toBe(1);
-          await hass.area.apply("" as TAreaId, ["switch.porch_light"]);
-          await sleep(10);
-          expect(
-            hass.entity.registry.current.find(
-              i => i.entity_id === "switch.porch_light",
-            )?.area_id,
-          ).toBe("");
-          await application.teardown();
-        });
-      },
-    });
-    await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
-  });
-
-  it("should delete a area", async () => {
+  it("should delete a floor", async () => {
     expect.assertions(2);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(
+          expect(hass.floor.current.some(i => i.floor_id === testFloor)).toBe(
             true,
           );
-          await hass.area.delete(testArea);
-          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(
+          await hass.floor.delete(testFloor);
+          expect(hass.floor.current.some(i => i.floor_id === testFloor)).toBe(
             false,
           );
           await application.teardown();

@@ -6,13 +6,13 @@ import {
 } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "../../hass.module";
-import { MOCK_ASSISTANT } from "../mock-assistant.module";
+import { LIB_MOCK_ASSISTANT } from "../mock-assistant.module";
 
 export const SILENT_BOOT = (
   configuration: PartialConfiguration = {},
   fixtures = false,
 ): BootstrapOptions => ({
-  appendLibrary: fixtures ? MOCK_ASSISTANT : undefined,
+  appendLibrary: fixtures ? LIB_MOCK_ASSISTANT : undefined,
   configuration,
   // quiet time
   customLogger: {

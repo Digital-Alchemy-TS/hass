@@ -123,6 +123,5 @@ bin/
 .nx/cache
 review.zip
 dynamic.d.ts
-fixtures.json
 hass/config
 test.d.ts
