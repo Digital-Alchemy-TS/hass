@@ -17,34 +17,60 @@ export const ENTITY_SETUP = {
     hass_e2e_online: {
       attributes: {
         friendly_name: "hass_e2e online",
+        restored: true,
+        supported_features: 0,
       },
-      entity_id: "binary_sensor.hass_e2e_online",
-      last_changed: "2024-05-01T23:01:44.812474+00:00",
       context: {
-        id: "01HWV68XQCWCA6DPV7QN6B11R8",
+        id: "01HWXTSCSBGW129NV7WY8MMG1E",
         parent_id: null,
         user_id: null,
       },
-      state: "on",
-      last_reported: "2024-05-01T23:01:44.812474+00:00",
-      last_updated: "2024-05-01T23:01:44.812474+00:00",
+      entity_id: "binary_sensor.hass_e2e_online",
+      last_changed: "2024-05-02T23:38:44.907649+00:00",
+      last_reported: "2024-05-02T23:38:44.907649+00:00",
+      last_updated: "2024-05-02T23:38:44.907649+00:00",
+      state: "unavailable",
     },
     toggles: {
       attributes: {
-        "Managed By": "hass_e2e",
         friendly_name: "toggles",
         icon: "mdi:toggle-switch-variant-off",
+        restored: true,
+        supported_features: 0,
       },
-      entity_id: "binary_sensor.toggles",
-      last_changed: "2024-05-01T23:01:59.325631+00:00",
       context: {
-        id: "01HWV69BWXX0EMASCYWG9XHYBV",
+        id: "01HWXTSCSB43FF1R6FX0QEE4Z6",
         parent_id: null,
         user_id: null,
       },
+      entity_id: "binary_sensor.toggles",
+      last_changed: "2024-05-02T23:38:44.907718+00:00",
+      last_reported: "2024-05-02T23:38:44.907718+00:00",
+      last_updated: "2024-05-02T23:38:44.907718+00:00",
+      state: "unavailable",
+    },
+  },
+  calendar: {
+    united_states_tx: {
+      attributes: {
+        all_day: true,
+        description: "",
+        end_time: "2024-05-28 00:00:00",
+        friendly_name: "United States, TX",
+        location: "United States, TX",
+        message: "Memorial Day",
+        start_time: "2024-05-27 00:00:00",
+      },
+      context: {
+        id: "01HWXTYEEFBB7QQC1CSM6PAR36",
+        parent_id: null,
+        user_id: null,
+      },
+      entity_id: "calendar.united_states_tx",
+      last_changed: "2024-05-02T23:41:30.447850+00:00",
+      last_reported: "2024-05-02T23:41:30.449701+00:00",
+      last_updated: "2024-05-02T23:41:30.447850+00:00",
       state: "off",
-      last_reported: "2024-05-01T23:01:59.325631+00:00",
-      last_updated: "2024-05-01T23:01:59.325631+00:00",
     },
   },
   person: {
@@ -57,222 +83,227 @@ export const ENTITY_SETUP = {
         user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59",
       },
       context: {
-        id: "01HWV5P32NTRFVKB5TWZR050SG",
+        id: "01HWXTSCSBRKJ9T2KV1JNER5KQ",
         parent_id: null,
         user_id: null,
       },
       entity_id: "person.digital_alchemy",
-      last_changed: "2024-05-01T22:51:27.701166+00:00",
-      last_reported: "2024-05-01T22:51:27.701396+00:00",
-      last_updated: "2024-05-01T22:51:27.701166+00:00",
+      last_changed: "2024-05-02T23:38:39.485125+00:00",
+      last_reported: "2024-05-02T23:38:44.907957+00:00",
+      last_updated: "2024-05-02T23:38:44.907957+00:00",
       state: "unknown",
     },
   },
   sensor: {
+    magic: {
+      attributes: {
+        friendly_name: "magic",
+        icon: "mdi:satellite-uplink",
+        restored: true,
+        supported_features: 0,
+      },
+      context: {
+        id: "01HWXTSCSBW34BP3R20RJ09CVZ",
+        parent_id: null,
+        user_id: null,
+      },
+      entity_id: "sensor.magic",
+      last_changed: "2024-05-02T23:38:44.907694+00:00",
+      last_reported: "2024-05-02T23:38:44.907694+00:00",
+      last_updated: "2024-05-02T23:38:44.907694+00:00",
+      state: "unavailable",
+    },
     sun_next_dawn: {
       attributes: {
         device_class: "timestamp",
         friendly_name: "Sun Next dawn",
       },
       context: {
-        id: "01HWV5PGN9K3WCDRZQADJVMDRH",
+        id: "01HWXTS8W1SRTPT5K1XM0G491X",
         parent_id: null,
         user_id: null,
       },
       entity_id: "sensor.sun_next_dawn",
-      last_changed: "2024-05-01T22:51:41.609579+00:00",
-      last_reported: "2024-05-01T22:51:41.609579+00:00",
-      last_updated: "2024-05-01T22:51:41.609579+00:00",
-      state: "2024-05-02T03:26:53+00:00",
-    },
-    magic: {
-      entity_id: "sensor.magic",
-      state: "50",
-      attributes: {
-        "Managed By": "hass_e2e",
-        icon: "mdi:satellite-uplink",
-        friendly_name: "magic",
-      },
-      last_changed: "2024-05-01T23:01:44.813217+00:00",
-      last_reported: "2024-05-01T23:01:44.813217+00:00",
-      last_updated: "2024-05-01T23:01:44.813217+00:00",
-      context: {
-        id: "01HWV68XQDEZQMGKTKDVG12NFE",
-        parent_id: null,
-        user_id: null,
-      },
+      last_changed: "2024-05-02T23:38:40.897643+00:00",
+      last_reported: "2024-05-02T23:38:40.897643+00:00",
+      last_updated: "2024-05-02T23:38:40.897643+00:00",
+      state: "2024-05-03T03:24:45+00:00",
     },
     sun_next_dusk: {
       attributes: {
         device_class: "timestamp",
         friendly_name: "Sun Next dusk",
       },
-      entity_id: "sensor.sun_next_dusk",
       context: {
-        id: "01HWV5PGNA8DTYRM3NJ9RA8MWG",
+        id: "01HWXTS8W1S95P1MVHDGHSQEB2",
         parent_id: null,
         user_id: null,
       },
-      last_changed: "2024-05-01T22:51:41.610181+00:00",
-      last_reported: "2024-05-01T22:51:41.610181+00:00",
-      state: "2024-05-02T19:49:14+00:00",
-      last_updated: "2024-05-01T22:51:41.610181+00:00",
+      entity_id: "sensor.sun_next_dusk",
+      last_changed: "2024-05-02T23:38:40.897814+00:00",
+      last_reported: "2024-05-02T23:38:40.897814+00:00",
+      last_updated: "2024-05-02T23:38:40.897814+00:00",
+      state: "2024-05-03T19:51:10+00:00",
     },
     sun_next_midnight: {
       attributes: {
         device_class: "timestamp",
         friendly_name: "Sun Next midnight",
       },
-      entity_id: "sensor.sun_next_midnight",
       context: {
-        id: "01HWV8A5SWKXXSKXAYK1VZ401B",
+        id: "01HWXTS8W1YQCPA3WZ69Y9JSPD",
         parent_id: null,
         user_id: null,
       },
-      last_changed: "2024-05-01T23:37:23.004639+00:00",
-      last_reported: "2024-05-01T23:37:23.004639+00:00",
-      state: "2024-05-02T23:37:17+00:00",
-      last_updated: "2024-05-01T23:37:23.004639+00:00",
+      entity_id: "sensor.sun_next_midnight",
+      last_changed: "2024-05-02T23:38:40.897950+00:00",
+      last_reported: "2024-05-02T23:38:40.897950+00:00",
+      last_updated: "2024-05-02T23:38:40.897950+00:00",
+      state: "2024-05-03T23:37:12+00:00",
     },
     sun_next_noon: {
       attributes: {
         device_class: "timestamp",
         friendly_name: "Sun Next noon",
       },
-      entity_id: "sensor.sun_next_noon",
       context: {
-        id: "01HWV5PGNAJC17N1C0FW2738EX",
+        id: "01HWXTS8W28MVV48CQ31JB2WKC",
         parent_id: null,
         user_id: null,
       },
-      last_changed: "2024-05-01T22:51:41.610338+00:00",
-      last_reported: "2024-05-01T22:51:41.610338+00:00",
-      state: "2024-05-02T11:37:25+00:00",
-      last_updated: "2024-05-01T22:51:41.610338+00:00",
+      entity_id: "sensor.sun_next_noon",
+      last_changed: "2024-05-02T23:38:40.898068+00:00",
+      last_reported: "2024-05-02T23:38:40.898068+00:00",
+      last_updated: "2024-05-02T23:38:40.898068+00:00",
+      state: "2024-05-03T11:37:19+00:00",
     },
     sun_next_rising: {
       attributes: {
         device_class: "timestamp",
         friendly_name: "Sun Next rising",
       },
-      entity_id: "sensor.sun_next_rising",
       context: {
-        id: "01HWV5PGNAF25ESYKV9K0EFXXG",
+        id: "01HWXTS8W2MMADKGWE4A5BMH51",
         parent_id: null,
         user_id: null,
       },
-      last_changed: "2024-05-01T22:51:41.610407+00:00",
-      last_reported: "2024-05-01T22:51:41.610407+00:00",
-      state: "2024-05-02T04:07:11+00:00",
-      last_updated: "2024-05-01T22:51:41.610407+00:00",
+      entity_id: "sensor.sun_next_rising",
+      last_changed: "2024-05-02T23:38:40.898182+00:00",
+      last_reported: "2024-05-02T23:38:40.898182+00:00",
+      last_updated: "2024-05-02T23:38:40.898182+00:00",
+      state: "2024-05-03T04:05:17+00:00",
     },
     sun_next_setting: {
       attributes: {
         device_class: "timestamp",
         friendly_name: "Sun Next setting",
       },
-      entity_id: "sensor.sun_next_setting",
       context: {
-        id: "01HWV5PGNABNXC3KSBH487VZ35",
+        id: "01HWXTS8W24KWTHR2B6V32NCXG",
         parent_id: null,
         user_id: null,
       },
-      last_changed: "2024-05-01T22:51:41.610467+00:00",
-      last_reported: "2024-05-01T22:51:41.610467+00:00",
-      state: "2024-05-02T19:08:39+00:00",
-      last_updated: "2024-05-01T22:51:41.610467+00:00",
+      entity_id: "sensor.sun_next_setting",
+      last_changed: "2024-05-02T23:38:40.898289+00:00",
+      last_reported: "2024-05-02T23:38:40.898289+00:00",
+      last_updated: "2024-05-02T23:38:40.898289+00:00",
+      state: "2024-05-03T19:10:21+00:00",
     },
   },
   sun: {
     sun: {
       attributes: {
-        next_dawn: "2024-05-02T03:26:53.682544+00:00",
-        next_dusk: "2024-05-02T19:49:14.518121+00:00",
-        next_midnight: "2024-05-02T23:37:17+00:00",
-        elevation: -22.15,
-        next_noon: "2024-05-02T11:37:25+00:00",
-        azimuth: 359.99,
-        next_rising: "2024-05-02T04:07:11.617514+00:00",
+        azimuth: 0.35,
+        elevation: -21.86,
         friendly_name: "Sun",
-        next_setting: "2024-05-02T19:08:39.868356+00:00",
+        next_dawn: "2024-05-03T03:24:45.747945+00:00",
+        next_dusk: "2024-05-03T19:51:10.358970+00:00",
+        next_midnight: "2024-05-03T23:37:12+00:00",
+        next_noon: "2024-05-03T11:37:19+00:00",
+        next_rising: "2024-05-03T04:05:17.926549+00:00",
+        next_setting: "2024-05-03T19:10:21.280558+00:00",
         rising: true,
       },
       context: {
-        id: "01HWV8A5SVJ1QHYFT5MJBAC43N",
+        id: "01HWXTS8W1J2TDGMN7KKNWP8DV",
         parent_id: null,
         user_id: null,
       },
       entity_id: "sun.sun",
-      last_changed: "2024-05-01T22:51:05.526268+00:00",
-      last_reported: "2024-05-01T23:37:23.003978+00:00",
-      last_updated: "2024-05-01T23:37:23.003978+00:00",
+      last_changed: "2024-05-02T23:38:40.897074+00:00",
+      last_reported: "2024-05-02T23:38:40.897074+00:00",
+      last_updated: "2024-05-02T23:38:40.897074+00:00",
       state: "below_horizon",
     },
   },
   switch: {
     bedroom_lamp: {
       attributes: {
-        "Managed By": "hass_e2e",
         friendly_name: "bedroom_lamp",
+        restored: true,
+        supported_features: 0,
       },
       context: {
-        id: "01HWV6F85B042WZZDCQZVBPHXV",
+        id: "01HWXTSCSB7BK003CH3AYYVXCB",
         parent_id: null,
-        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59",
+        user_id: null,
       },
       entity_id: "switch.bedroom_lamp",
-      last_changed: "2024-05-01T23:05:12.108917+00:00",
-      last_reported: "2024-05-01T23:05:12.108917+00:00",
-      last_updated: "2024-05-01T23:05:12.108917+00:00",
-      state: "off",
+      last_changed: "2024-05-02T23:38:44.907730+00:00",
+      last_reported: "2024-05-02T23:38:44.907730+00:00",
+      last_updated: "2024-05-02T23:38:44.907730+00:00",
+      state: "unavailable",
     },
     kitchen_cabinets: {
       attributes: {
-        "Managed By": "hass_e2e",
         friendly_name: "kitchen_cabinets",
+        restored: true,
+        supported_features: 0,
       },
       context: {
-        id: "01HWV6F85B042WZZDCQZVBPHXV",
+        id: "01HWXTSCSBM9Y3SRQTFJ5CVK6H",
         parent_id: null,
-        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59",
+        user_id: null,
       },
       entity_id: "switch.kitchen_cabinets",
-      last_changed: "2024-05-01T23:05:12.109259+00:00",
-      last_reported: "2024-05-01T23:05:12.109259+00:00",
-      last_updated: "2024-05-01T23:05:12.109259+00:00",
-      state: "off",
+      last_changed: "2024-05-02T23:38:44.907743+00:00",
+      last_reported: "2024-05-02T23:38:44.907743+00:00",
+      last_updated: "2024-05-02T23:38:44.907743+00:00",
+      state: "unavailable",
     },
     living_room_mood_lights: {
       attributes: {
-        "Managed By": "hass_e2e",
         friendly_name: "living_room_mood_lights",
+        restored: true,
+        supported_features: 0,
       },
       context: {
-        id: "01HWV6F85B042WZZDCQZVBPHXV",
+        id: "01HWXTSCSBS5B586JJ7VFH10SX",
         parent_id: null,
-        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59",
+        user_id: null,
       },
       entity_id: "switch.living_room_mood_lights",
-      last_changed: "2024-05-01T23:05:12.109188+00:00",
-      last_reported: "2024-05-01T23:05:12.109188+00:00",
-      last_updated: "2024-05-01T23:05:12.109188+00:00",
-      state: "off",
+      last_changed: "2024-05-02T23:38:44.907753+00:00",
+      last_reported: "2024-05-02T23:38:44.907753+00:00",
+      last_updated: "2024-05-02T23:38:44.907753+00:00",
+      state: "unavailable",
     },
     porch_light: {
       attributes: {
-        "Managed By": "hass_e2e",
         friendly_name: "porch_light",
+        restored: true,
+        supported_features: 0,
       },
       context: {
-        id: "01HWV6F85B042WZZDCQZVBPHXV",
+        id: "01HWXTSCSBFTSZR1M5XAK7XSR8",
         parent_id: null,
-        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59",
+        user_id: null,
       },
       entity_id: "switch.porch_light",
-      last_changed: "2024-05-01T23:05:12.109093+00:00",
-      last_reported: "2024-05-01T23:05:12.109093+00:00",
-      last_updated: "2024-05-01T23:05:12.109093+00:00",
-      state: "off",
+      last_changed: "2024-05-02T23:38:44.907761+00:00",
+      last_reported: "2024-05-02T23:38:44.907761+00:00",
+      last_updated: "2024-05-02T23:38:44.907761+00:00",
+      state: "unavailable",
     },
   },
   todo: {
@@ -282,14 +313,14 @@ export const ENTITY_SETUP = {
         supported_features: 15,
       },
       context: {
-        id: "01HWV5PGTV7D14QE96K8JP81YB",
+        id: "01HWXTS8X3D417XC4YJTG8QJWB",
         parent_id: null,
         user_id: null,
       },
       entity_id: "todo.shopping_list",
-      last_changed: "2024-05-01T22:51:41.787493+00:00",
-      last_reported: "2024-05-01T22:51:41.788855+00:00",
-      last_updated: "2024-05-01T22:51:41.787493+00:00",
+      last_changed: "2024-05-02T23:38:40.931953+00:00",
+      last_reported: "2024-05-02T23:38:40.931953+00:00",
+      last_updated: "2024-05-02T23:38:40.931953+00:00",
       state: "0",
     },
   },
@@ -299,39 +330,39 @@ export const ENTITY_SETUP = {
         friendly_name: "Google en com",
       },
       context: {
-        id: "01HWV5PGVBKJXG1JETDP9QA7P4",
+        id: "01HWXTS8XMPQ236CDJ6X7C6E60",
         parent_id: null,
         user_id: null,
       },
       entity_id: "tts.google_en_com",
-      last_changed: "2024-05-01T22:51:41.803208+00:00",
-      last_reported: "2024-05-01T22:51:41.804626+00:00",
-      last_updated: "2024-05-01T22:51:41.803208+00:00",
+      last_changed: "2024-05-02T23:38:40.948156+00:00",
+      last_reported: "2024-05-02T23:38:40.948156+00:00",
+      last_updated: "2024-05-02T23:38:40.948156+00:00",
       state: "unknown",
     },
   },
   zone: {
     home: {
       attributes: {
+        editable: true,
+        friendly_name: "Home",
+        icon: "mdi:home",
         latitude: 52.373_133_9,
         longitude: 4.890_314_7,
-        radius: 100,
         passive: false,
         persons: [],
-        editable: true,
-        icon: "mdi:home",
-        friendly_name: "Home",
+        radius: 100,
       },
-      entity_id: "zone.home",
-      last_changed: "2024-05-01T22:51:05.475652+00:00",
-      state: "0",
       context: {
-        id: "01HWV5PGN6S5B586JJ7VFH10SX",
+        id: "01HWXTS8GMB4ZW20P8MGMX0QSN",
         parent_id: null,
         user_id: null,
       },
-      last_reported: "2024-05-01T22:51:41.606270+00:00",
-      last_updated: "2024-05-01T22:51:41.606270+00:00",
+      entity_id: "zone.home",
+      last_changed: "2024-05-02T23:38:40.532050+00:00",
+      last_reported: "2024-05-02T23:38:40.532050+00:00",
+      last_updated: "2024-05-02T23:38:40.532050+00:00",
+      state: "0",
     },
   },
 };
@@ -461,6 +492,305 @@ export type iCallService = {
        * > ```
        */
       entity_id: PICK_ENTITY<"button"> | PICK_ENTITY<"button">[];
+    }): Promise<void>;
+  };
+  // # MARK: calendar
+  calendar: {
+    /**
+     * ### Create event
+     *
+     * > Adds a new calendar event.
+     */
+    create_event(service_data?: {
+      /**
+       * ## Description
+       *
+       * > A more complete description of the event than the one provided by the summary.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "description": "Meeting to provide technical review for 'Phoenix' design."
+       * > }
+       * > ```
+       */
+      description?: string;
+      /**
+       * ## End date
+       *
+       * > The date the all-day event should end (exclusive).
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "end_date": "2022-03-23"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > date: null
+       * > ```
+       */
+      end_date?: unknown;
+      /**
+       * ## End time
+       *
+       * > The date and time the event should end.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "end_date_time": "2022-03-22 22:00:00"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > datetime: null
+       * > ```
+       */
+      end_date_time?: unknown;
+      /**
+       * ## In
+       *
+       * > Days or weeks that you want to create the event in.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "in": "{\"days\": 2} or {\"weeks\": 2}"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * >
+       * > ```
+       */
+      in?: unknown;
+      /**
+       * ## Location
+       *
+       * > The location of the event.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "location": "Conference Room - F123, Bldg. 002"
+       * > }
+       * > ```
+       */
+      location?: string;
+      /**
+       * ## Start date
+       *
+       * > The date the all-day event should start.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "start_date": "2022-03-22"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > date: null
+       * > ```
+       */
+      start_date?: unknown;
+      /**
+       * ## Start time
+       *
+       * > The date and time the event should start.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "start_date_time": "2022-03-22 20:00:00"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > datetime: null
+       * > ```
+       */
+      start_date_time?: unknown;
+      /**
+       * ## Summary
+       *
+       * > Defines the short summary or subject for the event.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "summary": "Department Party"
+       * > }
+       * > ```
+       */
+      summary: string;
+      /**
+       * Assisted definition
+       * > ```yaml
+       * > entity:
+       * >   - domain:
+       * >       - calendar
+       * >     supported_features:
+       * >       - 1
+       * > ```
+       */
+      entity_id: PICK_ENTITY<"calendar"> | PICK_ENTITY<"calendar">[];
+    }): Promise<void>;
+    /**
+     * ### Get events
+     *
+     * > Get events on a calendar within a time range.
+     */
+    get_events(service_data?: {
+      /**
+       * ## Duration
+       *
+       * > Returns active events from start_date_time until the specified duration.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > duration: null
+       * > ```
+       */
+      duration?: unknown;
+      /**
+       * ## End time
+       *
+       * > Returns active events before this time (exclusive). Cannot be used with 'duration'.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "end_date_time": "2022-03-22 22:00:00"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > datetime: null
+       * > ```
+       */
+      end_date_time?: unknown;
+      /**
+       * ## Start time
+       *
+       * > Returns active events after this time (exclusive). When not set, defaults to now.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "start_date_time": "2022-03-22 20:00:00"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > datetime: null
+       * > ```
+       */
+      start_date_time?: unknown;
+      /**
+       * Assisted definition
+       * > ```yaml
+       * > entity:
+       * >   - domain:
+       * >       - calendar
+       * > ```
+       */
+      entity_id: PICK_ENTITY<"calendar"> | PICK_ENTITY<"calendar">[];
+    }): Promise<void>;
+    /**
+     * ### List event
+     *
+     * > Lists events on a calendar within a time range.
+     */
+    list_events(service_data?: {
+      /**
+       * ## Duration
+       *
+       * > Returns active events from start_date_time until the specified duration.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > duration: null
+       * > ```
+       */
+      duration?: unknown;
+      /**
+       * ## End time
+       *
+       * > Returns active events before this time (exclusive). Cannot be used with 'duration'.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "end_date_time": "2022-03-22 22:00:00"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > datetime: null
+       * > ```
+       */
+      end_date_time?: unknown;
+      /**
+       * ## Start time
+       *
+       * > Returns active events after this time (exclusive). When not set, defaults to now.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "start_date_time": "2022-03-22 20:00:00"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > datetime: null
+       * > ```
+       */
+      start_date_time?: unknown;
+      /**
+       * Assisted definition
+       * > ```yaml
+       * > entity:
+       * >   - domain:
+       * >       - calendar
+       * > ```
+       */
+      entity_id: PICK_ENTITY<"calendar"> | PICK_ENTITY<"calendar">[];
     }): Promise<void>;
   };
   // # MARK: cloud
@@ -2979,6 +3309,7 @@ export type REGISTRY_SETUP = {
       | "switch.kitchen_cabinets"
       | "switch.living_room_mood_lights"
       | "switch.porch_light";
+    _holiday: "calendar.united_states_tx";
   };
   label: {
     _synapse:
@@ -2989,6 +3320,7 @@ export type REGISTRY_SETUP = {
       | "switch.kitchen_cabinets"
       | "switch.living_room_mood_lights"
       | "switch.porch_light";
+    _test: never;
   };
   floor: {
     _downstairs: "switch.kitchen_cabinets" | "switch.living_room_mood_lights";
@@ -3005,6 +3337,7 @@ export type REGISTRY_SETUP = {
       | "sensor.sun_solar_elevation"
       | "sensor.sun_solar_azimuth"
       | "sensor.sun_solar_rising";
+    _e58841e47cf86097b310316e55d6bb12: "calendar.united_states_tx";
   };
 };
 
@@ -3012,19 +3345,22 @@ export type REGISTRY_SETUP = {
 export type TAreaId = "living_room" | "kitchen" | "bedroom";
 
 // #MARK: TDeviceId
-export type TDeviceId = "308e39cf50a9fc6c30b4110724ed1f2e";
+export type TDeviceId =
+  | "308e39cf50a9fc6c30b4110724ed1f2e"
+  | "e58841e47cf86097b310316e55d6bb12";
 
 // #MARK: TFloorId
 export type TFloorId = "downstairs" | "upstairs";
 
 // #MARK: TLabelId
-export type TLabelId = "synapse";
+export type TLabelId = "synapse" | "test";
 
 // #MARK: TZoneId
 export type TZoneId = string;
 
 // #MARK: TRawEntityIds
 export type TRawEntityIds =
+  | "person.digital_alchemy"
   | "zone.home"
   | "sun.sun"
   | "sensor.sun_next_dawn"
@@ -3033,7 +3369,6 @@ export type TRawEntityIds =
   | "sensor.sun_next_noon"
   | "sensor.sun_next_rising"
   | "sensor.sun_next_setting"
-  | "person.digital_alchemy"
   | "todo.shopping_list"
   | "tts.google_en_com"
   | "binary_sensor.hass_e2e_online"
@@ -3042,7 +3377,8 @@ export type TRawEntityIds =
   | "switch.bedroom_lamp"
   | "switch.kitchen_cabinets"
   | "switch.living_room_mood_lights"
-  | "switch.porch_light";
+  | "switch.porch_light"
+  | "calendar.united_states_tx";
 
 // #MARK: TPlatformId
 export type TPlatformId =
@@ -3050,15 +3386,17 @@ export type TPlatformId =
   | "person"
   | "shopping_list"
   | "google_translate"
-  | "synapse";
+  | "synapse"
+  | "holiday";
 
 // #MARK: TRawDomains
 export type TRawDomains =
+  | "person"
   | "zone"
   | "sun"
   | "sensor"
-  | "person"
   | "todo"
   | "tts"
   | "binary_sensor"
-  | "switch";
+  | "switch"
+  | "calendar";

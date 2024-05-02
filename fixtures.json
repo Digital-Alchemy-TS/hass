@@ -54,9 +54,54 @@
       "serial_number": null,
       "sw_version": null,
       "via_device_id": null
+    },
+    {
+      "area_id": null,
+      "configuration_url": null,
+      "config_entries": [
+        "05ecbbc6111791b6baacbbb60397db14"
+      ],
+      "connections": [],
+      "disabled_by": null,
+      "entry_type": "service",
+      "hw_version": null,
+      "id": "e58841e47cf86097b310316e55d6bb12",
+      "identifiers": [
+        [
+          "holiday",
+          "05ecbbc6111791b6baacbbb60397db14"
+        ]
+      ],
+      "labels": [],
+      "manufacturer": null,
+      "model": null,
+      "name_by_user": null,
+      "name": "United States, TX",
+      "serial_number": null,
+      "sw_version": null,
+      "via_device_id": null
     }
   ],
   "entities": [
+    {
+      "entity_id": "person.digital_alchemy",
+      "state": "unknown",
+      "attributes": {
+        "editable": true,
+        "id": "digital_alchemy",
+        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59",
+        "device_trackers": [],
+        "friendly_name": "digital-alchemy"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "01HWXTSCSBRKJ9T2KV1JNER5KQ",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
     {
       "entity_id": "zone.home",
       "state": "0",
@@ -70,11 +115,11 @@
         "icon": "mdi:home",
         "friendly_name": "Home"
       },
-      "last_changed": "2024-05-01T22:51:05.475652+00:00",
-      "last_reported": "2024-05-01T22:51:41.606270+00:00",
-      "last_updated": "2024-05-01T22:51:41.606270+00:00",
+      "last_changed": "2024-05-02T23:38:40.532050+00:00",
+      "last_reported": "2024-05-02T23:38:40.532050+00:00",
+      "last_updated": "2024-05-02T23:38:40.532050+00:00",
       "context": {
-        "id": "01HWV5PGN6S5B586JJ7VFH10SX",
+        "id": "01HWXTS8GMB4ZW20P8MGMX0QSN",
         "parent_id": null,
         "user_id": null
       }
@@ -83,154 +128,136 @@
       "entity_id": "sun.sun",
       "state": "below_horizon",
       "attributes": {
-        "next_dawn": "2024-05-02T03:26:53.682544+00:00",
-        "next_dusk": "2024-05-02T19:49:14.518121+00:00",
-        "next_midnight": "2024-05-01T23:37:23+00:00",
-        "next_noon": "2024-05-02T11:37:25+00:00",
-        "next_rising": "2024-05-02T04:07:11.617514+00:00",
-        "next_setting": "2024-05-02T19:08:39.868356+00:00",
-        "elevation": -21.93,
-        "azimuth": 353.31,
-        "rising": false,
+        "next_dawn": "2024-05-03T03:24:45.747945+00:00",
+        "next_dusk": "2024-05-03T19:51:10.358970+00:00",
+        "next_midnight": "2024-05-03T23:37:12+00:00",
+        "next_noon": "2024-05-03T11:37:19+00:00",
+        "next_rising": "2024-05-03T04:05:17.926549+00:00",
+        "next_setting": "2024-05-03T19:10:21.280558+00:00",
+        "elevation": -21.86,
+        "azimuth": 0.35,
+        "rising": true,
         "friendly_name": "Sun"
       },
-      "last_changed": "2024-05-01T22:51:05.526268+00:00",
-      "last_reported": "2024-05-01T23:11:41.611563+00:00",
-      "last_updated": "2024-05-01T23:11:41.611563+00:00",
+      "last_changed": "2024-05-02T23:38:40.897074+00:00",
+      "last_reported": "2024-05-02T23:38:40.897074+00:00",
+      "last_updated": "2024-05-02T23:38:40.897074+00:00",
       "context": {
-        "id": "01HWV6V4HBJN10G7S4K2RG6FDB",
+        "id": "01HWXTS8W1J2TDGMN7KKNWP8DV",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "sensor.sun_next_dawn",
-      "state": "2024-05-02T03:26:53+00:00",
+      "state": "2024-05-03T03:24:45+00:00",
       "attributes": {
         "device_class": "timestamp",
         "friendly_name": "Sun Next dawn"
       },
-      "last_changed": "2024-05-01T22:51:41.609579+00:00",
-      "last_reported": "2024-05-01T22:51:41.609579+00:00",
-      "last_updated": "2024-05-01T22:51:41.609579+00:00",
+      "last_changed": "2024-05-02T23:38:40.897643+00:00",
+      "last_reported": "2024-05-02T23:38:40.897643+00:00",
+      "last_updated": "2024-05-02T23:38:40.897643+00:00",
       "context": {
-        "id": "01HWV5PGN9K3WCDRZQADJVMDRH",
+        "id": "01HWXTS8W1SRTPT5K1XM0G491X",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "sensor.sun_next_dusk",
-      "state": "2024-05-02T19:49:14+00:00",
+      "state": "2024-05-03T19:51:10+00:00",
       "attributes": {
         "device_class": "timestamp",
         "friendly_name": "Sun Next dusk"
       },
-      "last_changed": "2024-05-01T22:51:41.610181+00:00",
-      "last_reported": "2024-05-01T22:51:41.610181+00:00",
-      "last_updated": "2024-05-01T22:51:41.610181+00:00",
+      "last_changed": "2024-05-02T23:38:40.897814+00:00",
+      "last_reported": "2024-05-02T23:38:40.897814+00:00",
+      "last_updated": "2024-05-02T23:38:40.897814+00:00",
       "context": {
-        "id": "01HWV5PGNA8DTYRM3NJ9RA8MWG",
+        "id": "01HWXTS8W1S95P1MVHDGHSQEB2",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "sensor.sun_next_midnight",
-      "state": "2024-05-01T23:37:23+00:00",
+      "state": "2024-05-03T23:37:12+00:00",
       "attributes": {
         "device_class": "timestamp",
         "friendly_name": "Sun Next midnight"
       },
-      "last_changed": "2024-05-01T22:51:41.610272+00:00",
-      "last_reported": "2024-05-01T22:51:41.610272+00:00",
-      "last_updated": "2024-05-01T22:51:41.610272+00:00",
+      "last_changed": "2024-05-02T23:38:40.897950+00:00",
+      "last_reported": "2024-05-02T23:38:40.897950+00:00",
+      "last_updated": "2024-05-02T23:38:40.897950+00:00",
       "context": {
-        "id": "01HWV5PGNA4834FD6F7MYG56BG",
+        "id": "01HWXTS8W1YQCPA3WZ69Y9JSPD",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "sensor.sun_next_noon",
-      "state": "2024-05-02T11:37:25+00:00",
+      "state": "2024-05-03T11:37:19+00:00",
       "attributes": {
         "device_class": "timestamp",
         "friendly_name": "Sun Next noon"
       },
-      "last_changed": "2024-05-01T22:51:41.610338+00:00",
-      "last_reported": "2024-05-01T22:51:41.610338+00:00",
-      "last_updated": "2024-05-01T22:51:41.610338+00:00",
+      "last_changed": "2024-05-02T23:38:40.898068+00:00",
+      "last_reported": "2024-05-02T23:38:40.898068+00:00",
+      "last_updated": "2024-05-02T23:38:40.898068+00:00",
       "context": {
-        "id": "01HWV5PGNAJC17N1C0FW2738EX",
+        "id": "01HWXTS8W28MVV48CQ31JB2WKC",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "sensor.sun_next_rising",
-      "state": "2024-05-02T04:07:11+00:00",
+      "state": "2024-05-03T04:05:17+00:00",
       "attributes": {
         "device_class": "timestamp",
         "friendly_name": "Sun Next rising"
       },
-      "last_changed": "2024-05-01T22:51:41.610407+00:00",
-      "last_reported": "2024-05-01T22:51:41.610407+00:00",
-      "last_updated": "2024-05-01T22:51:41.610407+00:00",
+      "last_changed": "2024-05-02T23:38:40.898182+00:00",
+      "last_reported": "2024-05-02T23:38:40.898182+00:00",
+      "last_updated": "2024-05-02T23:38:40.898182+00:00",
       "context": {
-        "id": "01HWV5PGNAF25ESYKV9K0EFXXG",
+        "id": "01HWXTS8W2MMADKGWE4A5BMH51",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "sensor.sun_next_setting",
-      "state": "2024-05-02T19:08:39+00:00",
+      "state": "2024-05-03T19:10:21+00:00",
       "attributes": {
         "device_class": "timestamp",
         "friendly_name": "Sun Next setting"
       },
-      "last_changed": "2024-05-01T22:51:41.610467+00:00",
-      "last_reported": "2024-05-01T22:51:41.610467+00:00",
-      "last_updated": "2024-05-01T22:51:41.610467+00:00",
+      "last_changed": "2024-05-02T23:38:40.898289+00:00",
+      "last_reported": "2024-05-02T23:38:40.898289+00:00",
+      "last_updated": "2024-05-02T23:38:40.898289+00:00",
       "context": {
-        "id": "01HWV5PGNABNXC3KSBH487VZ35",
+        "id": "01HWXTS8W24KWTHR2B6V32NCXG",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "sensor.magic",
-      "state": "50",
+      "state": "unavailable",
       "attributes": {
-        "Managed By": "hass_e2e",
+        "restored": true,
         "icon": "mdi:satellite-uplink",
-        "friendly_name": "magic"
+        "friendly_name": "magic",
+        "supported_features": 0
       },
-      "last_changed": "2024-05-01T23:01:44.813217+00:00",
-      "last_reported": "2024-05-01T23:01:44.813217+00:00",
-      "last_updated": "2024-05-01T23:01:44.813217+00:00",
+      "last_changed": "2024-05-02T23:38:44.907694+00:00",
+      "last_reported": "2024-05-02T23:38:44.907694+00:00",
+      "last_updated": "2024-05-02T23:38:44.907694+00:00",
       "context": {
-        "id": "01HWV68XQDEZQMGKTKDVG12NFE",
-        "parent_id": null,
-        "user_id": null
-      }
-    },
-    {
-      "entity_id": "person.digital_alchemy",
-      "state": "unknown",
-      "attributes": {
-        "editable": true,
-        "id": "digital_alchemy",
-        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59",
-        "device_trackers": [],
-        "friendly_name": "digital-alchemy"
-      },
-      "last_changed": "2024-05-01T22:51:27.701166+00:00",
-      "last_reported": "2024-05-01T22:51:27.701396+00:00",
-      "last_updated": "2024-05-01T22:51:27.701166+00:00",
-      "context": {
-        "id": "01HWV5P32NTRFVKB5TWZR050SG",
+        "id": "01HWXTSCSBW34BP3R20RJ09CVZ",
         "parent_id": null,
         "user_id": null
       }
@@ -242,11 +269,11 @@
         "friendly_name": "Shopping List",
         "supported_features": 15
       },
-      "last_changed": "2024-05-01T22:51:41.787493+00:00",
-      "last_reported": "2024-05-01T22:51:41.788855+00:00",
-      "last_updated": "2024-05-01T22:51:41.787493+00:00",
+      "last_changed": "2024-05-02T23:38:40.931953+00:00",
+      "last_reported": "2024-05-02T23:38:40.931953+00:00",
+      "last_updated": "2024-05-02T23:38:40.931953+00:00",
       "context": {
-        "id": "01HWV5PGTV7D14QE96K8JP81YB",
+        "id": "01HWXTS8X3D417XC4YJTG8QJWB",
         "parent_id": null,
         "user_id": null
       }
@@ -257,109 +284,137 @@
       "attributes": {
         "friendly_name": "Google en com"
       },
-      "last_changed": "2024-05-01T22:51:41.803208+00:00",
-      "last_reported": "2024-05-01T22:51:41.804626+00:00",
-      "last_updated": "2024-05-01T22:51:41.803208+00:00",
+      "last_changed": "2024-05-02T23:38:40.948156+00:00",
+      "last_reported": "2024-05-02T23:38:40.948156+00:00",
+      "last_updated": "2024-05-02T23:38:40.948156+00:00",
       "context": {
-        "id": "01HWV5PGVBKJXG1JETDP9QA7P4",
+        "id": "01HWXTS8XMPQ236CDJ6X7C6E60",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "binary_sensor.hass_e2e_online",
-      "state": "on",
+      "state": "unavailable",
       "attributes": {
-        "friendly_name": "hass_e2e online"
+        "restored": true,
+        "friendly_name": "hass_e2e online",
+        "supported_features": 0
       },
-      "last_changed": "2024-05-01T23:01:44.812474+00:00",
-      "last_reported": "2024-05-01T23:01:44.812474+00:00",
-      "last_updated": "2024-05-01T23:01:44.812474+00:00",
+      "last_changed": "2024-05-02T23:38:44.907649+00:00",
+      "last_reported": "2024-05-02T23:38:44.907649+00:00",
+      "last_updated": "2024-05-02T23:38:44.907649+00:00",
       "context": {
-        "id": "01HWV68XQCWCA6DPV7QN6B11R8",
+        "id": "01HWXTSCSBGW129NV7WY8MMG1E",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "binary_sensor.toggles",
-      "state": "off",
+      "state": "unavailable",
       "attributes": {
-        "Managed By": "hass_e2e",
+        "restored": true,
         "icon": "mdi:toggle-switch-variant-off",
-        "friendly_name": "toggles"
+        "friendly_name": "toggles",
+        "supported_features": 0
       },
-      "last_changed": "2024-05-01T23:01:59.325631+00:00",
-      "last_reported": "2024-05-01T23:01:59.325631+00:00",
-      "last_updated": "2024-05-01T23:01:59.325631+00:00",
+      "last_changed": "2024-05-02T23:38:44.907718+00:00",
+      "last_reported": "2024-05-02T23:38:44.907718+00:00",
+      "last_updated": "2024-05-02T23:38:44.907718+00:00",
       "context": {
-        "id": "01HWV69BWXX0EMASCYWG9XHYBV",
+        "id": "01HWXTSCSB43FF1R6FX0QEE4Z6",
         "parent_id": null,
         "user_id": null
       }
     },
     {
       "entity_id": "switch.bedroom_lamp",
-      "state": "off",
+      "state": "unavailable",
       "attributes": {
-        "Managed By": "hass_e2e",
-        "friendly_name": "bedroom_lamp"
+        "restored": true,
+        "friendly_name": "bedroom_lamp",
+        "supported_features": 0
       },
-      "last_changed": "2024-05-01T23:05:12.108917+00:00",
-      "last_reported": "2024-05-01T23:05:12.108917+00:00",
-      "last_updated": "2024-05-01T23:05:12.108917+00:00",
+      "last_changed": "2024-05-02T23:38:44.907730+00:00",
+      "last_reported": "2024-05-02T23:38:44.907730+00:00",
+      "last_updated": "2024-05-02T23:38:44.907730+00:00",
       "context": {
-        "id": "01HWV6F85B042WZZDCQZVBPHXV",
+        "id": "01HWXTSCSB7BK003CH3AYYVXCB",
         "parent_id": null,
-        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59"
+        "user_id": null
       }
     },
     {
       "entity_id": "switch.kitchen_cabinets",
-      "state": "off",
+      "state": "unavailable",
       "attributes": {
-        "Managed By": "hass_e2e",
-        "friendly_name": "kitchen_cabinets"
+        "restored": true,
+        "friendly_name": "kitchen_cabinets",
+        "supported_features": 0
       },
-      "last_changed": "2024-05-01T23:05:12.109259+00:00",
-      "last_reported": "2024-05-01T23:05:12.109259+00:00",
-      "last_updated": "2024-05-01T23:05:12.109259+00:00",
+      "last_changed": "2024-05-02T23:38:44.907743+00:00",
+      "last_reported": "2024-05-02T23:38:44.907743+00:00",
+      "last_updated": "2024-05-02T23:38:44.907743+00:00",
       "context": {
-        "id": "01HWV6F85B042WZZDCQZVBPHXV",
+        "id": "01HWXTSCSBM9Y3SRQTFJ5CVK6H",
         "parent_id": null,
-        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59"
+        "user_id": null
       }
     },
     {
       "entity_id": "switch.living_room_mood_lights",
-      "state": "off",
+      "state": "unavailable",
       "attributes": {
-        "Managed By": "hass_e2e",
-        "friendly_name": "living_room_mood_lights"
+        "restored": true,
+        "friendly_name": "living_room_mood_lights",
+        "supported_features": 0
       },
-      "last_changed": "2024-05-01T23:05:12.109188+00:00",
-      "last_reported": "2024-05-01T23:05:12.109188+00:00",
-      "last_updated": "2024-05-01T23:05:12.109188+00:00",
+      "last_changed": "2024-05-02T23:38:44.907753+00:00",
+      "last_reported": "2024-05-02T23:38:44.907753+00:00",
+      "last_updated": "2024-05-02T23:38:44.907753+00:00",
       "context": {
-        "id": "01HWV6F85B042WZZDCQZVBPHXV",
+        "id": "01HWXTSCSBS5B586JJ7VFH10SX",
         "parent_id": null,
-        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59"
+        "user_id": null
       }
     },
     {
       "entity_id": "switch.porch_light",
+      "state": "unavailable",
+      "attributes": {
+        "restored": true,
+        "friendly_name": "porch_light",
+        "supported_features": 0
+      },
+      "last_changed": "2024-05-02T23:38:44.907761+00:00",
+      "last_reported": "2024-05-02T23:38:44.907761+00:00",
+      "last_updated": "2024-05-02T23:38:44.907761+00:00",
+      "context": {
+        "id": "01HWXTSCSBFTSZR1M5XAK7XSR8",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "calendar.united_states_tx",
       "state": "off",
       "attributes": {
-        "Managed By": "hass_e2e",
-        "friendly_name": "porch_light"
+        "message": "Memorial Day",
+        "all_day": true,
+        "start_time": "2024-05-27 00:00:00",
+        "end_time": "2024-05-28 00:00:00",
+        "location": "United States, TX",
+        "description": "",
+        "friendly_name": "United States, TX"
       },
-      "last_changed": "2024-05-01T23:05:12.109093+00:00",
-      "last_reported": "2024-05-01T23:05:12.109093+00:00",
-      "last_updated": "2024-05-01T23:05:12.109093+00:00",
+      "last_changed": "2024-05-02T23:41:30.447850+00:00",
+      "last_reported": "2024-05-02T23:41:30.449701+00:00",
+      "last_updated": "2024-05-02T23:41:30.447850+00:00",
       "context": {
-        "id": "01HWV6F85B042WZZDCQZVBPHXV",
+        "id": "01HWXTYEEFBB7QQC1CSM6PAR36",
         "parent_id": null,
-        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59"
+        "user_id": null
       }
     }
   ],
@@ -664,7 +719,9 @@
       "hidden_by": null,
       "icon": null,
       "id": "ac5f558c61945b7af023cef2f9a77492",
-      "labels": [],
+      "labels": [
+        "synapse"
+      ],
       "name": null,
       "options": {
         "conversation": {
@@ -688,7 +745,9 @@
       "hidden_by": null,
       "icon": null,
       "id": "f8a9b938b353d5975a34e6d39a332c5a",
-      "labels": [],
+      "labels": [
+        "synapse"
+      ],
       "name": null,
       "options": {
         "conversation": {
@@ -712,7 +771,9 @@
       "hidden_by": null,
       "icon": null,
       "id": "c049b05005c0c8abe8120ee9bb734bed",
-      "labels": [],
+      "labels": [
+        "synapse"
+      ],
       "name": null,
       "options": {
         "conversation": {
@@ -736,7 +797,9 @@
       "hidden_by": null,
       "icon": null,
       "id": "ab86aec5a2e84c15455157ca2ddde105",
-      "labels": [],
+      "labels": [
+        "synapse"
+      ],
       "name": null,
       "options": {
         "conversation": {
@@ -760,7 +823,9 @@
       "hidden_by": null,
       "icon": null,
       "id": "1ebfee0bc69350aa8d84a3727e1f855b",
-      "labels": [],
+      "labels": [
+        "synapse"
+      ],
       "name": null,
       "options": {
         "conversation": {
@@ -784,7 +849,9 @@
       "hidden_by": null,
       "icon": null,
       "id": "ff58b60ec80ea735610806b5561de298",
-      "labels": [],
+      "labels": [
+        "synapse"
+      ],
       "name": null,
       "options": {
         "conversation": {
@@ -797,7 +864,7 @@
       "unique_id": "27b4fc99f35bbdd1a07173caff5b52f86e3bc342db96f48427e47980b0fb6b49"
     },
     {
-      "area_id": null,
+      "area_id": "",
       "categories": {},
       "config_entry_id": null,
       "device_id": null,
@@ -808,7 +875,9 @@
       "hidden_by": null,
       "icon": null,
       "id": "b3f95abd6b8328bdc0140080a2c8a7bc",
-      "labels": [],
+      "labels": [
+        "synapse"
+      ],
       "name": null,
       "options": {
         "conversation": {
@@ -819,6 +888,30 @@
       "platform": "synapse",
       "translation_key": null,
       "unique_id": "8eb8c1f8c760e97cfa49a0a29cd6891313a1e9a45dd046a556a9f317778cf50a"
+    },
+    {
+      "area_id": null,
+      "categories": {},
+      "config_entry_id": "05ecbbc6111791b6baacbbb60397db14",
+      "device_id": "e58841e47cf86097b310316e55d6bb12",
+      "disabled_by": null,
+      "entity_category": null,
+      "entity_id": "calendar.united_states_tx",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": null,
+      "id": "fc22f809ab3ebdfcbf9ba41aa953f1a2",
+      "labels": [],
+      "name": null,
+      "options": {
+        "conversation": {
+          "should_expose": false
+        }
+      },
+      "original_name": null,
+      "platform": "holiday",
+      "translation_key": null,
+      "unique_id": "05ecbbc6111791b6baacbbb60397db14"
     }
   ],
   "floors": [
@@ -837,8 +930,79 @@
       "name": "Upstairs"
     }
   ],
-  "labels": [],
+  "labels": [
+    {
+      "color": "accent",
+      "description": null,
+      "icon": "mdi:brain",
+      "label_id": "synapse",
+      "name": "synapse"
+    },
+    {
+      "color": "indigo",
+      "description": null,
+      "icon": "mdi:test-tube",
+      "label_id": "test",
+      "name": "test"
+    }
+  ],
   "services": [
+    {
+      "domain": "persistent_notification",
+      "services": {
+        "create": {
+          "name": "Create",
+          "description": "Shows a notification on the **Notifications** panel.",
+          "fields": {
+            "message": {
+              "required": true,
+              "example": "Please check your configuration.yaml.",
+              "selector": {
+                "text": null
+              },
+              "name": "Message",
+              "description": "Message body of the notification."
+            },
+            "title": {
+              "example": "Test notification",
+              "selector": {
+                "text": null
+              },
+              "name": "Title",
+              "description": "Optional title of the notification."
+            },
+            "notification_id": {
+              "example": 1234,
+              "selector": {
+                "text": null
+              },
+              "name": "Notification ID",
+              "description": "ID of the notification. This new notification will overwrite an existing notification with the same ID."
+            }
+          }
+        },
+        "dismiss": {
+          "name": "Dismiss",
+          "description": "Removes a notification from the **Notifications** panel.",
+          "fields": {
+            "notification_id": {
+              "required": true,
+              "example": 1234,
+              "selector": {
+                "text": null
+              },
+              "name": "Notification ID",
+              "description": "ID of the notification to be removed."
+            }
+          }
+        },
+        "dismiss_all": {
+          "name": "Dismiss all",
+          "description": "Removes all notifications from the **Notifications** panel.",
+          "fields": {}
+        }
+      }
+    },
     {
       "domain": "homeassistant",
       "services": {
@@ -990,95 +1154,6 @@
       }
     },
     {
-      "domain": "persistent_notification",
-      "services": {
-        "create": {
-          "name": "Create",
-          "description": "Shows a notification on the **Notifications** panel.",
-          "fields": {
-            "message": {
-              "required": true,
-              "example": "Please check your configuration.yaml.",
-              "selector": {
-                "text": null
-              },
-              "name": "Message",
-              "description": "Message body of the notification."
-            },
-            "title": {
-              "example": "Test notification",
-              "selector": {
-                "text": null
-              },
-              "name": "Title",
-              "description": "Optional title of the notification."
-            },
-            "notification_id": {
-              "example": 1234,
-              "selector": {
-                "text": null
-              },
-              "name": "Notification ID",
-              "description": "ID of the notification. This new notification will overwrite an existing notification with the same ID."
-            }
-          }
-        },
-        "dismiss": {
-          "name": "Dismiss",
-          "description": "Removes a notification from the **Notifications** panel.",
-          "fields": {
-            "notification_id": {
-              "required": true,
-              "example": 1234,
-              "selector": {
-                "text": null
-              },
-              "name": "Notification ID",
-              "description": "ID of the notification to be removed."
-            }
-          }
-        },
-        "dismiss_all": {
-          "name": "Dismiss all",
-          "description": "Removes all notifications from the **Notifications** panel.",
-          "fields": {}
-        }
-      }
-    },
-    {
-      "domain": "logger",
-      "services": {
-        "set_default_level": {
-          "name": "Set default level",
-          "description": "Sets the default log level for integrations.",
-          "fields": {
-            "level": {
-              "selector": {
-                "select": {
-                  "options": [
-                    "debug",
-                    "info",
-                    "warning",
-                    "error",
-                    "fatal",
-                    "critical"
-                  ],
-                  "translation_key": "level"
-                }
-              },
-              "name": "Level",
-              "description": "Default severity level for all integrations."
-            }
-          }
-        },
-        "set_level": {
-          "name": "Set level",
-          "description": "Sets the log level for one or more integrations.",
-          "fields": {}
-        }
-      }
-    },
-    {
       "domain": "system_log",
       "services": {
         "clear": {
@@ -1125,6 +1200,39 @@
               "description": "Logger name under which to log the message. Defaults to `system_log.external`."
             }
           }
+        }
+      }
+    },
+    {
+      "domain": "logger",
+      "services": {
+        "set_default_level": {
+          "name": "Set default level",
+          "description": "Sets the default log level for integrations.",
+          "fields": {
+            "level": {
+              "selector": {
+                "select": {
+                  "options": [
+                    "debug",
+                    "info",
+                    "warning",
+                    "error",
+                    "fatal",
+                    "critical"
+                  ],
+                  "translation_key": "level"
+                }
+              },
+              "name": "Level",
+              "description": "Default severity level for all integrations."
+            }
+          }
+        },
+        "set_level": {
+          "name": "Set level",
+          "description": "Sets the log level for one or more integrations.",
+          "fields": {}
         }
       }
     },
@@ -1559,30 +1667,6 @@
       }
     },
     {
-      "domain": "input_button",
-      "services": {
-        "reload": {
-          "name": "Reload",
-          "description": "Reloads helpers from the YAML-configuration.",
-          "fields": {}
-        },
-        "press": {
-          "name": "Press",
-          "description": "Mimics the physical button press on the device.",
-          "fields": {},
-          "target": {
-            "entity": [
-              {
-                "domain": [
-                  "input_button"
-                ]
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
       "domain": "timer",
       "services": {
         "reload": {
@@ -1950,22 +2034,56 @@
       }
     },
     {
-      "domain": "input_boolean",
+      "domain": "zone",
+      "services": {
+        "reload": {
+          "name": "Reload",
+          "description": "Reloads zones from the YAML-configuration.",
+          "fields": {}
+        }
+      }
+    },
+    {
+      "domain": "input_button",
       "services": {
         "reload": {
           "name": "Reload",
           "description": "Reloads helpers from the YAML-configuration.",
           "fields": {}
         },
-        "turn_on": {
-          "name": "Turn on",
-          "description": "Turns on the helper.",
+        "press": {
+          "name": "Press",
+          "description": "Mimics the physical button press on the device.",
           "fields": {},
           "target": {
             "entity": [
               {
                 "domain": [
-                  "input_boolean"
+                  "input_button"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "domain": "script",
+      "services": {
+        "reload": {
+          "name": "Reload",
+          "description": "Reloads all the available scripts.",
+          "fields": {}
+        },
+        "turn_on": {
+          "name": "Turn on",
+          "description": "Runs the sequence of actions defined in a script.",
+          "fields": {},
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "script"
                 ]
               }
             ]
@@ -1973,13 +2091,13 @@
         },
         "turn_off": {
           "name": "Turn off",
-          "description": "Turns off the helper.",
+          "description": "Stops a running script.",
           "fields": {},
           "target": {
             "entity": [
               {
                 "domain": [
-                  "input_boolean"
+                  "script"
                 ]
               }
             ]
@@ -1987,13 +2105,13 @@
         },
         "toggle": {
           "name": "Toggle",
-          "description": "Toggles the helper on/off.",
+          "description": "Toggle a script. Starts it, if isn't running, stops it otherwise.",
           "fields": {},
           "target": {
             "entity": [
               {
                 "domain": [
-                  "input_boolean"
+                  "script"
                 ]
               }
             ]
@@ -2130,22 +2248,22 @@
       }
     },
     {
-      "domain": "script",
+      "domain": "input_boolean",
       "services": {
         "reload": {
           "name": "Reload",
-          "description": "Reloads all the available scripts.",
+          "description": "Reloads helpers from the YAML-configuration.",
           "fields": {}
         },
         "turn_on": {
           "name": "Turn on",
-          "description": "Runs the sequence of actions defined in a script.",
+          "description": "Turns on the helper.",
           "fields": {},
           "target": {
             "entity": [
               {
                 "domain": [
-                  "script"
+                  "input_boolean"
                 ]
               }
             ]
@@ -2153,13 +2271,13 @@
         },
         "turn_off": {
           "name": "Turn off",
-          "description": "Stops a running script.",
+          "description": "Turns off the helper.",
           "fields": {},
           "target": {
             "entity": [
               {
                 "domain": [
-                  "script"
+                  "input_boolean"
                 ]
               }
             ]
@@ -2167,215 +2285,17 @@
         },
         "toggle": {
           "name": "Toggle",
-          "description": "Toggle a script. Starts it, if isn't running, stops it otherwise.",
+          "description": "Toggles the helper on/off.",
           "fields": {},
           "target": {
             "entity": [
               {
                 "domain": [
-                  "script"
+                  "input_boolean"
                 ]
               }
             ]
           }
-        }
-      }
-    },
-    {
-      "domain": "zone",
-      "services": {
-        "reload": {
-          "name": "Reload",
-          "description": "Reloads zones from the YAML-configuration.",
-          "fields": {}
-        }
-      }
-    },
-    {
-      "domain": "counter",
-      "services": {
-        "increment": {
-          "name": "Increment",
-          "description": "Increments a counter.",
-          "fields": {},
-          "target": {
-            "entity": [
-              {
-                "domain": [
-                  "counter"
-                ]
-              }
-            ]
-          }
-        },
-        "decrement": {
-          "name": "Decrement",
-          "description": "Decrements a counter.",
-          "fields": {},
-          "target": {
-            "entity": [
-              {
-                "domain": [
-                  "counter"
-                ]
-              }
-            ]
-          }
-        },
-        "reset": {
-          "name": "Reset",
-          "description": "Resets a counter.",
-          "fields": {},
-          "target": {
-            "entity": [
-              {
-                "domain": [
-                  "counter"
-                ]
-              }
-            ]
-          }
-        },
-        "set_value": {
-          "name": "Set",
-          "description": "Sets the counter value.",
-          "fields": {
-            "value": {
-              "required": true,
-              "selector": {
-                "number": {
-                  "min": 0,
-                  "max": 9223372036854776000,
-                  "mode": "box"
-                }
-              },
-              "name": "Value",
-              "description": "The new counter value the entity should be set to."
-            }
-          },
-          "target": {
-            "entity": [
-              {
-                "domain": [
-                  "counter"
-                ]
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "domain": "input_datetime",
-      "services": {
-        "reload": {
-          "name": "Reload",
-          "description": "Reloads helpers from the YAML-configuration.",
-          "fields": {}
-        },
-        "set_datetime": {
-          "name": "Set",
-          "description": "Sets the date and/or time.",
-          "fields": {
-            "date": {
-              "example": "\"2019-04-20\"",
-              "selector": {
-                "text": null
-              },
-              "name": "Date",
-              "description": "The target date."
-            },
-            "time": {
-              "example": "\"05:04:20\"",
-              "selector": {
-                "time": null
-              },
-              "name": "Time",
-              "description": "The target time."
-            },
-            "datetime": {
-              "example": "\"2019-04-20 05:04:20\"",
-              "selector": {
-                "text": null
-              },
-              "name": "Date & time",
-              "description": "The target date & time."
-            },
-            "timestamp": {
-              "selector": {
-                "number": {
-                  "min": 0,
-                  "max": 9223372036854776000,
-                  "mode": "box"
-                }
-              },
-              "name": "Timestamp",
-              "description": "The target date & time, expressed by a UNIX timestamp."
-            }
-          },
-          "target": {
-            "entity": [
-              {
-                "domain": [
-                  "input_datetime"
-                ]
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "domain": "input_text",
-      "services": {
-        "reload": {
-          "name": "Reload",
-          "description": "Reloads helpers from the YAML-configuration.",
-          "fields": {}
-        },
-        "set_value": {
-          "name": "Set",
-          "description": "Sets the value.",
-          "fields": {
-            "value": {
-              "required": true,
-              "example": "This is an example text",
-              "selector": {
-                "text": null
-              },
-              "name": "Value",
-              "description": "The target value."
-            }
-          },
-          "target": {
-            "entity": [
-              {
-                "domain": [
-                  "input_text"
-                ]
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "domain": "schedule",
-      "services": {
-        "reload": {
-          "name": "Reload",
-          "description": "Reloads schedules from the YAML-configuration.",
-          "fields": {}
-        }
-      }
-    },
-    {
-      "domain": "backup",
-      "services": {
-        "create": {
-          "name": "Create backup",
-          "description": "Creates a new backup.",
-          "fields": {}
         }
       }
     },
@@ -2446,85 +2366,72 @@
       }
     },
     {
-      "domain": "notify",
+      "domain": "input_datetime",
       "services": {
-        "persistent_notification": {
-          "name": "Send a persistent notification",
-          "description": "Sends a notification that is visible in the **Notifications** panel.",
-          "fields": {
-            "message": {
-              "required": true,
-              "example": "The garage door has been open for 10 minutes.",
-              "selector": {
-                "text": null
-              },
-              "name": "Message",
-              "description": "Message body of the notification."
-            },
-            "title": {
-              "example": "Your Garage Door Friend",
-              "selector": {
-                "text": null
-              },
-              "name": "Title",
-              "description": "Title of the notification."
-            },
-            "data": {
-              "example": "platform specific",
-              "selector": {
-                "object": null
-              },
-              "name": "Data",
-              "description": "Some integrations provide extended functionality. For information on how to use _data_, refer to the integration documentation.."
-            }
-          }
+        "reload": {
+          "name": "Reload",
+          "description": "Reloads helpers from the YAML-configuration.",
+          "fields": {}
         },
-        "notify": {
-          "name": "Send a notification with notify",
-          "description": "Sends a notification message using the notify service.",
+        "set_datetime": {
+          "name": "Set",
+          "description": "Sets the date and/or time.",
           "fields": {
-            "message": {
-              "required": true,
-              "example": "The garage door has been open for 10 minutes.",
+            "date": {
+              "example": "\"2019-04-20\"",
               "selector": {
                 "text": null
-              }
+              },
+              "name": "Date",
+              "description": "The target date."
             },
-            "title": {
-              "example": "Your Garage Door Friend",
+            "time": {
+              "example": "\"05:04:20\"",
+              "selector": {
+                "time": null
+              },
+              "name": "Time",
+              "description": "The target time."
+            },
+            "datetime": {
+              "example": "\"2019-04-20 05:04:20\"",
               "selector": {
                 "text": null
-              }
+              },
+              "name": "Date & time",
+              "description": "The target date & time."
             },
-            "target": {
-              "example": "platform specific",
+            "timestamp": {
               "selector": {
-                "object": null
-              }
-            },
-            "data": {
-              "example": "platform specific",
-              "selector": {
-                "object": null
-              }
+                "number": {
+                  "min": 0,
+                  "max": 9223372036854776000,
+                  "mode": "box"
+                }
+              },
+              "name": "Timestamp",
+              "description": "The target date & time, expressed by a UNIX timestamp."
             }
+          },
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "input_datetime"
+                ]
+              }
+            ]
           }
         }
       }
     },
     {
-      "domain": "synapse",
+      "domain": "backup",
       "services": {
-        "reload": {
-          "name": "",
-          "description": "Ask synapse application to re-send the entity list. Sent to all connected by default",
-          "fields": {
-            "app": {
-              "description": "The name of the app to target for the reload. If omitted, targets all apps.",
-              "example": "home_automation",
-              "required": false
-            }
-          }
+        "create": {
+          "name": "Create backup",
+          "description": "Creates a new backup.",
+          "fields": {}
         }
       }
     },
@@ -2617,6 +2524,140 @@
               },
               "name": "Sort reverse",
               "description": "Whether to sort in reverse (descending) order."
+            }
+          }
+        }
+      }
+    },
+    {
+      "domain": "counter",
+      "services": {
+        "increment": {
+          "name": "Increment",
+          "description": "Increments a counter.",
+          "fields": {},
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "counter"
+                ]
+              }
+            ]
+          }
+        },
+        "decrement": {
+          "name": "Decrement",
+          "description": "Decrements a counter.",
+          "fields": {},
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "counter"
+                ]
+              }
+            ]
+          }
+        },
+        "reset": {
+          "name": "Reset",
+          "description": "Resets a counter.",
+          "fields": {},
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "counter"
+                ]
+              }
+            ]
+          }
+        },
+        "set_value": {
+          "name": "Set",
+          "description": "Sets the counter value.",
+          "fields": {
+            "value": {
+              "required": true,
+              "selector": {
+                "number": {
+                  "min": 0,
+                  "max": 9223372036854776000,
+                  "mode": "box"
+                }
+              },
+              "name": "Value",
+              "description": "The new counter value the entity should be set to."
+            }
+          },
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "counter"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "domain": "schedule",
+      "services": {
+        "reload": {
+          "name": "Reload",
+          "description": "Reloads schedules from the YAML-configuration.",
+          "fields": {}
+        }
+      }
+    },
+    {
+      "domain": "input_text",
+      "services": {
+        "reload": {
+          "name": "Reload",
+          "description": "Reloads helpers from the YAML-configuration.",
+          "fields": {}
+        },
+        "set_value": {
+          "name": "Set",
+          "description": "Sets the value.",
+          "fields": {
+            "value": {
+              "required": true,
+              "example": "This is an example text",
+              "selector": {
+                "text": null
+              },
+              "name": "Value",
+              "description": "The target value."
+            }
+          },
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "input_text"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "domain": "synapse",
+      "services": {
+        "reload": {
+          "name": "",
+          "description": "Ask synapse application to re-send the entity list. Sent to all connected by default",
+          "fields": {
+            "app": {
+              "description": "The name of the app to target for the reload. If omitted, targets all apps.",
+              "example": "home_automation",
+              "required": false
             }
           }
         }
@@ -2854,6 +2895,240 @@
                 ]
               }
             ]
+          }
+        }
+      }
+    },
+    {
+      "domain": "notify",
+      "services": {
+        "persistent_notification": {
+          "name": "Send a persistent notification",
+          "description": "Sends a notification that is visible in the **Notifications** panel.",
+          "fields": {
+            "message": {
+              "required": true,
+              "example": "The garage door has been open for 10 minutes.",
+              "selector": {
+                "text": null
+              },
+              "name": "Message",
+              "description": "Message body of the notification."
+            },
+            "title": {
+              "example": "Your Garage Door Friend",
+              "selector": {
+                "text": null
+              },
+              "name": "Title",
+              "description": "Title of the notification."
+            },
+            "data": {
+              "example": "platform specific",
+              "selector": {
+                "object": null
+              },
+              "name": "Data",
+              "description": "Some integrations provide extended functionality. For information on how to use _data_, refer to the integration documentation.."
+            }
+          }
+        },
+        "notify": {
+          "name": "Send a notification with notify",
+          "description": "Sends a notification message using the notify service.",
+          "fields": {
+            "message": {
+              "required": true,
+              "example": "The garage door has been open for 10 minutes.",
+              "selector": {
+                "text": null
+              }
+            },
+            "title": {
+              "example": "Your Garage Door Friend",
+              "selector": {
+                "text": null
+              }
+            },
+            "target": {
+              "example": "platform specific",
+              "selector": {
+                "object": null
+              }
+            },
+            "data": {
+              "example": "platform specific",
+              "selector": {
+                "object": null
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "domain": "calendar",
+      "services": {
+        "create_event": {
+          "name": "Create event",
+          "description": "Adds a new calendar event.",
+          "fields": {
+            "summary": {
+              "required": true,
+              "example": "Department Party",
+              "selector": {
+                "text": null
+              },
+              "name": "Summary",
+              "description": "Defines the short summary or subject for the event."
+            },
+            "description": {
+              "example": "Meeting to provide technical review for 'Phoenix' design.",
+              "selector": {
+                "text": null
+              },
+              "name": "Description",
+              "description": "A more complete description of the event than the one provided by the summary."
+            },
+            "start_date_time": {
+              "example": "2022-03-22 20:00:00",
+              "selector": {
+                "datetime": null
+              },
+              "name": "Start time",
+              "description": "The date and time the event should start."
+            },
+            "end_date_time": {
+              "example": "2022-03-22 22:00:00",
+              "selector": {
+                "datetime": null
+              },
+              "name": "End time",
+              "description": "The date and time the event should end."
+            },
+            "start_date": {
+              "example": "2022-03-22",
+              "selector": {
+                "date": null
+              },
+              "name": "Start date",
+              "description": "The date the all-day event should start."
+            },
+            "end_date": {
+              "example": "2022-03-23",
+              "selector": {
+                "date": null
+              },
+              "name": "End date",
+              "description": "The date the all-day event should end (exclusive)."
+            },
+            "in": {
+              "example": "{\"days\": 2} or {\"weeks\": 2}",
+              "name": "In",
+              "description": "Days or weeks that you want to create the event in."
+            },
+            "location": {
+              "example": "Conference Room - F123, Bldg. 002",
+              "selector": {
+                "text": null
+              },
+              "name": "Location",
+              "description": "The location of the event."
+            }
+          },
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "calendar"
+                ],
+                "supported_features": [
+                  1
+                ]
+              }
+            ]
+          }
+        },
+        "list_events": {
+          "name": "List event",
+          "description": "Lists events on a calendar within a time range.",
+          "fields": {
+            "start_date_time": {
+              "example": "2022-03-22 20:00:00",
+              "selector": {
+                "datetime": null
+              },
+              "name": "Start time",
+              "description": "Returns active events after this time (exclusive). When not set, defaults to now."
+            },
+            "end_date_time": {
+              "example": "2022-03-22 22:00:00",
+              "selector": {
+                "datetime": null
+              },
+              "name": "End time",
+              "description": "Returns active events before this time (exclusive). Cannot be used with 'duration'."
+            },
+            "duration": {
+              "selector": {
+                "duration": null
+              },
+              "name": "Duration",
+              "description": "Returns active events from start_date_time until the specified duration."
+            }
+          },
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "calendar"
+                ]
+              }
+            ]
+          },
+          "response": {
+            "optional": false
+          }
+        },
+        "get_events": {
+          "name": "Get events",
+          "description": "Get events on a calendar within a time range.",
+          "fields": {
+            "start_date_time": {
+              "example": "2022-03-22 20:00:00",
+              "selector": {
+                "datetime": null
+              },
+              "name": "Start time",
+              "description": "Returns active events after this time (exclusive). When not set, defaults to now."
+            },
+            "end_date_time": {
+              "example": "2022-03-22 22:00:00",
+              "selector": {
+                "datetime": null
+              },
+              "name": "End time",
+              "description": "Returns active events before this time (exclusive). Cannot be used with 'duration'."
+            },
+            "duration": {
+              "selector": {
+                "duration": null
+              },
+              "name": "Duration",
+              "description": "Returns active events from start_date_time until the specified duration."
+            }
+          },
+          "target": {
+            "entity": [
+              {
+                "domain": [
+                  "calendar"
+                ]
+              }
+            ]
+          },
+          "response": {
+            "optional": false
           }
         }
       }

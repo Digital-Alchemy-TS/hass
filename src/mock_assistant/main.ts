@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { CreateApplication, TServiceParams } from "@digital-alchemy/core";
 import { writeFileSync } from "fs";
 import { join } from "path";
