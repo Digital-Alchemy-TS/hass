@@ -1,3 +1,7 @@
+[![codecov](https://codecov.io/gh/Digital-Alchemy-TS/hass/graph/badge.svg?token=LYUQ1FQ71D)](https://codecov.io/gh/Digital-Alchemy-TS/hass)
+
+---
+
 # 🏠 Welcome to `@digital-alchemy/hass`!
 
 This repository contains generic extensions for interacting with Home Assistant, including websocket & REST API adapters, entity & event management, backup workflows, and more.
@@ -71,6 +75,13 @@ For code running elsewhere, manual configuration is required. You will need a **
   BASE_URL=http://localhost:8123
   TOKEN=YOUR LONG LIVED ACCESS TOKEN
 ```
+
+### 🤖 Unit Testing
+
+Built in workflows for unit testing using standard test runners like Jest.
+
+- [Read more](https://docs.digital-alchemy.app/hass/unit-testing)
+
 ## 🤝 Related Projects
 
 For additional projects that build on and consume this library, check out these other projects:
