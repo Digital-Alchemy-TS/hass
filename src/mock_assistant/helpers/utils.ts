@@ -1,8 +1,13 @@
 import {
+  ApplicationDefinition,
   BootstrapOptions,
   CreateApplication,
+  is,
+  OptionalModuleConfiguration,
   PartialConfiguration,
+  ServiceFunction,
   ServiceMap,
+  TServiceParams,
 } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "../../hass.module";
@@ -35,3 +40,26 @@ export function CreateTestingApplication(services: ServiceMap) {
     services,
   });
 }
+
+export const CreateTestRunner = <
+  S extends ServiceMap,
+  C extends OptionalModuleConfiguration,
+>(
+  UNIT_TESTING_APP: ApplicationDefinition<S, C>,
+) => {
+  // setup runs at construction
+  // test runs at ready
+  return async function (setup: ServiceFunction, Test: ServiceFunction) {
+    function test(params: TServiceParams) {
+      params.lifecycle.onReady(async () => await Test(params));
+    }
+    return await UNIT_TESTING_APP.bootstrap({
+      appendLibrary: LIB_MOCK_ASSISTANT,
+      appendService: is.function(setup) ? { setup, test } : { test },
+      configuration: {
+        boilerplate: { LOG_LEVEL: "error" },
+        hass: { MOCK_SOCKET: true },
+      },
+    });
+  };
+};

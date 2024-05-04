@@ -1,6 +1,8 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import { sleep, TServiceParams } from "@digital-alchemy/core";
 
 import { ENTITY_STATE, EntityUpdateEvent, PICK_ENTITY } from "../../helpers";
+
+const SUPER_SHORT = 1;
 
 export function Events({ mock_assistant, hass }: TServiceParams) {
   let id = 1000;
@@ -24,6 +26,8 @@ export function Events({ mock_assistant, hass }: TServiceParams) {
     const old_state = mock_assistant.fixtures.byId(entity);
     new_state = mock_assistant.fixtures.replace(entity, new_state);
     await emitEvent("state_changed", { new_state, old_state });
+    // help ensure all the async flows settle
+    await sleep(SUPER_SHORT);
   }
 
   return {
