@@ -8,7 +8,7 @@ import {
 import dayjs from "dayjs";
 
 import { LIB_HASS } from "..";
-import { CreateTestRunner, LIB_MOCK_ASSISTANT } from "../mock_assistant";
+import { CreateTestRunner } from "../mock_assistant";
 
 describe("Workflows", () => {
   const application = CreateApplication({
