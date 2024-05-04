@@ -1,6 +1,7 @@
 import {
   BootstrapException,
   InternalError,
+  is,
   TServiceParams,
 } from "@digital-alchemy/core";
 import { existsSync, readFileSync } from "fs";
@@ -18,6 +19,7 @@ export function Fixtures({
   hass,
   lifecycle,
   config,
+  internal,
   context,
   mock_assistant,
 }: TServiceParams) {
@@ -29,9 +31,11 @@ export function Fixtures({
     mock_assistant.fixtures.data?.entities ?? [];
   hass.fetch.listServices = async () =>
     mock_assistant.fixtures.data?.services ?? [];
+  hass.fetch.getConfig = async () => mock_assistant.fixtures.data?.config;
 
   lifecycle.onPreInit(() => {
     const { MOCK_SOCKET } = config.hass;
+
     const { FIXTURES_FILE } = config.mock_assistant;
     if (!MOCK_SOCKET) {
       // There needs to be a shared understanding that nobody is actually sending message traffic anywhere
@@ -48,6 +52,10 @@ export function Fixtures({
         "MISSING_FIXTURES_FILE",
         `${FIXTURES_FILE} does not exist`,
       );
+    }
+    if (is.empty(config.hass.TOKEN)) {
+      // prevents throwing errors
+      internal.boilerplate.configuration.set("hass", "TOKEN", "--");
     }
 
     mock_assistant.fixtures.data = JSON.parse(

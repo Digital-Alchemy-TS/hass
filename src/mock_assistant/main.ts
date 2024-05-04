@@ -25,6 +25,7 @@ const writeFixtures = CreateApplication({
           JSON.stringify(
             {
               areas: hass.area.current,
+              config: await hass.fetch.getConfig(),
               devices: hass.device.current,
               entities: hass.entity.listEntities().map(i => hass.entity.raw(i)),
               entity_registry: hass.entity.registry.current,
