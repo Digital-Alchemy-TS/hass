@@ -2,6 +2,7 @@ import {
   ApplicationDefinition,
   BootstrapOptions,
   CreateApplication,
+  is,
   OptionalModuleConfiguration,
   PartialConfiguration,
   ServiceFunction,
@@ -40,23 +41,25 @@ export function CreateTestingApplication(services: ServiceMap) {
   });
 }
 
-export const CreateTestRunner =
-  <S extends ServiceMap, C extends OptionalModuleConfiguration>(
-    UNIT_TESTING_APP: ApplicationDefinition<S, C>,
-  ) =>
-  async (Setup: ServiceFunction, Test: ServiceFunction) =>
-    await UNIT_TESTING_APP.bootstrap({
+export const CreateTestRunner = <
+  S extends ServiceMap,
+  C extends OptionalModuleConfiguration,
+>(
+  UNIT_TESTING_APP: ApplicationDefinition<S, C>,
+) => {
+  // setup runs at construction
+  // test runs at ready
+  return async function (setup: ServiceFunction, Test: ServiceFunction) {
+    function test(params: TServiceParams) {
+      params.lifecycle.onReady(async () => await Test(params));
+    }
+    return await UNIT_TESTING_APP.bootstrap({
       appendLibrary: LIB_MOCK_ASSISTANT,
-      appendService: {
-        setup: Setup,
-        test: function (params: TServiceParams) {
-          // tests require ready state
-          // cut down on the repetition inside the unit tests
-          params.lifecycle.onReady(async () => await Test(params));
-        },
-      },
+      appendService: is.function(setup) ? { setup, test } : { test },
       configuration: {
         boilerplate: { LOG_LEVEL: "error" },
         hass: { MOCK_SOCKET: true },
       },
     });
+  };
+};
