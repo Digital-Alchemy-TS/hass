@@ -69,6 +69,11 @@
     "typescript": "^5.4.5"
   },
   "jest": {
+    "collectCoverage": true,
+    "coverageReporters": [
+      "text",
+      "cobertura"
+    ],
     "preset": "ts-jest",
     "testEnvironment": "node",
     "moduleFileExtensions": [
