@@ -386,11 +386,11 @@ export function EntityManager({
   }
 
   // #MARK: onPostConfig
-  lifecycle.onPostConfig(async () => {
+  lifecycle.onPostConfig(async function HassEntityPostConfig() {
     if (!config.hass.AUTO_CONNECT_SOCKET) {
       return;
     }
-    logger.debug({ name: "onPostConfig" }, `pre populate {MASTER_STATE}`);
+    logger.debug({ name: HassEntityPostConfig }, `pre populate {MASTER_STATE}`);
     await hass.entity.refresh();
   });
 
