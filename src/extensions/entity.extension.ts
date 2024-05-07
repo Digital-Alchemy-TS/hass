@@ -76,8 +76,7 @@ export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
     removeAllListeners: () => void;
   };
 
-const MAX_ATTEMPTS = 50;
-const FAILED_LOAD_DELAY = 5;
+const MAX_ATTEMPTS = 10;
 const UNLIMITED = 0;
 const RECENT = 5;
 
@@ -299,7 +298,7 @@ export function EntityManager({
     // - Fetch list of entities
     const states = await hass.fetch.getAllEntities();
     // - Keep retrying until max failures reached
-    if (is.empty(states)) {
+    if (!is.array(states) || is.empty(states)) {
       if (recursion > MAX_ATTEMPTS) {
         logger.fatal(
           { name: refresh },
@@ -308,12 +307,12 @@ export function EntityManager({
         exit();
       }
       logger.warn(
-        { name: refresh },
+        { name: refresh, response: states },
         "failed to retrieve entity list. retrying {%s}/[%s]",
         recursion,
         MAX_ATTEMPTS,
       );
-      await sleep(FAILED_LOAD_DELAY * SECOND);
+      await sleep(config.hass.RETRY_INTERVAL * SECOND);
       await refresh(recursion + INCREMENT);
       return;
     }
@@ -395,7 +394,6 @@ export function EntityManager({
     await hass.entity.refresh();
   });
 
-  // #MARK: AddLabel
   async function AddLabel({ entity, label }: EditLabelOptions) {
     const current = await EntityGet(entity);
     if (current?.labels?.includes(label)) {
