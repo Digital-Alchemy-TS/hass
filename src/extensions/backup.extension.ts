@@ -1,4 +1,4 @@
-import { HALF, is, SECOND, sleep, TServiceParams } from "@digital-alchemy/core";
+import { is, SECOND, sleep, TServiceParams } from "@digital-alchemy/core";
 
 import {
   BackupResponse,
@@ -6,7 +6,7 @@ import {
   SignRequestResponse,
 } from "../helpers";
 
-export function Backup({ logger, hass }: TServiceParams) {
+export function Backup({ logger, hass, config }: TServiceParams) {
   async function download(slug: string, destination: string): Promise<void> {
     const result = await hass.socket.sendMessage<SignRequestResponse>({
       path: `/api/backup/download/${slug}`,
@@ -21,26 +21,26 @@ export function Backup({ logger, hass }: TServiceParams) {
   }
 
   async function generate(): Promise<HomeAssistantBackup> {
-    let current = await list();
+    let current = await hass.backup.list();
     // const originalLength = current.backups.length;
     if (current.backing_up) {
       logger.warn(
         { name: generate },
-        `a backup is currently in progress. Waiting for that to complete instead.`,
+        `a backup is currently in progress. waiting for that to complete instead`,
       );
     } else {
       logger.info({ name: generate }, "initiating new backup");
       hass.socket.sendMessage({ type: "backup/generate" });
       while (current.backing_up === false) {
         logger.debug({ name: generate }, "... waiting");
-        await sleep(HALF * SECOND);
-        current = await list();
+        await sleep(config.hass.RETRY_INTERVAL * SECOND);
+        current = await hass.backup.list();
       }
     }
     while (current.backing_up === true) {
       logger.debug({ name: generate }, "... waiting");
-      await sleep(HALF * SECOND);
-      current = await list();
+      await sleep(config.hass.RETRY_INTERVAL * SECOND);
+      current = await hass.backup.list();
     }
     logger.info({ name: generate }, `backup complete`);
     return current.backups.pop();
@@ -55,7 +55,7 @@ export function Backup({ logger, hass }: TServiceParams) {
 
   async function remove(slug: string): Promise<void> {
     logger.trace({ name: remove }, "send");
-    await hass.socket.sendMessage({ slug, type: "backup/remove" }, false);
+    await hass.socket.sendMessage({ slug, type: "backup/remove" });
   }
 
   return { download, generate, list, remove };
