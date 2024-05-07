@@ -65,7 +65,8 @@ export const LIB_HASS = CreateLibrary({
     },
     RETRY_INTERVAL: {
       default: 5,
-      description: "How often to retry connecting on connection failure (ms).",
+      description:
+        "How often to retry connecting on connection failure (seconds).",
       type: "number",
     },
     SOCKET_AVG_DURATION: {
