@@ -73,6 +73,37 @@ export const ENTITY_SETUP = {
       state: "off",
     },
   },
+  light: {
+    bedroom_ceiling_fan: {
+      attributes: {
+        brightness: null,
+        color_mode: null,
+        color_temp: null,
+        color_temp_kelvin: null,
+        friendly_name: "Bedroom Ceiling Fan",
+        hs_color: null,
+        icon: "mdi:lightbulb-group",
+        max_color_temp_kelvin: 6535,
+        max_mireds: 500,
+        min_color_temp_kelvin: 2000,
+        min_mireds: 153,
+        rgb_color: null,
+        supported_color_modes: ["color_temp", "xy"],
+        supported_features: 40,
+        xy_color: null,
+      },
+      context: {
+        id: "01HX722Y1JFS6KN2MDERK0VJ2D",
+        parent_id: null,
+        user_id: null,
+      },
+      entity_id: "light.bedroom_ceiling_fan",
+      last_changed: "2024-05-06T13:39:28.645503+00:00",
+      last_reported: "2024-05-06T13:39:28.645503+00:00",
+      last_updated: "2024-05-06T13:39:28.645503+00:00",
+      state: "off",
+    },
+  },
   person: {
     digital_alchemy: {
       attributes: {
@@ -91,6 +122,24 @@ export const ENTITY_SETUP = {
       last_changed: "2024-05-02T23:38:39.485125+00:00",
       last_reported: "2024-05-02T23:38:44.907957+00:00",
       last_updated: "2024-05-02T23:38:44.907957+00:00",
+      state: "unknown",
+    },
+  },
+  scene: {
+    games_room_auto: {
+      attributes: {
+        "Managed By": "home_automation",
+        friendly_name: "bedroom off",
+      },
+      context: {
+        id: "01HWXW289S8HP5MSGNNTNB2CBG",
+        parent_id: null,
+        user_id: null,
+      },
+      entity_id: "scene.bedroom_off",
+      last_changed: "2024-05-03T00:01:03.801727+00:00",
+      last_reported: "2024-05-03T00:01:03.801727+00:00",
+      last_updated: "2024-05-03T00:01:03.801727+00:00",
       state: "unknown",
     },
   },
@@ -1739,6 +1788,792 @@ export type iCallService = {
       entity_id: PICK_ENTITY<"input_select"> | PICK_ENTITY<"input_select">[];
     }): Promise<void>;
   };
+  // # MARK: light
+  light: {
+    /**
+     * ### Toggle
+     *
+     * > Toggles one or more lights, from on to off, or, off to on, based on their current state.
+     */
+    toggle(service_data?: {
+      /**
+       * ## Brightness value
+       *
+       * > Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness, and 255 is the maximum brightness.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > number:
+       * >   min: 0
+       * >   max: 255
+       * > ```
+       */
+      brightness?: number;
+      /**
+       * ## Brightness
+       *
+       * > Number indicating the percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness, and 100 is the maximum brightness.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > number:
+       * >   min: 0
+       * >   max: 100
+       * >   unit_of_measurement: '%'
+       * > ```
+       */
+      brightness_pct?: number;
+      /**
+       * ## Color name
+       *
+       * > A human-readable color name.
+       */
+      color_name?:
+        | "homeassistant"
+        | "aliceblue"
+        | "antiquewhite"
+        | "aqua"
+        | "aquamarine"
+        | "azure"
+        | "beige"
+        | "bisque"
+        | "blanchedalmond"
+        | "blue"
+        | "blueviolet"
+        | "brown"
+        | "burlywood"
+        | "cadetblue"
+        | "chartreuse"
+        | "chocolate"
+        | "coral"
+        | "cornflowerblue"
+        | "cornsilk"
+        | "crimson"
+        | "cyan"
+        | "darkblue"
+        | "darkcyan"
+        | "darkgoldenrod"
+        | "darkgray"
+        | "darkgreen"
+        | "darkgrey"
+        | "darkkhaki"
+        | "darkmagenta"
+        | "darkolivegreen"
+        | "darkorange"
+        | "darkorchid"
+        | "darkred"
+        | "darksalmon"
+        | "darkseagreen"
+        | "darkslateblue"
+        | "darkslategray"
+        | "darkslategrey"
+        | "darkturquoise"
+        | "darkviolet"
+        | "deeppink"
+        | "deepskyblue"
+        | "dimgray"
+        | "dimgrey"
+        | "dodgerblue"
+        | "firebrick"
+        | "floralwhite"
+        | "forestgreen"
+        | "fuchsia"
+        | "gainsboro"
+        | "ghostwhite"
+        | "gold"
+        | "goldenrod"
+        | "gray"
+        | "green"
+        | "greenyellow"
+        | "grey"
+        | "honeydew"
+        | "hotpink"
+        | "indianred"
+        | "indigo"
+        | "ivory"
+        | "khaki"
+        | "lavender"
+        | "lavenderblush"
+        | "lawngreen"
+        | "lemonchiffon"
+        | "lightblue"
+        | "lightcoral"
+        | "lightcyan"
+        | "lightgoldenrodyellow"
+        | "lightgray"
+        | "lightgreen"
+        | "lightgrey"
+        | "lightpink"
+        | "lightsalmon"
+        | "lightseagreen"
+        | "lightskyblue"
+        | "lightslategray"
+        | "lightslategrey"
+        | "lightsteelblue"
+        | "lightyellow"
+        | "lime"
+        | "limegreen"
+        | "linen"
+        | "magenta"
+        | "maroon"
+        | "mediumaquamarine"
+        | "mediumblue"
+        | "mediumorchid"
+        | "mediumpurple"
+        | "mediumseagreen"
+        | "mediumslateblue"
+        | "mediumspringgreen"
+        | "mediumturquoise"
+        | "mediumvioletred"
+        | "midnightblue"
+        | "mintcream"
+        | "mistyrose"
+        | "moccasin"
+        | "navajowhite"
+        | "navy"
+        | "navyblue"
+        | "oldlace"
+        | "olive"
+        | "olivedrab"
+        | "orange"
+        | "orangered"
+        | "orchid"
+        | "palegoldenrod"
+        | "palegreen"
+        | "paleturquoise"
+        | "palevioletred"
+        | "papayawhip"
+        | "peachpuff"
+        | "peru"
+        | "pink"
+        | "plum"
+        | "powderblue"
+        | "purple"
+        | "red"
+        | "rosybrown"
+        | "royalblue"
+        | "saddlebrown"
+        | "salmon"
+        | "sandybrown"
+        | "seagreen"
+        | "seashell"
+        | "sienna"
+        | "silver"
+        | "skyblue"
+        | "slateblue"
+        | "slategray"
+        | "slategrey"
+        | "snow"
+        | "springgreen"
+        | "steelblue"
+        | "tan"
+        | "teal"
+        | "thistle"
+        | "tomato"
+        | "turquoise"
+        | "violet"
+        | "wheat"
+        | "white"
+        | "whitesmoke"
+        | "yellow"
+        | "yellowgreen";
+      /**
+       * ## Color temperature
+       *
+       * > Color temperature in mireds.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > color_temp: null
+       * > ```
+       */
+      color_temp?: unknown;
+      /**
+       * ## Effect
+       *
+       * > Light effect.
+       */
+      effect?: string;
+      /**
+       * ## Flash
+       *
+       * > Tell light to flash, can be either value short or long.
+       */
+      flash?: "long" | "short";
+      /**
+       * ## Hue/Sat color
+       *
+       * > Color in hue/sat format. A list of two integers. Hue is 0-360 and Sat is 0-100.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "hs_color": "[300, 70]"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > object: null
+       * > ```
+       */
+      hs_color?: unknown;
+      /**
+       * ## Color temperature
+       *
+       * > Color temperature in Kelvin.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > color_temp:
+       * >   unit: kelvin
+       * >   min: 2000
+       * >   max: 6500
+       * > ```
+       */
+      kelvin?: unknown;
+      /**
+       * ## Profile
+       *
+       * > Name of a light profile to use.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "profile": "relax"
+       * > }
+       * > ```
+       */
+      profile?: string;
+      /**
+       * ## Color
+       *
+       * > The color in RGB format. A list of three integers between 0 and 255 representing the values of red, green, and blue.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "rgb_color": "[255, 100, 100]"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > color_rgb: null
+       * > ```
+       */
+      rgb_color?: unknown;
+      /**
+       * ## Transition
+       *
+       * > Duration it takes to get to next state.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > number:
+       * >   min: 0
+       * >   max: 300
+       * >   unit_of_measurement: seconds
+       * > ```
+       */
+      transition?: number;
+      /**
+       * ## White
+       *
+       * > Set the light to white mode.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > constant:
+       * >   value: true
+       * >   label: Enabled
+       * > ```
+       */
+      white?: unknown;
+      /**
+       * ## XY-color
+       *
+       * > Color in XY-format. A list of two decimal numbers between 0 and 1.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "xy_color": "[0.52, 0.43]"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > object: null
+       * > ```
+       */
+      xy_color?: unknown;
+      /**
+       * Assisted definition
+       * > ```yaml
+       * > entity:
+       * >   - domain:
+       * >       - light
+       * > ```
+       */
+      entity_id: PICK_ENTITY<"light"> | PICK_ENTITY<"light">[];
+    }): Promise<void>;
+    /**
+     * ### Turn off
+     *
+     * > Turn off one or more lights.
+     */
+    turn_off(service_data?: {
+      /**
+       * ## Flash
+       *
+       * > Tell light to flash, can be either value short or long.
+       */
+      flash?: "long" | "short";
+      /**
+       * ## Transition
+       *
+       * > Duration it takes to get to next state.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > number:
+       * >   min: 0
+       * >   max: 300
+       * >   unit_of_measurement: seconds
+       * > ```
+       */
+      transition?: number;
+      /**
+       * Assisted definition
+       * > ```yaml
+       * > entity:
+       * >   - domain:
+       * >       - light
+       * > ```
+       */
+      entity_id: PICK_ENTITY<"light"> | PICK_ENTITY<"light">[];
+    }): Promise<void>;
+    /**
+     * ### Turn on
+     *
+     * > Turn on one or more lights and adjust properties of the light, even when they are turned on already.
+     */
+    turn_on(service_data?: {
+      /**
+       * ## Brightness value
+       *
+       * > Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness, and 255 is the maximum brightness.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > number:
+       * >   min: 0
+       * >   max: 255
+       * > ```
+       */
+      brightness?: number;
+      /**
+       * ## Brightness
+       *
+       * > Number indicating the percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness, and 100 is the maximum brightness.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > number:
+       * >   min: 0
+       * >   max: 100
+       * >   unit_of_measurement: '%'
+       * > ```
+       */
+      brightness_pct?: number;
+      /**
+       * ## Brightness step value
+       *
+       * > Change brightness by an amount.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > number:
+       * >   min: -225
+       * >   max: 255
+       * > ```
+       */
+      brightness_step?: number;
+      /**
+       * ## Brightness step
+       *
+       * > Change brightness by a percentage.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > number:
+       * >   min: -100
+       * >   max: 100
+       * >   unit_of_measurement: '%'
+       * > ```
+       */
+      brightness_step_pct?: number;
+      /**
+       * ## Color name
+       *
+       * > A human-readable color name.
+       */
+      color_name?:
+        | "homeassistant"
+        | "aliceblue"
+        | "antiquewhite"
+        | "aqua"
+        | "aquamarine"
+        | "azure"
+        | "beige"
+        | "bisque"
+        | "blanchedalmond"
+        | "blue"
+        | "blueviolet"
+        | "brown"
+        | "burlywood"
+        | "cadetblue"
+        | "chartreuse"
+        | "chocolate"
+        | "coral"
+        | "cornflowerblue"
+        | "cornsilk"
+        | "crimson"
+        | "cyan"
+        | "darkblue"
+        | "darkcyan"
+        | "darkgoldenrod"
+        | "darkgray"
+        | "darkgreen"
+        | "darkgrey"
+        | "darkkhaki"
+        | "darkmagenta"
+        | "darkolivegreen"
+        | "darkorange"
+        | "darkorchid"
+        | "darkred"
+        | "darksalmon"
+        | "darkseagreen"
+        | "darkslateblue"
+        | "darkslategray"
+        | "darkslategrey"
+        | "darkturquoise"
+        | "darkviolet"
+        | "deeppink"
+        | "deepskyblue"
+        | "dimgray"
+        | "dimgrey"
+        | "dodgerblue"
+        | "firebrick"
+        | "floralwhite"
+        | "forestgreen"
+        | "fuchsia"
+        | "gainsboro"
+        | "ghostwhite"
+        | "gold"
+        | "goldenrod"
+        | "gray"
+        | "green"
+        | "greenyellow"
+        | "grey"
+        | "honeydew"
+        | "hotpink"
+        | "indianred"
+        | "indigo"
+        | "ivory"
+        | "khaki"
+        | "lavender"
+        | "lavenderblush"
+        | "lawngreen"
+        | "lemonchiffon"
+        | "lightblue"
+        | "lightcoral"
+        | "lightcyan"
+        | "lightgoldenrodyellow"
+        | "lightgray"
+        | "lightgreen"
+        | "lightgrey"
+        | "lightpink"
+        | "lightsalmon"
+        | "lightseagreen"
+        | "lightskyblue"
+        | "lightslategray"
+        | "lightslategrey"
+        | "lightsteelblue"
+        | "lightyellow"
+        | "lime"
+        | "limegreen"
+        | "linen"
+        | "magenta"
+        | "maroon"
+        | "mediumaquamarine"
+        | "mediumblue"
+        | "mediumorchid"
+        | "mediumpurple"
+        | "mediumseagreen"
+        | "mediumslateblue"
+        | "mediumspringgreen"
+        | "mediumturquoise"
+        | "mediumvioletred"
+        | "midnightblue"
+        | "mintcream"
+        | "mistyrose"
+        | "moccasin"
+        | "navajowhite"
+        | "navy"
+        | "navyblue"
+        | "oldlace"
+        | "olive"
+        | "olivedrab"
+        | "orange"
+        | "orangered"
+        | "orchid"
+        | "palegoldenrod"
+        | "palegreen"
+        | "paleturquoise"
+        | "palevioletred"
+        | "papayawhip"
+        | "peachpuff"
+        | "peru"
+        | "pink"
+        | "plum"
+        | "powderblue"
+        | "purple"
+        | "red"
+        | "rosybrown"
+        | "royalblue"
+        | "saddlebrown"
+        | "salmon"
+        | "sandybrown"
+        | "seagreen"
+        | "seashell"
+        | "sienna"
+        | "silver"
+        | "skyblue"
+        | "slateblue"
+        | "slategray"
+        | "slategrey"
+        | "snow"
+        | "springgreen"
+        | "steelblue"
+        | "tan"
+        | "teal"
+        | "thistle"
+        | "tomato"
+        | "turquoise"
+        | "violet"
+        | "wheat"
+        | "white"
+        | "whitesmoke"
+        | "yellow"
+        | "yellowgreen";
+      /**
+       * ## Color temperature
+       *
+       * > Color temperature in mireds.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > color_temp:
+       * >   unit: mired
+       * >   min: 153
+       * >   max: 500
+       * > ```
+       */
+      color_temp?: unknown;
+      /**
+       * ## Effect
+       *
+       * > Light effect.
+       */
+      effect?: string;
+      /**
+       * ## Flash
+       *
+       * > Tell light to flash, can be either value short or long.
+       */
+      flash?: "long" | "short";
+      /**
+       * ## Hue/Sat color
+       *
+       * > Color in hue/sat format. A list of two integers. Hue is 0-360 and Sat is 0-100.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "hs_color": "[300, 70]"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > object: null
+       * > ```
+       */
+      hs_color?: unknown;
+      /**
+       * ## Color temperature
+       *
+       * > Color temperature in Kelvin.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > color_temp:
+       * >   unit: kelvin
+       * >   min: 2000
+       * >   max: 6500
+       * > ```
+       */
+      kelvin?: unknown;
+      /**
+       * ## Profile
+       *
+       * > Name of a light profile to use.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "profile": "relax"
+       * > }
+       * > ```
+       */
+      profile?: string;
+      /**
+       * ## Color
+       *
+       * > The color in RGB format. A list of three integers between 0 and 255 representing the values of red, green, and blue.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > color_rgb: null
+       * > ```
+       */
+      rgb_color?: unknown;
+      /**
+       * ## RGBW-color
+       *
+       * > The color in RGBW format. A list of four integers between 0 and 255 representing the values of red, green, blue, and white.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "rgbw_color": "[255, 100, 100, 50]"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > object: null
+       * > ```
+       */
+      rgbw_color?: unknown;
+      /**
+       * ## RGBWW-color
+       *
+       * > The color in RGBWW format. A list of five integers between 0 and 255 representing the values of red, green, blue, cold white, and warm white.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "rgbww_color": "[255, 100, 100, 50, 70]"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > object: null
+       * > ```
+       */
+      rgbww_color?: unknown;
+      /**
+       * ## Transition
+       *
+       * > Duration it takes to get to next state.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > number:
+       * >   min: 0
+       * >   max: 300
+       * >   unit_of_measurement: seconds
+       * > ```
+       */
+      transition?: number;
+      /**
+       * ## White
+       *
+       * > Set the light to white mode.
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > constant:
+       * >   value: true
+       * >   label: Enabled
+       * > ```
+       */
+      white?: unknown;
+      /**
+       * ## XY-color
+       *
+       * > Color in XY-format. A list of two decimal numbers between 0 and 1.
+       *
+       * ### Example
+       *
+       * > ```json
+       * > {
+       * >   "xy_color": "[0.52, 0.43]"
+       * > }
+       * > ```
+       *
+       * ## Selector
+       *
+       * > ```yaml
+       * > object: null
+       * > ```
+       */
+      xy_color?: unknown;
+      /**
+       * Assisted definition
+       * > ```yaml
+       * > entity:
+       * >   - domain:
+       * >       - light
+       * > ```
+       */
+      entity_id: PICK_ENTITY<"light"> | PICK_ENTITY<"light">[];
+    }): Promise<void>;
+  };
   // # MARK: input_text
   input_text: {
     /**
@@ -3285,7 +4120,7 @@ export type REGISTRY_SETUP = {
   area: {
     _living_room: "switch.living_room_mood_lights";
     _kitchen: "switch.kitchen_cabinets";
-    _bedroom: "switch.bedroom_lamp";
+    _bedroom: "switch.bedroom_lamp" | "light.bedroom_ceiling_fan";
   };
   platform: {
     _sun:
@@ -3394,6 +4229,8 @@ export type TRawDomains =
   | "person"
   | "zone"
   | "sun"
+  | "light"
+  | "scene"
   | "sensor"
   | "todo"
   | "tts"

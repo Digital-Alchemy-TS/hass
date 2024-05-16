@@ -1,4 +1,4 @@
-import { TAreaId, TDeviceId, TLabelId } from "../dynamic";
+import { TAreaId, TDeviceId, TLabelId, TRawDomains } from "../dynamic";
 import { ENTITY_STATE, PICK_ENTITY } from "./utility.helper";
 
 export enum HassEvents {
@@ -27,12 +27,13 @@ export interface GenericEntityDTO<
   ATTRIBUTES extends object = GenericEntityAttributes,
   STATE extends unknown = string,
   CONTEXT extends HassEntityContext = HassEntityContext,
+  DOMAIN extends TRawDomains = TRawDomains,
 > {
   attributes: ATTRIBUTES;
   context: CONTEXT;
   // ! DO NOT TIE THIS `PICK_ENTITY` BACK TO ALL_DOMAINS
   // Causes circular references, which results in entity definitions always being `any`
-  entity_id: PICK_ENTITY;
+  entity_id: PICK_ENTITY<DOMAIN>;
   last_changed: string;
   last_updated: string;
   state: STATE;
