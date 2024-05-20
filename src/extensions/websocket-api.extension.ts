@@ -255,7 +255,7 @@ export function WebsocketAPI({
   }
 
   // #MARK: fireEvent
-  async function fireEvent(event_type: string, event_data?: object) {
+  async function fireEvent(event_type: string, event_data: object = {}) {
     return await hass.socket.sendMessage({
       event_data,
       event_type,

@@ -7,8 +7,10 @@ words:
   - entites
   - hass
   - hassio
+  - rgbw
   - homekit
   - endregion
+  - rgbww
   - macaddress
   - quickboot
   - ssdp
