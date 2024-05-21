@@ -38,6 +38,24 @@ describe("Entity", () => {
         SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
       );
     });
+
+    it("should find entities by unique_id", async () => {
+      expect.assertions(2);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const entity = hass.entity.byUniqueId<"sensor.sun_next_dawn">(
+              "5622d76001a335e3ea893c4d60d31b3d-next_dawn",
+            );
+            expect(entity).toBeDefined();
+            expect(entity.entity_id).toBe("sensor.sun_next_dawn");
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
   });
 
   describe("Refresh", () => {
