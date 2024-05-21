@@ -56,6 +56,23 @@ describe("Entity", () => {
         SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
       );
     });
+
+    it("should return undefined for no matches", async () => {
+      expect.assertions(2);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const entity = hass.entity.byUniqueId(
+              "5622d76001a335e3ea893c4d60d31b3d-previous_dawn",
+            );
+            expect(entity).not.toBeDefined();
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
   });
 
   describe("Refresh", () => {
