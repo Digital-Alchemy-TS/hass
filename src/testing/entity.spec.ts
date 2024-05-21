@@ -58,7 +58,7 @@ describe("Entity", () => {
     });
 
     it("should return undefined for no matches", async () => {
-      expect.assertions(2);
+      expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
