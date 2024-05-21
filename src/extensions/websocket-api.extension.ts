@@ -392,7 +392,6 @@ export function WebsocketAPI({
     const url = getUrl();
     try {
       connection = new WS(url);
-      let initFinished = false;
       connection.on("message", async (message: string) => {
         try {
           lastReceivedMessage = dayjs();
@@ -418,10 +417,6 @@ export function WebsocketAPI({
       });
 
       connection.on("close", async (code, reason) => {
-        if (!initFinished) {
-          logger.error("trying again");
-          return await init();
-        }
         logger.warn(
           { code, name: init, reason: reason.toString() },
           "connection closed",
@@ -430,7 +425,6 @@ export function WebsocketAPI({
       });
 
       await new Promise<void>(done => (onSocketReady = done));
-      initFinished = true;
     } catch (error) {
       logger.error({ error, name: init, url }, `initConnection error`);
       hass.socket.setConnectionState("offline");
