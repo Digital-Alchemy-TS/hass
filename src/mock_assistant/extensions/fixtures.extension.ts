@@ -27,6 +27,8 @@ export function Fixtures({
   hass.floor.list = async () => mock_assistant.fixtures.data?.floors ?? [];
   hass.label.list = async () => mock_assistant.fixtures.data?.labels ?? [];
   hass.device.list = async () => mock_assistant.fixtures.data?.devices ?? [];
+  hass.entity.registry.list = async () =>
+    mock_assistant.fixtures.data.entity_registry ?? [];
   hass.fetch.getAllEntities = async () =>
     mock_assistant.fixtures.data?.entities ?? [];
   hass.fetch.listServices = async () =>

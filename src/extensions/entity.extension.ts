@@ -467,6 +467,18 @@ export function EntityManager({
     });
   });
 
+  // #MARK: byUniqueId
+  function byUniqueId<ID extends PICK_ENTITY>(unique_id: string) {
+    const entity = hass.entity.registry.current.find(
+      i => i.unique_id === unique_id,
+    ) as EntityRegistryItem<ID>;
+    if (!entity) {
+      logger.error({ name: byUniqueId, unique_id }, `could not find an entity`);
+      return undefined;
+    }
+    return hass.entity.byId<ID>(entity.entity_id);
+  }
+
   // #MARK: byLabel
   function byLabel<LABEL extends TLabelId, DOMAIN extends ALL_DOMAINS>(
     label: LABEL,
@@ -597,6 +609,11 @@ export function EntityManager({
      * search out ids by platform
      */
     byPlatform,
+
+    /**
+     * looks up entity_id reference by the unique id in the registry, and returns the entity reference
+     */
+    byUniqueId,
 
     /**
      * Internal library use only
