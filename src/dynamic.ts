@@ -1074,8 +1074,8 @@ export type iCallService = {
        * > ```
        */
       entity_id?:
-        | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">
-        | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">[];
+      | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">
+      | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">[];
     }): Promise<void>;
     /**
      * ### Start
@@ -1097,8 +1097,8 @@ export type iCallService = {
        * > ```
        */
       entity_id?:
-        | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">
-        | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">[];
+      | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">
+      | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">[];
     }): Promise<void>;
     /**
      * ### Stop
@@ -1120,8 +1120,8 @@ export type iCallService = {
        * > ```
        */
       entity_id?:
-        | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">
-        | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">[];
+      | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">
+      | PICK_FROM_PLATFORM<"ffmpeg", "binary_sensor">[];
     }): Promise<void>;
   };
   // # MARK: frontend
@@ -1548,8 +1548,8 @@ export type iCallService = {
        * > ```
        */
       entity_id:
-        | PICK_ENTITY<"input_datetime">
-        | PICK_ENTITY<"input_datetime">[];
+      | PICK_ENTITY<"input_datetime">
+      | PICK_ENTITY<"input_datetime">[];
     }): Promise<void>;
   };
   // # MARK: input_number
@@ -1831,154 +1831,154 @@ export type iCallService = {
        * > A human-readable color name.
        */
       color_name?:
-        | "homeassistant"
-        | "aliceblue"
-        | "antiquewhite"
-        | "aqua"
-        | "aquamarine"
-        | "azure"
-        | "beige"
-        | "bisque"
-        | "blanchedalmond"
-        | "blue"
-        | "blueviolet"
-        | "brown"
-        | "burlywood"
-        | "cadetblue"
-        | "chartreuse"
-        | "chocolate"
-        | "coral"
-        | "cornflowerblue"
-        | "cornsilk"
-        | "crimson"
-        | "cyan"
-        | "darkblue"
-        | "darkcyan"
-        | "darkgoldenrod"
-        | "darkgray"
-        | "darkgreen"
-        | "darkgrey"
-        | "darkkhaki"
-        | "darkmagenta"
-        | "darkolivegreen"
-        | "darkorange"
-        | "darkorchid"
-        | "darkred"
-        | "darksalmon"
-        | "darkseagreen"
-        | "darkslateblue"
-        | "darkslategray"
-        | "darkslategrey"
-        | "darkturquoise"
-        | "darkviolet"
-        | "deeppink"
-        | "deepskyblue"
-        | "dimgray"
-        | "dimgrey"
-        | "dodgerblue"
-        | "firebrick"
-        | "floralwhite"
-        | "forestgreen"
-        | "fuchsia"
-        | "gainsboro"
-        | "ghostwhite"
-        | "gold"
-        | "goldenrod"
-        | "gray"
-        | "green"
-        | "greenyellow"
-        | "grey"
-        | "honeydew"
-        | "hotpink"
-        | "indianred"
-        | "indigo"
-        | "ivory"
-        | "khaki"
-        | "lavender"
-        | "lavenderblush"
-        | "lawngreen"
-        | "lemonchiffon"
-        | "lightblue"
-        | "lightcoral"
-        | "lightcyan"
-        | "lightgoldenrodyellow"
-        | "lightgray"
-        | "lightgreen"
-        | "lightgrey"
-        | "lightpink"
-        | "lightsalmon"
-        | "lightseagreen"
-        | "lightskyblue"
-        | "lightslategray"
-        | "lightslategrey"
-        | "lightsteelblue"
-        | "lightyellow"
-        | "lime"
-        | "limegreen"
-        | "linen"
-        | "magenta"
-        | "maroon"
-        | "mediumaquamarine"
-        | "mediumblue"
-        | "mediumorchid"
-        | "mediumpurple"
-        | "mediumseagreen"
-        | "mediumslateblue"
-        | "mediumspringgreen"
-        | "mediumturquoise"
-        | "mediumvioletred"
-        | "midnightblue"
-        | "mintcream"
-        | "mistyrose"
-        | "moccasin"
-        | "navajowhite"
-        | "navy"
-        | "navyblue"
-        | "oldlace"
-        | "olive"
-        | "olivedrab"
-        | "orange"
-        | "orangered"
-        | "orchid"
-        | "palegoldenrod"
-        | "palegreen"
-        | "paleturquoise"
-        | "palevioletred"
-        | "papayawhip"
-        | "peachpuff"
-        | "peru"
-        | "pink"
-        | "plum"
-        | "powderblue"
-        | "purple"
-        | "red"
-        | "rosybrown"
-        | "royalblue"
-        | "saddlebrown"
-        | "salmon"
-        | "sandybrown"
-        | "seagreen"
-        | "seashell"
-        | "sienna"
-        | "silver"
-        | "skyblue"
-        | "slateblue"
-        | "slategray"
-        | "slategrey"
-        | "snow"
-        | "springgreen"
-        | "steelblue"
-        | "tan"
-        | "teal"
-        | "thistle"
-        | "tomato"
-        | "turquoise"
-        | "violet"
-        | "wheat"
-        | "white"
-        | "whitesmoke"
-        | "yellow"
-        | "yellowgreen";
+      | "homeassistant"
+      | "aliceblue"
+      | "antiquewhite"
+      | "aqua"
+      | "aquamarine"
+      | "azure"
+      | "beige"
+      | "bisque"
+      | "blanchedalmond"
+      | "blue"
+      | "blueviolet"
+      | "brown"
+      | "burlywood"
+      | "cadetblue"
+      | "chartreuse"
+      | "chocolate"
+      | "coral"
+      | "cornflowerblue"
+      | "cornsilk"
+      | "crimson"
+      | "cyan"
+      | "darkblue"
+      | "darkcyan"
+      | "darkgoldenrod"
+      | "darkgray"
+      | "darkgreen"
+      | "darkgrey"
+      | "darkkhaki"
+      | "darkmagenta"
+      | "darkolivegreen"
+      | "darkorange"
+      | "darkorchid"
+      | "darkred"
+      | "darksalmon"
+      | "darkseagreen"
+      | "darkslateblue"
+      | "darkslategray"
+      | "darkslategrey"
+      | "darkturquoise"
+      | "darkviolet"
+      | "deeppink"
+      | "deepskyblue"
+      | "dimgray"
+      | "dimgrey"
+      | "dodgerblue"
+      | "firebrick"
+      | "floralwhite"
+      | "forestgreen"
+      | "fuchsia"
+      | "gainsboro"
+      | "ghostwhite"
+      | "gold"
+      | "goldenrod"
+      | "gray"
+      | "green"
+      | "greenyellow"
+      | "grey"
+      | "honeydew"
+      | "hotpink"
+      | "indianred"
+      | "indigo"
+      | "ivory"
+      | "khaki"
+      | "lavender"
+      | "lavenderblush"
+      | "lawngreen"
+      | "lemonchiffon"
+      | "lightblue"
+      | "lightcoral"
+      | "lightcyan"
+      | "lightgoldenrodyellow"
+      | "lightgray"
+      | "lightgreen"
+      | "lightgrey"
+      | "lightpink"
+      | "lightsalmon"
+      | "lightseagreen"
+      | "lightskyblue"
+      | "lightslategray"
+      | "lightslategrey"
+      | "lightsteelblue"
+      | "lightyellow"
+      | "lime"
+      | "limegreen"
+      | "linen"
+      | "magenta"
+      | "maroon"
+      | "mediumaquamarine"
+      | "mediumblue"
+      | "mediumorchid"
+      | "mediumpurple"
+      | "mediumseagreen"
+      | "mediumslateblue"
+      | "mediumspringgreen"
+      | "mediumturquoise"
+      | "mediumvioletred"
+      | "midnightblue"
+      | "mintcream"
+      | "mistyrose"
+      | "moccasin"
+      | "navajowhite"
+      | "navy"
+      | "navyblue"
+      | "oldlace"
+      | "olive"
+      | "olivedrab"
+      | "orange"
+      | "orangered"
+      | "orchid"
+      | "palegoldenrod"
+      | "palegreen"
+      | "paleturquoise"
+      | "palevioletred"
+      | "papayawhip"
+      | "peachpuff"
+      | "peru"
+      | "pink"
+      | "plum"
+      | "powderblue"
+      | "purple"
+      | "red"
+      | "rosybrown"
+      | "royalblue"
+      | "saddlebrown"
+      | "salmon"
+      | "sandybrown"
+      | "seagreen"
+      | "seashell"
+      | "sienna"
+      | "silver"
+      | "skyblue"
+      | "slateblue"
+      | "slategray"
+      | "slategrey"
+      | "snow"
+      | "springgreen"
+      | "steelblue"
+      | "tan"
+      | "teal"
+      | "thistle"
+      | "tomato"
+      | "turquoise"
+      | "violet"
+      | "wheat"
+      | "white"
+      | "whitesmoke"
+      | "yellow"
+      | "yellowgreen";
       /**
        * ## Color temperature
        *
@@ -2238,154 +2238,154 @@ export type iCallService = {
        * > A human-readable color name.
        */
       color_name?:
-        | "homeassistant"
-        | "aliceblue"
-        | "antiquewhite"
-        | "aqua"
-        | "aquamarine"
-        | "azure"
-        | "beige"
-        | "bisque"
-        | "blanchedalmond"
-        | "blue"
-        | "blueviolet"
-        | "brown"
-        | "burlywood"
-        | "cadetblue"
-        | "chartreuse"
-        | "chocolate"
-        | "coral"
-        | "cornflowerblue"
-        | "cornsilk"
-        | "crimson"
-        | "cyan"
-        | "darkblue"
-        | "darkcyan"
-        | "darkgoldenrod"
-        | "darkgray"
-        | "darkgreen"
-        | "darkgrey"
-        | "darkkhaki"
-        | "darkmagenta"
-        | "darkolivegreen"
-        | "darkorange"
-        | "darkorchid"
-        | "darkred"
-        | "darksalmon"
-        | "darkseagreen"
-        | "darkslateblue"
-        | "darkslategray"
-        | "darkslategrey"
-        | "darkturquoise"
-        | "darkviolet"
-        | "deeppink"
-        | "deepskyblue"
-        | "dimgray"
-        | "dimgrey"
-        | "dodgerblue"
-        | "firebrick"
-        | "floralwhite"
-        | "forestgreen"
-        | "fuchsia"
-        | "gainsboro"
-        | "ghostwhite"
-        | "gold"
-        | "goldenrod"
-        | "gray"
-        | "green"
-        | "greenyellow"
-        | "grey"
-        | "honeydew"
-        | "hotpink"
-        | "indianred"
-        | "indigo"
-        | "ivory"
-        | "khaki"
-        | "lavender"
-        | "lavenderblush"
-        | "lawngreen"
-        | "lemonchiffon"
-        | "lightblue"
-        | "lightcoral"
-        | "lightcyan"
-        | "lightgoldenrodyellow"
-        | "lightgray"
-        | "lightgreen"
-        | "lightgrey"
-        | "lightpink"
-        | "lightsalmon"
-        | "lightseagreen"
-        | "lightskyblue"
-        | "lightslategray"
-        | "lightslategrey"
-        | "lightsteelblue"
-        | "lightyellow"
-        | "lime"
-        | "limegreen"
-        | "linen"
-        | "magenta"
-        | "maroon"
-        | "mediumaquamarine"
-        | "mediumblue"
-        | "mediumorchid"
-        | "mediumpurple"
-        | "mediumseagreen"
-        | "mediumslateblue"
-        | "mediumspringgreen"
-        | "mediumturquoise"
-        | "mediumvioletred"
-        | "midnightblue"
-        | "mintcream"
-        | "mistyrose"
-        | "moccasin"
-        | "navajowhite"
-        | "navy"
-        | "navyblue"
-        | "oldlace"
-        | "olive"
-        | "olivedrab"
-        | "orange"
-        | "orangered"
-        | "orchid"
-        | "palegoldenrod"
-        | "palegreen"
-        | "paleturquoise"
-        | "palevioletred"
-        | "papayawhip"
-        | "peachpuff"
-        | "peru"
-        | "pink"
-        | "plum"
-        | "powderblue"
-        | "purple"
-        | "red"
-        | "rosybrown"
-        | "royalblue"
-        | "saddlebrown"
-        | "salmon"
-        | "sandybrown"
-        | "seagreen"
-        | "seashell"
-        | "sienna"
-        | "silver"
-        | "skyblue"
-        | "slateblue"
-        | "slategray"
-        | "slategrey"
-        | "snow"
-        | "springgreen"
-        | "steelblue"
-        | "tan"
-        | "teal"
-        | "thistle"
-        | "tomato"
-        | "turquoise"
-        | "violet"
-        | "wheat"
-        | "white"
-        | "whitesmoke"
-        | "yellow"
-        | "yellowgreen";
+      | "homeassistant"
+      | "aliceblue"
+      | "antiquewhite"
+      | "aqua"
+      | "aquamarine"
+      | "azure"
+      | "beige"
+      | "bisque"
+      | "blanchedalmond"
+      | "blue"
+      | "blueviolet"
+      | "brown"
+      | "burlywood"
+      | "cadetblue"
+      | "chartreuse"
+      | "chocolate"
+      | "coral"
+      | "cornflowerblue"
+      | "cornsilk"
+      | "crimson"
+      | "cyan"
+      | "darkblue"
+      | "darkcyan"
+      | "darkgoldenrod"
+      | "darkgray"
+      | "darkgreen"
+      | "darkgrey"
+      | "darkkhaki"
+      | "darkmagenta"
+      | "darkolivegreen"
+      | "darkorange"
+      | "darkorchid"
+      | "darkred"
+      | "darksalmon"
+      | "darkseagreen"
+      | "darkslateblue"
+      | "darkslategray"
+      | "darkslategrey"
+      | "darkturquoise"
+      | "darkviolet"
+      | "deeppink"
+      | "deepskyblue"
+      | "dimgray"
+      | "dimgrey"
+      | "dodgerblue"
+      | "firebrick"
+      | "floralwhite"
+      | "forestgreen"
+      | "fuchsia"
+      | "gainsboro"
+      | "ghostwhite"
+      | "gold"
+      | "goldenrod"
+      | "gray"
+      | "green"
+      | "greenyellow"
+      | "grey"
+      | "honeydew"
+      | "hotpink"
+      | "indianred"
+      | "indigo"
+      | "ivory"
+      | "khaki"
+      | "lavender"
+      | "lavenderblush"
+      | "lawngreen"
+      | "lemonchiffon"
+      | "lightblue"
+      | "lightcoral"
+      | "lightcyan"
+      | "lightgoldenrodyellow"
+      | "lightgray"
+      | "lightgreen"
+      | "lightgrey"
+      | "lightpink"
+      | "lightsalmon"
+      | "lightseagreen"
+      | "lightskyblue"
+      | "lightslategray"
+      | "lightslategrey"
+      | "lightsteelblue"
+      | "lightyellow"
+      | "lime"
+      | "limegreen"
+      | "linen"
+      | "magenta"
+      | "maroon"
+      | "mediumaquamarine"
+      | "mediumblue"
+      | "mediumorchid"
+      | "mediumpurple"
+      | "mediumseagreen"
+      | "mediumslateblue"
+      | "mediumspringgreen"
+      | "mediumturquoise"
+      | "mediumvioletred"
+      | "midnightblue"
+      | "mintcream"
+      | "mistyrose"
+      | "moccasin"
+      | "navajowhite"
+      | "navy"
+      | "navyblue"
+      | "oldlace"
+      | "olive"
+      | "olivedrab"
+      | "orange"
+      | "orangered"
+      | "orchid"
+      | "palegoldenrod"
+      | "palegreen"
+      | "paleturquoise"
+      | "palevioletred"
+      | "papayawhip"
+      | "peachpuff"
+      | "peru"
+      | "pink"
+      | "plum"
+      | "powderblue"
+      | "purple"
+      | "red"
+      | "rosybrown"
+      | "royalblue"
+      | "saddlebrown"
+      | "salmon"
+      | "sandybrown"
+      | "seagreen"
+      | "seashell"
+      | "sienna"
+      | "silver"
+      | "skyblue"
+      | "slateblue"
+      | "slategray"
+      | "slategrey"
+      | "snow"
+      | "springgreen"
+      | "steelblue"
+      | "tan"
+      | "teal"
+      | "thistle"
+      | "tomato"
+      | "turquoise"
+      | "violet"
+      | "wheat"
+      | "white"
+      | "whitesmoke"
+      | "yellow"
+      | "yellowgreen";
       /**
        * ## Color temperature
        *
@@ -2724,7 +2724,221 @@ export type iCallService = {
        * > object: null
        * > ```
        */
-      data?: unknown;
+      data?: {
+        /**
+         * **iOS | MacOS**
+         * 
+         * The URL to open when the notification is clicked.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#opening-a-url)
+         */
+        url?: string;
+
+        /**
+         * **Android**
+         * 
+         * The action to perform when the notification is clicked.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#opening-a-url)
+         */
+        clickAction?: string;
+
+        /**
+         * The group to which the notification belongs.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#grouping)
+         */
+        group?: string;
+
+        /**
+         * The tag to identify the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#replacing)
+         */
+        tag?: string;
+
+        /**
+         * **iOS | MacOS**
+         * 
+         * The subtitle of the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#subtitle--subject)
+         */
+        subtitle?: string;
+
+        /**
+         * **Android**
+         * 
+         * The subject of the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#subtitle--subject)
+         */
+        subject?: string;
+
+        /**
+         * **Android**
+         * 
+         * The color of the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#notification-color)
+         */
+        color?: string;
+
+        /**
+         * **Android**
+         * 
+         * Whether the notification should be sticky (persistent).
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#sticky-notification)
+         */
+        sticky?: boolean;
+
+        /**
+         * **Android**
+         * 
+         * The channel to which the notification belongs.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#notification-channels)
+         */
+        channel?: string;
+
+        /**
+         * **Android**
+         * 
+         * The importance level of the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#notification-channel-importance)
+         */
+        importance?: "none" | "min" | "low" | "default" | "high" | "max";
+
+        /**
+         * **Android**
+         * 
+         * The vibration pattern of the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#notification-vibration-pattern)
+         */
+        vibrationPattern?: string;
+
+        /**
+         * **Android**
+         * 
+         * The LED color of the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#notification-led-color)
+         */
+        ledColor?: string;
+
+        /**
+         * **Android**
+         * 
+         * Whether the notification should be persistent.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#persistent-notification)
+         */
+        persistent?: boolean;
+
+        /**
+         * **Android**
+         * 
+         * The timeout duration of the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#notification-timeout)
+         */
+        timeout?: number;
+
+        /**
+         * **Android**
+         * 
+         * The URL of the notification icon.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#notification-icon)
+         */
+        icon_url?: string;
+
+        /**
+         * **Android**
+         * 
+         * The visibility of the notification on the lock screen.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#notification-sensitivity--lock-screen-visibility)
+         */
+        visibility: 'public' | 'private' | 'secret';
+
+        /**
+         * **Android**
+         * 
+         * The text to be spoken by text-to-speech notifications.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#text-to-speech-notifications)
+         */
+        tts_text: string;
+
+        /**
+         * **Android**
+         * 
+         * The media stream to be played by the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#text-to-speech-notifications)
+         */
+        media_stream: "alarm_stream" | "alarm_stream_max";
+
+        /**
+         * **Android**
+         * 
+         * Whether the notification should display a chronometer.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#chronometer-notifications)
+         */
+        chronometer: boolean;
+
+        /**
+         * **Android**
+         * 
+         * The timestamp to display in the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#chronometer-notifications)
+         */
+        when: number;
+
+        /**
+         * **Android**
+         * 
+         * Whether the notification should only alert once.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#alert-once)
+         */
+        alert_once: boolean;
+
+        /**
+         * **Android**
+         * 
+         * The status bar icon of the notification.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#notification-status-bar-icon)
+         */
+        notification_icon: string;
+
+        /**
+         * **Android**
+         * 
+         * Whether the notification should be displayed in the car UI.
+         * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#android-auto-visibility)
+         */
+        car_ui: boolean;
+
+        push?: {
+          /**
+           * **iOS | MacOS**
+           * 
+           * The sound to play for the notification.
+           * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#sounds)
+           */
+          sound: 'none' | string;
+
+          /**
+           * **iOS | MacOS**
+           * 
+           * The badge number to display on the app icon.
+           * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#badge)
+           */
+          badge: number;
+
+          /**
+           * **iOS | MacOS**
+           * 
+           * The interruption level of the notification.
+           * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#interruption-level)
+           */
+          interruption_level: 'passive' | 'active' | 'time-sensitive' | 'critical';
+
+          /**
+           * **iOS | MacOS**
+           * 
+           * The presentation options for the notification.
+           * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#presentation-options)
+           */
+          presentation_options: ['alert' | 'badge' | 'sound'];
+        }
+      };
       /**
        * ## message
        *
@@ -3176,8 +3390,8 @@ export type iCallService = {
        * > ```
        */
       entity_id:
-        | PICK_FROM_PLATFORM<"homeassistant", "scene">
-        | PICK_FROM_PLATFORM<"homeassistant", "scene">[];
+      | PICK_FROM_PLATFORM<"homeassistant", "scene">
+      | PICK_FROM_PLATFORM<"homeassistant", "scene">[];
     }): Promise<void>;
     /**
      * ### Reload
@@ -4057,8 +4271,8 @@ export type iCallService = {
        * > Media players to play the message.
        */
       media_player_entity_id:
-        | PICK_ENTITY<"media_player">
-        | PICK_ENTITY<"media_player">[];
+      | PICK_ENTITY<"media_player">
+      | PICK_ENTITY<"media_player">[];
       /**
        * ## Message
        *
@@ -4124,37 +4338,37 @@ export type REGISTRY_SETUP = {
   };
   platform: {
     _sun:
-      | "sensor.sun_next_dawn"
-      | "sensor.sun_next_dusk"
-      | "sensor.sun_next_midnight"
-      | "sensor.sun_next_noon"
-      | "sensor.sun_next_rising"
-      | "sensor.sun_next_setting"
-      | "sensor.sun_solar_elevation"
-      | "sensor.sun_solar_azimuth"
-      | "sensor.sun_solar_rising";
+    | "sensor.sun_next_dawn"
+    | "sensor.sun_next_dusk"
+    | "sensor.sun_next_midnight"
+    | "sensor.sun_next_noon"
+    | "sensor.sun_next_rising"
+    | "sensor.sun_next_setting"
+    | "sensor.sun_solar_elevation"
+    | "sensor.sun_solar_azimuth"
+    | "sensor.sun_solar_rising";
     _person: "person.digital_alchemy";
     _shopping_list: "todo.shopping_list";
     _google_translate: "tts.google_en_com";
     _synapse:
-      | "binary_sensor.hass_e2e_online"
-      | "sensor.magic"
-      | "binary_sensor.toggles"
-      | "switch.bedroom_lamp"
-      | "switch.kitchen_cabinets"
-      | "switch.living_room_mood_lights"
-      | "switch.porch_light";
+    | "binary_sensor.hass_e2e_online"
+    | "sensor.magic"
+    | "binary_sensor.toggles"
+    | "switch.bedroom_lamp"
+    | "switch.kitchen_cabinets"
+    | "switch.living_room_mood_lights"
+    | "switch.porch_light";
     _holiday: "calendar.united_states_tx";
   };
   label: {
     _synapse:
-      | "binary_sensor.hass_e2e_online"
-      | "sensor.magic"
-      | "binary_sensor.toggles"
-      | "switch.bedroom_lamp"
-      | "switch.kitchen_cabinets"
-      | "switch.living_room_mood_lights"
-      | "switch.porch_light";
+    | "binary_sensor.hass_e2e_online"
+    | "sensor.magic"
+    | "binary_sensor.toggles"
+    | "switch.bedroom_lamp"
+    | "switch.kitchen_cabinets"
+    | "switch.living_room_mood_lights"
+    | "switch.porch_light";
     _test: never;
   };
   floor: {
@@ -4163,15 +4377,15 @@ export type REGISTRY_SETUP = {
   };
   device: {
     _308e39cf50a9fc6c30b4110724ed1f2e:
-      | "sensor.sun_next_dawn"
-      | "sensor.sun_next_dusk"
-      | "sensor.sun_next_midnight"
-      | "sensor.sun_next_noon"
-      | "sensor.sun_next_rising"
-      | "sensor.sun_next_setting"
-      | "sensor.sun_solar_elevation"
-      | "sensor.sun_solar_azimuth"
-      | "sensor.sun_solar_rising";
+    | "sensor.sun_next_dawn"
+    | "sensor.sun_next_dusk"
+    | "sensor.sun_next_midnight"
+    | "sensor.sun_next_noon"
+    | "sensor.sun_next_rising"
+    | "sensor.sun_next_setting"
+    | "sensor.sun_solar_elevation"
+    | "sensor.sun_solar_azimuth"
+    | "sensor.sun_solar_rising";
     _e58841e47cf86097b310316e55d6bb12: "calendar.united_states_tx";
   };
 };
