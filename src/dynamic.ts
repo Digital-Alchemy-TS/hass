@@ -2748,7 +2748,7 @@ export type iCallService = {
         group?: string;
 
         /**
-         * The tag to identify the notification.
+         * The tag to identify the notification for replacement by another.
          * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#replacing)
          */
         tag?: string;
@@ -2756,7 +2756,7 @@ export type iCallService = {
         /**
          * **iOS | MacOS**
          * 
-         * The subtitle of the notification.
+         * The subtitle of the notification. Shows under the title.
          * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#subtitle--subject)
          */
         subtitle?: string;
