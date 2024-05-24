@@ -99,6 +99,14 @@ export function EntityManager({
   const ENTITY_PROXIES = new Map<PICK_ENTITY, ByIdProxy<PICK_ENTITY>>();
   const PREVIOUS_STATE = new Map<PICK_ENTITY, ENTITY_STATE<PICK_ENTITY>>();
   let lastRefresh: Dayjs;
+  function warnEarly(method: string) {
+    if (!init) {
+      logger.error(
+        "attempted to use [%s] before application booted. use {lifecycle.onReady}",
+        method,
+      );
+    }
+  }
 
   // * Local event emitter for coordination of socket events
   // Other libraries will internally take advantage of this eventemitter
@@ -469,6 +477,7 @@ export function EntityManager({
 
   // #MARK: byUniqueId
   function byUniqueId<ID extends PICK_ENTITY>(unique_id: string) {
+    warnEarly("byUniqueId");
     const entity = hass.entity.registry.current.find(
       i => i.unique_id === unique_id,
     ) as EntityRegistryItem<ID>;
@@ -484,6 +493,7 @@ export function EntityManager({
     label: LABEL,
     ...domains: DOMAIN[]
   ): PICK_FROM_LABEL<LABEL, DOMAIN>[] {
+    warnEarly("byLabel");
     const raw = hass.entity.registry.current.filter(i =>
       i.labels.includes(label),
     );
@@ -502,6 +512,7 @@ export function EntityManager({
     area: AREA,
     ...domains: DOMAIN[]
   ): PICK_FROM_AREA<AREA, DOMAIN>[] {
+    warnEarly("byArea");
     const raw = hass.entity.registry.current.filter(i => i.area_id === area);
     if (is.empty(domains)) {
       return raw.map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>);
@@ -518,6 +529,7 @@ export function EntityManager({
     device: DEVICE,
     ...domains: DOMAIN[]
   ): PICK_FROM_DEVICE<DEVICE, DOMAIN>[] {
+    warnEarly("byDevice");
     const raw = hass.entity.registry.current.filter(
       i => i.device_id === device,
     );
@@ -536,6 +548,7 @@ export function EntityManager({
     floor: FLOOR,
     ...domains: DOMAIN[]
   ): PICK_FROM_FLOOR<FLOOR, DOMAIN>[] {
+    warnEarly("byFloor");
     const areas = new Set<TAreaId>(
       hass.area.current.filter(i => i.floor_id === floor).map(i => i.area_id),
     );
@@ -555,6 +568,7 @@ export function EntityManager({
     platform: PLATFORM,
     ...domains: DOMAIN[]
   ) {
+    warnEarly("byPlatform");
     const raw = hass.entity.registry.current
       .filter(i => i.platform === platform)
       .filter(i => i.platform === platform)
@@ -567,6 +581,7 @@ export function EntityManager({
 
   // #MARK: RemoveEntity
   async function RemoveEntity(entity_id: PICK_ENTITY | PICK_ENTITY[]) {
+    warnEarly("RemoveEntity");
     await eachSeries([entity_id].flat(), async entity_id => {
       logger.debug({ name: entity_id }, `removing entity`);
       await hass.socket.sendMessage({
@@ -668,5 +683,7 @@ export function EntityManager({
       removeLabel: RemoveLabel,
       source: EntitySource,
     },
+
+    warnEarly,
   };
 }
