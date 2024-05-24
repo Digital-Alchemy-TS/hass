@@ -23,6 +23,7 @@ const FAILED = 1;
 
 export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
   let services: HassServiceDTO[];
+  let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
    * Describe the current services, and build up a proxy api based on that.
@@ -39,6 +40,7 @@ export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
       `runtime populate service interfaces`,
     );
     await loadServiceList();
+    loaded = true;
   });
 
   async function loadServiceList(recursion = START): Promise<void> {
@@ -119,7 +121,16 @@ export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
 
   function buildCallProxy(): iCallService {
     return new Proxy(rawProxy as iCallService, {
-      get: (_, domain: ALL_SERVICE_DOMAINS) => rawProxy[domain],
+      get: (_, domain: ALL_SERVICE_DOMAINS) => {
+        if (loaded) {
+          lifecycle.onReady(() => {
+            logger.error(
+              `attempted to use {hass.call} before data loaded. use {lifecycle.onReady}`,
+            );
+          });
+        }
+        return rawProxy[domain];
+      },
     });
   }
 
