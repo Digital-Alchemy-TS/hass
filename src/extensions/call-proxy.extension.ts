@@ -123,9 +123,11 @@ export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
     return new Proxy(rawProxy as iCallService, {
       get: (_, domain: ALL_SERVICE_DOMAINS) => {
         if (loaded) {
-          logger.error(
-            `attempted to use {hass.call} before data loaded. use {lifecycle.onReady}`,
-          );
+          lifecycle.onReady(() => {
+            logger.error(
+              `attempted to use {hass.call} before data loaded. use {lifecycle.onReady}`,
+            );
+          });
         }
         return rawProxy[domain];
       },

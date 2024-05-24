@@ -101,10 +101,12 @@ export function EntityManager({
   let lastRefresh: Dayjs;
   function warnEarly(method: string) {
     if (!init) {
-      logger.error(
-        "attempted to use [%s] before application booted. use {lifecycle.onReady}",
-        method,
-      );
+      lifecycle.onReady(() => {
+        logger.error(
+          "attempted to use [%s] before application booted. use {lifecycle.onReady}",
+          method,
+        );
+      });
     }
   }
 
