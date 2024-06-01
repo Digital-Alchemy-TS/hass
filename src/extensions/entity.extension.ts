@@ -7,7 +7,6 @@ import {
   sleep,
   START,
   TAnyFunction,
-  TBlackHole,
   TServiceParams,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
@@ -17,11 +16,13 @@ import { Get } from "type-fest";
 
 import {
   ALL_DOMAINS,
+  ByIdProxy,
   domain,
   EditLabelOptions,
   ENTITY_REGISTRY_UPDATED,
   ENTITY_STATE,
   EntityHistoryDTO,
+  EntityHistoryItem,
   EntityHistoryResult,
   EntityRegistryItem,
   PICK_ENTITY,
@@ -36,49 +37,10 @@ import {
   TPlatformId,
 } from "..";
 
-type EntityHistoryItem = { a: object; s: unknown; lu: number };
-export const ENTITY_UPDATE_RECEIVER = Symbol.for("entityUpdateReceiver");
-export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
-  ENTITY_STATE<ENTITY_ID> & {
-    entity_id: ENTITY_ID;
-    /**
-     * Run callback
-     */
-    onUpdate: (
-      callback: (
-        new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
-        old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
-        remove: () => TBlackHole,
-      ) => TBlackHole,
-    ) => { remove: () => void };
-    /**
-     * Run callback once, for next update
-     */
-    once: (
-      callback: (
-        new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
-        old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
-      ) => TBlackHole,
-    ) => void;
-    /**
-     * Will resolve with the next state of the next value. No time limit
-     */
-    nextState: () => Promise<ENTITY_STATE<ENTITY_ID>>;
-    /**
-     * Access the immediate previous entity state
-     */
-    previous: ENTITY_STATE<ENTITY_ID>;
-    /**
-     * Remove all `.onUpdate` listeners for this entity
-     *
-     * If you want to remove a particular one, use use the return value of the `.onUpdate` call instead
-     */
-    removeAllListeners: () => void;
-  };
-
 const MAX_ATTEMPTS = 10;
 const UNLIMITED = 0;
 const RECENT = 5;
+export const ENTITY_UPDATE_RECEIVER = Symbol.for("entityUpdateReceiver");
 
 export function EntityManager({
   logger,

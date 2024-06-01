@@ -1,3 +1,5 @@
+import { TBlackHole } from "@digital-alchemy/core";
+
 import { TAreaId, TDeviceId, TLabelId, TRawDomains } from "../dynamic";
 import { ENTITY_STATE, PICK_ENTITY } from "./utility.helper";
 
@@ -22,6 +24,47 @@ type GenericEntityAttributes = {
    */
   friendly_name?: string;
 };
+
+export type EntityHistoryItem = { a: object; s: unknown; lu: number };
+
+export type TEntityUpdateCallback<ENTITY_ID extends PICK_ENTITY> = (
+  new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
+  old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
+  remove: () => TBlackHole,
+) => TBlackHole;
+
+export type RemovableCallback<ENTITY_ID extends PICK_ENTITY> = (
+  callback: TEntityUpdateCallback<ENTITY_ID>,
+) => {
+  remove: () => void;
+};
+
+export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
+  ENTITY_STATE<ENTITY_ID> & {
+    entity_id: ENTITY_ID;
+    /**
+     * Run callback
+     */
+    onUpdate: RemovableCallback<ENTITY_ID>;
+    /**
+     * Run callback once, for next update
+     */
+    once: (callback: TEntityUpdateCallback<ENTITY_ID>) => void;
+    /**
+     * Will resolve with the next state of the next value. No time limit
+     */
+    nextState: () => Promise<ENTITY_STATE<ENTITY_ID>>;
+    /**
+     * Access the immediate previous entity state
+     */
+    previous: ENTITY_STATE<ENTITY_ID>;
+    /**
+     * Remove all `.onUpdate` listeners for this entity
+     *
+     * If you want to remove a particular one, use use the return value of the `.onUpdate` call instead
+     */
+    removeAllListeners: () => void;
+  };
 
 export interface GenericEntityDTO<
   ATTRIBUTES extends object = GenericEntityAttributes,
