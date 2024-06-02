@@ -68,6 +68,8 @@ export function EntityManager({
           "attempted to use [%s] before application booted. use {lifecycle.onReady}",
           method,
         );
+        // eslint-disable-next-line no-console
+        console.trace(method);
       });
     }
   }
