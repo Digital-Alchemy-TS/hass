@@ -23,6 +23,7 @@ const FAILED = 1;
 
 export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
   let services: HassServiceDTO[];
+  const RESPONSE_REQUIRED = new Set<string>();
   let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
@@ -73,6 +74,12 @@ export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
           async <SERVICE extends PICK_SERVICE<ALL_SERVICE_DOMAINS>>(
             parameters: object,
           ) => {
+            const data = value.services[key];
+            if (is.boolean(data?.response?.optional)) {
+              // https://github.com/Digital-Alchemy-TS/hass/issues/34
+              logger.warn(`calling services with responses not supported`);
+            }
+
             const service = `${value.domain}.${key}` as SERVICE;
             await sendMessage(service, {
               ...parameters,

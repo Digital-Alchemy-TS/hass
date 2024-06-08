@@ -51,6 +51,11 @@ export interface ServiceListField {
   fields: Record<string, ServiceListFieldDescription>;
   name?: string;
   target?: ServiceListServiceTarget;
+  response?: ResponseOptional;
+}
+
+export interface ResponseOptional {
+  optional?: boolean;
 }
 
 export interface HassServiceDTO {
