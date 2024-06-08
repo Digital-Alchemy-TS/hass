@@ -16,6 +16,7 @@ import { Get } from "type-fest";
 
 import {
   ALL_DOMAINS,
+  ALL_SERVICE_DOMAINS,
   ByIdProxy,
   domain,
   EditLabelOptions,
@@ -125,6 +126,7 @@ export function EntityManager({
   function byId<ENTITY_ID extends PICK_ENTITY>(
     entity_id: ENTITY_ID,
   ): ByIdProxy<ENTITY_ID> {
+    const entity_domain = domain(entity_id) as ALL_SERVICE_DOMAINS;
     if (!ENTITY_PROXIES.has(entity_id)) {
       ENTITY_PROXIES.set(
         entity_id,
@@ -168,6 +170,15 @@ export function EntityManager({
                       done(entity satisfies ENTITY_STATE<ENTITY_ID>),
                   );
                 });
+            }
+            if (hass.configure.isService(entity_domain, property)) {
+              return async function (data = {}) {
+                // @ts-expect-error it's fine
+                return await hass.call[entity_domain][property]({
+                  entity_id,
+                  ...data,
+                });
+              };
             }
             return proxyGetLogic(entity_id, property);
           },

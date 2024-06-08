@@ -1,28 +1,14 @@
-import {
-  INCREMENT,
-  is,
-  SECOND,
-  sleep,
-  START,
-  TServiceParams,
-} from "@digital-alchemy/core";
-import { exit } from "process";
+import { is, TServiceParams } from "@digital-alchemy/core";
 
 import {
   ALL_SERVICE_DOMAINS,
   CALL_PROXY_SERVICE_CALL,
-  HassServiceDTO,
   iCallService,
   PICK_SERVICE,
   PICK_SERVICE_PARAMETERS,
 } from "..";
 
-const FAILED_LOAD_DELAY = 5;
-const MAX_ATTEMPTS = 50;
-const FAILED = 1;
-
 export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
-  let services: HassServiceDTO[];
   let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
@@ -43,27 +29,9 @@ export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
     loaded = true;
   });
 
-  async function loadServiceList(recursion = START): Promise<void> {
-    logger.info({ name: loadServiceList }, `fetching service list`);
-    services = await hass.fetch.listServices();
-    if (is.empty(services)) {
-      if (recursion > MAX_ATTEMPTS) {
-        logger.fatal(
-          { name: loadServiceList },
-          `failed to load service list from Home Assistant`,
-        );
-        exit(FAILED);
-      }
-      logger.warn(
-        { name: loadServiceList },
-        "failed to retrieve {service} list. Retrying {%s}/[%s]",
-        recursion,
-        MAX_ATTEMPTS,
-      );
-      await sleep(FAILED_LOAD_DELAY * SECOND);
-      await loadServiceList(recursion + INCREMENT);
-      return;
-    }
+  async function loadServiceList(): Promise<void> {
+    await hass.configure.loadServiceList();
+    const services = hass.configure.getServices();
     services.forEach(value => {
       const services = Object.keys(value.services);
 
