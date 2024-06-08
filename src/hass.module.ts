@@ -10,6 +10,7 @@ import {
   FetchAPI,
   Floor,
   Label,
+  NotifyExtension,
   Registry,
   WebsocketAPI,
   Zone,
@@ -139,6 +140,11 @@ export const LIB_HASS = CreateLibrary({
     floor: Floor,
 
     label: Label,
+
+    /**
+     * Extended features for `hass.call.notify...`
+     */
+    notify: NotifyExtension,
 
     /**
      * Interact with the home assistant registry

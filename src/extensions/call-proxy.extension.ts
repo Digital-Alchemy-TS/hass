@@ -23,7 +23,6 @@ const FAILED = 1;
 
 export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
   let services: HassServiceDTO[];
-  const RESPONSE_REQUIRED = new Set<string>();
   let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**

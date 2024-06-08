@@ -17,6 +17,7 @@
     "rootDir": "./src",
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true,
     "sourceMap": true,
     "outDir": "./dist",
     "strict": false,
