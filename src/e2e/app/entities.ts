@@ -7,8 +7,8 @@ export function Entities({ synapse, context }: TServiceParams) {
   synapse.switch({ context, name: "porch_light" });
   const magicSensor = synapse.sensor({
     context,
-    defaultState: "50",
     name: "magic",
+    state: "50",
   });
   const togglesTheBinarySensor = synapse.binary_sensor({
     context,
