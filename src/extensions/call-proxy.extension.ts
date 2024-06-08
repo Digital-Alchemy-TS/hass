@@ -8,7 +8,13 @@ import {
   PICK_SERVICE_PARAMETERS,
 } from "..";
 
-export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
+export function CallProxy({
+  logger,
+  lifecycle,
+  internal,
+  hass,
+  config,
+}: TServiceParams) {
   let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
@@ -96,6 +102,11 @@ export function CallProxy({ logger, lifecycle, hass, config }: TServiceParams) {
   function buildCallProxy(): iCallService {
     return new Proxy(rawProxy as iCallService, {
       get: (_, domain: ALL_SERVICE_DOMAINS) => {
+        // oddities in the way proxies work
+        // this situation isn't testable afaik
+        if (!internal.boot.constructComplete.has("hass")) {
+          return undefined;
+        }
         if (!loaded) {
           lifecycle.onReady(() => {
             logger.error(
