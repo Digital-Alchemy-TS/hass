@@ -1,7 +1,3 @@
-import { FIRST } from "@digital-alchemy/core";
-
-import { iCallService } from "../dynamic";
-
 export type AppleActionableNotificationPush = {
   /**
    * **iOS | MacOS**
@@ -220,24 +216,4 @@ export type ActionableNotification = {
    * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#replacing)
    */
   tag?: string;
-};
-
-type BaseNotify = { notify: Record<string, () => Promise<void>> };
-
-export type DeviceExtractor<DATA extends BaseNotify> = keyof DATA["notify"];
-type FIRST = typeof FIRST;
-
-export type ActionableNotifications = {
-  android<DEVICE extends keyof iCallService["notify"]>(
-    device: DEVICE,
-    params: Parameters<iCallService["notify"][DEVICE]>[typeof FIRST] & {
-      data: ActionableNotification & AndroidActionableNotification;
-    },
-  ): Promise<void>;
-  apple<DEVICE extends keyof iCallService["notify"]>(
-    device: DEVICE,
-    params: Parameters<iCallService["notify"][DEVICE]>[typeof FIRST] & {
-      data: ActionableNotification & AppleActionableNotification;
-    },
-  ): Promise<void>;
 };

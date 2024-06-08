@@ -4,7 +4,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/ban-types */
 // @ts-nocheck
-import { PICK_ENTITY } from "./helpers";
+import {
+  ActionableNotification,
+  AndroidActionableNotification,
+  AppleActionableNotification,
+  PICK_ENTITY,
+} from "./helpers";
 
 type PICK_FROM_PLATFORM<
   ID extends TPlatformId,
@@ -2724,7 +2729,8 @@ export type iCallService = {
        * > object: null
        * > ```
        */
-      data?: unknown;
+      data?: ActionableNotification &
+        (AndroidActionableNotification | AppleActionableNotification);
       /**
        * ## message
        *
