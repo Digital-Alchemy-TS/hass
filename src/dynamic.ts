@@ -2799,7 +2799,8 @@ export type iCallService = {
        * > object: null
        * > ```
        */
-      data?: unknown;
+      data?: ActionableNotification &
+        (AndroidActionableNotification | AppleActionableNotification);
       /**
        * ## Message
        *
