@@ -1,7 +1,20 @@
-import { TBlackHole } from "@digital-alchemy/core";
+import { FIRST, TBlackHole } from "@digital-alchemy/core";
+import { Except } from "type-fest";
 
-import { TAreaId, TDeviceId, TLabelId, TRawDomains } from "../dynamic";
-import { ENTITY_STATE, PICK_ENTITY } from "./utility.helper";
+import {
+  iCallService,
+  TAreaId,
+  TDeviceId,
+  TLabelId,
+  TRawDomains,
+} from "../dynamic";
+import {
+  ALL_DOMAINS,
+  ALL_SERVICE_DOMAINS,
+  ENTITY_STATE,
+  GetDomain,
+  PICK_ENTITY,
+} from "./utility.helper";
 
 export enum HassEvents {
   state_changed = "state_changed",
@@ -64,7 +77,26 @@ export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
      * If you want to remove a particular one, use use the return value of the `.onUpdate` call instead
      */
     removeAllListeners: () => void;
-  };
+  } & (GetDomain<ENTITY_ID> extends ALL_SERVICE_DOMAINS
+      ? DomainServiceCalls<GetDomain<ENTITY_ID>>
+      : object);
+
+type DomainServiceCalls<
+  DOMAIN extends Extract<ALL_DOMAINS, ALL_SERVICE_DOMAINS>,
+> = {
+  [SERVICE in Extract<keyof iCallService[DOMAIN], string>]: CallRewrite<
+    DOMAIN,
+    SERVICE
+  >;
+};
+
+type CallRewrite<
+  D extends Extract<ALL_DOMAINS, ALL_SERVICE_DOMAINS>,
+  S extends keyof iCallService[D],
+> = (
+  // @ts-expect-error fixme another day, the transformation is valid
+  data?: Except<Parameters<iCallService[D][S]>[typeof FIRST], "entity_id">,
+) => Promise<void>;
 
 export interface GenericEntityDTO<
   ATTRIBUTES extends object = GenericEntityAttributes,
