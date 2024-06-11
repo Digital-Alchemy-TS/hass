@@ -15,7 +15,7 @@ export type LabelOptions = {
 };
 
 export type EditLabelOptions = {
-  entity: PICK_ENTITY;
+  entity: PICK_ENTITY | PICK_ENTITY[];
   label: TLabelId;
 };
 

@@ -634,7 +634,7 @@ export function WebsocketAPI({
 
     /**
      * Set up a new websocket connection to home assistant
-     *
+     *f
      * This doesn't normally need to be called by applications, the extension self manages
      */
     init,
