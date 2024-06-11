@@ -206,6 +206,26 @@ export type AndroidActionableNotification = {
 
 export type ActionableNotification = {
   /**
+   * Android allows 3 actions.
+   * iOS allows around 10 actions.
+   */
+  actions?: {
+    /**
+     * Key passed back in events.
+     * When set to `REPLY`, you will be prompted for text to send with the event.
+     */
+    action: "REPLY" | "URI" | string;
+    /**
+     * Shown on the action button to the user.
+     */
+    title: string;
+    /**
+     * The URI to open when selected.
+     * Android requires setting the action string to `URI` to use this key. [More Info](https://companion.home-assistant.io/docs/notifications/actionable-notifications/#uri-values).
+     */
+    uri?: string;
+  }
+  /**
    * The group to which the notification belongs.
    * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#grouping)
    */
