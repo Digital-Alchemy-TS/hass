@@ -224,7 +224,7 @@ export type ActionableNotification = {
      * Android requires setting the action string to `URI` to use this key. [More Info](https://companion.home-assistant.io/docs/notifications/actionable-notifications/#uri-values).
      */
     uri?: string;
-  }
+  };
   /**
    * The group to which the notification belongs.
    * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#grouping)
