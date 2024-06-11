@@ -50,7 +50,7 @@ export function EntityManager({
   lifecycle,
   event,
   context,
-  internal: { utils },
+  internal,
 }: TServiceParams) {
   // #MARK: Local vars
   /**
@@ -86,7 +86,7 @@ export function EntityManager({
     entity_id: ENTITY_ID,
     // 🖕 TS
   ): NonNullable<ENTITY_STATE<ENTITY_ID>> {
-    const out = utils.object.get(MASTER_STATE, entity_id) ?? {};
+    const out = internal.utils.object.get(MASTER_STATE, entity_id) ?? {};
     return out as ENTITY_STATE<ENTITY_ID>;
   }
 
@@ -119,7 +119,7 @@ export function EntityManager({
         `proxyGetLogic cannot find entity`,
       );
     }
-    return utils.object.get(current, property) || defaultValue;
+    return internal.utils.object.get(current, property) || defaultValue;
   }
 
   // #MARK: byId
@@ -135,10 +135,13 @@ export function EntityManager({
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
             if (property === "onUpdate") {
               return (callback: TAnyFunction) => {
-                const removableCallback = (
+                const removableCallback = async (
                   a: ENTITY_STATE<ENTITY_ID>,
                   b: ENTITY_STATE<ENTITY_ID>,
-                ) => callback(a, b, remove);
+                ) =>
+                  await internal.safeExec(
+                    async () => await callback(a, b, remove),
+                  );
                 function remove() {
                   ENTITY_EVENTS.removeListener(entity_id, removableCallback);
                 }
@@ -312,16 +315,16 @@ export function EntityManager({
     states.forEach(entity => {
       // ? Set first, ensure data is populated
       // `nextTick` will fire AFTER loop finishes
-      utils.object.set(
+      internal.utils.object.set(
         MASTER_STATE,
         entity.entity_id,
         entity,
-        is.undefined(utils.object.get(oldState, entity.entity_id)),
+        is.undefined(internal.utils.object.get(oldState, entity.entity_id)),
       );
       if (!init) {
         return;
       }
-      const old = utils.object.get(oldState, entity.entity_id);
+      const old = internal.utils.object.get(oldState, entity.entity_id);
       if (is.equal(old, entity)) {
         // logger.trace(
         //   { entity_id: entity.entity_id, name: refresh },
@@ -341,7 +344,7 @@ export function EntityManager({
           await EntityUpdateReceiver(
             entity.entity_id,
             entity satisfies ENTITY_STATE<PICK_ENTITY>,
-            utils.object.get(oldState, entity.entity_id),
+            internal.utils.object.get(oldState, entity.entity_id),
           ),
       );
     });
@@ -361,10 +364,10 @@ export function EntityManager({
         `removing deleted entity [%s] from {MASTER_STATE}`,
         entity_id,
       );
-      utils.object.del(MASTER_STATE, entity_id);
+      internal.utils.object.del(MASTER_STATE, entity_id);
       return;
     }
-    utils.object.set(MASTER_STATE, entity_id, new_state);
+    internal.utils.object.set(MASTER_STATE, entity_id, new_state);
     if (!hass.socket.pauseMessages) {
       ENTITY_EVENTS.emit(entity_id, new_state, old_state);
     }
@@ -639,7 +642,7 @@ export function EntityManager({
     /**
      * Retrieve the raw entity data for this point in time
      */
-    raw: (id: PICK_ENTITY) => utils.object.get(MASTER_STATE, id),
+    raw: (id: PICK_ENTITY) => internal.utils.object.get(MASTER_STATE, id),
 
     /**
      * Initiates a refresh of the current entity states. Useful for ensuring
