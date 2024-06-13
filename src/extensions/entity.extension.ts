@@ -11,12 +11,10 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import EventEmitter from "events";
 import { exit } from "process";
-import { Get } from "type-fest";
 
 import {
   ALL_DOMAINS,
   ByIdProxy,
-  domain,
   EditLabelOptions,
   ENTITY_REGISTRY_UPDATED,
   ENTITY_STATE,
@@ -25,10 +23,6 @@ import {
   EntityHistoryResult,
   EntityRegistryItem,
   PICK_ENTITY,
-  PICK_FROM_AREA,
-  PICK_FROM_DEVICE,
-  PICK_FROM_FLOOR,
-  PICK_FROM_LABEL,
   TAreaId,
   TDeviceId,
   TFloorId,
@@ -58,7 +52,6 @@ export function EntityManager({
   let MASTER_STATE = {} as Partial<
     Record<ALL_DOMAINS, Record<string, ENTITY_STATE<PICK_ENTITY>>>
   >;
-  const ENTITY_PROXIES = new Map<PICK_ENTITY, ByIdProxy<PICK_ENTITY>>();
   const PREVIOUS_STATE = new Map<PICK_ENTITY, ENTITY_STATE<PICK_ENTITY>>();
   let lastRefresh: Dayjs;
   function warnEarly(method: string) {
@@ -87,38 +80,6 @@ export function EntityManager({
   ): NonNullable<ENTITY_STATE<ENTITY_ID>> {
     const out = internal.utils.object.get(MASTER_STATE, entity_id) ?? {};
     return out as ENTITY_STATE<ENTITY_ID>;
-  }
-
-  // #MARK:proxyGetLogic
-  function proxyGetLogic<
-    ENTITY extends PICK_ENTITY = PICK_ENTITY,
-    PROPERTY extends string = string,
-  >(entity: ENTITY, property: PROPERTY): Get<ENTITY_STATE<ENTITY>, PROPERTY> {
-    if (!init) {
-      return undefined;
-    }
-    const valid = ["state", "attributes", "last"].some(i =>
-      property.startsWith(i),
-    );
-    if (!valid) {
-      logger.error(
-        { entity, name: proxyGetLogic, property },
-        `invalid property lookup`,
-      );
-      return undefined;
-    }
-    const current = getCurrentState(entity);
-    const defaultValue = (property === "state" ? undefined : {}) as Get<
-      ENTITY_STATE<ENTITY>,
-      PROPERTY
-    >;
-    if (!current) {
-      logger.error(
-        { defaultValue, name: entity, property },
-        `proxyGetLogic cannot find entity`,
-      );
-    }
-    return internal.utils.object.get(current, property) || defaultValue;
   }
 
   // #MARK: history
@@ -489,7 +450,8 @@ export function EntityManager({
     /**
      * Retrieve the raw entity data for this point in time
      */
-    raw: (entity_id: PICK_ENTITY) => utils.object.get(MASTER_STATE, entity_id),
+    raw: (entity_id: PICK_ENTITY) =>
+      internal.utils.object.get(MASTER_STATE, entity_id),
 
     /**
      * Initiates a refresh of the current entity states. Useful for ensuring

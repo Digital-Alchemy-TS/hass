@@ -17,11 +17,7 @@ import {
   PICK_ENTITY,
 } from "../helpers";
 
-export function ReferenceExtension({
-  hass,
-  logger,
-  internal: { utils },
-}: TServiceParams) {
+export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
   const ENTITY_PROXIES = new Map<PICK_ENTITY, ByIdProxy<PICK_ENTITY>>();
   // #MARK:proxyGetLogic
   function proxyGetLogic<
@@ -49,7 +45,7 @@ export function ReferenceExtension({
         `proxyGetLogic cannot find entity`,
       );
     }
-    return utils.object.get(current, property) || defaultValue;
+    return internal.utils.object.get(current, property) || defaultValue;
   }
 
   // #MARK: byId
@@ -67,10 +63,11 @@ export function ReferenceExtension({
             get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
               if (property === "onUpdate") {
                 return (callback: TAnyFunction) => {
-                  const removableCallback = (
+                  const removableCallback = async (
                     a: ENTITY_STATE<ENTITY_ID>,
                     b: ENTITY_STATE<ENTITY_ID>,
-                  ) => callback(a, b, remove);
+                  ) =>
+                    await internal.safeExec(async () => callback(a, b, remove));
                   function remove() {
                     hass.entity
                       ._entityEvents()
