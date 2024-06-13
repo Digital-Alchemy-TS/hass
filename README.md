@@ -6,7 +6,7 @@
 
 This repository contains generic extensions for interacting with Home Assistant, including websocket & REST API adapters, entity & event management, backup workflows, and more.
 
-- Extended docs: https://docs.digital-alchemy.app/Hass
+- [Extended docs](https://docs.digital-alchemy.app)
 - [Discord](https://discord.gg/JkZ35Gv97Y)
 
 ## ⭐ Features
