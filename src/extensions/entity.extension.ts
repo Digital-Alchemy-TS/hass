@@ -6,19 +6,15 @@ import {
   SECOND,
   sleep,
   START,
-  TAnyFunction,
   TServiceParams,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import EventEmitter from "events";
 import { exit } from "process";
-import { Get } from "type-fest";
 
 import {
   ALL_DOMAINS,
-  ALL_SERVICE_DOMAINS,
   ByIdProxy,
-  domain,
   EditLabelOptions,
   ENTITY_REGISTRY_UPDATED,
   ENTITY_STATE,
@@ -27,15 +23,12 @@ import {
   EntityHistoryResult,
   EntityRegistryItem,
   PICK_ENTITY,
-  PICK_FROM_AREA,
-  PICK_FROM_DEVICE,
-  PICK_FROM_FLOOR,
-  PICK_FROM_LABEL,
   TAreaId,
   TDeviceId,
   TFloorId,
   TLabelId,
   TPlatformId,
+  TRawDomains,
 } from "..";
 
 const MAX_ATTEMPTS = 10;
@@ -59,7 +52,6 @@ export function EntityManager({
   let MASTER_STATE = {} as Partial<
     Record<ALL_DOMAINS, Record<string, ENTITY_STATE<PICK_ENTITY>>>
   >;
-  const ENTITY_PROXIES = new Map<PICK_ENTITY, ByIdProxy<PICK_ENTITY>>();
   const PREVIOUS_STATE = new Map<PICK_ENTITY, ENTITY_STATE<PICK_ENTITY>>();
   let lastRefresh: Dayjs;
   function warnEarly(method: string) {
@@ -88,144 +80,6 @@ export function EntityManager({
   ): NonNullable<ENTITY_STATE<ENTITY_ID>> {
     const out = internal.utils.object.get(MASTER_STATE, entity_id) ?? {};
     return out as ENTITY_STATE<ENTITY_ID>;
-  }
-
-  // #MARK:proxyGetLogic
-  function proxyGetLogic<
-    ENTITY extends PICK_ENTITY = PICK_ENTITY,
-    PROPERTY extends string = string,
-  >(entity: ENTITY, property: PROPERTY): Get<ENTITY_STATE<ENTITY>, PROPERTY> {
-    if (!init) {
-      return undefined;
-    }
-    const valid = ["state", "attributes", "last"].some(i =>
-      property.startsWith(i),
-    );
-    if (!valid) {
-      logger.error(
-        { entity, name: proxyGetLogic, property },
-        `invalid property lookup`,
-      );
-      return undefined;
-    }
-    const current = getCurrentState(entity);
-    const defaultValue = (property === "state" ? undefined : {}) as Get<
-      ENTITY_STATE<ENTITY>,
-      PROPERTY
-    >;
-    if (!current) {
-      logger.error(
-        { defaultValue, name: entity, property },
-        `proxyGetLogic cannot find entity`,
-      );
-    }
-    return internal.utils.object.get(current, property) || defaultValue;
-  }
-
-  // #MARK: byId
-  function byId<ENTITY_ID extends PICK_ENTITY>(
-    entity_id: ENTITY_ID,
-  ): ByIdProxy<ENTITY_ID> {
-    const entity_domain = domain(entity_id) as ALL_SERVICE_DOMAINS;
-    if (!ENTITY_PROXIES.has(entity_id)) {
-      ENTITY_PROXIES.set(
-        entity_id,
-        new Proxy(getCurrentState(entity_id) as ByIdProxy<ENTITY_ID>, {
-          // things that shouldn't be needed: this extract
-          get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
-            if (property === "onUpdate") {
-              return (callback: TAnyFunction) => {
-                const removableCallback = async (
-                  a: ENTITY_STATE<ENTITY_ID>,
-                  b: ENTITY_STATE<ENTITY_ID>,
-                ) =>
-                  await internal.safeExec(
-                    async () => await callback(a, b, remove),
-                  );
-                function remove() {
-                  ENTITY_EVENTS.removeListener(entity_id, removableCallback);
-                }
-                ENTITY_EVENTS.on(entity_id, removableCallback);
-                return { remove };
-              };
-            }
-            if (property === "removeAllListeners") {
-              return function () {
-                ENTITY_EVENTS.removeAllListeners(entity_id);
-              };
-            }
-            if (property === "once") {
-              return (callback: TAnyFunction) =>
-                ENTITY_EVENTS.once(entity_id, async (a, b) => callback(a, b));
-            }
-            if (property === "entity_id") {
-              return entity_id;
-            }
-            if (property === "previous") {
-              return PREVIOUS_STATE.get(entity_id);
-            }
-            if (property === "nextState") {
-              return async () =>
-                await new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
-                  ENTITY_EVENTS.once(
-                    entity_id,
-                    (entity: ENTITY_STATE<ENTITY_ID>) =>
-                      done(entity satisfies ENTITY_STATE<ENTITY_ID>),
-                  );
-                });
-            }
-            if (hass.configure.isService(entity_domain, property)) {
-              return async function (data = {}) {
-                // @ts-expect-error it's fine
-                return await hass.call[entity_domain][property]({
-                  entity_id,
-                  ...data,
-                });
-              };
-            }
-            return proxyGetLogic(entity_id, property);
-          },
-          set(
-            _,
-            property: Extract<keyof ByIdProxy<ENTITY_ID>, string>,
-            value: unknown,
-          ) {
-            if (property === "state") {
-              setImmediate(async () => {
-                logger.debug(
-                  { entity_id, state: value },
-                  `emitting set state via rest`,
-                );
-                await hass.fetch.updateEntity(entity_id, {
-                  state: value as string | number,
-                });
-              });
-              return true;
-            }
-            if (property === "attributes") {
-              if (!is.object(value)) {
-                logger.error(`can only provide objects as attributes`);
-                return false;
-              }
-              setImmediate(async () => {
-                logger.debug(
-                  { attributes: Object.keys(value), entity_id },
-                  `updating attributes via rest`,
-                );
-                await hass.fetch.updateEntity(entity_id, { attributes: value });
-              });
-              return true;
-            }
-            logger.error(
-              { entity_id, property },
-              `cannot set property on entity`,
-            );
-            return false;
-          },
-        }),
-      );
-    }
-    return ENTITY_PROXIES.get(entity_id) as ByIdProxy<ENTITY_ID>;
   }
 
   // #MARK: history
@@ -269,7 +123,7 @@ export function EntityManager({
   // #MARK: findByDomain
   function findByDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
     return Object.keys(MASTER_STATE[domain] ?? {}).map(i =>
-      byId(`${domain}.${i}` as PICK_ENTITY),
+      hass.refBy.id(`${domain}.${i}` as PICK_ENTITY),
     );
   }
 
@@ -383,17 +237,19 @@ export function EntityManager({
   });
 
   async function AddLabel({ entity, label }: EditLabelOptions) {
-    const current = await EntityGet(entity);
-    if (current?.labels?.includes(label)) {
-      logger.debug({ name: entity }, `already has label {%s}`, label);
-      return;
-    }
-    return await new Promise<void>(async done => {
-      event.once(ENTITY_REGISTRY_UPDATED, done);
-      await hass.socket.sendMessage({
-        entity_id: entity,
-        labels: [...current.labels, label],
-        type: "config/entity_registry/update",
+    await each([entity].flat(), async entity => {
+      const current = await EntityGet(entity);
+      if (current?.labels?.includes(label)) {
+        logger.debug({ name: entity }, `already has label {%s}`, label);
+        return;
+      }
+      return await new Promise<void>(async done => {
+        event.once(ENTITY_REGISTRY_UPDATED, done);
+        await hass.socket.sendMessage({
+          entity_id: entity,
+          labels: [...current.labels, label],
+          type: "config/entity_registry/update",
+        });
       });
     });
   }
@@ -468,97 +324,6 @@ export function EntityManager({
     return hass.entity.byId<ID>(entity.entity_id);
   }
 
-  // #MARK: byLabel
-  function byLabel<LABEL extends TLabelId, DOMAIN extends ALL_DOMAINS>(
-    label: LABEL,
-    ...domains: DOMAIN[]
-  ): PICK_FROM_LABEL<LABEL, DOMAIN>[] {
-    warnEarly("byLabel");
-    const raw = hass.entity.registry.current.filter(i =>
-      i.labels.includes(label),
-    );
-    if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_FROM_LABEL<LABEL, DOMAIN>);
-    }
-    return raw
-      .filter(entity =>
-        domains.some(domain => is.domain(entity.entity_id, domain)),
-      )
-      .map(i => i.entity_id) as PICK_FROM_LABEL<LABEL, DOMAIN>[];
-  }
-
-  // #MARK: byArea
-  function byArea<AREA extends TAreaId, DOMAIN extends ALL_DOMAINS>(
-    area: AREA,
-    ...domains: DOMAIN[]
-  ): PICK_FROM_AREA<AREA, DOMAIN>[] {
-    warnEarly("byArea");
-    const raw = hass.entity.registry.current.filter(i => i.area_id === area);
-    if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>);
-    }
-    return raw
-      .filter(entity =>
-        domains.some(domain => is.domain(entity.entity_id, domain)),
-      )
-      .map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>);
-  }
-
-  // #MARK: byDevice
-  function byDevice<DEVICE extends TDeviceId, DOMAIN extends ALL_DOMAINS>(
-    device: DEVICE,
-    ...domains: DOMAIN[]
-  ): PICK_FROM_DEVICE<DEVICE, DOMAIN>[] {
-    warnEarly("byDevice");
-    const raw = hass.entity.registry.current.filter(
-      i => i.device_id === device,
-    );
-    if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>);
-    }
-    return raw
-      .filter(entity =>
-        domains.some(domain => is.domain(entity.entity_id, domain)),
-      )
-      .map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>);
-  }
-
-  // #MARK: byFloor
-  function byFloor<FLOOR extends TFloorId, DOMAIN extends ALL_DOMAINS>(
-    floor: FLOOR,
-    ...domains: DOMAIN[]
-  ): PICK_FROM_FLOOR<FLOOR, DOMAIN>[] {
-    warnEarly("byFloor");
-    const areas = new Set<TAreaId>(
-      hass.area.current.filter(i => i.floor_id === floor).map(i => i.area_id),
-    );
-    const raw = hass.entity.registry.current.filter(i => areas.has(i.area_id));
-    if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
-    }
-    return raw
-      .filter(entity =>
-        domains.some(domain => is.domain(entity.entity_id, domain)),
-      )
-      .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
-  }
-
-  // #MARK: byPlatform
-  function byPlatform<PLATFORM extends TPlatformId, DOMAIN extends ALL_DOMAINS>(
-    platform: PLATFORM,
-    ...domains: DOMAIN[]
-  ) {
-    warnEarly("byPlatform");
-    const raw = hass.entity.registry.current
-      .filter(i => i.platform === platform)
-      .filter(i => i.platform === platform)
-      .map(i => i.entity_id);
-    if (is.empty(domains)) {
-      return raw;
-    }
-    return raw.filter(i => domains.includes(domain(i) as DOMAIN));
-  }
-
   // #MARK: RemoveEntity
   async function RemoveEntity(entity_id: PICK_ENTITY | PICK_ENTITY[]) {
     warnEarly("RemoveEntity");
@@ -573,37 +338,75 @@ export function EntityManager({
 
   // #MARK: return object
   return {
+    _entityEvents: () => ENTITY_EVENTS,
     /**
      * Retrieve a list of entities listed as being part of a certain area
      * Tracks area updates at runtime
+     *
+     * @deprecated use `hass.idBy.area` - to be remove 2024-08
      */
-    byArea,
+    byArea: <AREA extends TAreaId, DOMAINS extends TRawDomains = TRawDomains>(
+      area: AREA,
+      ...domains: DOMAINS[]
+    ) => hass.idBy.area(area, ...domains),
 
     /**
      * Retrieve a list of entities associated with a particular device id
+     *
+     * @deprecated use `hass.idBy.device` - to be remove 2024-08
      */
-    byDevice,
+    byDevice: <
+      DEVICE extends TDeviceId,
+      DOMAINS extends TRawDomains = TRawDomains,
+    >(
+      device: DEVICE,
+      ...domains: DOMAINS[]
+    ) => hass.idBy.device<DEVICE, DOMAINS>(device, ...domains),
 
     /**
      * Retrieve a list of entities that have areas associated with a certain floor
+     *
+     * @deprecated use `hass.idBy.floor` - to be remove 2024-08
      */
-    byFloor,
+    byFloor: <
+      FLOOR extends TFloorId,
+      DOMAINS extends TRawDomains = TRawDomains,
+    >(
+      floor: FLOOR,
+      ...domains: DOMAINS[]
+    ) => hass.idBy.floor<FLOOR, DOMAINS>(floor, ...domains),
 
     /**
      * Retrieves a proxy object for a specified entity. This proxy object
      * provides current values and event hooks for the entity.
      */
-    byId,
+    byId: <ID extends PICK_ENTITY>(id: ID): ByIdProxy<ID> => hass.refBy.id(id),
 
     /**
      * Retrieve a list of entities that have a given label
+     *
+     * @deprecated use `hass.idBy.label` - to be remove 2024-08
      */
-    byLabel,
+    byLabel: <
+      LABEL extends TLabelId,
+      DOMAINS extends TRawDomains = TRawDomains,
+    >(
+      label: LABEL,
+      ...domains: DOMAINS[]
+    ) => hass.idBy.label<LABEL, DOMAINS>(label, ...domains),
 
     /**
      * search out ids by platform
+     *
+     * @deprecated use `hass.idBy.platform` - to be remove 2024-08
      */
-    byPlatform,
+    byPlatform: <
+      PLATFORM extends TPlatformId,
+      DOMAINS extends TRawDomains = TRawDomains,
+    >(
+      platform: PLATFORM,
+      ...domains: DOMAINS[]
+    ) => hass.idBy.platform<PLATFORM, DOMAINS>(platform, ...domains),
 
     /**
      * looks up entity_id reference by the unique id in the registry, and returns the entity reference
@@ -640,9 +443,15 @@ export function EntityManager({
     listEntities,
 
     /**
+     * Returns the previous entity state (not a proxy)
+     */
+    previousState: (entity_id: PICK_ENTITY) => PREVIOUS_STATE.get(entity_id),
+
+    /**
      * Retrieve the raw entity data for this point in time
      */
-    raw: (id: PICK_ENTITY) => internal.utils.object.get(MASTER_STATE, id),
+    raw: (entity_id: PICK_ENTITY) =>
+      internal.utils.object.get(MASTER_STATE, entity_id),
 
     /**
      * Initiates a refresh of the current entity states. Useful for ensuring

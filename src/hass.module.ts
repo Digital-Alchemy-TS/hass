@@ -14,6 +14,8 @@ import {
   WebsocketAPI,
   Zone,
 } from "./extensions";
+import { IDByExtension } from "./extensions/id-by.extension";
+import { ReferenceExtension } from "./extensions/reference.extension";
 
 type AllowRestOptions = "prefer" | "allow" | "forbid";
 
@@ -132,13 +134,24 @@ export const LIB_HASS = CreateLibrary({
      * retrieve and interact with home assistant entities
      */
     entity: EntityManager,
+
     /**
      * rest api commands
      */
     fetch: FetchAPI,
     floor: Floor,
 
+    /**
+     * Search for entity ids in a type safe way
+     */
+    idBy: IDByExtension,
+
     label: Label,
+
+    /**
+     * Obtain references to entities
+     */
+    refBy: ReferenceExtension,
 
     /**
      * Interact with the home assistant registry
