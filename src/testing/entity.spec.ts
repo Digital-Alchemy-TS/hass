@@ -1,3 +1,5 @@
+import { mock } from "node:test";
+
 import {
   ApplicationDefinition,
   OptionalModuleConfiguration,
@@ -49,6 +51,46 @@ describe("Entity", () => {
             );
             expect(entity).toBeDefined();
             expect(entity.entity_id).toBe("sensor.sun_next_dawn");
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("should return unmodified entity state with .raw", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const allData = hass.entity._masterState();
+            const single = hass.entity.raw("sun.sun");
+            expect(single).toBe(allData.sun.sun);
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("should return previous entity state with .previous", async () => {
+      expect.assertions(3);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass, mock_assistant }: TServiceParams) {
+          const entity_id = "sensor.magic";
+          const value = "bar";
+          lifecycle.onReady(async () => {
+            const start = hass.entity.raw(entity_id);
+            await mock_assistant.events.emitEntityUpdate(entity_id, {
+              state: value,
+            });
+            const updated = hass.entity.raw(entity_id);
+            const previous = hass.entity.previousState(entity_id);
+            expect(updated.state).toBe(value);
+            expect(start.state).not.toBe(value);
+            expect(start).toEqual(previous);
           });
         },
       });
