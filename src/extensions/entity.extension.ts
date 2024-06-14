@@ -14,6 +14,7 @@ import { exit } from "process";
 
 import {
   ALL_DOMAINS,
+  ANY_ENTITY,
   ByIdProxy,
   EditLabelOptions,
   ENTITY_REGISTRY_UPDATED,
@@ -36,6 +37,10 @@ const UNLIMITED = 0;
 const RECENT = 5;
 export const ENTITY_UPDATE_RECEIVER = Symbol.for("entityUpdateReceiver");
 
+type TMasterState = {
+  [DOMAIN in ALL_DOMAINS]: Record<string, ENTITY_STATE<PICK_ENTITY<DOMAIN>>>;
+};
+
 export function EntityManager({
   logger,
   hass,
@@ -49,10 +54,8 @@ export function EntityManager({
   /**
    * MASTER_STATE.switch.desk_light = {entity_id,state,attributes,...}
    */
-  let MASTER_STATE = {} as Partial<
-    Record<ALL_DOMAINS, Record<string, ENTITY_STATE<PICK_ENTITY>>>
-  >;
-  const PREVIOUS_STATE = new Map<PICK_ENTITY, ENTITY_STATE<PICK_ENTITY>>();
+  let MASTER_STATE = {} as Partial<TMasterState>;
+  const PREVIOUS_STATE = new Map<ANY_ENTITY, ENTITY_STATE<ANY_ENTITY>>();
   let lastRefresh: Dayjs;
   function warnEarly(method: string) {
     if (!init) {
@@ -74,16 +77,15 @@ export function EntityManager({
   let init = false;
 
   // #MARK: getCurrentState
-  function getCurrentState<ENTITY_ID extends PICK_ENTITY>(
+  function getCurrentState<ENTITY_ID extends ANY_ENTITY>(
     entity_id: ENTITY_ID,
-    // 🖕 TS
-  ): NonNullable<ENTITY_STATE<ENTITY_ID>> {
+  ): ENTITY_STATE<ENTITY_ID> {
     const out = internal.utils.object.get(MASTER_STATE, entity_id) ?? {};
     return out as ENTITY_STATE<ENTITY_ID>;
   }
 
   // #MARK: history
-  async function history<ENTITES extends PICK_ENTITY[]>(
+  async function history<ENTITES extends ANY_ENTITY[]>(
     payload: Omit<EntityHistoryDTO<ENTITES>, "type">,
   ) {
     logger.trace({ payload }, `looking up entity history`);
@@ -92,11 +94,11 @@ export function EntityManager({
       end_time: dayjs(payload.end_time).toISOString(),
       start_time: dayjs(payload.start_time).toISOString(),
       type: "history/history_during_period",
-    })) as Record<PICK_ENTITY, EntityHistoryItem[]>;
+    })) as Record<ANY_ENTITY, EntityHistoryItem[]>;
 
-    const entities = Object.keys(result) as PICK_ENTITY[];
+    const entities = Object.keys(result) as ANY_ENTITY[];
     return Object.fromEntries(
-      entities.map((entity_id: PICK_ENTITY) => {
+      entities.map((entity_id: ANY_ENTITY) => {
         const key = entity_id;
         const states = result[entity_id];
         const value = states.map(data => {
@@ -112,10 +114,17 @@ export function EntityManager({
   }
 
   // #MARK: listEntities
-  function listEntities(): PICK_ENTITY[] {
+  function listEntities<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS>(
+    domain?: DOMAIN,
+  ): PICK_ENTITY<DOMAIN>[] {
+    if (domain) {
+      return Object.keys(MASTER_STATE[domain as ALL_DOMAINS]).map(
+        id => `${domain}.${id}` as PICK_ENTITY<DOMAIN>,
+      );
+    }
     return Object.keys(MASTER_STATE).flatMap(domain =>
       Object.keys(MASTER_STATE[domain as ALL_DOMAINS]).map(
-        id => `${domain}.${id}` as PICK_ENTITY,
+        id => `${domain}.${id}` as PICK_ENTITY<DOMAIN>,
       ),
     );
   }
@@ -123,7 +132,7 @@ export function EntityManager({
   // #MARK: findByDomain
   function findByDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
     return Object.keys(MASTER_STATE[domain] ?? {}).map(i =>
-      hass.refBy.id(`${domain}.${i}` as PICK_ENTITY),
+      hass.refBy.id(`${domain}.${i}` as PICK_ENTITY<DOMAIN>),
     );
   }
 
@@ -162,7 +171,7 @@ export function EntityManager({
     // - Preserve old state for comparison
     const oldState = MASTER_STATE;
     MASTER_STATE = {};
-    const emitUpdates: ENTITY_STATE<PICK_ENTITY>[] = [];
+    const emitUpdates: ENTITY_STATE<ANY_ENTITY>[] = [];
 
     // - Go through all entities, setting the state
     // ~ If this is a refresh (not an initial boot), track what changed so events can be emitted
@@ -197,7 +206,7 @@ export function EntityManager({
         async entity =>
           await EntityUpdateReceiver(
             entity.entity_id,
-            entity satisfies ENTITY_STATE<PICK_ENTITY>,
+            entity satisfies ENTITY_STATE<ANY_ENTITY>,
             internal.utils.object.get(oldState, entity.entity_id),
           ),
       );
@@ -206,8 +215,8 @@ export function EntityManager({
   }
 
   // #MARK: EntityUpdateReceiver
-  function EntityUpdateReceiver<ENTITY extends PICK_ENTITY = PICK_ENTITY>(
-    entity_id: PICK_ENTITY,
+  function EntityUpdateReceiver<ENTITY extends ANY_ENTITY = ANY_ENTITY>(
+    entity_id: ENTITY,
     new_state: ENTITY_STATE<ENTITY>,
     old_state: ENTITY_STATE<ENTITY>,
   ) {
@@ -257,13 +266,13 @@ export function EntityManager({
   // #MARK: EntitySource
   async function EntitySource() {
     return await hass.socket.sendMessage<
-      Record<PICK_ENTITY, { domain: string }>
+      Record<ANY_ENTITY, { domain: string }>
     >({ type: "entity/source" });
   }
 
   // #MARK: EntityList
   async function EntityList() {
-    return await hass.socket.sendMessage<EntityRegistryItem<PICK_ENTITY>[]>({
+    return await hass.socket.sendMessage<EntityRegistryItem<ANY_ENTITY>[]>({
       type: "config/entity_registry/list",
     });
   }
@@ -287,7 +296,7 @@ export function EntityManager({
   }
 
   // #MARK: EntityGet
-  async function EntityGet<ENTITY extends PICK_ENTITY>(entity_id: ENTITY) {
+  async function EntityGet<ENTITY extends ANY_ENTITY>(entity_id: ENTITY) {
     return await hass.socket.sendMessage<EntityRegistryItem<ENTITY>>({
       entity_id: entity_id,
       type: "config/entity_registry/get",
@@ -311,21 +320,8 @@ export function EntityManager({
     });
   });
 
-  // #MARK: byUniqueId
-  function byUniqueId<ID extends PICK_ENTITY>(unique_id: string) {
-    warnEarly("byUniqueId");
-    const entity = hass.entity.registry.current.find(
-      i => i.unique_id === unique_id,
-    ) as EntityRegistryItem<ID>;
-    if (!entity) {
-      logger.error({ name: byUniqueId, unique_id }, `could not find an entity`);
-      return undefined;
-    }
-    return hass.entity.byId<ID>(entity.entity_id);
-  }
-
   // #MARK: RemoveEntity
-  async function RemoveEntity(entity_id: PICK_ENTITY | PICK_ENTITY[]) {
+  async function RemoveEntity(entity_id: ANY_ENTITY | ANY_ENTITY[]) {
     warnEarly("RemoveEntity");
     await eachSeries([entity_id].flat(), async entity_id => {
       logger.debug({ name: entity_id }, `removing entity`);
@@ -339,6 +335,7 @@ export function EntityManager({
   // #MARK: return object
   return {
     _entityEvents: () => ENTITY_EVENTS,
+    _masterState: () => MASTER_STATE,
     /**
      * Retrieve a list of entities listed as being part of a certain area
      * Tracks area updates at runtime
@@ -379,8 +376,10 @@ export function EntityManager({
     /**
      * Retrieves a proxy object for a specified entity. This proxy object
      * provides current values and event hooks for the entity.
+     *
+     * @deprecated use `hass.refBy.id` - to be remove 2024-08
      */
-    byId: <ID extends PICK_ENTITY>(id: ID): ByIdProxy<ID> => hass.refBy.id(id),
+    byId: <ID extends ANY_ENTITY>(id: ID): ByIdProxy<ID> => hass.refBy.id(id),
 
     /**
      * Retrieve a list of entities that have a given label
@@ -410,8 +409,11 @@ export function EntityManager({
 
     /**
      * looks up entity_id reference by the unique id in the registry, and returns the entity reference
+     *
+     * @deprecated use `hass.idBy.unique_id` | `hass.refBy.unique_id`
      */
-    byUniqueId,
+    byUniqueId: <ID extends ANY_ENTITY>(unique_id: string) =>
+      hass.refBy.unique_id<ID>(unique_id),
 
     /**
      * Internal library use only
@@ -421,6 +423,8 @@ export function EntityManager({
     /**
      * Lists all entities within a specified domain. This is useful for
      * domain-specific operations or queries.
+     *
+     * @deprecated use `hass.idBy.domain` | `hass.refBy.domain`
      */
     findByDomain,
 
@@ -445,12 +449,12 @@ export function EntityManager({
     /**
      * Returns the previous entity state (not a proxy)
      */
-    previousState: (entity_id: PICK_ENTITY) => PREVIOUS_STATE.get(entity_id),
+    previousState: (entity_id: ANY_ENTITY) => PREVIOUS_STATE.get(entity_id),
 
     /**
      * Retrieve the raw entity data for this point in time
      */
-    raw: (entity_id: PICK_ENTITY) =>
+    raw: (entity_id: ANY_ENTITY) =>
       internal.utils.object.get(MASTER_STATE, entity_id),
 
     /**
@@ -464,7 +468,7 @@ export function EntityManager({
      */
     registry: {
       addLabel: AddLabel,
-      current: [] as EntityRegistryItem<PICK_ENTITY>[],
+      current: [] as EntityRegistryItem<ANY_ENTITY>[],
       get: EntityGet,
       list: EntityList,
       registryList: EntityList,

@@ -21,8 +21,91 @@ describe("ID By", () => {
     jest.restoreAllMocks();
   });
 
-  describe("id", () => {
-    //
+  describe("refBy.id", () => {
+    it("can grab references by id", async () => {
+      expect.assertions(2);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const sensor = hass.refBy.id("sensor.magic");
+            expect(sensor).toBeDefined();
+            expect(sensor.state).toBe("unavailable");
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("references have attributes", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const sensor = hass.refBy.id("sensor.magic");
+            expect(sensor.attributes).toEqual(
+              expect.objectContaining({ friendly_name: "magic" }),
+            );
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("references do not return random attributes", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const sensor = hass.refBy.id("sensor.magic");
+            // @ts-expect-error it's the test
+            expect(sensor.foo).toBeUndefined();
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+  });
+
+  describe("domain", () => {
+    it("load references by domain", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const sensor = hass.refBy.domain("sensor");
+            expect(sensor.length).toBe(7);
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+  });
+
+  describe("unique_id", () => {
+    it("load references by unique_id", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const sensor = hass.refBy.unique_id(
+              "e1806fdc93296bbd5ab42967003cd38729ff9ba6cfeefc3e15a03ad01ac894fe",
+            );
+            expect(sensor.entity_id).toBe("sensor.magic");
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
   });
 
   describe("label", () => {
@@ -31,8 +114,23 @@ describe("ID By", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
-            const sensor = hass.refBy.id("sensor.sun_next_dawn");
-            expect(sensor.state).toBe("2024-05-03T03:24:45+00:00");
+            const list = hass.refBy.label("synapse");
+            expect(list.length).toBe(7);
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("load references by label limiting by domain", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const list = hass.refBy.label("synapse", "light");
+            expect(list.length).toBe(0);
           });
         },
       });

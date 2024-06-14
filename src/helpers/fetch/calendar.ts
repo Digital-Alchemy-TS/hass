@@ -6,7 +6,7 @@ export type CalendarFetchOptions = {
   /**
    * Calendar(s) to load events for.
    */
-  calendar: PICK_ENTITY | PICK_ENTITY[];
+  calendar: PICK_ENTITY<"calendar"> | PICK_ENTITY<"calendar">[];
   /**
    * The end (exclusive) of the event.
    */

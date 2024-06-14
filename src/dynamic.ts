@@ -141,7 +141,7 @@ export const ENTITY_SETUP = {
         parent_id: null,
         user_id: null,
       },
-      entity_id: "scene.bedroom_off",
+      entity_id: "scene.games_room_auto",
       last_changed: "2024-05-03T00:01:03.801727+00:00",
       last_reported: "2024-05-03T00:01:03.801727+00:00",
       last_updated: "2024-05-03T00:01:03.801727+00:00",
@@ -4209,6 +4209,8 @@ export type TRawEntityIds =
   | "sensor.sun_next_dusk"
   | "sensor.sun_next_midnight"
   | "sensor.sun_next_noon"
+  | "light.bedroom_ceiling_fan"
+  | "scene.games_room_auto"
   | "sensor.sun_next_rising"
   | "sensor.sun_next_setting"
   | "todo.shopping_list"

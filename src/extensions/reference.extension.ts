@@ -11,17 +11,23 @@ import {
 } from "../dynamic";
 import {
   ALL_SERVICE_DOMAINS,
+  ANY_ENTITY,
   ByIdProxy,
   domain,
   ENTITY_STATE,
   PICK_ENTITY,
+  PICK_FROM_AREA,
+  PICK_FROM_DEVICE,
+  PICK_FROM_FLOOR,
+  PICK_FROM_LABEL,
+  PICK_FROM_PLATFORM,
 } from "../helpers";
 
 export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
-  const ENTITY_PROXIES = new Map<PICK_ENTITY, ByIdProxy<PICK_ENTITY>>();
+  const ENTITY_PROXIES = new Map<ANY_ENTITY, ByIdProxy<ANY_ENTITY>>();
   // #MARK:proxyGetLogic
   function proxyGetLogic<
-    ENTITY extends PICK_ENTITY = PICK_ENTITY,
+    ENTITY extends ANY_ENTITY = ANY_ENTITY,
     PROPERTY extends string = string,
   >(entity: ENTITY, property: PROPERTY): Get<ENTITY_STATE<ENTITY>, PROPERTY> {
     const valid = ["state", "attributes", "last"].some(i =>
@@ -49,7 +55,7 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
   }
 
   // #MARK: byId
-  function byId<ENTITY_ID extends PICK_ENTITY>(
+  function byId<ENTITY_ID extends ANY_ENTITY>(
     entity_id: ENTITY_ID,
   ): ByIdProxy<ENTITY_ID> {
     const entity_domain = domain(entity_id) as ALL_SERVICE_DOMAINS;
@@ -166,7 +172,8 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
     area: <AREA extends TAreaId, DOMAINS extends TRawDomains = TRawDomains>(
       area: AREA,
       ...domains: DOMAINS[]
-    ) => hass.idBy.area<AREA, DOMAINS>(area, ...domains).map(id => byId(id)),
+    ): ByIdProxy<PICK_FROM_AREA<AREA, DOMAINS>>[] =>
+      hass.idBy.area<AREA, DOMAINS>(area, ...domains).map(id => byId(id)),
 
     device: <
       DEVICE extends TDeviceId,
@@ -174,20 +181,27 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
     >(
       device: DEVICE,
       ...domains: DOMAINS[]
-    ) =>
+    ): ByIdProxy<PICK_FROM_DEVICE<DEVICE, DOMAINS>>[] =>
       hass.idBy.device<DEVICE, DOMAINS>(device, ...domains).map(id => byId(id)),
+
+    domain: <DOMAIN extends TRawDomains = TRawDomains>(
+      domain: DOMAIN,
+    ): ByIdProxy<PICK_ENTITY<DOMAIN>>[] =>
+      hass.idBy.domain<DOMAIN>(domain).map(id => byId(id)),
 
     floor: <FLOOR extends TFloorId, DOMAINS extends TRawDomains = TRawDomains>(
       floor: FLOOR,
       ...domains: DOMAINS[]
-    ) => hass.idBy.floor<FLOOR, DOMAINS>(floor, ...domains).map(id => byId(id)),
+    ): ByIdProxy<PICK_FROM_FLOOR<FLOOR, DOMAINS>>[] =>
+      hass.idBy.floor<FLOOR, DOMAINS>(floor, ...domains).map(id => byId(id)),
 
     id: byId,
 
     label: <LABEL extends TLabelId, DOMAINS extends TRawDomains = TRawDomains>(
       label: LABEL,
       ...domains: DOMAINS[]
-    ) => hass.idBy.label<LABEL, DOMAINS>(label, ...domains).map(id => byId(id)),
+    ): ByIdProxy<PICK_FROM_LABEL<LABEL, DOMAINS>>[] =>
+      hass.idBy.label<LABEL, DOMAINS>(label, ...domains).map(id => byId(id)),
 
     platform: <
       PLATFORM extends TPlatformId,
@@ -195,9 +209,14 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
     >(
       platform: PLATFORM,
       ...domains: DOMAINS[]
-    ) =>
+    ): ByIdProxy<PICK_FROM_PLATFORM<PLATFORM, DOMAINS>>[] =>
       hass.idBy
         .platform<PLATFORM, DOMAINS>(platform, ...domains)
         .map(id => byId(id)),
+
+    unique_id: <ID extends ANY_ENTITY>(unique_id: string): ByIdProxy<ID> => {
+      const id = hass.idBy.unique_id<ID>(unique_id);
+      return id ? byId(id) : undefined;
+    },
   };
 }

@@ -17,12 +17,18 @@ import { HassEntityContext } from ".";
 
 export type ANY_ENTITY = TRawEntityIds;
 
+// ? Casting by domain turns things from "equiv to ANY_ENTITY" to "scene.*" type generics
+// These are no longer valid comparisons against ANY_ENTITY though
+// ? The extract converts those generic types back into real entity ids to make types valid again
 /**
  * Pick any valid entity, optionally limiting by domain
  */
-export type PICK_ENTITY<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> = {
-  [key in DOMAIN]: `${key}.${keyof (typeof ENTITY_SETUP)[key] & string}`;
-}[DOMAIN];
+export type PICK_ENTITY<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> = Extract<
+  ANY_ENTITY,
+  {
+    [key in DOMAIN]: `${key}.${keyof (typeof ENTITY_SETUP)[key] & string}`;
+  }[DOMAIN]
+>;
 
 /**
  * Pick any valid service call, optionally limiting by domain
@@ -44,7 +50,7 @@ export type PICK_SERVICE_PARAMETERS<
     : never;
 
 export function entity_split(
-  entity: { entity_id: PICK_ENTITY } | PICK_ENTITY,
+  entity: { entity_id: ANY_ENTITY } | ANY_ENTITY,
 ): [ALL_DOMAINS, string] {
   if (is.object(entity)) {
     entity = entity.entity_id;
@@ -55,7 +61,7 @@ export function entity_split(
  * Extract the domain from an entity with type safety
  */
 export function domain(
-  entity: { entity_id: PICK_ENTITY } | PICK_ENTITY,
+  entity: { entity_id: ANY_ENTITY } | ANY_ENTITY,
 ): ALL_DOMAINS {
   if (is.object(entity)) {
     entity = entity.entity_id;
@@ -71,7 +77,7 @@ export type ENTITY_PROP<
 /**
  * Type definitions to match a specific entity.
  */
-export type ENTITY_STATE<ENTITY_ID extends PICK_ENTITY> = Omit<
+export type ENTITY_STATE<ENTITY_ID extends ANY_ENTITY> = Omit<
   Get<typeof ENTITY_SETUP, ENTITY_ID>,
   | "state"
   | "context"
@@ -98,22 +104,22 @@ export type ALL_DOMAINS = TRawDomains;
  */
 export type ALL_SERVICE_DOMAINS = keyof iCallService;
 
-export type GetDomain<ENTITY extends PICK_ENTITY> =
+export type GetDomain<ENTITY extends ANY_ENTITY> =
   ENTITY extends `${infer domain}.${string}` ? domain : never;
 
 is.domain = <DOMAIN extends ALL_DOMAINS>(
   entity: string,
-  domain: DOMAIN,
+  domain: DOMAIN | DOMAIN[],
 ): entity is PICK_ENTITY<DOMAIN> => {
-  const [test] = entity.split(".");
-  return test === domain;
+  const [test] = entity.split(".") as [DOMAIN, string];
+  return [domain].flat().includes(test);
 };
 
 declare module "@digital-alchemy/core" {
   export interface IsIt {
     domain: <DOMAIN extends ALL_DOMAINS>(
       entity: string,
-      domain: DOMAIN,
+      domain: DOMAIN | DOMAIN[],
     ) => entity is PICK_ENTITY<DOMAIN>;
   }
 }

@@ -6,13 +6,13 @@ import {
 } from "@digital-alchemy/core";
 import { existsSync, readFileSync } from "fs";
 
-import { ENTITY_STATE, PICK_ENTITY } from "../../helpers";
+import { ANY_ENTITY, ENTITY_STATE } from "../../helpers";
 import { ScannerCacheData } from "../helpers";
 
 const MEGA_HIGH_PRIORITY = 1000;
 
 type StateOptions = Partial<{
-  [entity in PICK_ENTITY]: Partial<ENTITY_STATE<entity>>;
+  [entity in ANY_ENTITY]: Partial<ENTITY_STATE<entity>>;
 }>;
 
 export function Fixtures({
@@ -67,18 +67,18 @@ export function Fixtures({
 
   function setState(options: StateOptions) {
     lifecycle.onPreInit(() => {
-      const entities = Object.keys(options) as PICK_ENTITY[];
+      const entities = Object.keys(options) as ANY_ENTITY[];
       entities.forEach(i => replace(i, options[i]));
     });
   }
 
-  function byId(entity: PICK_ENTITY) {
+  function byId(entity: ANY_ENTITY) {
     return mock_assistant.fixtures.data.entities.find(
       i => i.entity_id === entity,
     );
   }
 
-  function replace<ENTITY extends PICK_ENTITY>(
+  function replace<ENTITY extends ANY_ENTITY>(
     entity: ENTITY,
     new_state: Partial<ENTITY_STATE<ENTITY>>,
   ): ENTITY_STATE<ENTITY> {

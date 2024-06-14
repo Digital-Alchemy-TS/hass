@@ -6,7 +6,6 @@ import {
 } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
-import { PICK_ENTITY } from "../helpers";
 import {
   CreateTestingApplication,
   SILENT_BOOT,
@@ -89,12 +88,12 @@ describe("FetchAPI", () => {
             });
           lifecycle.onReady(async () => {
             await hass.fetch.calendarSearch({
-              calendar: "calendar.example_calendar" as PICK_ENTITY,
+              calendar: "calendar.united_states_tx",
               end,
               start,
             });
             expect(spy).toHaveBeenCalledWith(
-              `${BASE_URL}/api/calendars/calendar.example_calendar?end=${encodeURIComponent(end.toISOString())}&start=${encodeURIComponent(start.toISOString())}`,
+              `${BASE_URL}/api/calendars/calendar.united_states_tx?end=${encodeURIComponent(end.toISOString())}&start=${encodeURIComponent(start.toISOString())}`,
               expect.objectContaining({
                 method: "get",
               }),

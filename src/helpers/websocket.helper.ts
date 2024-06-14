@@ -3,7 +3,12 @@ import { Dayjs } from "dayjs";
 
 import { HassSocketMessageTypes } from "./constants.helper";
 import { EntityUpdateEvent } from "./entity-state.helper";
-import { ALL_DOMAINS, ENTITY_STATE, PICK_ENTITY } from "./utility.helper";
+import {
+  ALL_DOMAINS,
+  ANY_ENTITY,
+  ENTITY_STATE,
+  PICK_ENTITY,
+} from "./utility.helper";
 
 export interface SignRequestResponse {
   path: string;
@@ -52,7 +57,7 @@ export interface UpdateEntityMessageDTO<
 }
 
 export interface RemoveEntityMessageDTO {
-  entity_id: PICK_ENTITY;
+  entity_id: ANY_ENTITY;
   type: "config/entity_registry/remove";
 }
 
@@ -94,7 +99,7 @@ export interface RemoveBackupDTO {
 }
 
 export interface EntityHistoryDTO<
-  ENTITIES extends PICK_ENTITY[] = PICK_ENTITY[],
+  ENTITIES extends ANY_ENTITY[] = ANY_ENTITY[],
 > {
   end_time: Date | string | Dayjs;
   entity_ids: ENTITIES;
@@ -105,7 +110,7 @@ export interface EntityHistoryDTO<
 }
 
 export type EntityHistoryResult<
-  ENTITY extends PICK_ENTITY = PICK_ENTITY,
+  ENTITY extends ANY_ENTITY = ANY_ENTITY,
   ATTRIBUTES extends object = object,
 > = Pick<
   ENTITY_STATE<ENTITY> & { attributes: ATTRIBUTES },
