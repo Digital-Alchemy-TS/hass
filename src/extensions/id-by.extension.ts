@@ -10,6 +10,7 @@ import {
 import {
   ALL_DOMAINS,
   ANY_ENTITY,
+  EntityRegistryItem,
   PICK_ENTITY,
   PICK_FROM_AREA,
   PICK_FROM_DEVICE,
@@ -28,7 +29,7 @@ const process = <RAW extends ANY_ENTITY>(
   return raw;
 };
 
-export function IDByExtension({ hass }: TServiceParams) {
+export function IDByExtension({ hass, logger }: TServiceParams) {
   // * label
   function byDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
     const MASTER_STATE = hass.entity._masterState();
@@ -37,6 +38,18 @@ export function IDByExtension({ hass }: TServiceParams) {
     );
   }
 
+  // #MARK: byUniqueId
+  function unique_id<ID extends ANY_ENTITY>(unique_id: string): ID {
+    hass.entity.warnEarly("byUniqueId");
+    const entity = hass.entity.registry.current.find(
+      i => i.unique_id === unique_id,
+    ) as EntityRegistryItem<ID>;
+    if (!entity) {
+      logger.error({ name: unique_id, unique_id }, `could not find an entity`);
+      return undefined;
+    }
+    return entity?.entity_id;
+  }
   // * label
   function label<LABEL extends TLabelId, DOMAIN extends ALL_DOMAINS>(
     label: LABEL,
@@ -110,5 +123,13 @@ export function IDByExtension({ hass }: TServiceParams) {
     );
   }
 
-  return { area, device, domain: byDomain, floor, label, platform };
+  return {
+    area,
+    device,
+    domain: byDomain,
+    floor,
+    label,
+    platform,
+    unique_id,
+  };
 }

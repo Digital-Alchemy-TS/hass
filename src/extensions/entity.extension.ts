@@ -320,19 +320,6 @@ export function EntityManager({
     });
   });
 
-  // #MARK: byUniqueId
-  function byUniqueId<ID extends ANY_ENTITY>(unique_id: string) {
-    warnEarly("byUniqueId");
-    const entity = hass.entity.registry.current.find(
-      i => i.unique_id === unique_id,
-    ) as EntityRegistryItem<ID>;
-    if (!entity) {
-      logger.error({ name: byUniqueId, unique_id }, `could not find an entity`);
-      return undefined;
-    }
-    return hass.entity.byId<ID>(entity.entity_id);
-  }
-
   // #MARK: RemoveEntity
   async function RemoveEntity(entity_id: ANY_ENTITY | ANY_ENTITY[]) {
     warnEarly("RemoveEntity");
@@ -389,6 +376,8 @@ export function EntityManager({
     /**
      * Retrieves a proxy object for a specified entity. This proxy object
      * provides current values and event hooks for the entity.
+     *
+     * @deprecated use `hass.refBy.id` - to be remove 2024-08
      */
     byId: <ID extends ANY_ENTITY>(id: ID): ByIdProxy<ID> => hass.refBy.id(id),
 
@@ -423,7 +412,8 @@ export function EntityManager({
      *
      * @deprecated use `hass.idBy.unique_id` | `hass.refBy.unique_id`
      */
-    byUniqueId,
+    byUniqueId: <ID extends ANY_ENTITY>(unique_id: string) =>
+      hass.refBy.unique_id<ID>(unique_id),
 
     /**
      * Internal library use only

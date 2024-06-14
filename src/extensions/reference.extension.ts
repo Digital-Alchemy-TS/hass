@@ -213,5 +213,8 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
       hass.idBy
         .platform<PLATFORM, DOMAINS>(platform, ...domains)
         .map(id => byId(id)),
+
+    unique_id: <ID extends ANY_ENTITY>(unique_id: string): ByIdProxy<ID> =>
+      byId(hass.idBy.unique_id(unique_id)),
   };
 }
