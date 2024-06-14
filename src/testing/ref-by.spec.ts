@@ -89,6 +89,25 @@ describe("ID By", () => {
     });
   });
 
+  describe("unique_id", () => {
+    it("load references by unique_id", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const sensor = hass.refBy.unique_id(
+              "e1806fdc93296bbd5ab42967003cd38729ff9ba6cfeefc3e15a03ad01ac894fe",
+            );
+            expect(sensor.entity_id).toBe("sensor.magic");
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+  });
+
   describe("label", () => {
     it("load references by label", async () => {
       expect.assertions(1);
