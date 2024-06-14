@@ -1,4 +1,5 @@
 import {
+  ANY_ENTITY,
   AreaDetails,
   DeviceDetails,
   ENTITY_STATE,
@@ -7,15 +8,14 @@ import {
   HassConfig,
   HassServiceDTO as HassServiceDefinition,
   LabelDefinition,
-  PICK_ENTITY,
 } from "../../helpers";
 
 export type ScannerCacheData = {
   areas: AreaDetails[];
   config: HassConfig;
   devices: DeviceDetails[];
-  entities: ENTITY_STATE<PICK_ENTITY>[];
-  entity_registry: EntityRegistryItem<PICK_ENTITY>[];
+  entities: ENTITY_STATE<ANY_ENTITY>[];
+  entity_registry: EntityRegistryItem<ANY_ENTITY>[];
   floors: FloorDetails[];
   labels: LabelDefinition[];
   services: HassServiceDefinition[];

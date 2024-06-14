@@ -12,6 +12,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 import {
   ALL_SERVICE_DOMAINS,
+  ANY_ENTITY,
   CalendarEvent,
   CalendarFetchOptions,
   CheckConfigResult,
@@ -19,7 +20,6 @@ import {
   HassConfig,
   HassServiceDTO,
   HomeAssistantServerLogItem,
-  PICK_ENTITY,
   PICK_SERVICE,
   PICK_SERVICE_PARAMETERS,
   PostConfigPriorities,
@@ -97,9 +97,9 @@ export function FetchAPI({
   >(
     serviceName: SERVICE,
     data: PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>,
-  ): Promise<ENTITY_STATE<PICK_ENTITY>[]> {
+  ): Promise<void> {
     const [domain, service] = serviceName.split(".");
-    return await hass.fetch.fetch({
+    await hass.fetch.fetch({
       body: data as TFetchBody,
       method: "post",
       url: `/api/services/${domain}/${service}`,
@@ -132,7 +132,7 @@ export function FetchAPI({
       "global" | "local",
       Record<string, string>
     >,
-  >(entityId: PICK_ENTITY): Promise<T> {
+  >(entityId: ANY_ENTITY): Promise<T> {
     logger.trace({ name: fetchEntityCustomizations }, `send`);
     return await hass.fetch.fetch<T>({
       url: `/api/config/customize/config/${encodeURIComponent(entityId)}`,
@@ -140,7 +140,7 @@ export function FetchAPI({
   }
 
   async function fetchEntityHistory<
-    ENTITY extends PICK_ENTITY = PICK_ENTITY,
+    ENTITY extends ANY_ENTITY = ANY_ENTITY,
     T extends ENTITY_STATE<ENTITY> = ENTITY_STATE<ENTITY>,
   >(
     entity_id: ENTITY,
@@ -194,9 +194,9 @@ export function FetchAPI({
     }
   }
 
-  async function getAllEntities(): Promise<ENTITY_STATE<PICK_ENTITY>[]> {
+  async function getAllEntities(): Promise<ENTITY_STATE<ANY_ENTITY>[]> {
     logger.trace({ name: getAllEntities }, `send`);
-    return await hass.fetch.fetch<ENTITY_STATE<PICK_ENTITY>[]>({
+    return await hass.fetch.fetch<ENTITY_STATE<ANY_ENTITY>[]>({
       url: `/api/states`,
     });
   }
@@ -235,7 +235,7 @@ export function FetchAPI({
     STATE extends string | number = string,
     ATTRIBUTES extends object = object,
   >(
-    entity_id: PICK_ENTITY,
+    entity_id: ANY_ENTITY,
     { attributes, state }: SendBody<STATE, ATTRIBUTES>,
   ): Promise<void> {
     const body: SendBody<STATE> = {};

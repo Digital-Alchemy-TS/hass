@@ -6,7 +6,7 @@ import {
   TPlatformId,
   TZoneId,
 } from "../dynamic";
-import { PICK_ENTITY } from "./utility.helper";
+import { ANY_ENTITY } from "./utility.helper";
 
 export type LabelOptions = {
   name: string;
@@ -15,12 +15,12 @@ export type LabelOptions = {
 };
 
 export type EditLabelOptions = {
-  entity: PICK_ENTITY;
+  entity: ANY_ENTITY;
   label: TLabelId;
 };
 
 export type EditAliasOptions = {
-  entity: PICK_ENTITY;
+  entity: ANY_ENTITY;
   alias: string;
 };
 
@@ -34,11 +34,11 @@ export type LabelDefinition = {
 
 export type ToggleExpose = {
   assistants: string | string[];
-  entity_ids: PICK_ENTITY | PICK_ENTITY[];
+  entity_ids: ANY_ENTITY | ANY_ENTITY[];
   should_expose: boolean;
 };
 
-export type EntityRegistryItem<ENTITY extends PICK_ENTITY> = {
+export type EntityRegistryItem<ENTITY extends ANY_ENTITY> = {
   area_id?: TAreaId;
   categories: object;
   config_entry_id?: string;

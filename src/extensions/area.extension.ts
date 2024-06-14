@@ -6,12 +6,12 @@ import {
 
 import { TAreaId } from "../dynamic";
 import {
+  ANY_ENTITY,
   AREA_REGISTRY_UPDATED,
   AreaCreate,
   AreaDetails,
   EARLY_ON_READY,
   ENTITY_REGISTRY_UPDATED,
-  PICK_ENTITY,
 } from "../helpers";
 
 export function Area({
@@ -72,9 +72,9 @@ export function Area({
     });
   }
 
-  async function apply(area: TAreaId, entities: PICK_ENTITY[]) {
-    const out = { updated: [] as PICK_ENTITY[] };
-    await eachSeries(entities, async (entity: PICK_ENTITY) => {
+  async function apply(area: TAreaId, entities: ANY_ENTITY[]) {
+    const out = { updated: [] as ANY_ENTITY[] };
+    await eachSeries(entities, async (entity: ANY_ENTITY) => {
       const details = hass.entity.registry.current.find(
         item => item.entity_id === entity,
       );

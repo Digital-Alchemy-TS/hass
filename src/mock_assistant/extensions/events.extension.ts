@@ -1,6 +1,6 @@
 import { sleep, TServiceParams } from "@digital-alchemy/core";
 
-import { ENTITY_STATE, EntityUpdateEvent, PICK_ENTITY } from "../../helpers";
+import { ANY_ENTITY, ENTITY_STATE, EntityUpdateEvent } from "../../helpers";
 
 const SUPER_SHORT = 1;
 
@@ -19,7 +19,7 @@ export function Events({ mock_assistant, hass }: TServiceParams) {
     });
   }
 
-  async function emitEntityUpdate<ENTITY extends PICK_ENTITY>(
+  async function emitEntityUpdate<ENTITY extends ANY_ENTITY>(
     entity: ENTITY,
     new_state: Partial<ENTITY_STATE<ENTITY>>,
   ) {

@@ -11,17 +11,17 @@ import {
 } from "../dynamic";
 import {
   ALL_SERVICE_DOMAINS,
+  ANY_ENTITY,
   ByIdProxy,
   domain,
   ENTITY_STATE,
-  PICK_ENTITY,
 } from "../helpers";
 
 export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
-  const ENTITY_PROXIES = new Map<PICK_ENTITY, ByIdProxy<PICK_ENTITY>>();
+  const ENTITY_PROXIES = new Map<ANY_ENTITY, ByIdProxy<ANY_ENTITY>>();
   // #MARK:proxyGetLogic
   function proxyGetLogic<
-    ENTITY extends PICK_ENTITY = PICK_ENTITY,
+    ENTITY extends ANY_ENTITY = ANY_ENTITY,
     PROPERTY extends string = string,
   >(entity: ENTITY, property: PROPERTY): Get<ENTITY_STATE<ENTITY>, PROPERTY> {
     const valid = ["state", "attributes", "last"].some(i =>
@@ -49,7 +49,7 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
   }
 
   // #MARK: byId
-  function byId<ENTITY_ID extends PICK_ENTITY>(
+  function byId<ENTITY_ID extends ANY_ENTITY>(
     entity_id: ENTITY_ID,
   ): ByIdProxy<ENTITY_ID> {
     const entity_domain = domain(entity_id) as ALL_SERVICE_DOMAINS;

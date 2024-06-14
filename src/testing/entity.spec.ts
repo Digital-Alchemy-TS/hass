@@ -5,7 +5,7 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { ENTITY_STATE, PICK_ENTITY } from "../helpers";
+import { ANY_ENTITY, ENTITY_STATE } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("Entity", () => {
@@ -127,7 +127,7 @@ describe("Entity", () => {
             { text: "502 Bad Gateway" },
             { text: "502 Bad Gateway" },
             [],
-            [{ entity_id: "sensor.magic" } as ENTITY_STATE<PICK_ENTITY>],
+            [{ entity_id: "sensor.magic" } as ENTITY_STATE<ANY_ENTITY>],
           ];
           const spy = jest
             .spyOn(hass.fetch, "getAllEntities")

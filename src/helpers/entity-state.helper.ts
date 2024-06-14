@@ -11,6 +11,7 @@ import {
 import {
   ALL_DOMAINS,
   ALL_SERVICE_DOMAINS,
+  ANY_ENTITY,
   ENTITY_STATE,
   GetDomain,
   PICK_ENTITY,
@@ -31,7 +32,7 @@ type GenericEntityAttributes = {
   /**
    * Entity groups
    */
-  entity_id?: PICK_ENTITY[];
+  entity_id?: ANY_ENTITY[];
   /**
    * Human readable name
    */
@@ -40,19 +41,19 @@ type GenericEntityAttributes = {
 
 export type EntityHistoryItem = { a: object; s: unknown; lu: number };
 
-export type TEntityUpdateCallback<ENTITY_ID extends PICK_ENTITY> = (
+export type TEntityUpdateCallback<ENTITY_ID extends ANY_ENTITY> = (
   new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
   old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
   remove: () => TBlackHole,
 ) => TBlackHole;
 
-export type RemovableCallback<ENTITY_ID extends PICK_ENTITY> = (
+export type RemovableCallback<ENTITY_ID extends ANY_ENTITY> = (
   callback: TEntityUpdateCallback<ENTITY_ID>,
 ) => {
   remove: () => void;
 };
 
-export type ByIdProxy<ENTITY_ID extends PICK_ENTITY> =
+export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> =
   ENTITY_STATE<ENTITY_ID> & {
     entity_id: ENTITY_ID;
     /**
@@ -106,15 +107,13 @@ export interface GenericEntityDTO<
 > {
   attributes: ATTRIBUTES;
   context: CONTEXT;
-  // ! DO NOT TIE THIS `PICK_ENTITY` BACK TO ALL_DOMAINS
-  // Causes circular references, which results in entity definitions always being `any`
   entity_id: PICK_ENTITY<DOMAIN>;
   last_changed: string;
   last_updated: string;
   state: STATE;
 }
 
-export interface EventData<ID extends PICK_ENTITY = PICK_ENTITY> {
+export interface EventData<ID extends ANY_ENTITY = ANY_ENTITY> {
   entity_id?: ID;
   event?: number;
   id?: string;
@@ -122,7 +121,7 @@ export interface EventData<ID extends PICK_ENTITY = PICK_ENTITY> {
   old_state?: ENTITY_STATE<ID>;
 }
 export type EntityUpdateEvent<
-  ID extends PICK_ENTITY = PICK_ENTITY,
+  ID extends ANY_ENTITY = ANY_ENTITY,
   CONTEXT extends HassEntityContext = HassEntityContext,
 > = {
   context: CONTEXT;
@@ -134,14 +133,14 @@ export type EntityUpdateEvent<
   variables: Record<string, unknown>;
 };
 
-export interface EntityDetails {
+export interface EntityDetails<ENTITY extends ANY_ENTITY> {
   area_id: TAreaId;
   categories: Categories;
   config_entry_id: null | string;
   device_id: TDeviceId;
   disabled_by: string | null;
   entity_category: string | null;
-  entity_id: PICK_ENTITY;
+  entity_id: ENTITY;
   has_entity_name: boolean;
   hidden_by: string | null;
   icon: null;
