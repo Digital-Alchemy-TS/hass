@@ -348,6 +348,7 @@ export function EntityManager({
   // #MARK: return object
   return {
     _entityEvents: () => ENTITY_EVENTS,
+    _masterState: () => MASTER_STATE,
     /**
      * Retrieve a list of entities listed as being part of a certain area
      * Tracks area updates at runtime

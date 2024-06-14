@@ -15,6 +15,12 @@ import {
   ByIdProxy,
   domain,
   ENTITY_STATE,
+  PICK_ENTITY,
+  PICK_FROM_AREA,
+  PICK_FROM_DEVICE,
+  PICK_FROM_FLOOR,
+  PICK_FROM_LABEL,
+  PICK_FROM_PLATFORM,
 } from "../helpers";
 
 export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
@@ -166,7 +172,8 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
     area: <AREA extends TAreaId, DOMAINS extends TRawDomains = TRawDomains>(
       area: AREA,
       ...domains: DOMAINS[]
-    ) => hass.idBy.area<AREA, DOMAINS>(area, ...domains).map(id => byId(id)),
+    ): ByIdProxy<PICK_FROM_AREA<AREA, DOMAINS>>[] =>
+      hass.idBy.area<AREA, DOMAINS>(area, ...domains).map(id => byId(id)),
 
     device: <
       DEVICE extends TDeviceId,
@@ -174,20 +181,27 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
     >(
       device: DEVICE,
       ...domains: DOMAINS[]
-    ) =>
+    ): ByIdProxy<PICK_FROM_DEVICE<DEVICE, DOMAINS>>[] =>
       hass.idBy.device<DEVICE, DOMAINS>(device, ...domains).map(id => byId(id)),
+
+    domain: <DOMAIN extends TRawDomains = TRawDomains>(
+      domain: DOMAIN,
+    ): ByIdProxy<PICK_ENTITY<DOMAIN>>[] =>
+      hass.idBy.domain<DOMAIN>(domain).map(id => byId(id)),
 
     floor: <FLOOR extends TFloorId, DOMAINS extends TRawDomains = TRawDomains>(
       floor: FLOOR,
       ...domains: DOMAINS[]
-    ) => hass.idBy.floor<FLOOR, DOMAINS>(floor, ...domains).map(id => byId(id)),
+    ): ByIdProxy<PICK_FROM_FLOOR<FLOOR, DOMAINS>>[] =>
+      hass.idBy.floor<FLOOR, DOMAINS>(floor, ...domains).map(id => byId(id)),
 
     id: byId,
 
     label: <LABEL extends TLabelId, DOMAINS extends TRawDomains = TRawDomains>(
       label: LABEL,
       ...domains: DOMAINS[]
-    ) => hass.idBy.label<LABEL, DOMAINS>(label, ...domains).map(id => byId(id)),
+    ): ByIdProxy<PICK_FROM_LABEL<LABEL, DOMAINS>>[] =>
+      hass.idBy.label<LABEL, DOMAINS>(label, ...domains).map(id => byId(id)),
 
     platform: <
       PLATFORM extends TPlatformId,
@@ -195,7 +209,7 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
     >(
       platform: PLATFORM,
       ...domains: DOMAINS[]
-    ) =>
+    ): ByIdProxy<PICK_FROM_PLATFORM<PLATFORM, DOMAINS>>[] =>
       hass.idBy
         .platform<PLATFORM, DOMAINS>(platform, ...domains)
         .map(id => byId(id)),

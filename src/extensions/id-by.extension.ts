@@ -9,48 +9,60 @@ import {
 } from "../dynamic";
 import {
   ALL_DOMAINS,
-  domain,
+  ANY_ENTITY,
+  PICK_ENTITY,
   PICK_FROM_AREA,
   PICK_FROM_DEVICE,
   PICK_FROM_FLOOR,
   PICK_FROM_LABEL,
+  PICK_FROM_PLATFORM,
 } from "../helpers";
 
+const process = <RAW extends ANY_ENTITY>(
+  raw: RAW[],
+  domains: ALL_DOMAINS[],
+) => {
+  if (!is.empty(domains)) {
+    raw = raw.filter(entity => is.domain(entity, domains));
+  }
+  return raw;
+};
+
 export function IDByExtension({ hass }: TServiceParams) {
+  // * label
+  function byDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
+    const MASTER_STATE = hass.entity._masterState();
+    return Object.keys(MASTER_STATE[domain] ?? {}).map(
+      id => `${domain}.${id}` as PICK_ENTITY<DOMAIN>,
+    );
+  }
+
   // * label
   function label<LABEL extends TLabelId, DOMAIN extends ALL_DOMAINS>(
     label: LABEL,
     ...domains: DOMAIN[]
-  ): PICK_FROM_LABEL<LABEL, DOMAIN>[] {
+  ) {
     hass.entity.warnEarly("label");
-    const raw = hass.entity.registry.current.filter(i =>
-      i.labels.includes(label),
+    return process(
+      hass.entity.registry.current
+        .filter(i => i.labels.includes(label))
+        .map(i => i.entity_id as PICK_FROM_LABEL<LABEL, DOMAIN>),
+      domains,
     );
-    if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_FROM_LABEL<LABEL, DOMAIN>);
-    }
-    return raw
-      .filter(entity =>
-        domains.some(domain => is.domain(entity.entity_id, domain)),
-      )
-      .map(i => i.entity_id) as PICK_FROM_LABEL<LABEL, DOMAIN>[];
   }
 
   // * area
   function area<AREA extends TAreaId, DOMAIN extends ALL_DOMAINS>(
     area: AREA,
     ...domains: DOMAIN[]
-  ): PICK_FROM_AREA<AREA, DOMAIN>[] {
+  ) {
     hass.entity.warnEarly("area");
-    const raw = hass.entity.registry.current.filter(i => i.area_id === area);
-    if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>);
-    }
-    return raw
-      .filter(entity =>
-        domains.some(domain => is.domain(entity.entity_id, domain)),
-      )
-      .map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>);
+    return process(
+      hass.entity.registry.current
+        .filter(i => i.area_id === area)
+        .map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>),
+      domains,
+    );
   }
 
   // * device
@@ -59,17 +71,12 @@ export function IDByExtension({ hass }: TServiceParams) {
     ...domains: DOMAIN[]
   ): PICK_FROM_DEVICE<DEVICE, DOMAIN>[] {
     hass.entity.warnEarly("device");
-    const raw = hass.entity.registry.current.filter(
-      i => i.device_id === device,
+    return process(
+      hass.entity.registry.current
+        .filter(i => i.device_id === device)
+        .map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>),
+      domains,
     );
-    if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>);
-    }
-    return raw
-      .filter(entity =>
-        domains.some(domain => is.domain(entity.entity_id, domain)),
-      )
-      .map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>);
   }
 
   // * floor
@@ -81,32 +88,27 @@ export function IDByExtension({ hass }: TServiceParams) {
     const areas = new Set<TAreaId>(
       hass.area.current.filter(i => i.floor_id === floor).map(i => i.area_id),
     );
-    const raw = hass.entity.registry.current.filter(i => areas.has(i.area_id));
-    if (is.empty(domains)) {
-      return raw.map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
-    }
-    return raw
-      .filter(entity =>
-        domains.some(domain => is.domain(entity.entity_id, domain)),
-      )
-      .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>);
+    return process(
+      hass.entity.registry.current
+        .filter(i => areas.has(i.area_id))
+        .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>),
+      domains,
+    );
   }
 
   // * platform
   function platform<PLATFORM extends TPlatformId, DOMAIN extends ALL_DOMAINS>(
     platform: PLATFORM,
     ...domains: DOMAIN[]
-  ) {
+  ): PICK_FROM_PLATFORM<PLATFORM, DOMAIN>[] {
     hass.entity.warnEarly("platform");
-    const raw = hass.entity.registry.current
-      .filter(i => i.platform === platform)
-      .filter(i => i.platform === platform)
-      .map(i => i.entity_id);
-    if (is.empty(domains)) {
-      return raw;
-    }
-    return raw.filter(i => domains.includes(domain(i) as DOMAIN));
+    return process(
+      hass.entity.registry.current
+        .filter(i => i.platform === platform)
+        .map(i => i.entity_id as PICK_FROM_PLATFORM<PLATFORM, DOMAIN>),
+      domains,
+    );
   }
 
-  return { area, device, floor, label, platform };
+  return { area, device, domain: byDomain, floor, label, platform };
 }

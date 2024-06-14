@@ -109,17 +109,17 @@ export type GetDomain<ENTITY extends ANY_ENTITY> =
 
 is.domain = <DOMAIN extends ALL_DOMAINS>(
   entity: string,
-  domain: DOMAIN,
+  domain: DOMAIN | DOMAIN[],
 ): entity is PICK_ENTITY<DOMAIN> => {
-  const [test] = entity.split(".");
-  return test === domain;
+  const [test] = entity.split(".") as [DOMAIN, string];
+  return [domain].flat().includes(test);
 };
 
 declare module "@digital-alchemy/core" {
   export interface IsIt {
     domain: <DOMAIN extends ALL_DOMAINS>(
       entity: string,
-      domain: DOMAIN,
+      domain: DOMAIN | DOMAIN[],
     ) => entity is PICK_ENTITY<DOMAIN>;
   }
 }
