@@ -1,5 +1,3 @@
-import { mock } from "node:test";
-
 import {
   ApplicationDefinition,
   OptionalModuleConfiguration,
