@@ -44,7 +44,7 @@ describe("Entity", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
-            const entity = hass.entity.byUniqueId<"sensor.sun_next_dawn">(
+            const entity = hass.refBy.unique_id<"sensor.sun_next_dawn">(
               "5622d76001a335e3ea893c4d60d31b3d-next_dawn",
             );
             expect(entity).toBeDefined();
@@ -62,7 +62,7 @@ describe("Entity", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
-            const entity = hass.entity.byUniqueId(
+            const entity = hass.refBy.unique_id(
               "5622d76001a335e3ea893c4d60d31b3d-previous_dawn",
             );
             expect(entity).not.toBeDefined();
