@@ -71,7 +71,6 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
       ) as ByIdProxy<ENTITY_ID>;
       ENTITY_PROXIES.set(
         entity_id,
-        // @ts-expect-error this is valid, shut up typescript
         // just because you can't do generics properly....
         new Proxy(thing, {
           // things that shouldn't be needed: this extract

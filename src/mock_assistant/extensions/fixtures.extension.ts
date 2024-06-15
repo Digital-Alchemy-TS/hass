@@ -87,7 +87,6 @@ export function Fixtures({
     data.entities = data.entities.filter(i => i.entity_id !== entity);
 
     const updated = { ...old_state, ...new_state } as ENTITY_STATE<ENTITY>;
-    // @ts-expect-error it's fine
     mock_assistant.fixtures.data.entities.push(updated);
     return updated;
   }

@@ -31,9 +31,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "binary_sensor.hass_e2e_online";
-      last_changed: "2024-05-02T23:38:44.907649+00:00";
-      last_reported: "2024-05-02T23:38:44.907649+00:00";
-      last_updated: "2024-05-02T23:38:44.907649+00:00";
+
       state: "unavailable";
     };
     toggles: {
@@ -49,9 +47,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "binary_sensor.toggles";
-      last_changed: "2024-05-02T23:38:44.907718+00:00";
-      last_reported: "2024-05-02T23:38:44.907718+00:00";
-      last_updated: "2024-05-02T23:38:44.907718+00:00";
+
       state: "unavailable";
     };
   };
@@ -72,9 +68,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "calendar.united_states_tx";
-      last_changed: "2024-05-02T23:41:30.447850+00:00";
-      last_reported: "2024-05-02T23:41:30.449701+00:00";
-      last_updated: "2024-05-02T23:41:30.447850+00:00";
+
       state: "off";
     };
   };
@@ -103,9 +97,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "light.bedroom_ceiling_fan";
-      last_changed: "2024-05-06T13:39:28.645503+00:00";
-      last_reported: "2024-05-06T13:39:28.645503+00:00";
-      last_updated: "2024-05-06T13:39:28.645503+00:00";
+
       state: "off";
     };
   };
@@ -124,9 +116,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "person.digital_alchemy";
-      last_changed: "2024-05-02T23:38:39.485125+00:00";
-      last_reported: "2024-05-02T23:38:44.907957+00:00";
-      last_updated: "2024-05-02T23:38:44.907957+00:00";
+
       state: "unknown";
     };
   };
@@ -142,9 +132,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "scene.games_room_auto";
-      last_changed: "2024-05-03T00:01:03.801727+00:00";
-      last_reported: "2024-05-03T00:01:03.801727+00:00";
-      last_updated: "2024-05-03T00:01:03.801727+00:00";
+
       state: "unknown";
     };
   };
@@ -162,9 +150,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "sensor.magic";
-      last_changed: "2024-05-02T23:38:44.907694+00:00";
-      last_reported: "2024-05-02T23:38:44.907694+00:00";
-      last_updated: "2024-05-02T23:38:44.907694+00:00";
+
       state: string;
     };
     sun_next_dawn: {
@@ -178,9 +164,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "sensor.sun_next_dawn";
-      last_changed: "2024-05-02T23:38:40.897643+00:00";
-      last_reported: "2024-05-02T23:38:40.897643+00:00";
-      last_updated: "2024-05-02T23:38:40.897643+00:00";
+
       state: "2024-05-03T03:24:45+00:00";
     };
     sun_next_dusk: {
@@ -194,9 +178,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "sensor.sun_next_dusk";
-      last_changed: "2024-05-02T23:38:40.897814+00:00";
-      last_reported: "2024-05-02T23:38:40.897814+00:00";
-      last_updated: "2024-05-02T23:38:40.897814+00:00";
+
       state: "2024-05-03T19:51:10+00:00";
     };
     sun_next_midnight: {
@@ -210,9 +192,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "sensor.sun_next_midnight";
-      last_changed: "2024-05-02T23:38:40.897950+00:00";
-      last_reported: "2024-05-02T23:38:40.897950+00:00";
-      last_updated: "2024-05-02T23:38:40.897950+00:00";
+
       state: "2024-05-03T23:37:12+00:00";
     };
     sun_next_noon: {
@@ -226,9 +206,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "sensor.sun_next_noon";
-      last_changed: "2024-05-02T23:38:40.898068+00:00";
-      last_reported: "2024-05-02T23:38:40.898068+00:00";
-      last_updated: "2024-05-02T23:38:40.898068+00:00";
+
       state: "2024-05-03T11:37:19+00:00";
     };
     sun_next_rising: {
@@ -242,9 +220,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "sensor.sun_next_rising";
-      last_changed: "2024-05-02T23:38:40.898182+00:00";
-      last_reported: "2024-05-02T23:38:40.898182+00:00";
-      last_updated: "2024-05-02T23:38:40.898182+00:00";
+
       state: "2024-05-03T04:05:17+00:00";
     };
     sun_next_setting: {
@@ -258,9 +234,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "sensor.sun_next_setting";
-      last_changed: "2024-05-02T23:38:40.898289+00:00";
-      last_reported: "2024-05-02T23:38:40.898289+00:00";
-      last_updated: "2024-05-02T23:38:40.898289+00:00";
+
       state: "2024-05-03T19:10:21+00:00";
     };
   };
@@ -284,9 +258,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "sun.sun";
-      last_changed: "2024-05-02T23:38:40.897074+00:00";
-      last_reported: "2024-05-02T23:38:40.897074+00:00";
-      last_updated: "2024-05-02T23:38:40.897074+00:00";
+
       state: "below_horizon";
     };
   };
@@ -303,9 +275,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "switch.bedroom_lamp";
-      last_changed: "2024-05-02T23:38:44.907730+00:00";
-      last_reported: "2024-05-02T23:38:44.907730+00:00";
-      last_updated: "2024-05-02T23:38:44.907730+00:00";
+
       state: "unavailable";
     };
     kitchen_cabinets: {
@@ -320,9 +290,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "switch.kitchen_cabinets";
-      last_changed: "2024-05-02T23:38:44.907743+00:00";
-      last_reported: "2024-05-02T23:38:44.907743+00:00";
-      last_updated: "2024-05-02T23:38:44.907743+00:00";
+
       state: "unavailable";
     };
     living_room_mood_lights: {
@@ -337,9 +305,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "switch.living_room_mood_lights";
-      last_changed: "2024-05-02T23:38:44.907753+00:00";
-      last_reported: "2024-05-02T23:38:44.907753+00:00";
-      last_updated: "2024-05-02T23:38:44.907753+00:00";
+
       state: "unavailable";
     };
     porch_light: {
@@ -354,9 +320,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "switch.porch_light";
-      last_changed: "2024-05-02T23:38:44.907761+00:00";
-      last_reported: "2024-05-02T23:38:44.907761+00:00";
-      last_updated: "2024-05-02T23:38:44.907761+00:00";
+
       state: "unavailable";
     };
   };
@@ -372,9 +336,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "todo.shopping_list";
-      last_changed: "2024-05-02T23:38:40.931953+00:00";
-      last_reported: "2024-05-02T23:38:40.931953+00:00";
-      last_updated: "2024-05-02T23:38:40.931953+00:00";
+
       state: "0";
     };
   };
@@ -389,9 +351,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "tts.google_en_com";
-      last_changed: "2024-05-02T23:38:40.948156+00:00";
-      last_reported: "2024-05-02T23:38:40.948156+00:00";
-      last_updated: "2024-05-02T23:38:40.948156+00:00";
+
       state: "unknown";
     };
   };
@@ -413,9 +373,7 @@ export type ENTITY_SETUP = {
         user_id: null;
       };
       entity_id: "zone.home";
-      last_changed: "2024-05-02T23:38:40.532050+00:00";
-      last_reported: "2024-05-02T23:38:40.532050+00:00";
-      last_updated: "2024-05-02T23:38:40.532050+00:00";
+
       state: "0";
     };
   };

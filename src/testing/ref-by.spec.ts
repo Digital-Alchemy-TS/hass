@@ -4,6 +4,7 @@ import {
   ServiceMap,
   TServiceParams,
 } from "@digital-alchemy/core";
+import dayjs from "dayjs";
 
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
@@ -63,6 +64,23 @@ describe("ID By", () => {
             const sensor = hass.refBy.id("sensor.magic");
             // @ts-expect-error it's the test
             expect(sensor.foo).toBeUndefined();
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("references provide last_* as dayjs", async () => {
+      expect.assertions(3);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            const sensor = hass.refBy.id("sensor.magic");
+            expect(sensor.last_changed instanceof dayjs).toBe(true);
+            expect(sensor.last_reported instanceof dayjs).toBe(true);
+            expect(sensor.last_updated instanceof dayjs).toBe(true);
           });
         },
       });

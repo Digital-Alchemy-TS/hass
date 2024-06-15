@@ -220,7 +220,6 @@ export function EntityManager({
     new_state: ENTITY_STATE<ENTITY>,
     old_state: ENTITY_STATE<ENTITY>,
   ) {
-    // @ts-expect-error it's fine
     PREVIOUS_STATE.set(entity_id, old_state);
     if (new_state === null) {
       logger.warn(
