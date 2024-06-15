@@ -23,9 +23,9 @@ export enum HassEvents {
 }
 
 export interface HassEntityContext {
-  id: string;
-  parent_id: string;
-  user_id: string;
+  id: string | null;
+  parent_id: string | null;
+  user_id: string | null;
 }
 
 type GenericEntityAttributes = {
