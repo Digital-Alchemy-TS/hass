@@ -17,408 +17,408 @@ type PICK_FROM_PLATFORM<
 > = Extract<REGISTRY_SETUP["platform"][`_${ID}`], PICK_ENTITY<DOMAIN>>;
 
 // #MARK: ENTITY_SETUP
-export const ENTITY_SETUP = {
+export type ENTITY_SETUP = {
   binary_sensor: {
     hass_e2e_online: {
       attributes: {
-        friendly_name: "hass_e2e online",
-        restored: true,
-        supported_features: 0,
-      },
+        friendly_name: "hass_e2e online";
+        restored: true;
+        supported_features: 0;
+      };
       context: {
-        id: "01HWXTSCSBGW129NV7WY8MMG1E",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "binary_sensor.hass_e2e_online",
-      last_changed: "2024-05-02T23:38:44.907649+00:00",
-      last_reported: "2024-05-02T23:38:44.907649+00:00",
-      last_updated: "2024-05-02T23:38:44.907649+00:00",
-      state: "unavailable",
-    },
+        id: "01HWXTSCSBGW129NV7WY8MMG1E";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "binary_sensor.hass_e2e_online";
+      last_changed: "2024-05-02T23:38:44.907649+00:00";
+      last_reported: "2024-05-02T23:38:44.907649+00:00";
+      last_updated: "2024-05-02T23:38:44.907649+00:00";
+      state: "unavailable";
+    };
     toggles: {
       attributes: {
-        friendly_name: "toggles",
-        icon: "mdi:toggle-switch-variant-off",
-        restored: true,
-        supported_features: 0,
-      },
+        friendly_name: "toggles";
+        icon: "mdi:toggle-switch-variant-off";
+        restored: true;
+        supported_features: 0;
+      };
       context: {
-        id: "01HWXTSCSB43FF1R6FX0QEE4Z6",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "binary_sensor.toggles",
-      last_changed: "2024-05-02T23:38:44.907718+00:00",
-      last_reported: "2024-05-02T23:38:44.907718+00:00",
-      last_updated: "2024-05-02T23:38:44.907718+00:00",
-      state: "unavailable",
-    },
-  },
+        id: "01HWXTSCSB43FF1R6FX0QEE4Z6";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "binary_sensor.toggles";
+      last_changed: "2024-05-02T23:38:44.907718+00:00";
+      last_reported: "2024-05-02T23:38:44.907718+00:00";
+      last_updated: "2024-05-02T23:38:44.907718+00:00";
+      state: "unavailable";
+    };
+  };
   calendar: {
     united_states_tx: {
       attributes: {
-        all_day: true,
-        description: "",
-        end_time: "2024-05-28 00:00:00",
-        friendly_name: "United States, TX",
-        location: "United States, TX",
-        message: "Memorial Day",
-        start_time: "2024-05-27 00:00:00",
-      },
+        all_day: true;
+        description: "";
+        end_time: "2024-05-28 00:00:00";
+        friendly_name: "United States, TX";
+        location: "United States, TX";
+        message: "Memorial Day";
+        start_time: "2024-05-27 00:00:00";
+      };
       context: {
-        id: "01HWXTYEEFBB7QQC1CSM6PAR36",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "calendar.united_states_tx",
-      last_changed: "2024-05-02T23:41:30.447850+00:00",
-      last_reported: "2024-05-02T23:41:30.449701+00:00",
-      last_updated: "2024-05-02T23:41:30.447850+00:00",
-      state: "off",
-    },
-  },
+        id: "01HWXTYEEFBB7QQC1CSM6PAR36";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "calendar.united_states_tx";
+      last_changed: "2024-05-02T23:41:30.447850+00:00";
+      last_reported: "2024-05-02T23:41:30.449701+00:00";
+      last_updated: "2024-05-02T23:41:30.447850+00:00";
+      state: "off";
+    };
+  };
   light: {
     bedroom_ceiling_fan: {
       attributes: {
-        brightness: null,
-        color_mode: null,
-        color_temp: null,
-        color_temp_kelvin: null,
-        friendly_name: "Bedroom Ceiling Fan",
-        hs_color: null,
-        icon: "mdi:lightbulb-group",
-        max_color_temp_kelvin: 6535,
-        max_mireds: 500,
-        min_color_temp_kelvin: 2000,
-        min_mireds: 153,
-        rgb_color: null,
-        supported_color_modes: ["color_temp", "xy"],
-        supported_features: 40,
-        xy_color: null,
-      },
+        brightness: null;
+        color_mode: null;
+        color_temp: null;
+        color_temp_kelvin: null;
+        friendly_name: "Bedroom Ceiling Fan";
+        hs_color: null;
+        icon: "mdi:lightbulb-group";
+        max_color_temp_kelvin: 6535;
+        max_mireds: 500;
+        min_color_temp_kelvin: 2000;
+        min_mireds: 153;
+        rgb_color: null;
+        supported_color_modes: ["color_temp", "xy"];
+        supported_features: 40;
+        xy_color: null;
+      };
       context: {
-        id: "01HX722Y1JFS6KN2MDERK0VJ2D",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "light.bedroom_ceiling_fan",
-      last_changed: "2024-05-06T13:39:28.645503+00:00",
-      last_reported: "2024-05-06T13:39:28.645503+00:00",
-      last_updated: "2024-05-06T13:39:28.645503+00:00",
-      state: "off",
-    },
-  },
+        id: "01HX722Y1JFS6KN2MDERK0VJ2D";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "light.bedroom_ceiling_fan";
+      last_changed: "2024-05-06T13:39:28.645503+00:00";
+      last_reported: "2024-05-06T13:39:28.645503+00:00";
+      last_updated: "2024-05-06T13:39:28.645503+00:00";
+      state: "off";
+    };
+  };
   person: {
     digital_alchemy: {
       attributes: {
-        device_trackers: [],
-        editable: true,
-        friendly_name: "digital-alchemy",
-        id: "digital_alchemy",
-        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59",
-      },
+        device_trackers: [];
+        editable: true;
+        friendly_name: "digital-alchemy";
+        id: "digital_alchemy";
+        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59";
+      };
       context: {
-        id: "01HWXTSCSBRKJ9T2KV1JNER5KQ",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "person.digital_alchemy",
-      last_changed: "2024-05-02T23:38:39.485125+00:00",
-      last_reported: "2024-05-02T23:38:44.907957+00:00",
-      last_updated: "2024-05-02T23:38:44.907957+00:00",
-      state: "unknown",
-    },
-  },
+        id: "01HWXTSCSBRKJ9T2KV1JNER5KQ";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "person.digital_alchemy";
+      last_changed: "2024-05-02T23:38:39.485125+00:00";
+      last_reported: "2024-05-02T23:38:44.907957+00:00";
+      last_updated: "2024-05-02T23:38:44.907957+00:00";
+      state: "unknown";
+    };
+  };
   scene: {
     games_room_auto: {
       attributes: {
-        "Managed By": "home_automation",
-        friendly_name: "bedroom off",
-      },
+        "Managed By": "home_automation";
+        friendly_name: "bedroom off";
+      };
       context: {
-        id: "01HWXW289S8HP5MSGNNTNB2CBG",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "scene.games_room_auto",
-      last_changed: "2024-05-03T00:01:03.801727+00:00",
-      last_reported: "2024-05-03T00:01:03.801727+00:00",
-      last_updated: "2024-05-03T00:01:03.801727+00:00",
-      state: "unknown",
-    },
-  },
+        id: "01HWXW289S8HP5MSGNNTNB2CBG";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "scene.games_room_auto";
+      last_changed: "2024-05-03T00:01:03.801727+00:00";
+      last_reported: "2024-05-03T00:01:03.801727+00:00";
+      last_updated: "2024-05-03T00:01:03.801727+00:00";
+      state: "unknown";
+    };
+  };
   sensor: {
     magic: {
       attributes: {
-        friendly_name: "magic",
-        icon: "mdi:satellite-uplink",
-        restored: true,
-        supported_features: 0,
-      },
+        friendly_name: "magic";
+        icon: "mdi:satellite-uplink";
+        restored: true;
+        supported_features: 0;
+      };
       context: {
-        id: "01HWXTSCSBW34BP3R20RJ09CVZ",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "sensor.magic",
-      last_changed: "2024-05-02T23:38:44.907694+00:00",
-      last_reported: "2024-05-02T23:38:44.907694+00:00",
-      last_updated: "2024-05-02T23:38:44.907694+00:00",
-      state: "unavailable",
-    },
+        id: "01HWXTSCSBW34BP3R20RJ09CVZ";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.magic";
+      last_changed: "2024-05-02T23:38:44.907694+00:00";
+      last_reported: "2024-05-02T23:38:44.907694+00:00";
+      last_updated: "2024-05-02T23:38:44.907694+00:00";
+      state: string;
+    };
     sun_next_dawn: {
       attributes: {
-        device_class: "timestamp",
-        friendly_name: "Sun Next dawn",
-      },
+        device_class: "timestamp";
+        friendly_name: "Sun Next dawn";
+      };
       context: {
-        id: "01HWXTS8W1SRTPT5K1XM0G491X",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "sensor.sun_next_dawn",
-      last_changed: "2024-05-02T23:38:40.897643+00:00",
-      last_reported: "2024-05-02T23:38:40.897643+00:00",
-      last_updated: "2024-05-02T23:38:40.897643+00:00",
-      state: "2024-05-03T03:24:45+00:00",
-    },
+        id: "01HWXTS8W1SRTPT5K1XM0G491X";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.sun_next_dawn";
+      last_changed: "2024-05-02T23:38:40.897643+00:00";
+      last_reported: "2024-05-02T23:38:40.897643+00:00";
+      last_updated: "2024-05-02T23:38:40.897643+00:00";
+      state: "2024-05-03T03:24:45+00:00";
+    };
     sun_next_dusk: {
       attributes: {
-        device_class: "timestamp",
-        friendly_name: "Sun Next dusk",
-      },
+        device_class: "timestamp";
+        friendly_name: "Sun Next dusk";
+      };
       context: {
-        id: "01HWXTS8W1S95P1MVHDGHSQEB2",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "sensor.sun_next_dusk",
-      last_changed: "2024-05-02T23:38:40.897814+00:00",
-      last_reported: "2024-05-02T23:38:40.897814+00:00",
-      last_updated: "2024-05-02T23:38:40.897814+00:00",
-      state: "2024-05-03T19:51:10+00:00",
-    },
+        id: "01HWXTS8W1S95P1MVHDGHSQEB2";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.sun_next_dusk";
+      last_changed: "2024-05-02T23:38:40.897814+00:00";
+      last_reported: "2024-05-02T23:38:40.897814+00:00";
+      last_updated: "2024-05-02T23:38:40.897814+00:00";
+      state: "2024-05-03T19:51:10+00:00";
+    };
     sun_next_midnight: {
       attributes: {
-        device_class: "timestamp",
-        friendly_name: "Sun Next midnight",
-      },
+        device_class: "timestamp";
+        friendly_name: "Sun Next midnight";
+      };
       context: {
-        id: "01HWXTS8W1YQCPA3WZ69Y9JSPD",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "sensor.sun_next_midnight",
-      last_changed: "2024-05-02T23:38:40.897950+00:00",
-      last_reported: "2024-05-02T23:38:40.897950+00:00",
-      last_updated: "2024-05-02T23:38:40.897950+00:00",
-      state: "2024-05-03T23:37:12+00:00",
-    },
+        id: "01HWXTS8W1YQCPA3WZ69Y9JSPD";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.sun_next_midnight";
+      last_changed: "2024-05-02T23:38:40.897950+00:00";
+      last_reported: "2024-05-02T23:38:40.897950+00:00";
+      last_updated: "2024-05-02T23:38:40.897950+00:00";
+      state: "2024-05-03T23:37:12+00:00";
+    };
     sun_next_noon: {
       attributes: {
-        device_class: "timestamp",
-        friendly_name: "Sun Next noon",
-      },
+        device_class: "timestamp";
+        friendly_name: "Sun Next noon";
+      };
       context: {
-        id: "01HWXTS8W28MVV48CQ31JB2WKC",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "sensor.sun_next_noon",
-      last_changed: "2024-05-02T23:38:40.898068+00:00",
-      last_reported: "2024-05-02T23:38:40.898068+00:00",
-      last_updated: "2024-05-02T23:38:40.898068+00:00",
-      state: "2024-05-03T11:37:19+00:00",
-    },
+        id: "01HWXTS8W28MVV48CQ31JB2WKC";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.sun_next_noon";
+      last_changed: "2024-05-02T23:38:40.898068+00:00";
+      last_reported: "2024-05-02T23:38:40.898068+00:00";
+      last_updated: "2024-05-02T23:38:40.898068+00:00";
+      state: "2024-05-03T11:37:19+00:00";
+    };
     sun_next_rising: {
       attributes: {
-        device_class: "timestamp",
-        friendly_name: "Sun Next rising",
-      },
+        device_class: "timestamp";
+        friendly_name: "Sun Next rising";
+      };
       context: {
-        id: "01HWXTS8W2MMADKGWE4A5BMH51",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "sensor.sun_next_rising",
-      last_changed: "2024-05-02T23:38:40.898182+00:00",
-      last_reported: "2024-05-02T23:38:40.898182+00:00",
-      last_updated: "2024-05-02T23:38:40.898182+00:00",
-      state: "2024-05-03T04:05:17+00:00",
-    },
+        id: "01HWXTS8W2MMADKGWE4A5BMH51";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.sun_next_rising";
+      last_changed: "2024-05-02T23:38:40.898182+00:00";
+      last_reported: "2024-05-02T23:38:40.898182+00:00";
+      last_updated: "2024-05-02T23:38:40.898182+00:00";
+      state: "2024-05-03T04:05:17+00:00";
+    };
     sun_next_setting: {
       attributes: {
-        device_class: "timestamp",
-        friendly_name: "Sun Next setting",
-      },
+        device_class: "timestamp";
+        friendly_name: "Sun Next setting";
+      };
       context: {
-        id: "01HWXTS8W24KWTHR2B6V32NCXG",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "sensor.sun_next_setting",
-      last_changed: "2024-05-02T23:38:40.898289+00:00",
-      last_reported: "2024-05-02T23:38:40.898289+00:00",
-      last_updated: "2024-05-02T23:38:40.898289+00:00",
-      state: "2024-05-03T19:10:21+00:00",
-    },
-  },
+        id: "01HWXTS8W24KWTHR2B6V32NCXG";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.sun_next_setting";
+      last_changed: "2024-05-02T23:38:40.898289+00:00";
+      last_reported: "2024-05-02T23:38:40.898289+00:00";
+      last_updated: "2024-05-02T23:38:40.898289+00:00";
+      state: "2024-05-03T19:10:21+00:00";
+    };
+  };
   sun: {
     sun: {
       attributes: {
-        azimuth: 0.35,
-        elevation: -21.86,
-        friendly_name: "Sun",
-        next_dawn: "2024-05-03T03:24:45.747945+00:00",
-        next_dusk: "2024-05-03T19:51:10.358970+00:00",
-        next_midnight: "2024-05-03T23:37:12+00:00",
-        next_noon: "2024-05-03T11:37:19+00:00",
-        next_rising: "2024-05-03T04:05:17.926549+00:00",
-        next_setting: "2024-05-03T19:10:21.280558+00:00",
-        rising: true,
-      },
+        azimuth: 0.35;
+        elevation: -21.86;
+        friendly_name: "Sun";
+        next_dawn: "2024-05-03T03:24:45.747945+00:00";
+        next_dusk: "2024-05-03T19:51:10.358970+00:00";
+        next_midnight: "2024-05-03T23:37:12+00:00";
+        next_noon: "2024-05-03T11:37:19+00:00";
+        next_rising: "2024-05-03T04:05:17.926549+00:00";
+        next_setting: "2024-05-03T19:10:21.280558+00:00";
+        rising: true;
+      };
       context: {
-        id: "01HWXTS8W1J2TDGMN7KKNWP8DV",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "sun.sun",
-      last_changed: "2024-05-02T23:38:40.897074+00:00",
-      last_reported: "2024-05-02T23:38:40.897074+00:00",
-      last_updated: "2024-05-02T23:38:40.897074+00:00",
-      state: "below_horizon",
-    },
-  },
+        id: "01HWXTS8W1J2TDGMN7KKNWP8DV";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sun.sun";
+      last_changed: "2024-05-02T23:38:40.897074+00:00";
+      last_reported: "2024-05-02T23:38:40.897074+00:00";
+      last_updated: "2024-05-02T23:38:40.897074+00:00";
+      state: "below_horizon";
+    };
+  };
   switch: {
     bedroom_lamp: {
       attributes: {
-        friendly_name: "bedroom_lamp",
-        restored: true,
-        supported_features: 0,
-      },
+        friendly_name: "bedroom_lamp";
+        restored: true;
+        supported_features: 0;
+      };
       context: {
-        id: "01HWXTSCSB7BK003CH3AYYVXCB",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "switch.bedroom_lamp",
-      last_changed: "2024-05-02T23:38:44.907730+00:00",
-      last_reported: "2024-05-02T23:38:44.907730+00:00",
-      last_updated: "2024-05-02T23:38:44.907730+00:00",
-      state: "unavailable",
-    },
+        id: "01HWXTSCSB7BK003CH3AYYVXCB";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "switch.bedroom_lamp";
+      last_changed: "2024-05-02T23:38:44.907730+00:00";
+      last_reported: "2024-05-02T23:38:44.907730+00:00";
+      last_updated: "2024-05-02T23:38:44.907730+00:00";
+      state: "unavailable";
+    };
     kitchen_cabinets: {
       attributes: {
-        friendly_name: "kitchen_cabinets",
-        restored: true,
-        supported_features: 0,
-      },
+        friendly_name: "kitchen_cabinets";
+        restored: true;
+        supported_features: 0;
+      };
       context: {
-        id: "01HWXTSCSBM9Y3SRQTFJ5CVK6H",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "switch.kitchen_cabinets",
-      last_changed: "2024-05-02T23:38:44.907743+00:00",
-      last_reported: "2024-05-02T23:38:44.907743+00:00",
-      last_updated: "2024-05-02T23:38:44.907743+00:00",
-      state: "unavailable",
-    },
+        id: "01HWXTSCSBM9Y3SRQTFJ5CVK6H";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "switch.kitchen_cabinets";
+      last_changed: "2024-05-02T23:38:44.907743+00:00";
+      last_reported: "2024-05-02T23:38:44.907743+00:00";
+      last_updated: "2024-05-02T23:38:44.907743+00:00";
+      state: "unavailable";
+    };
     living_room_mood_lights: {
       attributes: {
-        friendly_name: "living_room_mood_lights",
-        restored: true,
-        supported_features: 0,
-      },
+        friendly_name: "living_room_mood_lights";
+        restored: true;
+        supported_features: 0;
+      };
       context: {
-        id: "01HWXTSCSBS5B586JJ7VFH10SX",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "switch.living_room_mood_lights",
-      last_changed: "2024-05-02T23:38:44.907753+00:00",
-      last_reported: "2024-05-02T23:38:44.907753+00:00",
-      last_updated: "2024-05-02T23:38:44.907753+00:00",
-      state: "unavailable",
-    },
+        id: "01HWXTSCSBS5B586JJ7VFH10SX";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "switch.living_room_mood_lights";
+      last_changed: "2024-05-02T23:38:44.907753+00:00";
+      last_reported: "2024-05-02T23:38:44.907753+00:00";
+      last_updated: "2024-05-02T23:38:44.907753+00:00";
+      state: "unavailable";
+    };
     porch_light: {
       attributes: {
-        friendly_name: "porch_light",
-        restored: true,
-        supported_features: 0,
-      },
+        friendly_name: "porch_light";
+        restored: true;
+        supported_features: 0;
+      };
       context: {
-        id: "01HWXTSCSBFTSZR1M5XAK7XSR8",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "switch.porch_light",
-      last_changed: "2024-05-02T23:38:44.907761+00:00",
-      last_reported: "2024-05-02T23:38:44.907761+00:00",
-      last_updated: "2024-05-02T23:38:44.907761+00:00",
-      state: "unavailable",
-    },
-  },
+        id: "01HWXTSCSBFTSZR1M5XAK7XSR8";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "switch.porch_light";
+      last_changed: "2024-05-02T23:38:44.907761+00:00";
+      last_reported: "2024-05-02T23:38:44.907761+00:00";
+      last_updated: "2024-05-02T23:38:44.907761+00:00";
+      state: "unavailable";
+    };
+  };
   todo: {
     shopping_list: {
       attributes: {
-        friendly_name: "Shopping List",
-        supported_features: 15,
-      },
+        friendly_name: "Shopping List";
+        supported_features: 15;
+      };
       context: {
-        id: "01HWXTS8X3D417XC4YJTG8QJWB",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "todo.shopping_list",
-      last_changed: "2024-05-02T23:38:40.931953+00:00",
-      last_reported: "2024-05-02T23:38:40.931953+00:00",
-      last_updated: "2024-05-02T23:38:40.931953+00:00",
-      state: "0",
-    },
-  },
+        id: "01HWXTS8X3D417XC4YJTG8QJWB";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "todo.shopping_list";
+      last_changed: "2024-05-02T23:38:40.931953+00:00";
+      last_reported: "2024-05-02T23:38:40.931953+00:00";
+      last_updated: "2024-05-02T23:38:40.931953+00:00";
+      state: "0";
+    };
+  };
   tts: {
     google_en_com: {
       attributes: {
-        friendly_name: "Google en com",
-      },
+        friendly_name: "Google en com";
+      };
       context: {
-        id: "01HWXTS8XMPQ236CDJ6X7C6E60",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "tts.google_en_com",
-      last_changed: "2024-05-02T23:38:40.948156+00:00",
-      last_reported: "2024-05-02T23:38:40.948156+00:00",
-      last_updated: "2024-05-02T23:38:40.948156+00:00",
-      state: "unknown",
-    },
-  },
+        id: "01HWXTS8XMPQ236CDJ6X7C6E60";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "tts.google_en_com";
+      last_changed: "2024-05-02T23:38:40.948156+00:00";
+      last_reported: "2024-05-02T23:38:40.948156+00:00";
+      last_updated: "2024-05-02T23:38:40.948156+00:00";
+      state: "unknown";
+    };
+  };
   zone: {
     home: {
       attributes: {
-        editable: true,
-        friendly_name: "Home",
-        icon: "mdi:home",
-        latitude: 52.373_133_9,
-        longitude: 4.890_314_7,
-        passive: false,
-        persons: [],
-        radius: 100,
-      },
+        editable: true;
+        friendly_name: "Home";
+        icon: "mdi:home";
+        latitude: 52.373_133_9;
+        longitude: 4.890_314_7;
+        passive: false;
+        persons: [];
+        radius: 100;
+      };
       context: {
-        id: "01HWXTS8GMB4ZW20P8MGMX0QSN",
-        parent_id: null,
-        user_id: null,
-      },
-      entity_id: "zone.home",
-      last_changed: "2024-05-02T23:38:40.532050+00:00",
-      last_reported: "2024-05-02T23:38:40.532050+00:00",
-      last_updated: "2024-05-02T23:38:40.532050+00:00",
-      state: "0",
-    },
-  },
+        id: "01HWXTS8GMB4ZW20P8MGMX0QSN";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "zone.home";
+      last_changed: "2024-05-02T23:38:40.532050+00:00";
+      last_reported: "2024-05-02T23:38:40.532050+00:00";
+      last_updated: "2024-05-02T23:38:40.532050+00:00";
+      state: "0";
+    };
+  };
 };
 
 // #MARK: iCallService

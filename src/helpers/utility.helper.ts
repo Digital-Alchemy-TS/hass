@@ -1,4 +1,5 @@
 import { is, TBlackHole } from "@digital-alchemy/core";
+import { Dayjs } from "dayjs";
 import { Get } from "type-fest";
 
 import {
@@ -26,7 +27,7 @@ export type ANY_ENTITY = TRawEntityIds;
 export type PICK_ENTITY<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> = Extract<
   ANY_ENTITY,
   {
-    [key in DOMAIN]: `${key}.${keyof (typeof ENTITY_SETUP)[key] & string}`;
+    [key in DOMAIN]: `${key}.${keyof ENTITY_SETUP[key] & string}`;
   }[DOMAIN]
 >;
 
@@ -72,13 +73,13 @@ export function domain(
 export type ENTITY_PROP<
   ENTITY_ID extends PICK_ENTITY,
   PROP extends "state" | "attributes",
-> = Get<typeof ENTITY_SETUP, `${ENTITY_ID}.${PROP}`>;
+> = Get<ENTITY_SETUP, `${ENTITY_ID}.${PROP}`>;
 
 /**
  * Type definitions to match a specific entity.
  */
 export type ENTITY_STATE<ENTITY_ID extends ANY_ENTITY> = Omit<
-  Get<typeof ENTITY_SETUP, ENTITY_ID>,
+  Get<ENTITY_SETUP, ENTITY_ID>,
   | "state"
   | "context"
   | "last_changed"
@@ -86,11 +87,12 @@ export type ENTITY_STATE<ENTITY_ID extends ANY_ENTITY> = Omit<
   | "entity_id"
   | "attributes"
 > & {
-  last_changed: string;
-  last_updated: string;
-  attributes: Get<typeof ENTITY_SETUP, ENTITY_ID>["attributes"];
+  last_reported: Dayjs;
+  last_changed: Dayjs;
+  last_updated: Dayjs;
+  attributes: Get<ENTITY_SETUP, ENTITY_ID>["attributes"];
   entity_id: ENTITY_ID;
-  state: string;
+  state: Get<ENTITY_SETUP, ENTITY_ID>["state"];
   context: HassEntityContext;
 };
 

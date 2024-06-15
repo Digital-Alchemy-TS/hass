@@ -1,4 +1,5 @@
 import { is, TAnyFunction, TServiceParams } from "@digital-alchemy/core";
+import dayjs from "dayjs";
 import { Get } from "type-fest";
 
 import {
@@ -41,16 +42,21 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
       return undefined;
     }
     const current = hass.entity.getCurrentState(entity);
+    if (!current) {
+      logger.error(
+        { name: entity, property },
+        `proxyGetLogic cannot find entity`,
+      );
+    }
+    if (property.startsWith("last")) {
+      const value = internal.utils.object.get(current, property) as string;
+      return dayjs(value) as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
+    }
+
     const defaultValue = (property === "state" ? undefined : {}) as Get<
       ENTITY_STATE<ENTITY>,
       PROPERTY
     >;
-    if (!current) {
-      logger.error(
-        { defaultValue, name: entity, property },
-        `proxyGetLogic cannot find entity`,
-      );
-    }
     return internal.utils.object.get(current, property) || defaultValue;
   }
 
@@ -60,109 +66,111 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
   ): ByIdProxy<ENTITY_ID> {
     const entity_domain = domain(entity_id) as ALL_SERVICE_DOMAINS;
     if (!ENTITY_PROXIES.has(entity_id)) {
+      const thing = hass.entity.getCurrentState(
+        entity_id,
+      ) as ByIdProxy<ENTITY_ID>;
       ENTITY_PROXIES.set(
         entity_id,
-        new Proxy(
-          hass.entity.getCurrentState(entity_id) as ByIdProxy<ENTITY_ID>,
-          {
-            // things that shouldn't be needed: this extract
-            get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
-              if (property === "onUpdate") {
-                return (callback: TAnyFunction) => {
-                  const removableCallback = async (
-                    a: ENTITY_STATE<ENTITY_ID>,
-                    b: ENTITY_STATE<ENTITY_ID>,
-                  ) =>
-                    await internal.safeExec(async () => callback(a, b, remove));
-                  function remove() {
-                    hass.entity
-                      ._entityEvents()
-                      .removeListener(entity_id, removableCallback);
-                  }
-
-                  hass.entity._entityEvents().on(entity_id, removableCallback);
-                  return { remove };
-                };
-              }
-              if (property === "removeAllListeners") {
-                return function () {
-                  hass.entity._entityEvents().removeAllListeners(entity_id);
-                };
-              }
-              if (property === "once") {
-                return (callback: TAnyFunction) =>
+        // @ts-expect-error this is valid, shut up typescript
+        // just because you can't do generics properly....
+        new Proxy(thing, {
+          // things that shouldn't be needed: this extract
+          get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
+            if (property === "onUpdate") {
+              return (callback: TAnyFunction) => {
+                const removableCallback = async (
+                  a: ENTITY_STATE<ENTITY_ID>,
+                  b: ENTITY_STATE<ENTITY_ID>,
+                ) =>
+                  await internal.safeExec(async () => callback(a, b, remove));
+                function remove() {
                   hass.entity
                     ._entityEvents()
-                    .once(entity_id, async (a, b) => callback(a, b));
-              }
-              if (property === "entity_id") {
-                return entity_id;
-              }
-              if (property === "previous") {
-                return hass.entity.previousState(entity_id);
-              }
-              if (property === "nextState") {
-                return async () =>
-                  await new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
-                    hass.entity
-                      ._entityEvents()
-                      .once(entity_id, (entity: ENTITY_STATE<ENTITY_ID>) =>
-                        done(entity satisfies ENTITY_STATE<ENTITY_ID>),
-                      );
-                  });
-              }
-              if (hass.configure.isService(entity_domain, property)) {
-                return async function (data = {}) {
-                  // @ts-expect-error it's fine
-                  return await hass.call[entity_domain][property]({
-                    entity_id,
-                    ...data,
-                  });
-                };
-              }
-              return proxyGetLogic(entity_id, property);
-            },
-            set(
-              _,
-              property: Extract<keyof ByIdProxy<ENTITY_ID>, string>,
-              value: unknown,
-            ) {
-              if (property === "state") {
-                setImmediate(async () => {
-                  logger.debug(
-                    { entity_id, state: value },
-                    `emitting set state via rest`,
-                  );
-                  await hass.fetch.updateEntity(entity_id, {
-                    state: value as string | number,
-                  });
-                });
-                return true;
-              }
-              if (property === "attributes") {
-                if (!is.object(value)) {
-                  logger.error(`can only provide objects as attributes`);
-                  return false;
+                    .removeListener(entity_id, removableCallback);
                 }
-                setImmediate(async () => {
-                  logger.debug(
-                    { attributes: Object.keys(value), entity_id },
-                    `updating attributes via rest`,
-                  );
-                  await hass.fetch.updateEntity(entity_id, {
-                    attributes: value,
-                  });
+
+                hass.entity._entityEvents().on(entity_id, removableCallback);
+                return { remove };
+              };
+            }
+            if (property === "removeAllListeners") {
+              return function () {
+                hass.entity._entityEvents().removeAllListeners(entity_id);
+              };
+            }
+            if (property === "once") {
+              return (callback: TAnyFunction) =>
+                hass.entity
+                  ._entityEvents()
+                  .once(entity_id, async (a, b) => callback(a, b));
+            }
+            if (property === "entity_id") {
+              return entity_id;
+            }
+            if (property === "previous") {
+              return hass.entity.previousState(entity_id);
+            }
+            if (property === "nextState") {
+              return async () =>
+                await new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
+                  hass.entity
+                    ._entityEvents()
+                    .once(entity_id, (entity: ENTITY_STATE<ENTITY_ID>) =>
+                      done(entity satisfies ENTITY_STATE<ENTITY_ID>),
+                    );
                 });
-                return true;
-              }
-              logger.error(
-                { entity_id, property },
-                `cannot set property on entity`,
-              );
-              return false;
-            },
+            }
+            if (hass.configure.isService(entity_domain, property)) {
+              return async function (data = {}) {
+                // @ts-expect-error it's fine
+                return await hass.call[entity_domain][property]({
+                  entity_id,
+                  ...data,
+                });
+              };
+            }
+            return proxyGetLogic(entity_id, property);
           },
-        ),
+          set(
+            _,
+            property: Extract<keyof ByIdProxy<ENTITY_ID>, string>,
+            value: unknown,
+          ) {
+            if (property === "state") {
+              setImmediate(async () => {
+                logger.debug(
+                  { entity_id, state: value },
+                  `emitting set state via rest`,
+                );
+                await hass.fetch.updateEntity(entity_id, {
+                  state: value as string | number,
+                });
+              });
+              return true;
+            }
+            if (property === "attributes") {
+              if (!is.object(value)) {
+                logger.error(`can only provide objects as attributes`);
+                return false;
+              }
+              setImmediate(async () => {
+                logger.debug(
+                  { attributes: Object.keys(value), entity_id },
+                  `updating attributes via rest`,
+                );
+                await hass.fetch.updateEntity(entity_id, {
+                  attributes: value,
+                });
+              });
+              return true;
+            }
+            logger.error(
+              { entity_id, property },
+              `cannot set property on entity`,
+            );
+            return false;
+          },
+        }),
       );
     }
     return ENTITY_PROXIES.get(entity_id) as ByIdProxy<ENTITY_ID>;
