@@ -26,9 +26,7 @@ export type ANY_ENTITY = TRawEntityIds;
  */
 export type PICK_ENTITY<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> = Extract<
   ANY_ENTITY,
-  {
-    [key in DOMAIN]: `${key}.${keyof ENTITY_SETUP[key] & string}`;
-  }[DOMAIN]
+  `${DOMAIN}.${string}`
 >;
 
 /**
@@ -79,7 +77,7 @@ export type ENTITY_PROP<
  * Type definitions to match a specific entity.
  */
 export type ENTITY_STATE<ENTITY_ID extends ANY_ENTITY> = Omit<
-  Get<ENTITY_SETUP, ENTITY_ID>,
+  ENTITY_SETUP[ENTITY_ID],
   | "state"
   | "context"
   | "last_changed"
@@ -90,9 +88,9 @@ export type ENTITY_STATE<ENTITY_ID extends ANY_ENTITY> = Omit<
   last_reported: Dayjs;
   last_changed: Dayjs;
   last_updated: Dayjs;
-  attributes: Get<ENTITY_SETUP, ENTITY_ID>["attributes"];
+  attributes: ENTITY_SETUP[ENTITY_ID]["attributes"];
   entity_id: ENTITY_ID;
-  state: Get<ENTITY_SETUP, ENTITY_ID>["state"];
+  state: ENTITY_SETUP[ENTITY_ID]["state"];
   context: HassEntityContext;
 };
 

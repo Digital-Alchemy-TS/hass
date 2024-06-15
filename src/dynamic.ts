@@ -18,364 +18,342 @@ type PICK_FROM_PLATFORM<
 
 // #MARK: ENTITY_SETUP
 export type ENTITY_SETUP = {
-  binary_sensor: {
-    hass_e2e_online: {
-      attributes: {
-        friendly_name: "hass_e2e online";
-        restored: true;
-        supported_features: 0;
-      };
-      context: {
-        id: "01HWXTSCSBGW129NV7WY8MMG1E";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "binary_sensor.hass_e2e_online";
-
-      state: "unavailable";
+  "binary_sensor.hass_e2e_online": {
+    attributes: {
+      friendly_name: "hass_e2e online";
+      restored: true;
+      supported_features: 0;
     };
-    toggles: {
-      attributes: {
-        friendly_name: "toggles";
-        icon: "mdi:toggle-switch-variant-off";
-        restored: true;
-        supported_features: 0;
-      };
-      context: {
-        id: "01HWXTSCSB43FF1R6FX0QEE4Z6";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "binary_sensor.toggles";
-
-      state: "unavailable";
+    context: {
+      id: "01HWXTSCSBGW129NV7WY8MMG1E";
+      parent_id: null;
+      user_id: null;
     };
+    entity_id: "binary_sensor.hass_e2e_online";
+
+    state: "unavailable";
   };
-  calendar: {
-    united_states_tx: {
-      attributes: {
-        all_day: true;
-        description: "";
-        end_time: "2024-05-28 00:00:00";
-        friendly_name: "United States, TX";
-        location: "United States, TX";
-        message: "Memorial Day";
-        start_time: "2024-05-27 00:00:00";
-      };
-      context: {
-        id: "01HWXTYEEFBB7QQC1CSM6PAR36";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "calendar.united_states_tx";
-
-      state: "off";
+  "binary_sensor.toggles": {
+    attributes: {
+      friendly_name: "toggles";
+      icon: "mdi:toggle-switch-variant-off";
+      restored: true;
+      supported_features: 0;
     };
+    context: {
+      id: "01HWXTSCSB43FF1R6FX0QEE4Z6";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "binary_sensor.toggles";
+
+    state: "unavailable";
   };
-  light: {
-    bedroom_ceiling_fan: {
-      attributes: {
-        brightness: null;
-        color_mode: null;
-        color_temp: null;
-        color_temp_kelvin: null;
-        friendly_name: "Bedroom Ceiling Fan";
-        hs_color: null;
-        icon: "mdi:lightbulb-group";
-        max_color_temp_kelvin: 6535;
-        max_mireds: 500;
-        min_color_temp_kelvin: 2000;
-        min_mireds: 153;
-        rgb_color: null;
-        supported_color_modes: ["color_temp", "xy"];
-        supported_features: 40;
-        xy_color: null;
-      };
-      context: {
-        id: "01HX722Y1JFS6KN2MDERK0VJ2D";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "light.bedroom_ceiling_fan";
-
-      state: "off";
+  "calendar.united_states_tx": {
+    attributes: {
+      all_day: true;
+      description: "";
+      end_time: "2024-05-28 00:00:00";
+      friendly_name: "United States, TX";
+      location: "United States, TX";
+      message: "Memorial Day";
+      start_time: "2024-05-27 00:00:00";
     };
+    context: {
+      id: "01HWXTYEEFBB7QQC1CSM6PAR36";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "calendar.united_states_tx";
+
+    state: "off";
   };
-  person: {
-    digital_alchemy: {
-      attributes: {
-        device_trackers: [];
-        editable: true;
-        friendly_name: "digital-alchemy";
-        id: "digital_alchemy";
-        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59";
-      };
-      context: {
-        id: "01HWXTSCSBRKJ9T2KV1JNER5KQ";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "person.digital_alchemy";
-
-      state: "unknown";
+  "light.bedroom_ceiling_fan": {
+    attributes: {
+      brightness: null;
+      color_mode: null;
+      color_temp: null;
+      color_temp_kelvin: null;
+      friendly_name: "Bedroom Ceiling Fan";
+      hs_color: null;
+      icon: "mdi:lightbulb-group";
+      max_color_temp_kelvin: 6535;
+      max_mireds: 500;
+      min_color_temp_kelvin: 2000;
+      min_mireds: 153;
+      rgb_color: null;
+      supported_color_modes: ["color_temp", "xy"];
+      supported_features: 40;
+      xy_color: null;
     };
+    context: {
+      id: "01HX722Y1JFS6KN2MDERK0VJ2D";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "light.bedroom_ceiling_fan";
+
+    state: "off";
   };
-  scene: {
-    games_room_auto: {
-      attributes: {
-        "Managed By": "home_automation";
-        friendly_name: "bedroom off";
-      };
-      context: {
-        id: "01HWXW289S8HP5MSGNNTNB2CBG";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "scene.games_room_auto";
-
-      state: "unknown";
+  "person.digital_alchemy": {
+    attributes: {
+      device_trackers: [];
+      editable: true;
+      friendly_name: "digital-alchemy";
+      id: "digital_alchemy";
+      user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59";
     };
+    context: {
+      id: "01HWXTSCSBRKJ9T2KV1JNER5KQ";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "person.digital_alchemy";
+
+    state: "unknown";
   };
-  sensor: {
-    magic: {
-      attributes: {
-        friendly_name: "magic";
-        icon: "mdi:satellite-uplink";
-        restored: true;
-        supported_features: 0;
-      };
-      context: {
-        id: "01HWXTSCSBW34BP3R20RJ09CVZ";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "sensor.magic";
-
-      state: string;
+  "scene.games_room_auto": {
+    attributes: {
+      "Managed By": "home_automation";
+      friendly_name: "bedroom off";
     };
-    sun_next_dawn: {
-      attributes: {
-        device_class: "timestamp";
-        friendly_name: "Sun Next dawn";
-      };
-      context: {
-        id: "01HWXTS8W1SRTPT5K1XM0G491X";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "sensor.sun_next_dawn";
-
-      state: "2024-05-03T03:24:45+00:00";
+    context: {
+      id: "01HWXW289S8HP5MSGNNTNB2CBG";
+      parent_id: null;
+      user_id: null;
     };
-    sun_next_dusk: {
-      attributes: {
-        device_class: "timestamp";
-        friendly_name: "Sun Next dusk";
-      };
-      context: {
-        id: "01HWXTS8W1S95P1MVHDGHSQEB2";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "sensor.sun_next_dusk";
+    entity_id: "scene.games_room_auto";
 
-      state: "2024-05-03T19:51:10+00:00";
-    };
-    sun_next_midnight: {
-      attributes: {
-        device_class: "timestamp";
-        friendly_name: "Sun Next midnight";
-      };
-      context: {
-        id: "01HWXTS8W1YQCPA3WZ69Y9JSPD";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "sensor.sun_next_midnight";
-
-      state: "2024-05-03T23:37:12+00:00";
-    };
-    sun_next_noon: {
-      attributes: {
-        device_class: "timestamp";
-        friendly_name: "Sun Next noon";
-      };
-      context: {
-        id: "01HWXTS8W28MVV48CQ31JB2WKC";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "sensor.sun_next_noon";
-
-      state: "2024-05-03T11:37:19+00:00";
-    };
-    sun_next_rising: {
-      attributes: {
-        device_class: "timestamp";
-        friendly_name: "Sun Next rising";
-      };
-      context: {
-        id: "01HWXTS8W2MMADKGWE4A5BMH51";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "sensor.sun_next_rising";
-
-      state: "2024-05-03T04:05:17+00:00";
-    };
-    sun_next_setting: {
-      attributes: {
-        device_class: "timestamp";
-        friendly_name: "Sun Next setting";
-      };
-      context: {
-        id: "01HWXTS8W24KWTHR2B6V32NCXG";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "sensor.sun_next_setting";
-
-      state: "2024-05-03T19:10:21+00:00";
-    };
+    state: "unknown";
   };
-  sun: {
-    sun: {
-      attributes: {
-        azimuth: 0.35;
-        elevation: -21.86;
-        friendly_name: "Sun";
-        next_dawn: "2024-05-03T03:24:45.747945+00:00";
-        next_dusk: "2024-05-03T19:51:10.358970+00:00";
-        next_midnight: "2024-05-03T23:37:12+00:00";
-        next_noon: "2024-05-03T11:37:19+00:00";
-        next_rising: "2024-05-03T04:05:17.926549+00:00";
-        next_setting: "2024-05-03T19:10:21.280558+00:00";
-        rising: true;
-      };
-      context: {
-        id: "01HWXTS8W1J2TDGMN7KKNWP8DV";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "sun.sun";
-
-      state: "below_horizon";
+  "sensor.magic": {
+    attributes: {
+      friendly_name: "magic";
+      icon: "mdi:satellite-uplink";
+      restored: true;
+      supported_features: 0;
     };
+    context: {
+      id: "01HWXTSCSBW34BP3R20RJ09CVZ";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "sensor.magic";
+
+    state: string;
   };
-  switch: {
-    bedroom_lamp: {
-      attributes: {
-        friendly_name: "bedroom_lamp";
-        restored: true;
-        supported_features: 0;
-      };
-      context: {
-        id: "01HWXTSCSB7BK003CH3AYYVXCB";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "switch.bedroom_lamp";
-
-      state: "unavailable";
+  "sensor.sun_next_dawn": {
+    attributes: {
+      device_class: "timestamp";
+      friendly_name: "Sun Next dawn";
     };
-    kitchen_cabinets: {
-      attributes: {
-        friendly_name: "kitchen_cabinets";
-        restored: true;
-        supported_features: 0;
-      };
-      context: {
-        id: "01HWXTSCSBM9Y3SRQTFJ5CVK6H";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "switch.kitchen_cabinets";
-
-      state: "unavailable";
+    context: {
+      id: "01HWXTS8W1SRTPT5K1XM0G491X";
+      parent_id: null;
+      user_id: null;
     };
-    living_room_mood_lights: {
-      attributes: {
-        friendly_name: "living_room_mood_lights";
-        restored: true;
-        supported_features: 0;
-      };
-      context: {
-        id: "01HWXTSCSBS5B586JJ7VFH10SX";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "switch.living_room_mood_lights";
+    entity_id: "sensor.sun_next_dawn";
 
-      state: "unavailable";
-    };
-    porch_light: {
-      attributes: {
-        friendly_name: "porch_light";
-        restored: true;
-        supported_features: 0;
-      };
-      context: {
-        id: "01HWXTSCSBFTSZR1M5XAK7XSR8";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "switch.porch_light";
-
-      state: "unavailable";
-    };
+    state: "2024-05-03T03:24:45+00:00";
   };
-  todo: {
-    shopping_list: {
-      attributes: {
-        friendly_name: "Shopping List";
-        supported_features: 15;
-      };
-      context: {
-        id: "01HWXTS8X3D417XC4YJTG8QJWB";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "todo.shopping_list";
-
-      state: "0";
+  "sensor.sun_next_dusk": {
+    attributes: {
+      device_class: "timestamp";
+      friendly_name: "Sun Next dusk";
     };
+    context: {
+      id: "01HWXTS8W1S95P1MVHDGHSQEB2";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "sensor.sun_next_dusk";
+
+    state: "2024-05-03T19:51:10+00:00";
   };
-  tts: {
-    google_en_com: {
-      attributes: {
-        friendly_name: "Google en com";
-      };
-      context: {
-        id: "01HWXTS8XMPQ236CDJ6X7C6E60";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "tts.google_en_com";
-
-      state: "unknown";
+  "sensor.sun_next_midnight": {
+    attributes: {
+      device_class: "timestamp";
+      friendly_name: "Sun Next midnight";
     };
+    context: {
+      id: "01HWXTS8W1YQCPA3WZ69Y9JSPD";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "sensor.sun_next_midnight";
+
+    state: "2024-05-03T23:37:12+00:00";
   };
-  zone: {
-    home: {
-      attributes: {
-        editable: true;
-        friendly_name: "Home";
-        icon: "mdi:home";
-        latitude: 52.373_133_9;
-        longitude: 4.890_314_7;
-        passive: false;
-        persons: [];
-        radius: 100;
-      };
-      context: {
-        id: "01HWXTS8GMB4ZW20P8MGMX0QSN";
-        parent_id: null;
-        user_id: null;
-      };
-      entity_id: "zone.home";
-
-      state: "0";
+  "sensor.sun_next_noon": {
+    attributes: {
+      device_class: "timestamp";
+      friendly_name: "Sun Next noon";
     };
+    context: {
+      id: "01HWXTS8W28MVV48CQ31JB2WKC";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "sensor.sun_next_noon";
+
+    state: "2024-05-03T11:37:19+00:00";
+  };
+  "sensor.sun_next_rising": {
+    attributes: {
+      device_class: "timestamp";
+      friendly_name: "Sun Next rising";
+    };
+    context: {
+      id: "01HWXTS8W2MMADKGWE4A5BMH51";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "sensor.sun_next_rising";
+
+    state: "2024-05-03T04:05:17+00:00";
+  };
+  "sensor.sun_next_setting": {
+    attributes: {
+      device_class: "timestamp";
+      friendly_name: "Sun Next setting";
+    };
+    context: {
+      id: "01HWXTS8W24KWTHR2B6V32NCXG";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "sensor.sun_next_setting";
+
+    state: "2024-05-03T19:10:21+00:00";
+  };
+  "sun.sun": {
+    attributes: {
+      azimuth: 0.35;
+      elevation: -21.86;
+      friendly_name: "Sun";
+      next_dawn: "2024-05-03T03:24:45.747945+00:00";
+      next_dusk: "2024-05-03T19:51:10.358970+00:00";
+      next_midnight: "2024-05-03T23:37:12+00:00";
+      next_noon: "2024-05-03T11:37:19+00:00";
+      next_rising: "2024-05-03T04:05:17.926549+00:00";
+      next_setting: "2024-05-03T19:10:21.280558+00:00";
+      rising: true;
+    };
+    context: {
+      id: "01HWXTS8W1J2TDGMN7KKNWP8DV";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "sun.sun";
+
+    state: "below_horizon";
+  };
+  "switch.bedroom_lamp": {
+    attributes: {
+      friendly_name: "bedroom_lamp";
+      restored: true;
+      supported_features: 0;
+    };
+    context: {
+      id: "01HWXTSCSB7BK003CH3AYYVXCB";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "switch.bedroom_lamp";
+
+    state: "unavailable";
+  };
+  "switch.kitchen_cabinets": {
+    attributes: {
+      friendly_name: "kitchen_cabinets";
+      restored: true;
+      supported_features: 0;
+    };
+    context: {
+      id: "01HWXTSCSBM9Y3SRQTFJ5CVK6H";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "switch.kitchen_cabinets";
+
+    state: "unavailable";
+  };
+  "switch.living_room_mood_lights": {
+    attributes: {
+      friendly_name: "living_room_mood_lights";
+      restored: true;
+      supported_features: 0;
+    };
+    context: {
+      id: "01HWXTSCSBS5B586JJ7VFH10SX";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "switch.living_room_mood_lights";
+
+    state: "unavailable";
+  };
+  "switch.porch_light": {
+    attributes: {
+      friendly_name: "porch_light";
+      restored: true;
+      supported_features: 0;
+    };
+    context: {
+      id: "01HWXTSCSBFTSZR1M5XAK7XSR8";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "switch.porch_light";
+
+    state: "unavailable";
+  };
+  "todo.shopping_list": {
+    attributes: {
+      friendly_name: "Shopping List";
+      supported_features: 15;
+    };
+    context: {
+      id: "01HWXTS8X3D417XC4YJTG8QJWB";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "todo.shopping_list";
+
+    state: "0";
+  };
+  "tts.google_en_com": {
+    attributes: {
+      friendly_name: "Google en com";
+    };
+    context: {
+      id: "01HWXTS8XMPQ236CDJ6X7C6E60";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "tts.google_en_com";
+
+    state: "unknown";
+  };
+  "zone.home": {
+    attributes: {
+      editable: true;
+      friendly_name: "Home";
+      icon: "mdi:home";
+      latitude: 52.373_133_9;
+      longitude: 4.890_314_7;
+      passive: false;
+      persons: [];
+      radius: 100;
+    };
+    context: {
+      id: "01HWXTS8GMB4ZW20P8MGMX0QSN";
+      parent_id: null;
+      user_id: null;
+    };
+    entity_id: "zone.home";
+
+    state: "0";
   };
 };
 
