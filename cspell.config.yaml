@@ -3,24 +3,25 @@ ignorePaths: []
 dictionaryDefinitions: []
 dictionaries: []
 words:
+  - cobertura
   - codeowners
+  - endregion
   - entites
   - hass
   - hassio
-  - rgbw
+  - homeassistant
   - homekit
-  - endregion
-  - rgbww
+  - hvac
   - macaddress
   - quickboot
-  - ssdp
-  - tvshow
-  - hvac
-  - rtsp
-  - systype
-  - zeroconf
-  - homeassistant
-  - sonarjs
+  - rgbw
+  - rgbww
   - rrule
+  - rtsp
+  - sonarjs
+  - ssdp
+  - systype
+  - tvshow
+  - zeroconf
 ignoreWords: []
 import: []

@@ -1,6 +1,7 @@
 import { is, TAnyFunction, TServiceParams } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 import { Get } from "type-fest";
+import { isNumeric } from "validator";
 
 import {
   TAreaId,
@@ -52,12 +53,14 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
       const value = internal.utils.object.get(current, property) as string;
       return dayjs(value) as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
     }
+    if (property === "state") {
+      if (domain(entity) === "sensor" && isNumeric(current.state)) {
+        return Number(current.state) as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
+      }
+      return current.state as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
+    }
 
-    const defaultValue = (property === "state" ? undefined : {}) as Get<
-      ENTITY_STATE<ENTITY>,
-      PROPERTY
-    >;
-    return internal.utils.object.get(current, property) || defaultValue;
+    return (current.attributes || {}) as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
   }
 
   // #MARK: byId
