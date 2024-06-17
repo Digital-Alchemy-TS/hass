@@ -28,20 +28,14 @@
     "./mock-assistant": "./dist/mock_assistant/index.js"
   },
   "license": "MIT",
-  "dependencies": {
-    "@digital-alchemy/core": "^24.6.1",
-    "@types/validator": "^13.11.10",
-    "dayjs": "^1.11.11",
-    "prom-client": "^15.1.2",
-    "validator": "^13.12.0",
-    "ws": "^8.17.0"
-  },
   "devDependencies": {
     "@cspell/eslint-plugin": "^8.8.4",
+    "@digital-alchemy/core": "^24.6.1",
     "@digital-alchemy/synapse": "^0.3.8",
     "@digital-alchemy/type-writer": "^0.3.13",
     "@types/figlet": "^1.5.8",
     "@types/jest": "^29.5.12",
+    "@types/validator": "^13.11.10",
     "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.5",
     "@types/mute-stream": "^0.0.4",
@@ -69,6 +63,13 @@
     "tsx": "^4.15.3",
     "type-fest": "^4.20.0",
     "typescript": "^5.4.5"
+  },
+  "peerDependencies": {
+    "@digital-alchemy/core": "*",
+    "dayjs": "^1.11.11",
+    "prom-client": "^15.1.2",
+    "validator": "^13.12.0",
+    "ws": "^8.17.0"
   },
   "jest": {
     "collectCoverage": true,

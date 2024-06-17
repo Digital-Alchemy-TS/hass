@@ -190,7 +190,7 @@ export function WebsocketAPI({
         try {
           await hass.socket.init();
           hass.socket.setConnectionState("connected");
-          logger.info({ name }, "auth success {connecting} => {connected}");
+          logger.debug({ name }, "auth success {connecting} => {connected}");
         } catch (error) {
           logger.error(
             { error, name },
