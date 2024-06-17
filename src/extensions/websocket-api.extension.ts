@@ -520,7 +520,7 @@ export function WebsocketAPI({
       // ? null = deleted entity
       // TODO: handle renames properly
       if (new_state || new_state === null) {
-        hass.entity.entityUpdateReceiver(id, new_state, old_state);
+        hass.entity._entityUpdateReceiver(id, new_state, old_state);
       } else {
         // FIXME: probably removal / rename?
         // It's an edge case for sure, and not positive this code should handle it

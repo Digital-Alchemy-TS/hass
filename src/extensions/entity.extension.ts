@@ -53,7 +53,6 @@ export function EntityManager({
    */
   let MASTER_STATE = {} as Partial<TMasterState>;
   const PREVIOUS_STATE = new Map<ANY_ENTITY, ENTITY_STATE<ANY_ENTITY>>();
-  const UNIQUE_ID_MAP = new Map<ANY_ENTITY, string>();
   let lastRefresh: Dayjs;
   function warnEarly(method: string) {
     if (!init) {
@@ -229,7 +228,9 @@ export function EntityManager({
     internal.utils.object.set(MASTER_STATE, entity_id, new_state);
     if (!hass.socket.pauseMessages) {
       event.emit(entity_id, new_state, old_state);
-      const unique_id = UNIQUE_ID_MAP.get(entity_id);
+      const unique_id = hass.entity.registry.current.find(
+        i => i.entity_id === entity_id,
+      )?.unique_id;
       if (!is.empty(unique_id)) {
         event.emit(unique_id, new_state, old_state);
       }
@@ -272,13 +273,9 @@ export function EntityManager({
 
   // #MARK: EntityList
   async function EntityList() {
-    const out = await hass.socket.sendMessage<EntityRegistryItem<ANY_ENTITY>[]>(
-      {
-        type: "config/entity_registry/list",
-      },
-    );
-    out.forEach(i => UNIQUE_ID_MAP.set(i.entity_id, i.unique_id));
-    return out;
+    return await hass.socket.sendMessage<EntityRegistryItem<ANY_ENTITY>[]>({
+      type: "config/entity_registry/list",
+    });
   }
 
   // #MARK: RemoveLabel
@@ -339,7 +336,13 @@ export function EntityManager({
   // #MARK: return object
   return {
     _entityEvents: () => event,
+    /**
+     * Internal library use only
+     */
+    _entityUpdateReceiver: EntityUpdateReceiver,
+
     _masterState: () => MASTER_STATE,
+
     /**
      * Retrieve a list of entities listed as being part of a certain area
      * Tracks area updates at runtime
@@ -418,11 +421,6 @@ export function EntityManager({
      */
     byUniqueId: <ID extends ANY_ENTITY>(unique_id: string) =>
       hass.refBy.unique_id<ID>(unique_id),
-
-    /**
-     * Internal library use only
-     */
-    entityUpdateReceiver: EntityUpdateReceiver,
 
     /**
      * Lists all entities within a specified domain. This is useful for
