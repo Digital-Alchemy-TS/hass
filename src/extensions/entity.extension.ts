@@ -9,7 +9,6 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
-import EventEmitter from "events";
 import { exit } from "process";
 
 import {
@@ -33,9 +32,7 @@ import {
 } from "..";
 
 const MAX_ATTEMPTS = 10;
-const UNLIMITED = 0;
 const RECENT = 5;
-export const ENTITY_UPDATE_RECEIVER = Symbol.for("entityUpdateReceiver");
 
 type TMasterState = {
   [DOMAIN in ALL_DOMAINS]: Record<string, ENTITY_STATE<PICK_ENTITY<DOMAIN>>>;
@@ -72,8 +69,6 @@ export function EntityManager({
 
   // * Local event emitter for coordination of socket events
   // Other libraries will internally take advantage of this eventemitter
-  const ENTITY_EVENTS = new EventEmitter();
-  ENTITY_EVENTS.setMaxListeners(UNLIMITED);
   let init = false;
 
   // #MARK: getCurrentState
@@ -232,7 +227,13 @@ export function EntityManager({
     }
     internal.utils.object.set(MASTER_STATE, entity_id, new_state);
     if (!hass.socket.pauseMessages) {
-      ENTITY_EVENTS.emit(entity_id, new_state, old_state);
+      event.emit(entity_id, new_state, old_state);
+      const unique_id = hass.entity.registry.current.find(
+        i => i.entity_id === entity_id,
+      )?.unique_id;
+      if (!is.empty(unique_id)) {
+        event.emit(unique_id, new_state, old_state);
+      }
     }
   }
 
@@ -334,8 +335,14 @@ export function EntityManager({
 
   // #MARK: return object
   return {
-    _entityEvents: () => ENTITY_EVENTS,
+    _entityEvents: () => event,
+    /**
+     * Internal library use only
+     */
+    _entityUpdateReceiver: EntityUpdateReceiver,
+
     _masterState: () => MASTER_STATE,
+
     /**
      * Retrieve a list of entities listed as being part of a certain area
      * Tracks area updates at runtime
@@ -414,11 +421,6 @@ export function EntityManager({
      */
     byUniqueId: <ID extends ANY_ENTITY>(unique_id: string) =>
       hass.refBy.unique_id<ID>(unique_id),
-
-    /**
-     * Internal library use only
-     */
-    entityUpdateReceiver: EntityUpdateReceiver,
 
     /**
      * Lists all entities within a specified domain. This is useful for

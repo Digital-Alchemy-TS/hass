@@ -23,6 +23,40 @@ describe("Entity", () => {
   });
 
   describe("API", () => {
+    describe("Updates", () => {
+      it("should emit events onConnect", async () => {
+        expect.assertions(3);
+        application = CreateTestingApplication({
+          Test({ lifecycle, hass, event }: TServiceParams) {
+            lifecycle.onReady(() => {
+              const old_state = hass.entity.raw("sensor.magic");
+              const new_state = { ...old_state, state: "test" };
+              const spy = jest.spyOn(event, "emit");
+              hass.entity._entityUpdateReceiver(
+                "sensor.magic",
+                new_state,
+                old_state,
+              );
+              expect(spy).toHaveReturnedTimes(2);
+              expect(spy).toHaveBeenCalledWith(
+                "sensor.magic",
+                new_state,
+                old_state,
+              );
+              expect(spy).toHaveBeenCalledWith(
+                "e1806fdc93296bbd5ab42967003cd38729ff9ba6cfeefc3e15a03ad01ac894fe",
+                new_state,
+                old_state,
+              );
+            });
+          },
+        });
+        await application.bootstrap(
+          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+        );
+      });
+    });
+
     it("should emit events onConnect", async () => {
       expect.assertions(1);
       application = CreateTestingApplication({
