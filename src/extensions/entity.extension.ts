@@ -29,6 +29,8 @@ import {
   TLabelId,
   TPlatformId,
   TRawDomains,
+  TUniqueId,
+  TUniqueIDMapping,
 } from "..";
 
 const MAX_ATTEMPTS = 10;
@@ -419,8 +421,15 @@ export function EntityManager({
      *
      * @deprecated use `hass.idBy.unique_id` | `hass.refBy.unique_id`
      */
-    byUniqueId: <ID extends ANY_ENTITY>(unique_id: string) =>
-      hass.refBy.unique_id<ID>(unique_id),
+    byUniqueId: <
+      UNIQUE_ID extends TUniqueId,
+      ENTITY_ID extends Extract<
+        TUniqueIDMapping[UNIQUE_ID],
+        ANY_ENTITY
+      > = Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY>,
+    >(
+      unique_id: UNIQUE_ID,
+    ) => hass.refBy.unique_id<UNIQUE_ID, ENTITY_ID>(unique_id),
 
     /**
      * Lists all entities within a specified domain. This is useful for
