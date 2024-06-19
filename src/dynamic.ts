@@ -4182,3 +4182,47 @@ export type TRawDomains =
   | "binary_sensor"
   | "switch"
   | "calendar";
+
+export type TUniqueIDMapping = {
+  "5622d76001a335e3ea893c4d60d31b3d-next_dawn": "sensor.sun_next_dawn";
+  "5622d76001a335e3ea893c4d60d31b3d-next_dusk": "sensor.sun_next_dusk";
+  "5622d76001a335e3ea893c4d60d31b3d-next_midnight": "sensor.sun_next_midnight";
+  "5622d76001a335e3ea893c4d60d31b3d-next_noon": "sensor.sun_next_noon";
+  "5622d76001a335e3ea893c4d60d31b3d-next_rising": "sensor.sun_next_rising";
+  "5622d76001a335e3ea893c4d60d31b3d-next_setting": "sensor.sun_next_setting";
+  "5622d76001a335e3ea893c4d60d31b3d-solar_elevation": "sensor.sun_solar_elevation";
+  "5622d76001a335e3ea893c4d60d31b3d-solar_azimuth": "sensor.sun_solar_azimuth";
+  "5622d76001a335e3ea893c4d60d31b3d-solar_rising": "sensor.sun_solar_rising";
+  digital_alchemy: "person.digital_alchemy";
+  "6acd101923c0460fc31bad82c4efa140": "todo.shopping_list";
+  "4a7fc2592d3a98e0eed8cbc73e839c1c": "tts.google_en_com";
+  hass_e2e_is_online: "binary_sensor.hass_e2e_online";
+  e1806fdc93296bbd5ab42967003cd38729ff9ba6cfeefc3e15a03ad01ac894fe: "sensor.magic";
+  a6e8373221727e197144ba689d7606d4be6f609f2fd0fd8e17516548780465ab: "binary_sensor.toggles";
+  "413eb6d69bbec134a07a6d32effd3c3763955e611f43256600cca40725276816": "switch.bedroom_lamp";
+  "06d5a22e681ee9c668f8563bd3108853fb053c43342131782afe989090c4ced9": "switch.kitchen_cabinets";
+  "27b4fc99f35bbdd1a07173caff5b52f86e3bc342db96f48427e47980b0fb6b49": "switch.living_room_mood_lights";
+  "8eb8c1f8c760e97cfa49a0a29cd6891313a1e9a45dd046a556a9f317778cf50a": "switch.porch_light";
+  "05ecbbc6111791b6baacbbb60397db14": "calendar.united_states_tx";
+};
+export type TUniqueId =
+  | "5622d76001a335e3ea893c4d60d31b3d-next_dawn"
+  | "5622d76001a335e3ea893c4d60d31b3d-next_dusk"
+  | "5622d76001a335e3ea893c4d60d31b3d-next_midnight"
+  | "5622d76001a335e3ea893c4d60d31b3d-next_noon"
+  | "5622d76001a335e3ea893c4d60d31b3d-next_rising"
+  | "5622d76001a335e3ea893c4d60d31b3d-next_setting"
+  | "5622d76001a335e3ea893c4d60d31b3d-solar_elevation"
+  | "5622d76001a335e3ea893c4d60d31b3d-solar_azimuth"
+  | "5622d76001a335e3ea893c4d60d31b3d-solar_rising"
+  | "digital_alchemy"
+  | "6acd101923c0460fc31bad82c4efa140"
+  | "4a7fc2592d3a98e0eed8cbc73e839c1c"
+  | "hass_e2e_is_online"
+  | "e1806fdc93296bbd5ab42967003cd38729ff9ba6cfeefc3e15a03ad01ac894fe"
+  | "a6e8373221727e197144ba689d7606d4be6f609f2fd0fd8e17516548780465ab"
+  | "413eb6d69bbec134a07a6d32effd3c3763955e611f43256600cca40725276816"
+  | "06d5a22e681ee9c668f8563bd3108853fb053c43342131782afe989090c4ced9"
+  | "27b4fc99f35bbdd1a07173caff5b52f86e3bc342db96f48427e47980b0fb6b49"
+  | "8eb8c1f8c760e97cfa49a0a29cd6891313a1e9a45dd046a556a9f317778cf50a"
+  | "05ecbbc6111791b6baacbbb60397db14";

@@ -6,6 +6,8 @@ import {
   TFloorId,
   TLabelId,
   TPlatformId,
+  TUniqueId,
+  TUniqueIDMapping,
 } from "../dynamic";
 import {
   ALL_DOMAINS,
@@ -39,11 +41,17 @@ export function IDByExtension({ hass, logger }: TServiceParams) {
   }
 
   // #MARK: byUniqueId
-  function unique_id<ID extends ANY_ENTITY>(unique_id: string): ID {
+  function unique_id<
+    UNIQUE_ID extends TUniqueId,
+    ENTITY_ID extends Extract<
+      TUniqueIDMapping[UNIQUE_ID],
+      ANY_ENTITY
+    > = Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY>,
+  >(unique_id: UNIQUE_ID): ENTITY_ID {
     hass.entity.warnEarly("byUniqueId");
     const entity = hass.entity.registry.current.find(
       i => i.unique_id === unique_id,
-    ) as EntityRegistryItem<ID>;
+    ) as EntityRegistryItem<ENTITY_ID>;
     if (!entity) {
       logger.error({ name: unique_id, unique_id }, `could not find an entity`);
       return undefined;

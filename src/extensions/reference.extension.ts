@@ -10,6 +10,8 @@ import {
   TLabelId,
   TPlatformId,
   TRawDomains,
+  TUniqueId,
+  TUniqueIDMapping,
 } from "../dynamic";
 import {
   ALL_SERVICE_DOMAINS,
@@ -224,9 +226,20 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
         .platform<PLATFORM, DOMAINS>(platform, ...domains)
         .map(id => byId(id)),
 
-    unique_id: <ID extends ANY_ENTITY>(unique_id: string): ByIdProxy<ID> => {
-      const id = hass.idBy.unique_id<ID>(unique_id);
-      return id ? byId(id) : undefined;
+    unique_id: <
+      UNIQUE_ID extends TUniqueId,
+      ENTITY_ID extends Extract<
+        TUniqueIDMapping[UNIQUE_ID],
+        ANY_ENTITY
+      > = Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY>,
+    >(
+      unique_id: UNIQUE_ID,
+    ): ByIdProxy<ENTITY_ID> => {
+      const id = hass.idBy.unique_id<UNIQUE_ID, ENTITY_ID>(unique_id);
+      if (!id) {
+        return undefined;
+      }
+      return byId(id);
     },
   };
 }
