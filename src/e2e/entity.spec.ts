@@ -30,7 +30,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            const porch = hass.entity.byId("switch.porch_light");
+            const porch = hass.refBy.id("switch.porch_light");
             const startRaw = hass.entity.raw("switch.porch_light");
             expect(porch.state).toBe(startRaw.state);
             hass.call.switch.toggle({ entity_id: "switch.porch_light" });
@@ -50,7 +50,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            const porch = hass.entity.byId("switch.porch_light");
+            const porch = hass.refBy.id("switch.porch_light");
             const raw = hass.entity.raw("switch.porch_light");
             expect(porch.state).toBe(raw.state);
             expect(porch.attributes).toEqual(raw.attributes);
@@ -72,7 +72,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            const porch = hass.entity.byId("switch.porch_light");
+            const porch = hass.refBy.id("switch.porch_light");
             porch.onUpdate(() => counter++);
             for (let i = 0; i < expected; i++) {
               await hass.call.switch.toggle({
@@ -94,7 +94,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            const porch = hass.entity.byId("switch.porch_light");
+            const porch = hass.refBy.id("switch.porch_light");
             porch.onUpdate((_new_state, _old_state, remove) => {
               remove();
               counter++;
@@ -119,7 +119,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            const porch = hass.entity.byId("switch.porch_light");
+            const porch = hass.refBy.id("switch.porch_light");
             const { remove } = porch.onUpdate(() => {
               remove();
               counter++;
@@ -144,7 +144,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            const porch = hass.entity.byId("switch.porch_light");
+            const porch = hass.refBy.id("switch.porch_light");
             porch.onUpdate(() => {
               porch.removeAllListeners();
               counter++;
@@ -169,7 +169,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            const porch = hass.entity.byId("switch.porch_light");
+            const porch = hass.refBy.id("switch.porch_light");
             porch.once(() => counter++);
             for (let i = 0; i <= 2; i++) {
               await hass.call.switch.toggle({
@@ -190,7 +190,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            const porch = hass.entity.byId("switch.porch_light");
+            const porch = hass.refBy.id("switch.porch_light");
             setImmediate(async () => {
               const next = await porch.nextState();
               expect(next.state).toBe(porch.state);
@@ -209,7 +209,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            const porch = hass.entity.byId("switch.porch_light");
+            const porch = hass.refBy.id("switch.porch_light");
             setImmediate(async () => {
               const next = await porch.nextState();
               expect(next.state).toBe(porch.state);

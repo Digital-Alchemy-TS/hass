@@ -32,7 +32,7 @@ describe("Call Proxy E2E", () => {
         lifecycle.onReady(async () => {
           let hit = false;
           const wait = sleep(SETTLE_TIMEOUT);
-          hass.entity.byId("switch.porch_light").onUpdate(() => {
+          hass.refBy.id("switch.porch_light").onUpdate(() => {
             hit = true;
             wait.kill("continue");
           });

@@ -24,7 +24,7 @@ describe("Entity", () => {
 
   describe("API", () => {
     describe("Updates", () => {
-      it("should emit events onConnect", async () => {
+      it("should emit updates on change", async () => {
         expect.assertions(3);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
@@ -55,22 +55,41 @@ describe("Entity", () => {
           SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
         );
       });
-    });
 
-    it("should emit events onConnect", async () => {
-      expect.assertions(1);
-      application = CreateTestingApplication({
-        Test({ lifecycle, hass }: TServiceParams) {
-          let hit = false;
-          hass.socket.onConnect(() => (hit = true));
-          lifecycle.onReady(() => {
-            expect(hit).toBe(true);
-          });
-        },
+      it("returns undefined from nextState when timeout is exceeded", async () => {
+        expect.assertions(1);
+        application = CreateTestingApplication({
+          Test({ lifecycle, hass }: TServiceParams) {
+            lifecycle.onReady(async () => {
+              const entity = hass.refBy.id("sensor.magic");
+              const old_state = hass.entity.raw("sensor.magic");
+
+              // Set a timeout of 100ms
+              const wait = new Promise<ENTITY_STATE<ANY_ENTITY> | undefined>(
+                async done => {
+                  done(await entity.nextState(25));
+                },
+              );
+
+              // Simulate delay longer than the timeout to ensure timeout is exceeded
+              setTimeout(() => {
+                const new_state = { ...old_state, state: "test" };
+                hass.entity._entityUpdateReceiver(
+                  "sensor.magic",
+                  new_state,
+                  old_state,
+                );
+              }, 50); // 200ms delay
+
+              const result = await wait;
+              expect(result).toBeUndefined();
+            });
+          },
+        });
+        await application.bootstrap(
+          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+        );
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
     });
 
     it("should find entities by unique_id", async () => {

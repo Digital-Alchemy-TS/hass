@@ -26,7 +26,7 @@ describe("Workflows", () => {
           schedule: CronExpression.EVERY_DAY_AT_8PM,
         });
 
-        const entity = hass.entity.byId("sensor.magic");
+        const entity = hass.refBy.id("sensor.magic");
         entity.onUpdate(async () => {
           const action = entity.state === "test" ? "turn_on" : "turn_off";
           await hass.call.switch[action]({
