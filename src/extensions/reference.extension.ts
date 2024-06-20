@@ -1,4 +1,10 @@
-import { is, TAnyFunction, TServiceParams } from "@digital-alchemy/core";
+import {
+  is,
+  NONE,
+  sleep,
+  TAnyFunction,
+  TServiceParams,
+} from "@digital-alchemy/core";
 import dayjs from "dayjs";
 import { Get } from "type-fest";
 import { isNumeric } from "validator";
@@ -27,7 +33,12 @@ import {
   PICK_FROM_PLATFORM,
 } from "../helpers";
 
-export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
+export function ReferenceExtension({
+  hass,
+  logger,
+  internal,
+  event,
+}: TServiceParams) {
   const ENTITY_PROXIES = new Map<ANY_ENTITY, ByIdProxy<ANY_ENTITY>>();
   // #MARK:proxyGetLogic
   function proxyGetLogic<
@@ -80,49 +91,71 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
         new Proxy(thing, {
           // things that shouldn't be needed: this extract
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
-            if (property === "onUpdate") {
-              return (callback: TAnyFunction) => {
-                const removableCallback = async (
-                  a: ENTITY_STATE<ENTITY_ID>,
-                  b: ENTITY_STATE<ENTITY_ID>,
-                ) =>
-                  await internal.safeExec(async () => callback(a, b, remove));
-                function remove() {
-                  hass.entity
-                    ._entityEvents()
-                    .removeListener(entity_id, removableCallback);
-                }
+            switch (property) {
+              // * onUpdate
+              case "onUpdate": {
+                return (callback: TAnyFunction) => {
+                  const removableCallback = async (
+                    a: ENTITY_STATE<ENTITY_ID>,
+                    b: ENTITY_STATE<ENTITY_ID>,
+                  ) =>
+                    await internal.safeExec(async () => callback(a, b, remove));
+                  function remove() {
+                    event.removeListener(entity_id, removableCallback);
+                  }
 
-                hass.entity._entityEvents().on(entity_id, removableCallback);
-                return { remove };
-              };
-            }
-            if (property === "removeAllListeners") {
-              return function () {
-                hass.entity._entityEvents().removeAllListeners(entity_id);
-              };
-            }
-            if (property === "once") {
-              return (callback: TAnyFunction) =>
-                hass.entity
-                  ._entityEvents()
-                  .once(entity_id, async (a, b) => callback(a, b));
-            }
-            if (property === "entity_id") {
-              return entity_id;
-            }
-            if (property === "previous") {
-              return hass.entity.previousState(entity_id);
-            }
-            if (property === "nextState") {
-              return async () =>
-                await new Promise<ENTITY_STATE<ENTITY_ID>>(done => {
-                  hass.entity
-                    ._entityEvents()
-                    .once(entity_id, (entity: ENTITY_STATE<ENTITY_ID>) =>
-                      done(entity satisfies ENTITY_STATE<ENTITY_ID>),
-                    );
-                });
+                  event.on(entity_id, removableCallback);
+                  return { remove };
+                };
+              }
+
+              // * removeAllListeners
+              case "removeAllListeners": {
+                return function () {
+                  event.removeAllListeners(entity_id);
+                };
+              }
+
+              // * once
+              case "once": {
+                return (callback: TAnyFunction) =>
+                  event.once(entity_id, async (a, b) => callback(a, b));
+              }
+
+              // * entity_id
+              case "entity_id": {
+                return entity_id;
+              }
+
+              // * previous
+              case "previous": {
+                return hass.entity.previousState(entity_id);
+              }
+
+              // * nextState
+              case "nextState": {
+                return async (timeout?: number) =>
+                  await new Promise<ENTITY_STATE<ENTITY_ID>>(async done => {
+                    const complete = (entity: ENTITY_STATE<ENTITY_ID>) => {
+                      if (done) {
+                        done(entity satisfies ENTITY_STATE<ENTITY_ID>);
+                        done = undefined;
+                      }
+                    };
+                    event.once(entity_id, complete);
+                    if (is.number(timeout) && timeout > NONE) {
+                      await sleep(timeout);
+                      if (done) {
+                        logger.debug(
+                          { entity_id, name: "nextState", timeout },
+                          "timed out",
+                        );
+                        done(undefined);
+                        done = undefined;
+                      }
+                    }
+                  });
+              }
             }
             if (hass.configure.isService(entity_domain, property)) {
               return async function (data = {}) {
@@ -140,6 +173,7 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
             property: Extract<keyof ByIdProxy<ENTITY_ID>, string>,
             value: unknown,
           ) {
+            // * state
             if (property === "state") {
               setImmediate(async () => {
                 logger.debug(
@@ -152,6 +186,7 @@ export function ReferenceExtension({ hass, logger, internal }: TServiceParams) {
               });
               return true;
             }
+            // * attributes
             if (property === "attributes") {
               if (!is.object(value)) {
                 logger.error(`can only provide objects as attributes`);

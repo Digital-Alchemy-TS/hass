@@ -337,7 +337,6 @@ export function EntityManager({
 
   // #MARK: return object
   return {
-    _entityEvents: () => event,
     /**
      * Internal library use only
      */
