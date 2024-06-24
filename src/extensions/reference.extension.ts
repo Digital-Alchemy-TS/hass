@@ -5,7 +5,7 @@ import {
   TAnyFunction,
   TServiceParams,
 } from "@digital-alchemy/core";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { Get } from "type-fest";
 import { isNumeric } from "validator";
 
@@ -113,6 +113,17 @@ export function ReferenceExtension({
               case "removeAllListeners": {
                 return function () {
                   event.removeAllListeners(entity_id);
+                };
+              }
+
+              // * history
+              case "history": {
+                return async function (from: Dayjs | Date, to: Dayjs | Date) {
+                  return await hass.fetch.fetchEntityHistory(
+                    entity_id,
+                    from,
+                    to,
+                  );
                 };
               }
 
