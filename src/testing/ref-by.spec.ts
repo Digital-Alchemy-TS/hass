@@ -6,6 +6,7 @@ import {
 } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
+import { ANY_ENTITY, ENTITY_STATE } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("ID By", () => {
@@ -81,6 +82,31 @@ describe("ID By", () => {
             expect(sensor.last_changed instanceof dayjs).toBe(true);
             expect(sensor.last_reported instanceof dayjs).toBe(true);
             expect(sensor.last_updated instanceof dayjs).toBe(true);
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("passes through history calls", async () => {
+      expect.assertions(2);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(async () => {
+            const result = [] as ENTITY_STATE<ANY_ENTITY>[];
+            const spy = jest
+              .spyOn(hass.fetch, "fetchEntityHistory")
+              .mockImplementation(async () => result);
+            const from = new Date();
+            const to = new Date();
+            const entity_id = "sensor.magic";
+
+            const entity = hass.refBy.id(entity_id);
+            const out = await entity.history(from, to);
+            expect(spy).toHaveBeenCalledWith(entity_id, from, to);
+            expect(out).toBe(result);
           });
         },
       });
