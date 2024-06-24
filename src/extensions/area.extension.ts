@@ -32,15 +32,16 @@ export function Area({
       done();
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
-    hass.socket.subscribe({
-      context,
-      event_type: "area_registry_updated",
-      async exec() {
-        hass.area.current = await hass.area.list();
-        logger.debug(`area registry updated`);
-        event.emit(AREA_REGISTRY_UPDATED);
-      },
-    });
+  });
+
+  hass.socket.subscribe({
+    context,
+    event_type: "area_registry_updated",
+    async exec() {
+      hass.area.current = await hass.area.list();
+      logger.debug(`area registry updated`);
+      event.emit(AREA_REGISTRY_UPDATED);
+    },
   });
 
   async function list() {
