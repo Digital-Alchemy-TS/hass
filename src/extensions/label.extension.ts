@@ -26,15 +26,16 @@ export function Label({
       done();
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
-    hass.socket.subscribe({
-      context,
-      event_type: "label_registry_updated",
-      async exec() {
-        hass.label.current = await hass.label.list();
-        logger.debug(`label registry updated`);
-        event.emit(LABEL_REGISTRY_UPDATED);
-      },
-    });
+  });
+
+  hass.socket.subscribe({
+    context,
+    event_type: "label_registry_updated",
+    async exec() {
+      hass.label.current = await hass.label.list();
+      logger.debug(`label registry updated`);
+      event.emit(LABEL_REGISTRY_UPDATED);
+    },
   });
 
   async function create(details: LabelOptions) {

@@ -24,16 +24,17 @@ export function Device({
       done();
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
-    hass.socket.subscribe({
-      context,
-      event_type: "device_registry_updated",
-      async exec() {
-        hass.device.current = await hass.device.list();
-        logger.debug(`device registry updated`);
-        event.emit(DEVICE_REGISTRY_UPDATED);
-      },
-    });
     await SubscribeUpdates();
+  });
+
+  hass.socket.subscribe({
+    context,
+    event_type: "device_registry_updated",
+    async exec() {
+      hass.device.current = await hass.device.list();
+      logger.debug(`device registry updated`);
+      event.emit(DEVICE_REGISTRY_UPDATED);
+    },
   });
 
   async function SubscribeUpdates() {

@@ -1,14 +1,14 @@
 {
   "name": "@digital-alchemy/hass",
   "repository": "https://github.com/Digital-Alchemy-TS/hass",
-  "homepage": "https://docs.digital-alchemy.app/Hass",
-  "version": "24.06.8",
+  "homepage": "https://docs.digital-alchemy.app",
+  "version": "24.6.9",
   "scripts": {
     "build": "rm -rf dist/; tsc",
     "lint": "eslint src",
     "test": "./scripts/test.sh",
-    "prepublishOnly": "npm run build",
-    "upgrade": "ncu -f '@digital-alchemy/*' -u; npm i"
+    "prepublishOnly": "yarn build",
+    "upgrade": "ncu -f '@digital-alchemy/*' -u; yarn"
   },
   "bin": {
     "mock-assistant": "./dist/mock_assistant/main.js"
@@ -36,20 +36,21 @@
   "license": "MIT",
   "devDependencies": {
     "@cspell/eslint-plugin": "^8.8.4",
-    "@digital-alchemy/core": "^24.6.3",
-    "@digital-alchemy/synapse": "^24.6.3",
+    "@digital-alchemy/core": "^24.6.4",
+    "@digital-alchemy/synapse": "^24.6.4",
     "@digital-alchemy/type-writer": "^24.6.5",
     "@types/figlet": "^1.5.8",
     "@types/jest": "^29.5.12",
-    "@types/validator": "^13.11.10",
     "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.5",
     "@types/mute-stream": "^0.0.4",
     "@types/node": "^20.14.2",
     "@types/uuid": "^9.0.8",
+    "@types/validator": "^13.11.10",
     "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "7.13.0",
     "@typescript-eslint/parser": "7.13.0",
+    "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsonc": "^2.15.1",
@@ -60,9 +61,8 @@
     "eslint-plugin-sonarjs": "^0.25.1",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-unicorn": "^52.0.0",
-    "eslint": "8.57.0",
-    "jest-environment-node": "^29.7.0",
     "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
     "npm-check-updates": "^16.14.20",
     "prettier": "^3.3.2",
     "ts-jest": "^29.1.4",
@@ -98,5 +98,6 @@
         }
       ]
     }
-  }
+  },
+  "packageManager": "yarn@4.3.1"
 }

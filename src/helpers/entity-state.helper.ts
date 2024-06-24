@@ -1,4 +1,5 @@
 import { FIRST, TBlackHole } from "@digital-alchemy/core";
+import { Dayjs } from "dayjs";
 import { Except } from "type-fest";
 
 import {
@@ -60,6 +61,13 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> =
      * Run callback
      */
     onUpdate: RemovableCallback<ENTITY_ID>;
+    /**
+     * Retrieve state changes for an entity in a date range
+     */
+    history: (
+      from: Dayjs | Date,
+      to: Dayjs | Date,
+    ) => Promise<ENTITY_STATE<ENTITY_ID>[]>;
     /**
      * Run callback once, for next update
      */
