@@ -47,8 +47,8 @@ export function FetchAPI({
 
   // Load configurations
   lifecycle.onPostConfig(() => {
-    fetcher.setBaseUrl(config.hass.BASE_URL);
-    fetcher.setHeaders({ Authorization: `Bearer ${config.hass.TOKEN}` });
+    fetcher.base_url = config.hass.BASE_URL;
+    fetcher.base_headers = { Authorization: `Bearer ${config.hass.TOKEN}` };
   }, PostConfigPriorities.FETCH);
 
   async function calendarSearch({
