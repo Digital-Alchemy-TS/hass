@@ -29,7 +29,7 @@ describe("Entity", () => {
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
             lifecycle.onReady(() => {
-              const old_state = hass.entity.raw("sensor.magic");
+              const old_state = hass.entity.getCurrentState("sensor.magic");
               const new_state = { ...old_state, state: "test" };
               const spy = jest.spyOn(event, "emit");
               hass.entity._entityUpdateReceiver(
@@ -62,7 +62,7 @@ describe("Entity", () => {
           Test({ lifecycle, hass }: TServiceParams) {
             lifecycle.onReady(async () => {
               const entity = hass.refBy.id("sensor.magic");
-              const old_state = hass.entity.raw("sensor.magic");
+              const old_state = hass.entity.getCurrentState("sensor.magic");
 
               // Set a timeout of 100ms
               const wait = new Promise<ENTITY_STATE<ANY_ENTITY> | undefined>(
@@ -116,7 +116,7 @@ describe("Entity", () => {
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
             const allData = hass.entity._masterState();
-            const single = hass.entity.raw("sun.sun");
+            const single = hass.entity.getCurrentState("sun.sun");
             expect(single).toBe(allData.sun.sun);
           });
         },
@@ -133,11 +133,11 @@ describe("Entity", () => {
           const entity_id = "sensor.magic";
           const value = "bar";
           lifecycle.onReady(async () => {
-            const start = hass.entity.raw(entity_id);
+            const start = hass.entity.getCurrentState(entity_id);
             await mock_assistant.events.emitEntityUpdate(entity_id, {
               state: value,
             });
-            const updated = hass.entity.raw(entity_id);
+            const updated = hass.entity.getCurrentState(entity_id);
             const previous = hass.entity.previousState(entity_id);
             expect(updated.state).toBe(value);
             expect(start.state).not.toBe(value);

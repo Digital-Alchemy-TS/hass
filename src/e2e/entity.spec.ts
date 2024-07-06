@@ -31,11 +31,11 @@ describe("Entity E2E", () => {
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
             const porch = hass.refBy.id("switch.porch_light");
-            const startRaw = hass.entity.raw("switch.porch_light");
+            const startRaw = hass.entity.getCurrentState("switch.porch_light");
             expect(porch.state).toBe(startRaw.state);
             hass.call.switch.toggle({ entity_id: "switch.porch_light" });
             const updated = await porch.nextState();
-            const endRaw = hass.entity.raw("switch.porch_light");
+            const endRaw = hass.entity.getCurrentState("switch.porch_light");
             expect(updated.state).toBe(porch.state);
             expect(endRaw.state).toBe(porch.state);
             await application.teardown();
@@ -51,7 +51,7 @@ describe("Entity E2E", () => {
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
             const porch = hass.refBy.id("switch.porch_light");
-            const raw = hass.entity.raw("switch.porch_light");
+            const raw = hass.entity.getCurrentState("switch.porch_light");
             expect(porch.state).toBe(raw.state);
             expect(porch.attributes).toEqual(raw.attributes);
             expect(porch.last_changed).toBe(raw.last_changed);
@@ -250,13 +250,13 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            expect(hass.entity.byArea("bedroom")).toEqual([
+            expect(hass.idBy.area("bedroom")).toEqual([
               "switch.bedroom_lamp",
             ] as PICK_ENTITY[]);
-            expect(hass.entity.byArea("living_room")).toEqual([
+            expect(hass.idBy.area("living_room")).toEqual([
               "switch.living_room_mood_lights",
             ] as PICK_ENTITY[]);
-            expect(hass.entity.byArea("kitchen")).toEqual([
+            expect(hass.idBy.area("kitchen")).toEqual([
               "switch.kitchen_cabinets",
             ] as PICK_ENTITY[]);
             await application.teardown();
@@ -271,10 +271,10 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            expect(hass.entity.byFloor("upstairs")).toEqual([
+            expect(hass.idBy.floor("upstairs")).toEqual([
               "switch.bedroom_lamp",
             ] as PICK_ENTITY[]);
-            expect(hass.entity.byFloor("downstairs")).toEqual([
+            expect(hass.idBy.floor("downstairs")).toEqual([
               "switch.kitchen_cabinets",
               "switch.living_room_mood_lights",
             ] as PICK_ENTITY[]);
@@ -290,7 +290,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            expect(hass.entity.byLabel("synapse")).toEqual([
+            expect(hass.idBy.label("synapse")).toEqual([
               "binary_sensor.hass_e2e_online",
               "sensor.magic",
               "binary_sensor.toggles",
@@ -311,7 +311,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            expect(hass.entity.byPlatform("synapse")).toEqual([
+            expect(hass.idBy.platform("synapse")).toEqual([
               "binary_sensor.hass_e2e_online",
               "sensor.magic",
               "binary_sensor.toggles",
@@ -333,7 +333,7 @@ describe("Entity E2E", () => {
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
             expect(
-              hass.entity.byDevice("308e39cf50a9fc6c30b4110724ed1f2e"),
+              hass.idBy.device("308e39cf50a9fc6c30b4110724ed1f2e"),
             ).toEqual([
               "sensor.sun_next_dawn",
               "sensor.sun_next_dusk",
