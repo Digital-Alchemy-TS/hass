@@ -14,7 +14,6 @@ import { exit } from "process";
 import {
   ALL_DOMAINS,
   ANY_ENTITY,
-  ByIdProxy,
   EditLabelOptions,
   ENTITY_REGISTRY_UPDATED,
   ENTITY_STATE,
@@ -23,14 +22,6 @@ import {
   EntityHistoryResult,
   EntityRegistryItem,
   PICK_ENTITY,
-  TAreaId,
-  TDeviceId,
-  TFloorId,
-  TLabelId,
-  TPlatformId,
-  TRawDomains,
-  TUniqueId,
-  TUniqueIDMapping,
 } from "..";
 
 const MAX_ATTEMPTS = 10;
@@ -345,92 +336,6 @@ export function EntityManager({
     _masterState: () => MASTER_STATE,
 
     /**
-     * Retrieve a list of entities listed as being part of a certain area
-     * Tracks area updates at runtime
-     *
-     * @deprecated use `hass.idBy.area` - to be remove 2024-08
-     */
-    byArea: <AREA extends TAreaId, DOMAINS extends TRawDomains = TRawDomains>(
-      area: AREA,
-      ...domains: DOMAINS[]
-    ) => hass.idBy.area(area, ...domains),
-
-    /**
-     * Retrieve a list of entities associated with a particular device id
-     *
-     * @deprecated use `hass.idBy.device` - to be remove 2024-08
-     */
-    byDevice: <
-      DEVICE extends TDeviceId,
-      DOMAINS extends TRawDomains = TRawDomains,
-    >(
-      device: DEVICE,
-      ...domains: DOMAINS[]
-    ) => hass.idBy.device<DEVICE, DOMAINS>(device, ...domains),
-
-    /**
-     * Retrieve a list of entities that have areas associated with a certain floor
-     *
-     * @deprecated use `hass.idBy.floor` - to be remove 2024-08
-     */
-    byFloor: <
-      FLOOR extends TFloorId,
-      DOMAINS extends TRawDomains = TRawDomains,
-    >(
-      floor: FLOOR,
-      ...domains: DOMAINS[]
-    ) => hass.idBy.floor<FLOOR, DOMAINS>(floor, ...domains),
-
-    /**
-     * Retrieves a proxy object for a specified entity. This proxy object
-     * provides current values and event hooks for the entity.
-     *
-     * @deprecated use `hass.refBy.id` - to be remove 2024-08
-     */
-    byId: <ID extends ANY_ENTITY>(id: ID): ByIdProxy<ID> => hass.refBy.id(id),
-
-    /**
-     * Retrieve a list of entities that have a given label
-     *
-     * @deprecated use `hass.idBy.label` - to be remove 2024-08
-     */
-    byLabel: <
-      LABEL extends TLabelId,
-      DOMAINS extends TRawDomains = TRawDomains,
-    >(
-      label: LABEL,
-      ...domains: DOMAINS[]
-    ) => hass.idBy.label<LABEL, DOMAINS>(label, ...domains),
-
-    /**
-     * search out ids by platform
-     *
-     * @deprecated use `hass.idBy.platform` - to be remove 2024-08
-     */
-    byPlatform: <
-      PLATFORM extends TPlatformId,
-      DOMAINS extends TRawDomains = TRawDomains,
-    >(
-      platform: PLATFORM,
-      ...domains: DOMAINS[]
-    ) => hass.idBy.platform<PLATFORM, DOMAINS>(platform, ...domains),
-
-    /**
-     * looks up entity_id reference by the unique id in the registry, and returns the entity reference
-     *
-     * @deprecated use `hass.idBy.unique_id` | `hass.refBy.unique_id`
-     */
-    byUniqueId: <
-      UNIQUE_ID extends TUniqueId,
-      ENTITY_ID extends Extract<
-        TUniqueIDMapping[UNIQUE_ID],
-        ANY_ENTITY
-      > = Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY>,
-    >(
-      unique_id: UNIQUE_ID,
-    ) => hass.refBy.unique_id<UNIQUE_ID, ENTITY_ID>(unique_id),
-
-    /**
      * Lists all entities within a specified domain. This is useful for
      * domain-specific operations or queries.
      *
@@ -460,12 +365,6 @@ export function EntityManager({
      * Returns the previous entity state (not a proxy)
      */
     previousState: (entity_id: ANY_ENTITY) => PREVIOUS_STATE.get(entity_id),
-
-    /**
-     * Retrieve the raw entity data for this point in time
-     */
-    raw: (entity_id: ANY_ENTITY) =>
-      internal.utils.object.get(MASTER_STATE, entity_id),
 
     /**
      * Initiates a refresh of the current entity states. Useful for ensuring

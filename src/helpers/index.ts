@@ -4,6 +4,7 @@ export * from "./device.helper";
 export * from "./entity-state.helper";
 export * from "./features.helper";
 export * from "./fetch";
+export * from "./id-by.helper";
 export * from "./metrics.helper";
 export * from "./notify.helper";
 export * from "./registry";

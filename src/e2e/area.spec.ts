@@ -95,7 +95,7 @@ describe("Area E2E", () => {
               i => i.entity_id === "switch.porch_light",
             )?.area_id,
           ).toBe(testArea);
-          expect(hass.entity.byArea(testArea).length).toBe(1);
+          expect(hass.idBy.area(testArea).length).toBe(1);
           await hass.area.apply("" as TAreaId, ["switch.porch_light"]);
           await sleep(10);
           expect(

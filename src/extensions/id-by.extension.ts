@@ -13,6 +13,7 @@ import {
   ALL_DOMAINS,
   ANY_ENTITY,
   EntityRegistryItem,
+  IDByInterface,
   PICK_ENTITY,
   PICK_FROM_AREA,
   PICK_FROM_DEVICE,
@@ -31,7 +32,7 @@ const process = <RAW extends ANY_ENTITY>(
   return raw;
 };
 
-export function IDByExtension({ hass, logger }: TServiceParams) {
+export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
   // * label
   function byDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
     const MASTER_STATE = hass.entity._masterState();
