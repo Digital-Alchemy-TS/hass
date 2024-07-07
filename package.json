@@ -2,7 +2,7 @@
   "name": "@digital-alchemy/hass",
   "repository": "https://github.com/Digital-Alchemy-TS/hass",
   "homepage": "https://docs.digital-alchemy.app",
-  "version": "24.7.1",
+  "version": "24.7.2",
   "scripts": {
     "build": "rm -rf dist/; tsc",
     "lint": "eslint src",
@@ -36,9 +36,9 @@
   "license": "MIT",
   "devDependencies": {
     "@cspell/eslint-plugin": "^8.8.4",
-    "@digital-alchemy/core": "^24.6.4",
-    "@digital-alchemy/synapse": "^24.6.4",
-    "@digital-alchemy/type-writer": "^24.6.5",
+    "@digital-alchemy/core": "^24.6.6",
+    "@digital-alchemy/synapse": "^24.6.6",
+    "@digital-alchemy/type-writer": "^24.6.6",
     "@types/figlet": "^1.5.8",
     "@types/jest": "^29.5.12",
     "@types/js-yaml": "^4.0.9",
