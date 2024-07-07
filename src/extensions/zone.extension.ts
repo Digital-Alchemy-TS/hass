@@ -3,6 +3,7 @@ import { TServiceParams } from "@digital-alchemy/core";
 import {
   EARLY_ON_READY,
   ManifestItem,
+  ZONE_REGISTRY_UPDATED,
   ZoneDetails,
   ZoneOptions,
 } from "../helpers";
@@ -10,6 +11,7 @@ import {
 export function Zone({
   config,
   hass,
+  event,
   logger,
   context,
   lifecycle,
@@ -32,13 +34,17 @@ export function Zone({
     async exec() {
       hass.zone.current = await hass.zone.list();
       logger.debug(`zone registry updated`);
+      event.emit(ZONE_REGISTRY_UPDATED);
     },
   });
 
   async function ZoneCreate(options: ZoneOptions) {
-    await hass.socket.sendMessage<ManifestItem[]>({
-      ...options,
-      type: "zone/create",
+    return new Promise<void>(async done => {
+      event.once(ZONE_REGISTRY_UPDATED, done);
+      await hass.socket.sendMessage<ManifestItem[]>({
+        ...options,
+        type: "zone/create",
+      });
     });
   }
 

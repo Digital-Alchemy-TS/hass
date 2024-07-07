@@ -18,6 +18,13 @@ type PICK_FROM_PLATFORM<
 
 // #MARK: ENTITY_SETUP
 export type ENTITY_SETUP = {
+  "button.example": {
+    state: string;
+    entity_id: "button.example";
+    attributes: {
+      friendly_name: "Example button";
+    };
+  };
   "binary_sensor.hass_e2e_online": {
     attributes: {
       friendly_name: "hass_e2e online";
@@ -2640,6 +2647,25 @@ export type iCallService = {
      */
     set_level(service_data: {}): Promise<void>;
   };
+  // # MARK: button
+  button: {
+    /**
+     * ### Press
+     *
+     * > Press the button entity.
+     */
+    press(service_data: {
+      /**
+       * Assisted definition
+       * > ```yaml
+       * > entity:
+       * >   - domain:
+       * >       - button
+       * > ```
+       */
+      entity_id: PICK_ENTITY<"button"> | PICK_ENTITY<"button">[];
+    }): Promise<void>;
+  };
   // # MARK: notify
   notify: {
     /**
@@ -4082,6 +4108,7 @@ export type REGISTRY_SETUP = {
     _synapse:
       | "binary_sensor.hass_e2e_online"
       | "sensor.magic"
+      | "button.example"
       | "binary_sensor.toggles"
       | "switch.bedroom_lamp"
       | "switch.kitchen_cabinets"
@@ -4112,6 +4139,7 @@ export type REGISTRY_SETUP = {
       | "sensor.sun_next_noon"
       | "sensor.sun_next_rising"
       | "sensor.sun_next_setting"
+      | "button.example"
       | "sensor.sun_solar_elevation"
       | "sensor.sun_solar_azimuth"
       | "sensor.sun_solar_rising";
@@ -4143,6 +4171,7 @@ export type TRawEntityIds =
   | "sun.sun"
   | "sensor.sun_next_dawn"
   | "sensor.sun_next_dusk"
+  | "button.example"
   | "sensor.sun_next_midnight"
   | "sensor.sun_next_noon"
   | "light.bedroom_ceiling_fan"
@@ -4176,6 +4205,7 @@ export type TRawDomains =
   | "sun"
   | "light"
   | "scene"
+  | "button"
   | "sensor"
   | "todo"
   | "tts"
@@ -4191,6 +4221,7 @@ export type TUniqueIDMapping = {
   "5622d76001a335e3ea893c4d60d31b3d-next_rising": "sensor.sun_next_rising";
   "5622d76001a335e3ea893c4d60d31b3d-next_setting": "sensor.sun_next_setting";
   "5622d76001a335e3ea893c4d60d31b3d-solar_elevation": "sensor.sun_solar_elevation";
+  "6d8acf36200c5ff8d2d9bb1b1f1dbe00c7eb5b7540103fd90c9a035f82967431": "button.start_white_noise";
   "5622d76001a335e3ea893c4d60d31b3d-solar_azimuth": "sensor.sun_solar_azimuth";
   "5622d76001a335e3ea893c4d60d31b3d-solar_rising": "sensor.sun_solar_rising";
   digital_alchemy: "person.digital_alchemy";

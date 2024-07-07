@@ -7,6 +7,7 @@ import {
   Configure,
   Device,
   EntityManager,
+  Events,
   FetchAPI,
   Floor,
   Label,
@@ -129,11 +130,15 @@ export const LIB_HASS = CreateLibrary({
     configure: Configure,
 
     device: Device,
-
     /**
      * retrieve and interact with home assistant entities
      */
     entity: EntityManager,
+
+    /**
+     * Named event attachments
+     */
+    events: Events,
 
     /**
      * rest api commands
