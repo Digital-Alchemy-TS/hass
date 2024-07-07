@@ -39,9 +39,12 @@ export function Zone({
   });
 
   async function ZoneCreate(options: ZoneOptions) {
-    await hass.socket.sendMessage<ManifestItem[]>({
-      ...options,
-      type: "zone/create",
+    return new Promise<void>(async done => {
+      event.once(ZONE_REGISTRY_UPDATED, done);
+      await hass.socket.sendMessage<ManifestItem[]>({
+        ...options,
+        type: "zone/create",
+      });
     });
   }
 
