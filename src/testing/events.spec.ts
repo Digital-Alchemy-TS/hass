@@ -13,11 +13,7 @@ import {
   LABEL_REGISTRY_UPDATED,
   ZONE_REGISTRY_UPDATED,
 } from "../helpers";
-import {
-  CreateTestingApplication,
-  Events,
-  SILENT_BOOT,
-} from "../mock_assistant";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("Events", () => {
   let application: ApplicationDefinition<
