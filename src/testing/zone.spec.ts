@@ -5,7 +5,6 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { TZoneId } from "../dynamic";
 import { ZONE_REGISTRY_UPDATED, ZoneDetails } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
