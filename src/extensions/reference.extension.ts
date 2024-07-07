@@ -163,6 +163,45 @@ export function ReferenceExtension({
                         );
                         done(undefined);
                         done = undefined;
+                        event.removeListener(entity_id, complete);
+                      }
+                    }
+                  });
+              }
+
+              // * waitForState
+              case "waitForState": {
+                return async (state: string | number, timeout?: number) =>
+                  await new Promise<ENTITY_STATE<ENTITY_ID>>(async done => {
+                    const complete = (entity: ENTITY_STATE<ENTITY_ID>) => {
+                      if (entity.state !== state) {
+                        logger.trace(
+                          {
+                            expected: state,
+                            incoming: entity.state,
+                            name: "waitForState",
+                          },
+                          `state did not match`,
+                        );
+                        return;
+                      }
+                      if (done) {
+                        done(entity satisfies ENTITY_STATE<ENTITY_ID>);
+                        done = undefined;
+                        event.removeListener(entity_id, complete);
+                      }
+                    };
+                    event.on(entity_id, complete);
+                    if (is.number(timeout) && timeout > NONE) {
+                      await sleep(timeout);
+                      if (done) {
+                        logger.debug(
+                          { entity_id, name: "waitForState", timeout },
+                          "timed out",
+                        );
+                        done(undefined);
+                        done = undefined;
+                        event.removeListener(entity_id, complete);
                       }
                     }
                   });

@@ -77,6 +77,13 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> =
      */
     nextState: (timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
     /**
+     * Will resolve when state
+     */
+    waitForState: (
+      state: string | number,
+      timeoutMs?: number,
+    ) => Promise<ENTITY_STATE<ENTITY_ID>>;
+    /**
      * Access the immediate previous entity state
      */
     previous: ENTITY_STATE<ENTITY_ID>;
