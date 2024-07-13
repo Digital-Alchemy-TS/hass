@@ -1,5 +1,3 @@
-import { Unit } from "convert-units";
-
 import {
   TAreaId,
   TDeviceId,
