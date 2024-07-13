@@ -28,7 +28,6 @@
     "./mock-assistant": "./dist/mock_assistant/index.js"
   },
   "dependencies": {
-    "convert-units": "^2.3.4",
     "dayjs": "^1.11.11",
     "prom-client": "^15.1.2",
     "validator": "^13.12.0",
@@ -40,7 +39,6 @@
     "@digital-alchemy/core": "^24.7.1",
     "@digital-alchemy/synapse": "^24.6.6",
     "@digital-alchemy/type-writer": "^24.6.6",
-    "@types/convert-units": "^2.3.9",
     "@types/figlet": "^1.5.8",
     "@types/jest": "^29.5.12",
     "@types/js-yaml": "^4.0.9",
