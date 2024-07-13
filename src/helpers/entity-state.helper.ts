@@ -9,6 +9,7 @@ import {
   TLabelId,
   TRawDomains,
 } from "../dynamic";
+import { SensorUnitOfMeasurement } from "./registry";
 import {
   ALL_DOMAINS,
   ALL_SERVICE_DOMAINS,
@@ -184,6 +185,7 @@ export interface Conversation {
 export interface Sensor {
   suggested_display_precision?: number;
   display_precision?: null;
+  unit_of_measurement?: SensorUnitOfMeasurement;
 }
 
 export interface SensorPrivate {
