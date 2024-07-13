@@ -13,12 +13,17 @@ words:
   - homekit
   - hvac
   - macaddress
+  - gbit
+  - cbar
+  - mbar
   - quickboot
   - rgbw
   - rgbww
   - rrule
   - rtsp
   - sonarjs
+  - mbit
+  - kbit
   - ssdp
   - systype
   - tvshow
