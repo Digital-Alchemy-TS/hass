@@ -78,7 +78,7 @@ describe("Entity E2E", () => {
               await hass.call.switch.toggle({
                 entity_id: "switch.porch_light",
               });
-              await sleep(50);
+              await sleep(100);
             }
             expect(counter).toBe(expected);
             await application.teardown();
@@ -103,7 +103,7 @@ describe("Entity E2E", () => {
               await hass.call.switch.toggle({
                 entity_id: "switch.porch_light",
               });
-              await sleep(50);
+              await sleep(100);
             }
             expect(counter).toBe(1);
             await application.teardown();
@@ -128,7 +128,7 @@ describe("Entity E2E", () => {
               await hass.call.switch.toggle({
                 entity_id: "switch.porch_light",
               });
-              await sleep(50);
+              await sleep(100);
             }
             expect(counter).toBe(1);
             await application.teardown();
@@ -153,7 +153,7 @@ describe("Entity E2E", () => {
               await hass.call.switch.toggle({
                 entity_id: "switch.porch_light",
               });
-              await sleep(50);
+              await sleep(100);
             }
             expect(counter).toBe(1);
             await application.teardown();
@@ -175,7 +175,7 @@ describe("Entity E2E", () => {
               await hass.call.switch.toggle({
                 entity_id: "switch.porch_light",
               });
-              await sleep(50);
+              await sleep(100);
             }
             expect(counter).toBe(1);
             await application.teardown();
@@ -196,7 +196,7 @@ describe("Entity E2E", () => {
               expect(next.state).toBe(porch.state);
             });
             await hass.call.switch.toggle({ entity_id: "switch.porch_light" });
-            await sleep(50);
+            await sleep(100);
             await application.teardown();
           });
         },
@@ -215,7 +215,7 @@ describe("Entity E2E", () => {
               expect(next.state).toBe(porch.state);
             });
             await hass.call.switch.toggle({ entity_id: "switch.porch_light" });
-            await sleep(50);
+            await sleep(100);
             await application.teardown();
           });
         },

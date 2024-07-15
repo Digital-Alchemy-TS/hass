@@ -34,7 +34,7 @@ describe("Label E2E", () => {
           let hit = false;
           event.on(LABEL_REGISTRY_UPDATED, () => (hit = true));
           await hass.socket.fireEvent("label_registry_updated");
-          await sleep(50);
+          await sleep(100);
           expect(hit).toBe(true);
           await application.teardown();
         });

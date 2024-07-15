@@ -34,7 +34,7 @@ describe("Floor E2E", () => {
           let hit = false;
           event.on(FLOOR_REGISTRY_UPDATED, () => (hit = true));
           await hass.socket.fireEvent("floor_registry_updated");
-          await sleep(50);
+          await sleep(100);
           expect(hit).toBe(true);
           await application.teardown();
         });

@@ -1,4 +1,4 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import { throttle, TServiceParams } from "@digital-alchemy/core";
 
 import { TFloorId } from "../dynamic";
 import {
@@ -32,6 +32,7 @@ export function Floor({
     context,
     event_type: "floor_registry_updated",
     async exec() {
+      await throttle(FLOOR_REGISTRY_UPDATED, config.hass.EVENT_THROTTLE_MS);
       hass.floor.current = await hass.floor.list();
       logger.debug(`floor registry updated`);
       event.emit(FLOOR_REGISTRY_UPDATED);

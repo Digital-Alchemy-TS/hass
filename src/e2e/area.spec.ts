@@ -7,7 +7,7 @@ import {
 } from "@digital-alchemy/core";
 
 import { TAreaId } from "../dynamic";
-import { AREA_REGISTRY_UPDATED } from "../helpers";
+import { AREA_REGISTRY_UPDATED, AreaDetails } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 import { BASE_URL, TOKEN } from "./utils";
 
@@ -34,7 +34,7 @@ describe("Area E2E", () => {
           let hit = false;
           event.on(AREA_REGISTRY_UPDATED, () => (hit = true));
           await hass.socket.fireEvent("area_registry_updated");
-          await sleep(50);
+          await sleep(100);
           expect(hit).toBe(true);
           await application.teardown();
         });
@@ -68,7 +68,7 @@ describe("Area E2E", () => {
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          const item = hass.area.current.find(i => i.area_id === testArea);
+          const item = hass.area.current.find(i => i.area_id === testArea) as AreaDetails;
           await hass.area.update({
             ...item,
             name: "extra test",
