@@ -1,4 +1,4 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import { throttle, TServiceParams } from "@digital-alchemy/core";
 
 import {
   EARLY_ON_READY,
@@ -32,6 +32,7 @@ export function Zone({
     context,
     event_type: "zone_registry_updated",
     async exec() {
+      await throttle(ZONE_REGISTRY_UPDATED, config.hass.EVENT_THROTTLE_MS);
       hass.zone.current = await hass.zone.list();
       logger.debug(`zone registry updated`);
       event.emit(ZONE_REGISTRY_UPDATED);

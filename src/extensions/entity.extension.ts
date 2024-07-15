@@ -6,6 +6,7 @@ import {
   SECOND,
   sleep,
   START,
+  throttle,
   TServiceParams,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
@@ -296,6 +297,16 @@ export function EntityManager({
       type: "config/entity_registry/get",
     });
   }
+  hass.socket.subscribe({
+    context,
+    event_type: "entity_registry_updated",
+    async exec() {
+      await throttle(ENTITY_REGISTRY_UPDATED, config.hass.EVENT_THROTTLE_MS);
+      logger.debug("entity registry updated");
+      hass.entity.registry.current = await hass.entity.registry.list();
+      event.emit(ENTITY_REGISTRY_UPDATED);
+    },
+  });
 
   // #MARK: onConnect
   hass.socket.onConnect(async () => {
@@ -303,15 +314,6 @@ export function EntityManager({
       return;
     }
     hass.entity.registry.current = await hass.entity.registry.list();
-    hass.socket.subscribe({
-      context,
-      event_type: "entity_registry_updated",
-      async exec() {
-        logger.debug("entity registry updated");
-        hass.entity.registry.current = await hass.entity.registry.list();
-        event.emit(ENTITY_REGISTRY_UPDATED);
-      },
-    });
   });
 
   // #MARK: RemoveEntity

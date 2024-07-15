@@ -676,6 +676,11 @@ export function WebsocketAPI({
     setConnectionState,
 
     /**
+     * internal
+     */
+    socketEvents,
+
+    /**
      * Subscribe to hass core registry updates.
      *
      * Not the same as `onEvent` (you probably want that)

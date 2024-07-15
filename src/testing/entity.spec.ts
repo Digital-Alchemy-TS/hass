@@ -2,6 +2,7 @@ import {
   ApplicationDefinition,
   OptionalModuleConfiguration,
   ServiceMap,
+  sleep,
   TServiceParams,
 } from "@digital-alchemy/core";
 
@@ -24,6 +25,41 @@ describe("Entity", () => {
 
   describe("API", () => {
     describe("Updates", () => {
+      it("should throttle updates properly", async () => {
+        expect.assertions(1);
+        application = CreateTestingApplication({
+          Test({ lifecycle, hass }: TServiceParams) {
+            jest
+              .spyOn(hass.socket, "sendMessage")
+              .mockImplementation(async () => undefined);
+            let counter = 0;
+            hass.events.onEntityRegistryUpdate(() => counter++);
+            lifecycle.onReady(async () => {
+              setImmediate(async () => {
+                hass.socket.socketEvents.emit("entity_registry_updated");
+                await sleep(5);
+                hass.socket.socketEvents.emit("entity_registry_updated");
+                await sleep(5);
+                hass.socket.socketEvents.emit("entity_registry_updated");
+                await sleep(20);
+                hass.socket.socketEvents.emit("entity_registry_updated");
+              });
+              await sleep(50);
+              expect(counter).toBe(2);
+            });
+          },
+        });
+        await application.bootstrap(
+          SILENT_BOOT({
+            hass: {
+              AUTO_CONNECT_SOCKET: false,
+              AUTO_SCAN_CALL_PROXY: false,
+              EVENT_THROTTLE_MS: 10,
+            },
+          }),
+        );
+      });
+
       it("should emit updates on change", async () => {
         expect.assertions(3);
         application = CreateTestingApplication({

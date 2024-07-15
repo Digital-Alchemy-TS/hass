@@ -47,6 +47,11 @@ export const LIB_HASS = CreateLibrary({
       enum: ["prefer", "forbid", "allow"],
       type: "string",
     } as StringConfig<AllowRestOptions>,
+    EVENT_THROTTLE_MS: {
+      default: 50,
+      description: "Throttle reactions to registry changes",
+      type: "number",
+    },
     EXPECT_RESPONSE_AFTER: {
       default: 5,
       description:

@@ -2,6 +2,7 @@ import {
   ApplicationDefinition,
   OptionalModuleConfiguration,
   ServiceMap,
+  sleep,
   TServiceParams,
 } from "@digital-alchemy/core";
 
@@ -100,6 +101,40 @@ describe("Area", () => {
                 type: "config/area_registry/update",
                 ...EXAMPLE_AREA,
               });
+            });
+          },
+        });
+        await application.bootstrap(
+          SILENT_BOOT({
+            hass: {
+              AUTO_CONNECT_SOCKET: false,
+              AUTO_SCAN_CALL_PROXY: false,
+            },
+          }),
+        );
+      });
+
+      it("should throttle updates properly", async () => {
+        expect.assertions(1);
+        application = CreateTestingApplication({
+          Test({ lifecycle, hass }: TServiceParams) {
+            jest
+              .spyOn(hass.socket, "sendMessage")
+              .mockImplementation(async () => undefined);
+            let counter = 0;
+            hass.events.onAreaRegistryUpdate(() => counter++);
+            lifecycle.onReady(async () => {
+              setImmediate(async () => {
+                hass.socket.socketEvents.emit("area_registry_updated");
+                await sleep(5);
+                hass.socket.socketEvents.emit("area_registry_updated");
+                await sleep(5);
+                hass.socket.socketEvents.emit("area_registry_updated");
+                await sleep(75);
+                hass.socket.socketEvents.emit("area_registry_updated");
+              });
+              await sleep(200);
+              expect(counter).toBe(2);
             });
           },
         });
