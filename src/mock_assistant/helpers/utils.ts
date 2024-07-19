@@ -11,13 +11,20 @@ import {
 } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "../../hass.module";
+import { HassConfig } from "../../helpers";
 import { LIB_MOCK_ASSISTANT } from "../mock-assistant.module";
-
+function Rewire({ hass }: TServiceParams) {
+  jest
+    .spyOn(hass.fetch, "getConfig")
+    .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
+}
 export const SILENT_BOOT = (
   configuration: PartialConfiguration = {},
   fixtures = false,
+  rewire = true,
 ): BootstrapOptions => ({
   appendLibrary: fixtures ? LIB_MOCK_ASSISTANT : undefined,
+  appendService: rewire ? { Rewire } : undefined,
   configuration,
   // quiet time
   customLogger: {
@@ -55,7 +62,9 @@ export const CreateTestRunner = <
     }
     return await UNIT_TESTING_APP.bootstrap({
       appendLibrary: LIB_MOCK_ASSISTANT,
-      appendService: is.function(setup) ? { setup, test } : { test },
+      appendService: is.function(setup)
+        ? { Rewire, setup, test }
+        : { Rewire, test },
       configuration: {
         boilerplate: { LOG_LEVEL: "error" },
         hass: { MOCK_SOCKET: true },

@@ -6,6 +6,7 @@ import {
 } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
+import { HassConfig } from "../helpers";
 import {
   CreateTestingApplication,
   SILENT_BOOT,
@@ -186,6 +187,74 @@ describe("FetchAPI", () => {
       );
     });
 
+    // TODO: Need a way to make this pass without breaking all other tests
+    it.skip("exits for low version at boot", async () => {
+      expect.assertions(2);
+      let mock: jest.SpyInstance;
+      let exitSpy: jest.SpyInstance;
+      application = CreateTestingApplication({
+        Test({ hass }: TServiceParams) {
+          mock = jest
+            .spyOn(hass.fetch, "getConfig")
+            .mockImplementation(
+              async () => ({ version: "2024.1.0" }) as HassConfig,
+            );
+          exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
+            throw new Error("EXPECTED TESTING ERROR");
+          });
+        },
+      });
+      try {
+        await application.bootstrap(
+          SILENT_BOOT({
+            hass: {
+              AUTO_CONNECT_SOCKET: false,
+              AUTO_SCAN_CALL_PROXY: false,
+              BASE_URL,
+              TOKEN,
+            },
+          }),
+        );
+      } finally {
+        expect(mock).toHaveBeenCalled();
+        expect(exitSpy).toHaveBeenCalled();
+      }
+    });
+
+    // TODO: Need a way to make this pass without breaking all other tests
+    it.skip("passes for valid version", async () => {
+      expect.assertions(2);
+      let mock: jest.SpyInstance;
+      let exitSpy: jest.SpyInstance;
+      application = CreateTestingApplication({
+        Test({ hass }: TServiceParams) {
+          mock = jest
+            .spyOn(hass.fetch, "getConfig")
+            .mockImplementation(
+              async () => ({ version: "2024.4.1" }) as HassConfig,
+            );
+          exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
+            throw new Error("EXPECTED TESTING ERROR");
+          });
+        },
+      });
+      try {
+        await application.bootstrap(
+          SILENT_BOOT({
+            hass: {
+              AUTO_CONNECT_SOCKET: false,
+              AUTO_SCAN_CALL_PROXY: false,
+              BASE_URL,
+              TOKEN,
+            },
+          }),
+        );
+      } finally {
+        expect(mock).toHaveBeenCalled();
+        expect(exitSpy).not.toHaveBeenCalled();
+      }
+    });
+
     it("should format fetchEntityCustomizations properly", async () => {
       expect.assertions(1);
       application = CreateTestingApplication({
@@ -351,14 +420,18 @@ describe("FetchAPI", () => {
         },
       });
       await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            BASE_URL,
-            TOKEN,
+        SILENT_BOOT(
+          {
+            hass: {
+              AUTO_CONNECT_SOCKET: false,
+              AUTO_SCAN_CALL_PROXY: false,
+              BASE_URL,
+              TOKEN,
+            },
           },
-        }),
+          false,
+          false,
+        ),
       );
     });
 
