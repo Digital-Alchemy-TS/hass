@@ -49,10 +49,13 @@ export function FetchAPI({
   const { download: downloader } = fetcher;
 
   // Load configurations
-  lifecycle.onPostConfig(async () => {
+  lifecycle.onPostConfig(() => {
     fetcher.base_url = config.hass.BASE_URL;
     fetcher.base_headers = { Authorization: `Bearer ${config.hass.TOKEN}` };
+  }, PostConfigPriorities.FETCH);
 
+  lifecycle.onBootstrap(async () => {
+    console.log(config.hass.BASE_URL);
     // First opportunity: verify target is within range
     const target = await hass.fetch.getConfig();
     if (lt(target.version, MIN_SUPPORTED_HASS_VERSION)) {
@@ -63,7 +66,7 @@ export function FetchAPI({
       exit();
     }
     logger.debug(`hass version %s`, target.version);
-  }, PostConfigPriorities.FETCH);
+  });
 
   async function calendarSearch({
     calendar,
