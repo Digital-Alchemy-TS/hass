@@ -17,6 +17,7 @@ words:
   - cbar
   - mbar
   - quickboot
+  - websockets
   - rgbw
   - rgbww
   - rrule

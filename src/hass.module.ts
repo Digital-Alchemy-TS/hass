@@ -120,8 +120,14 @@ export const LIB_HASS = CreateLibrary({
   // no internal dependency ones first
   priorityInit: ["fetch", "socket"],
   services: {
+    /**
+     * home assistant areas
+     */
     area: Area,
 
+    /**
+     * home assistant backup interactions
+     */
     backup: Backup,
 
     /**
@@ -134,14 +140,18 @@ export const LIB_HASS = CreateLibrary({
      */
     configure: Configure,
 
+    /**
+     * device interactions
+     */
     device: Device,
+
     /**
      * retrieve and interact with home assistant entities
      */
     entity: EntityManager,
 
     /**
-     * Named event attachments
+     * named event attachments
      */
     events: Events,
 
@@ -149,22 +159,29 @@ export const LIB_HASS = CreateLibrary({
      * rest api commands
      */
     fetch: FetchAPI,
+
+    /**
+     * floors, like groups of areas
+     */
     floor: Floor,
 
     /**
-     * Search for entity ids in a type safe way
+     * search for entity ids in a type safe way
      */
     idBy: IDByExtension,
 
+    /**
+     * home assistant label interactions
+     */
     label: Label,
 
     /**
-     * Obtain references to entities
+     * obtain references to entities
      */
     refBy: ReferenceExtension,
 
     /**
-     * Interact with the home assistant registry
+     * interact with the home assistant registry
      */
     registry: Registry,
 
@@ -172,6 +189,10 @@ export const LIB_HASS = CreateLibrary({
      * websocket interface
      */
     socket: WebsocketAPI,
+
+    /**
+     * zone interactions
+     */
     zone: Zone,
   },
 });

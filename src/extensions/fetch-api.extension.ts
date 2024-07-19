@@ -55,11 +55,14 @@ export function FetchAPI({
   }, PostConfigPriorities.FETCH);
 
   lifecycle.onBootstrap(async () => {
-    console.log(config.hass.BASE_URL);
-    // First opportunity: verify target is within range
+    if (!config.hass.AUTO_CONNECT_SOCKET) {
+      // shorthand for is unit test right now
+      return;
+    }
     const target = await hass.fetch.getConfig();
     if (lt(target.version, MIN_SUPPORTED_HASS_VERSION)) {
       logger.fatal(
+        { target: target.version },
         "minimum supported version of home assistant: %s",
         MIN_SUPPORTED_HASS_VERSION,
       );
