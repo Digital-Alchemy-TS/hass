@@ -1031,7 +1031,7 @@ __metadata:
     npm-check-updates: "npm:^16.14.20"
     prettier: "npm:^3.3.2"
     prom-client: "npm:^15.1.2"
-    semver: "npm:^7.6.2"
+    semver: "npm:^7.6.3"
     ts-jest: "npm:^29.1.4"
     tsx: "npm:^4.15.3"
     type-fest: "npm:^4.20.0"
@@ -8656,7 +8656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.6.2":
+"semver@npm:^7.6.3":
   version: 7.6.3
   resolution: "semver@npm:7.6.3"
   bin:
