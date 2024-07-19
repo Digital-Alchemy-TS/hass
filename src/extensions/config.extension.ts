@@ -27,12 +27,9 @@ export function Configure({
   config,
   internal,
 }: TServiceParams) {
-  /**
-   * Check for environment defined tokens provided by Home Assistant
-   *
-   * If available, override defaults to match
-   */
   lifecycle.onPreInit(() => {
+    // HASSIO_TOKEN provided by home assistant to addons
+    // SUPERVISOR_TOKEN used as alias elsewhere
     const token = env.HASSIO_TOKEN || env.SUPERVISOR_TOKEN;
     if (is.empty(token)) {
       return;
@@ -44,6 +41,7 @@ export function Configure({
     internal.boilerplate.configuration.set(
       "hass",
       "BASE_URL",
+      // don't go over the network
       env.HASS_SERVER || "http://supervisor/core",
     );
     internal.boilerplate.configuration.set("hass", "TOKEN", token);

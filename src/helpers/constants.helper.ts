@@ -15,6 +15,13 @@ export enum HassSocketMessageTypes {
 export const HOME_ASSISTANT_MODULE_CONFIGURATION =
   "HOME_ASSISTANT_MODULE_CONFIGURATION";
 
+/**
+ * Required for label support, which is an automatic process at boot
+ *
+ * Will not make feature optional to support older hass versions
+ * Update your stuff
+ */
+export const MIN_SUPPORTED_HASS_VERSION = "2024.4";
 export const EARLY_ON_READY = 1;
 export const ENTITY_REGISTRY_UPDATED = "ENTITY_REGISTRY_UPDATED";
 export const AREA_REGISTRY_UPDATED = "AREA_REGISTRY_UPDATED";
