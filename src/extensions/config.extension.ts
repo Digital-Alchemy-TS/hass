@@ -78,7 +78,7 @@ export function Configure({
 
   let services: HassServiceDTO[];
   async function loadServiceList(recursion = START): Promise<void> {
-    logger.info({ name: loadServiceList }, `fetching service list`);
+    logger.debug({ name: loadServiceList }, `fetching service list`);
     services = await hass.fetch.listServices();
     if (is.empty(services)) {
       if (recursion > MAX_ATTEMPTS) {

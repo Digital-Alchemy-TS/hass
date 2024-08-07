@@ -225,7 +225,7 @@ export function EntityManager({
       const unique_id = hass.entity.registry.current.find(
         i => i.entity_id === entity_id,
       )?.unique_id;
-      if (!is.empty(unique_id)) {
+      if (is.number(unique_id) || !is.empty(unique_id)) {
         event.emit(unique_id, new_state, old_state);
       }
     }
