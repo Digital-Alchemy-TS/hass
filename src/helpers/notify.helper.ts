@@ -1,4 +1,4 @@
-export type AppleActionableNotificationPush = {
+export type AppleNotificationPush = {
   /**
    * **iOS | MacOS**
    *
@@ -32,7 +32,73 @@ export type AppleActionableNotificationPush = {
   presentation_options?: ["alert" | "badge" | "sound"];
 };
 
-export type AppleActionableNotification = {
+export type NotificationAction = {
+  /**
+   * Key passed back in events.
+   * When set to `REPLY`, you will be prompted for text to send with the event.
+   */
+  action: "REPLY" | "URI" | string;
+  /**
+   * Shown on the action button to the user.
+   */
+  title: string;
+  /**
+   * The URI to open when selected.
+   * Android requires setting the action string to `URI` to use this key. [More Info](https://companion.home-assistant.io/docs/notifications/actionable-notifications/#uri-values).
+   */
+  uri?: string;
+};
+
+export type AndroidNotificationActionOptions = {};
+
+export type AppleNotificationActionOptions = {
+  /**
+   * **iOS | MacOS**
+   * 
+   * Set to `foreground` to launch the app when tapped. Defaults to background which just fires the event.
+   * This is automatically set to foreground when providing a uri.
+   */
+  activationMode?: "foreground" | "background";
+  /**
+   * **iOS | MacOS**
+   * 
+   * Set to `true` to require a password to fire the event.
+   */
+  authenticationRequired?: boolean;
+  /**
+   * **iOS | MacOS**
+   * 
+   * Set to `true` to color the actions title red.
+   */
+  destructive?: boolean;
+  /**
+   * **iOS | MacOS**
+   * 
+   * Set to `textInput` to prompt for text to return with the event. This also occurs when setting the action to `REPLY`.
+   */
+  behavior?: "textInput";
+  /**
+   * **iOS | MacOS**
+   * 
+   * Title to use for text input for actions that prompt.
+   */
+  textInputButtonTitle?: string;
+  /**
+   * **iOS | MacOS**
+   * 
+   * Placeholder to use for text input for actions that prompt.
+   */
+  textInputPlaceholder?: string;
+  /**
+   * **iOS | MacOS**
+   * 
+   * The icon to use for the notification.
+   * * [More info](https://companion.home-assistant.io/docs/notifications/actionable-notifications#icon-values)
+   */
+  icon?: string;
+}
+
+export type AppleNotificationData = {
   /**
    * **iOS | MacOS**
    *
@@ -48,10 +114,14 @@ export type AppleActionableNotification = {
    * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#subtitle--subject)
    */
   subtitle?: string;
-  push?: AppleActionableNotificationPush;
+  push?: AppleNotificationPush;
+  /**
+   * iOS Suports ~10 actions.
+   */
+  actions: Array<NotificationAction & AppleNotificationActionOptions>;
 };
 
-export type AndroidActionableNotification = {
+export type AndroidNotificationData = {
   /**
    * **Android**
    *
@@ -202,29 +272,14 @@ export type AndroidActionableNotification = {
    * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#android-auto-visibility)
    */
   car_ui?: boolean;
+
+  /**
+   * Android Suports 3 actions.
+   */
+  actions: Array<NotificationAction & AndroidNotificationActionOptions>;
 };
 
-export type ActionableNotification = {
-  /**
-   * Android allows 3 actions.
-   * iOS allows around 10 actions.
-   */
-  actions?: {
-    /**
-     * Key passed back in events.
-     * When set to `REPLY`, you will be prompted for text to send with the event.
-     */
-    action: "REPLY" | "URI" | string;
-    /**
-     * Shown on the action button to the user.
-     */
-    title: string;
-    /**
-     * The URI to open when selected.
-     * Android requires setting the action string to `URI` to use this key. [More Info](https://companion.home-assistant.io/docs/notifications/actionable-notifications/#uri-values).
-     */
-    uri?: string;
-  }[];
+export type NotificationData = {
   /**
    * The group to which the notification belongs.
    * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#grouping)

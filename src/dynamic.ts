@@ -5,9 +5,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 // @ts-nocheck
 import {
-  ActionableNotification,
-  AndroidActionableNotification,
-  AppleActionableNotification,
+  NotificationData,
+  AndroidNotificationData,
+  AppleNotificationData,
   PICK_ENTITY,
 } from "./helpers";
 
@@ -2691,8 +2691,8 @@ export type iCallService = {
        * > object: null
        * > ```
        */
-      data?: ActionableNotification &
-        (AndroidActionableNotification | AppleActionableNotification);
+      data?: NotificationData &
+      (AndroidNotificationData | AppleNotificationData);
       /**
        * ## message
        *
@@ -2761,8 +2761,8 @@ export type iCallService = {
        * > object: null
        * > ```
        */
-      data?: ActionableNotification &
-        (AndroidActionableNotification | AppleActionableNotification);
+      data?: NotificationData &
+      (AndroidNotificationData | AppleNotificationData);
       /**
        * ## Message
        *
