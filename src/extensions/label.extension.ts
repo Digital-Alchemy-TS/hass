@@ -1,4 +1,4 @@
-import { throttle, TServiceParams } from "@digital-alchemy/core";
+import { debounce, TServiceParams } from "@digital-alchemy/core";
 
 import { TLabelId } from "../dynamic";
 import {
@@ -32,7 +32,7 @@ export function Label({
     context,
     event_type: "label_registry_updated",
     async exec() {
-      await throttle(LABEL_REGISTRY_UPDATED, config.hass.EVENT_THROTTLE_MS);
+      await debounce(LABEL_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
       hass.label.current = await hass.label.list();
       logger.debug(`label registry updated`);
       event.emit(LABEL_REGISTRY_UPDATED);

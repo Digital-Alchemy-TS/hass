@@ -958,9 +958,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digital-alchemy/core@npm:^24.7.2":
-  version: 24.7.2
-  resolution: "@digital-alchemy/core@npm:24.7.2"
+"@digital-alchemy/core@npm:^24.8.2":
+  version: 24.8.2
+  resolution: "@digital-alchemy/core@npm:24.8.2"
   dependencies:
     chalk: "npm:^5.3.0"
     dayjs: "npm:^1.11.11"
@@ -975,7 +975,7 @@ __metadata:
   dependenciesMeta:
     redis:
       optional: true
-  checksum: 10/d45c39883df79ed85e1245bce833db9147d8749282e985ab0258e77989e2cf1dd6ebe62a6f8e2018ba1c5d9890b60bf03515a4d8f0b220229185a4790cbde9db
+  checksum: 10/68e9676a9a33daba073e2d351bac4738bd20ea9d5c3ef41b4d8d2ca813649af108cbd7023e0803b771c4c0ccc6da520c9756b52d0b0dfcfd06fee7178ab7e162
   languageName: node
   linkType: hard
 
@@ -999,8 +999,8 @@ __metadata:
   resolution: "@digital-alchemy/hass@workspace:."
   dependencies:
     "@cspell/eslint-plugin": "npm:^8.8.4"
-    "@digital-alchemy/core": "npm:^24.7.2"
-    "@digital-alchemy/synapse": "npm:^24.7.1"
+    "@digital-alchemy/core": "npm:^24.8.2"
+    "@digital-alchemy/synapse": "npm:^24.8.1"
     "@digital-alchemy/type-writer": "npm:^24.7.2"
     "@types/figlet": "npm:^1.5.8"
     "@types/jest": "npm:^29.5.12"
@@ -1045,9 +1045,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@digital-alchemy/synapse@npm:^24.7.1":
-  version: 24.7.1
-  resolution: "@digital-alchemy/synapse@npm:24.7.1"
+"@digital-alchemy/synapse@npm:^24.8.1":
+  version: 24.8.1
+  resolution: "@digital-alchemy/synapse@npm:24.8.1"
   dependencies:
     "@digital-alchemy/fastify-extension": "npm:*"
     better-sqlite3: "npm:^11.0.0"
@@ -1059,7 +1059,7 @@ __metadata:
   dependenciesMeta:
     "@digital-alchemy/fastify-extension":
       optional: true
-  checksum: 10/eb10a0c389fa2236bd9b6edb97dea56a9f254909665aa017c7be1e85fbce31994ab95cb7334cac42ba84c059d03241dd2b4a7b98db7ebbcdb9be00ae47153eeb
+  checksum: 10/df0957537cdede94bca0bdeb0d83de4e856ed5205958302ace41baf55f0fa5e3fb442d95a7fe433b6fde7e73ede97cb3350463603890e19ff422614980c6b2b1
   languageName: node
   linkType: hard
 

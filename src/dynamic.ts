@@ -5,9 +5,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 // @ts-nocheck
 import {
-  NotificationData,
   AndroidNotificationData,
   AppleNotificationData,
+  NotificationData,
   PICK_ENTITY,
 } from "./helpers";
 
@@ -2692,7 +2692,7 @@ export type iCallService = {
        * > ```
        */
       data?: NotificationData &
-      (AndroidNotificationData | AppleNotificationData);
+        (AndroidNotificationData | AppleNotificationData);
       /**
        * ## message
        *
@@ -2762,7 +2762,7 @@ export type iCallService = {
        * > ```
        */
       data?: NotificationData &
-      (AndroidNotificationData | AppleNotificationData);
+        (AndroidNotificationData | AppleNotificationData);
       /**
        * ## Message
        *

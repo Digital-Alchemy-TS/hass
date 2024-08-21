@@ -1,7 +1,7 @@
 import {
   eachSeries,
   InternalError,
-  throttle,
+  debounce,
   TServiceParams,
 } from "@digital-alchemy/core";
 
@@ -39,7 +39,7 @@ export function Area({
     context,
     event_type: "area_registry_updated",
     async exec() {
-      await throttle(AREA_REGISTRY_UPDATED, config.hass.EVENT_THROTTLE_MS);
+      await debounce(AREA_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
       hass.area.current = await hass.area.list();
       logger.debug(`area registry updated`);
       event.emit(AREA_REGISTRY_UPDATED);

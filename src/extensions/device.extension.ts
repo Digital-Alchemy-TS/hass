@@ -1,4 +1,4 @@
-import { throttle, TServiceParams } from "@digital-alchemy/core";
+import { debounce, TServiceParams } from "@digital-alchemy/core";
 
 import {
   DEVICE_REGISTRY_UPDATED,
@@ -31,7 +31,7 @@ export function Device({
     context,
     event_type: "device_registry_updated",
     async exec() {
-      await throttle(DEVICE_REGISTRY_UPDATED, config.hass.EVENT_THROTTLE_MS);
+      await debounce(DEVICE_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
       hass.device.current = await hass.device.list();
       logger.debug(`device registry updated`);
       event.emit(DEVICE_REGISTRY_UPDATED);

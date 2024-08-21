@@ -49,54 +49,55 @@ export type NotificationAction = {
   uri?: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type AndroidNotificationActionOptions = {};
 
 export type AppleNotificationActionOptions = {
   /**
    * **iOS | MacOS**
-   * 
+   *
    * Set to `foreground` to launch the app when tapped. Defaults to background which just fires the event.
    * This is automatically set to foreground when providing a uri.
    */
   activationMode?: "foreground" | "background";
   /**
    * **iOS | MacOS**
-   * 
+   *
    * Set to `true` to require a password to fire the event.
    */
   authenticationRequired?: boolean;
   /**
    * **iOS | MacOS**
-   * 
+   *
    * Set to `true` to color the actions title red.
    */
   destructive?: boolean;
   /**
    * **iOS | MacOS**
-   * 
+   *
    * Set to `textInput` to prompt for text to return with the event. This also occurs when setting the action to `REPLY`.
    */
   behavior?: "textInput";
   /**
    * **iOS | MacOS**
-   * 
+   *
    * Title to use for text input for actions that prompt.
    */
   textInputButtonTitle?: string;
   /**
    * **iOS | MacOS**
-   * 
+   *
    * Placeholder to use for text input for actions that prompt.
    */
   textInputPlaceholder?: string;
   /**
    * **iOS | MacOS**
-   * 
+   *
    * The icon to use for the notification.
    * * [More info](https://companion.home-assistant.io/docs/notifications/actionable-notifications#icon-values)
    */
   icon?: string;
-}
+};
 
 export type AppleNotificationData = {
   /**

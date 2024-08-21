@@ -204,7 +204,7 @@ describe("Label", () => {
         );
       });
 
-      it("should throttle updates properly", async () => {
+      it("should debounce updates properly", async () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {

@@ -6,7 +6,7 @@ import {
   SECOND,
   sleep,
   START,
-  throttle,
+  debounce,
   TServiceParams,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
@@ -301,7 +301,7 @@ export function EntityManager({
     context,
     event_type: "entity_registry_updated",
     async exec() {
-      await throttle(ENTITY_REGISTRY_UPDATED, config.hass.EVENT_THROTTLE_MS);
+      await debounce(ENTITY_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
       logger.debug("entity registry updated");
       hass.entity.registry.current = await hass.entity.registry.list();
       event.emit(ENTITY_REGISTRY_UPDATED);

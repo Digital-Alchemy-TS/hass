@@ -25,7 +25,7 @@ describe("Entity", () => {
 
   describe("API", () => {
     describe("Updates", () => {
-      it("should throttle updates properly", async () => {
+      it("should debounce updates properly", async () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
@@ -54,7 +54,7 @@ describe("Entity", () => {
             hass: {
               AUTO_CONNECT_SOCKET: false,
               AUTO_SCAN_CALL_PROXY: false,
-              EVENT_THROTTLE_MS: 10,
+              EVENT_DEBOUNCE_MS: 10,
             },
           }),
         );
