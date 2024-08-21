@@ -1,7 +1,7 @@
 import {
+  debounce,
   eachSeries,
   InternalError,
-  debounce,
   TServiceParams,
 } from "@digital-alchemy/core";
 

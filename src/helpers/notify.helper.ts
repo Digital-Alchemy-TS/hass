@@ -117,7 +117,7 @@ export type AppleNotificationData = {
   subtitle?: string;
   push?: AppleNotificationPush;
   /**
-   * iOS Suports ~10 actions.
+   * iOS Supports ~10 actions.
    */
   actions: Array<NotificationAction & AppleNotificationActionOptions>;
 };
@@ -275,7 +275,7 @@ export type AndroidNotificationData = {
   car_ui?: boolean;
 
   /**
-   * Android Suports 3 actions.
+   * Android Supports 3 actions.
    */
   actions: Array<NotificationAction & AndroidNotificationActionOptions>;
 };
