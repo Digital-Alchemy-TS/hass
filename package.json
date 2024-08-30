@@ -2,7 +2,7 @@
   "name": "@digital-alchemy/hass",
   "repository": "https://github.com/Digital-Alchemy-TS/hass",
   "homepage": "https://docs.digital-alchemy.app",
-  "version": "24.8.2",
+  "version": "24.8.3",
   "description": "Typescript APIs for Home Assistant. Includes rest & websocket bindings",
   "scripts": {
     "build": "rm -rf dist/; tsc",
@@ -61,9 +61,9 @@
   "license": "MIT",
   "devDependencies": {
     "@cspell/eslint-plugin": "^8.8.4",
-    "@digital-alchemy/core": "^24.8.2",
-    "@digital-alchemy/synapse": "^24.8.1",
-    "@digital-alchemy/type-writer": "^24.7.2",
+    "@digital-alchemy/core": "^24.8.4",
+    "@digital-alchemy/synapse": "^24.8.2",
+    "@digital-alchemy/type-writer": "^24.8.1",
     "@types/figlet": "^1.5.8",
     "@types/jest": "^29.5.12",
     "@types/js-yaml": "^4.0.9",

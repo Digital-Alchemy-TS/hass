@@ -59,6 +59,7 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
     }
     return entity?.entity_id;
   }
+
   // * label
   function label<LABEL extends TLabelId, DOMAIN extends ALL_DOMAINS>(
     label: LABEL,
@@ -79,12 +80,31 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
     ...domains: DOMAIN[]
   ) {
     hass.entity.warnEarly("area");
-    return process(
-      hass.entity.registry.current
-        .filter(i => i.area_id === area)
-        .map(i => i.entity_id as PICK_FROM_AREA<AREA, DOMAIN>),
-      domains,
+
+    // find entities are associated with the area directly
+    const fromEntity = hass.entity.registry.current
+      .filter(i => i.area_id === area)
+      .map(i => i.entity_id);
+
+    // identify devices
+    const devices = new Set(
+      hass.device.current
+        .filter(device => device.area_id === area)
+        .map(i => i.id),
     );
+
+    // extract entities associated with device, that have not been assigned to a room
+    const fromDevice = hass.entity.registry.current
+      .filter(
+        entity => devices.has(entity.device_id) && is.empty(entity.area_id),
+      )
+      .map(i => i.entity_id);
+
+    return process(
+      // merge lists
+      is.unique([...fromEntity, ...fromDevice]),
+      domains,
+    ) as PICK_FROM_AREA<AREA, DOMAIN>[];
   }
 
   // * device
