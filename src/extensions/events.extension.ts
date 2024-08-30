@@ -11,15 +11,6 @@ import {
 
 type SimpleCallback = () => TBlackHole;
 
-const ANY_REGISTRY = [
-  AREA_REGISTRY_UPDATED,
-  DEVICE_REGISTRY_UPDATED,
-  ENTITY_REGISTRY_UPDATED,
-  FLOOR_REGISTRY_UPDATED,
-  LABEL_REGISTRY_UPDATED,
-  ZONE_REGISTRY_UPDATED,
-];
-
 export function Events({ event }: TServiceParams) {
   return {
     onAreaRegistryUpdate: (callback: SimpleCallback) =>
@@ -32,8 +23,6 @@ export function Events({ event }: TServiceParams) {
       event.on(FLOOR_REGISTRY_UPDATED, callback),
     onLabelRegistryUpdate: (callback: SimpleCallback) =>
       event.on(LABEL_REGISTRY_UPDATED, callback),
-    onRegistryUpdate: (callback: SimpleCallback) =>
-      ANY_REGISTRY.forEach(i => event.on(i, callback)),
     onZoneRegistryUpdate: (callback: SimpleCallback) =>
       event.on(ZONE_REGISTRY_UPDATED, callback),
   };
