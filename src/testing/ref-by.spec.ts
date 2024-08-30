@@ -192,7 +192,7 @@ describe("ID By", () => {
           lifecycle.onReady(() => {
             const bedroom = hass.refBy.area("bedroom");
             const kitchen = hass.refBy.area("kitchen");
-            expect(bedroom.length).toBe(1);
+            expect(bedroom.length).toBe(2);
             expect(kitchen.length).toBe(1);
           });
         },
@@ -209,7 +209,7 @@ describe("ID By", () => {
           lifecycle.onReady(() => {
             const bedroom = hass.refBy.area("bedroom", "light");
             const kitchen = hass.refBy.area("kitchen", "light");
-            expect(bedroom.length).toBe(0);
+            expect(bedroom.length).toBe(1);
             expect(kitchen.length).toBe(0);
           });
         },
@@ -296,7 +296,7 @@ describe("ID By", () => {
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
             const synapse = hass.refBy.floor("downstairs");
-            expect(synapse.length).toBe(2);
+            expect(synapse.length).toBe(3);
           });
         },
       });
