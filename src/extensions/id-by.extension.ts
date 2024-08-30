@@ -41,9 +41,6 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
     );
   }
 
-  let areaCache = new Map<TAreaId, PICK_ENTITY[]>();
-  hass.events.onRegistryUpdate(() => (areaCache = new Map()));
-
   // #MARK: byUniqueId
   function unique_id<
     UNIQUE_ID extends TUniqueId,
