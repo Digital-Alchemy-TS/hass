@@ -26,6 +26,15 @@
       "labels": [],
       "name": "Bedroom",
       "picture": null
+    },
+    {
+      "aliases": [],
+      "area_id": "test",
+      "floor_id": "upstairs",
+      "icon": null,
+      "labels": [],
+      "name": "Test",
+      "picture": null
     }
   ],
   "devices": [
@@ -66,6 +75,32 @@
       "entry_type": "service",
       "hw_version": null,
       "id": "e58841e47cf86097b310316e55d6bb12",
+      "identifiers": [
+        [
+          "holiday",
+          "05ecbbc6111791b6baacbbb60397db14"
+        ]
+      ],
+      "labels": [],
+      "manufacturer": null,
+      "model": null,
+      "name_by_user": null,
+      "name": "United States, TX",
+      "serial_number": null,
+      "sw_version": null,
+      "via_device_id": null
+    },
+    {
+      "area_id": "test",
+      "configuration_url": null,
+      "config_entries": [
+        "05ecbbc6111791b6baacaaa60397db14"
+      ],
+      "connections": [],
+      "disabled_by": null,
+      "entry_type": "service",
+      "hw_version": null,
+      "id": "e59941e47cf86097b310316e55d6bb12",
       "identifiers": [
         [
           "holiday",
@@ -397,6 +432,75 @@
       }
     },
     {
+      "entity_id": "sensor.living_room_temperature",
+      "state": "23.5",
+      "attributes": {
+        "unit_of_measurement": "°C",
+        "friendly_name": "Living Room Temperature",
+        "device_class": "temperature"
+      },
+      "last_changed": "2024-08-30T14:02:12.345678+00:00",
+      "last_reported": "2024-08-30T14:02:12.345678+00:00",
+      "last_updated": "2024-08-30T14:02:12.345678+00:00",
+      "context": {
+        "id": "02CDEFGHIJK1L2MNO3PQRS4TU5",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "light.bedroom_light",
+      "state": "on",
+      "attributes": {
+        "brightness": 255,
+        "friendly_name": "Bedroom Light",
+        "supported_features": 41
+      },
+      "last_changed": "2024-08-30T14:03:21.567890+00:00",
+      "last_reported": "2024-08-30T14:03:21.567890+00:00",
+      "last_updated": "2024-08-30T14:03:21.567890+00:00",
+      "context": {
+        "id": "03UVWXYZABCDE123FGHI456JKL7",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "climate.hallway_thermostat",
+      "state": "cool",
+      "attributes": {
+        "current_temperature": 22,
+        "target_temperature": 20,
+        "hvac_mode": "cool",
+        "friendly_name": "Hallway Thermostat",
+        "supported_features": 1
+      },
+      "last_changed": "2024-08-30T14:04:44.123456+00:00",
+      "last_reported": "2024-08-30T14:04:44.123456+00:00",
+      "last_updated": "2024-08-30T14:04:44.123456+00:00",
+      "context": {
+        "id": "04MNOPQRSTUV8WX9YZABCDE123",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "binary_sensor.garage_door",
+      "state": "off",
+      "attributes": {
+        "device_class": "door",
+        "friendly_name": "Garage Door Sensor"
+      },
+      "last_changed": "2024-08-30T14:05:32.789012+00:00",
+      "last_reported": "2024-08-30T14:05:32.789012+00:00",
+      "last_updated": "2024-08-30T14:05:32.789012+00:00",
+      "context": {
+        "id": "05FGHIJKLMNO4PQR5STUV6789WX",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
       "entity_id": "calendar.united_states_tx",
       "state": "off",
       "attributes": {
@@ -419,6 +523,86 @@
     }
   ],
   "entity_registry": [
+    {
+      "area_id": "living_room",
+      "categories": {},
+      "config_entry_id": "9f1b2c34d0a7498d9ecbbb5d673c5e4a",
+      "device_id": "e59941e47cf86097b310316e55d6bb12",
+      "disabled_by": null,
+      "entity_category": null,
+      "entity_id": "sensor.living_room_temperature",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:thermometer",
+      "id": "4a7d8f7d8b9c4e6db5a3c7f1d1a9e4c7",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Living Room Temperature",
+      "platform": "sensor",
+      "translation_key": null,
+      "unique_id": "9f1b2c34d0a7498d9ecbbb5d673c5e4a-living_room_temperature"
+    },
+    {
+      "area_id": "bedroom",
+      "categories": {},
+      "config_entry_id": "c4f9e8ab7c3b4f9e8ab9d1f6a1c2e3d4",
+      "device_id": "e59941e47cf86097b310316e55d6bb12",
+      "disabled_by": null,
+      "entity_category": null,
+      "entity_id": "light.bedroom_light",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:lightbulb",
+      "id": "7c1e8d9c9b8c4e7eb5a3d9f6c1e7a3d9",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Bedroom Light",
+      "platform": "light",
+      "translation_key": null,
+      "unique_id": "c4f9e8ab7c3b4f9e8ab9d1f6a1c2e3d4-bedroom_light"
+    },
+    {
+      "area_id": null,
+      "categories": {},
+      "config_entry_id": "a1b2c3d4e5f67890ab1c2d3e4f567890",
+      "device_id": "e59941e47cf86097b310316e55d6bb12",
+      "disabled_by": null,
+      "entity_category": null,
+      "entity_id": "climate.hallway_thermostat",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:thermostat",
+      "id": "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Hallway Thermostat",
+      "platform": "climate",
+      "translation_key": null,
+      "unique_id": "a1b2c3d4e5f67890ab1c2d3e4f567890-hallway_thermostat"
+    },
+    {
+      "area_id": null,
+      "categories": {},
+      "config_entry_id": "b1c2d3e4f567890a1b2c3d4e5f67890b",
+      "device_id": "e59941e47cf86097b310316e55d6bb12",
+      "disabled_by": null,
+      "entity_category": null,
+      "entity_id": "binary_sensor.garage_door",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:garage",
+      "id": "6p5o4n3m2l1k0j9i8h7g6f5e4d3c2b1a",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Garage Door Sensor",
+      "platform": "binary_sensor",
+      "translation_key": null,
+      "unique_id": "b1c2d3e4f567890a1b2c3d4e5f67890b-garage_door"
+    },
     {
       "area_id": null,
       "categories": {},
@@ -444,7 +628,7 @@
       "unique_id": "5622d76001a335e3ea893c4d60d31b3d-next_dawn"
     },
     {
-      "area_id": null,
+      "area_id": "test",
       "categories": {},
       "config_entry_id": "5622d76001a335e3ea893c4d60d31b3d",
       "device_id": "308e39cf50a9fc6c30b4110724ed1f2e",

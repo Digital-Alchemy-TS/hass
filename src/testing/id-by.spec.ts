@@ -5,6 +5,7 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
+import { PICK_ENTITY } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("ID By", () => {
@@ -31,6 +32,30 @@ describe("ID By", () => {
             const kitchen = hass.idBy.area("kitchen");
             expect(bedroom.length).toBe(1);
             expect(kitchen.length).toBe(1);
+          });
+        },
+      });
+      await application.bootstrap(
+        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
+      );
+    });
+
+    it("finds entities only related by device", async () => {
+      expect.assertions(1);
+      application = CreateTestingApplication({
+        Test({ lifecycle, hass }: TServiceParams) {
+          lifecycle.onReady(() => {
+            // merges 1 from direct area, 2 via device
+            // ignores 2 from the device assigned to another area
+            const list = hass.idBy.area("test") as PICK_ENTITY[];
+            const expected = [
+              "sensor.sun_next_dusk",
+              "climate.hallway_thermostat",
+              "binary_sensor.garage_door",
+            ] as PICK_ENTITY[];
+            expect(expected.every(expected => list.includes(expected))).toBe(
+              true,
+            );
           });
         },
       });

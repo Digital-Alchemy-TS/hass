@@ -86,20 +86,22 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
       .filter(i => i.area_id === area)
       .map(i => i.entity_id);
 
-    // merge those from devices registered to those areas
-    // unless they are manually assigned to a different room
-    const fromDevice = hass.device.current
-      .filter(device => device.area_id === area)
-      .flatMap(device =>
-        hass.entity.registry.current
-          .filter(
-            entity =>
-              entity.device_id === device.via_device_id &&
-              (is.empty(entity.area_id) || entity.area_id === area),
-          )
-          .map(i => i.entity_id),
-      );
+    // identify devices
+    const devices = new Set(
+      hass.device.current
+        .filter(device => device.area_id === area)
+        .map(i => i.id),
+    );
+
+    // extract entities associated with device, that have not been assigned to a room
+    const fromDevice = hass.entity.registry.current
+      .filter(
+        entity => devices.has(entity.device_id) && is.empty(entity.area_id),
+      )
+      .map(i => i.entity_id);
+
     return process(
+      // merge lists
       is.unique([...fromEntity, ...fromDevice]),
       domains,
     ) as PICK_FROM_AREA<AREA, DOMAIN>[];

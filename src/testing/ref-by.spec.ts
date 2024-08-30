@@ -123,7 +123,7 @@ describe("ID By", () => {
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
             const sensor = hass.refBy.domain("sensor");
-            expect(sensor.length).toBe(7);
+            expect(sensor.length).toBe(8);
           });
         },
       });

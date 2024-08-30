@@ -4087,6 +4087,7 @@ export type iCallService = {
 // #MARK: REGISTRY_SETUP
 export type REGISTRY_SETUP = {
   area: {
+    _test: "switch.living_room_mood_lights";
     _living_room: "switch.living_room_mood_lights";
     _kitchen: "switch.kitchen_cabinets";
     _bedroom: "switch.bedroom_lamp" | "light.bedroom_ceiling_fan";
@@ -4148,7 +4149,7 @@ export type REGISTRY_SETUP = {
 };
 
 // #MARK: TAreaId
-export type TAreaId = "living_room" | "kitchen" | "bedroom";
+export type TAreaId = "living_room" | "kitchen" | "bedroom" | "test";
 
 // #MARK: TDeviceId
 export type TDeviceId =
