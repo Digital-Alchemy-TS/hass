@@ -937,9 +937,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digital-alchemy/core@npm:^24.6.1":
-  version: 24.6.6
-  resolution: "@digital-alchemy/core@npm:24.6.6"
+"@digital-alchemy/core@npm:^24.8.4":
+  version: 24.8.4
+  resolution: "@digital-alchemy/core@npm:24.8.4"
   dependencies:
     chalk: "npm:^5.3.0"
     dayjs: "npm:^1.11.11"
@@ -954,43 +954,23 @@ __metadata:
   dependenciesMeta:
     redis:
       optional: true
-  checksum: 10/e8b4ed60ebb6170403450da8e1d1c5e285c04a3223c6c7aff5b5c6da05774d029087303fa356b7194912ff8f4626bcb7126f024d535217e9c3b14c57a141fd09
+  checksum: 10/51e44d5d3fd104c129e1233f73c16ad65c8471213893f655b93a25e342f1342dab52237187452752be046605e3da1df5e6eb811fdfddf7a2537e912dc58348ae
   languageName: node
   linkType: hard
 
-"@digital-alchemy/core@npm:^24.8.2":
-  version: 24.8.2
-  resolution: "@digital-alchemy/core@npm:24.8.2"
+"@digital-alchemy/fastify-extension@npm:^24.8.1":
+  version: 24.8.1
+  resolution: "@digital-alchemy/fastify-extension@npm:24.8.1"
   dependencies:
-    chalk: "npm:^5.3.0"
-    dayjs: "npm:^1.11.11"
-    dotenv: "npm:^16.4.5"
-    ini: "npm:^4.1.3"
-    js-yaml: "npm:^4.1.0"
-    minimist: "npm:^1.2.8"
-    node-cache: "npm:^5.1.2"
-    node-cron: "npm:^3.0.3"
-    prom-client: "npm:^15.1.2"
-    redis: "npm:^4.6.14"
-  dependenciesMeta:
-    redis:
-      optional: true
-  checksum: 10/68e9676a9a33daba073e2d351bac4738bd20ea9d5c3ef41b4d8d2ca813649af108cbd7023e0803b771c4c0ccc6da520c9756b52d0b0dfcfd06fee7178ab7e162
-  languageName: node
-  linkType: hard
-
-"@digital-alchemy/fastify-extension@npm:*":
-  version: 24.6.1
-  resolution: "@digital-alchemy/fastify-extension@npm:24.6.1"
-  dependencies:
-    "@digital-alchemy/core": "npm:^24.6.1"
     "@fastify/auth": "npm:^4.6.1"
     "@fastify/basic-auth": "npm:^5.1.1"
     "@fastify/jwt": "npm:^8.0.0"
     dayjs: "npm:^1.11.10"
     fastify: "npm:^4.26.2"
     prom-client: "npm:^15.1.1"
-  checksum: 10/efbb68b36ddf8b21eea81db483e18589efe3f909cf4c5e74b6dfb17dbdcf010719c8ee1335a1cf256c45ecd9cdb8f4e09e031697f99625d97049e05d642bfe7b
+  peerDependencies:
+    "@digital-alchemy/core": "*"
+  checksum: 10/251d887b10ff6758396eb89ebb4c27ac465085a7b0e3b25688cb134c7c7c4819d2a962f89beaa6247094bace394a08190086cc0d7fb5ede6dc6d55bee6cf87dc
   languageName: node
   linkType: hard
 
@@ -999,9 +979,9 @@ __metadata:
   resolution: "@digital-alchemy/hass@workspace:."
   dependencies:
     "@cspell/eslint-plugin": "npm:^8.8.4"
-    "@digital-alchemy/core": "npm:^24.8.2"
-    "@digital-alchemy/synapse": "npm:^24.8.1"
-    "@digital-alchemy/type-writer": "npm:^24.7.2"
+    "@digital-alchemy/core": "npm:^24.8.4"
+    "@digital-alchemy/synapse": "npm:^24.8.2"
+    "@digital-alchemy/type-writer": "npm:^24.8.1"
     "@types/figlet": "npm:^1.5.8"
     "@types/jest": "npm:^29.5.12"
     "@types/js-yaml": "npm:^4.0.9"
@@ -1045,11 +1025,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@digital-alchemy/synapse@npm:^24.8.1":
-  version: 24.8.1
-  resolution: "@digital-alchemy/synapse@npm:24.8.1"
+"@digital-alchemy/synapse@npm:^24.8.2":
+  version: 24.8.2
+  resolution: "@digital-alchemy/synapse@npm:24.8.2"
   dependencies:
-    "@digital-alchemy/fastify-extension": "npm:*"
+    "@digital-alchemy/fastify-extension": "npm:^24.8.1"
     better-sqlite3: "npm:^11.0.0"
     dayjs: "npm:^1.11.11"
     node-ssdp: "npm:^4.0.1"
@@ -1059,13 +1039,13 @@ __metadata:
   dependenciesMeta:
     "@digital-alchemy/fastify-extension":
       optional: true
-  checksum: 10/df0957537cdede94bca0bdeb0d83de4e856ed5205958302ace41baf55f0fa5e3fb442d95a7fe433b6fde7e73ede97cb3350463603890e19ff422614980c6b2b1
+  checksum: 10/6762a695b8280ec0ebd5b40160c283acf1dbf903eb4497795e840e6a494847fcbf5d2a3e2695ee3ff2462a61771c6f72ead55ffd19db2946ef021ac9f5dc297b
   languageName: node
   linkType: hard
 
-"@digital-alchemy/type-writer@npm:^24.7.2":
-  version: 24.7.2
-  resolution: "@digital-alchemy/type-writer@npm:24.7.2"
+"@digital-alchemy/type-writer@npm:^24.8.1":
+  version: 24.8.1
+  resolution: "@digital-alchemy/type-writer@npm:24.8.1"
   dependencies:
     js-yaml: "npm:^4.1.0"
     quicktype: "npm:^23.0.170"
@@ -1076,7 +1056,7 @@ __metadata:
     "@digital-alchemy/hass": "*"
   bin:
     type-writer: dist/main.js
-  checksum: 10/618ec45c39596d509529f9c21a0479d3c4d42b3de2f31f6f771cfe2d7f42841626af103c177de55a7e1c566ec6c2b20b8d7df57414a6d3cba784767973bf831b
+  checksum: 10/d86b4b90f02e966cb1ed7fc4f74eff92a38824aec885c88528eb7bc2430cbc31cc4af8a3dbeb6960fa50087b3898fe8b77ea348e96eb21d8c648b0054a97b1fd
   languageName: node
   linkType: hard
 
