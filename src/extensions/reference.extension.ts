@@ -85,6 +85,27 @@ export function ReferenceExtension({
       const thing = hass.entity.getCurrentState(
         entity_id,
       ) as ByIdProxy<ENTITY_ID>;
+
+      function keys() {
+        const entityDomain = domain(entity_id);
+        return [
+          "attributes",
+          "entity_id",
+          "history",
+          "last",
+          "nextState",
+          "once",
+          "onUpdate",
+          "previous",
+          "removeAllListeners",
+          "state",
+          "waitForState",
+          ...hass.configure
+            .getServices()
+            .filter(({ domain }) => domain === entityDomain)
+            .flatMap(i => Object.keys(i.services)),
+        ];
+      }
       ENTITY_PROXIES.set(
         entity_id,
         // just because you can't do generics properly....
@@ -217,6 +238,12 @@ export function ReferenceExtension({
               };
             }
             return proxyGetLogic(entity_id, property);
+          },
+          has(_, property: string) {
+            return keys().includes(property);
+          },
+          ownKeys() {
+            return keys();
           },
           set(
             _,

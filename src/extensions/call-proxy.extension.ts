@@ -118,6 +118,15 @@ export function CallProxy({
         }
         return rawProxy[domain];
       },
+      has(_, property: string) {
+        return property in rawProxy;
+      },
+      ownKeys() {
+        return Object.keys(rawProxy);
+      },
+      set() {
+        return false;
+      },
     });
   }
 
