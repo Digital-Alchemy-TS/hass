@@ -125,6 +125,7 @@ export function CallProxy({
         return Object.keys(rawProxy);
       },
       set() {
+        // lol, no
         return false;
       },
     });
