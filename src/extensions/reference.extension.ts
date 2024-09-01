@@ -1,14 +1,17 @@
 import {
+  DOWN,
   is,
   NONE,
   sleep,
   TAnyFunction,
   TServiceParams,
+  UP,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import { Get } from "type-fest";
 import { isNumeric } from "validator";
 
+import { SERVICE_LIST_UPDATED } from "..";
 import {
   TAreaId,
   TDeviceId,
@@ -82,9 +85,47 @@ export function ReferenceExtension({
   ): ByIdProxy<ENTITY_ID> {
     const entity_domain = domain(entity_id) as ALL_SERVICE_DOMAINS;
     if (!ENTITY_PROXIES.has(entity_id)) {
-      const thing = hass.entity.getCurrentState(
+      const { ...thing } = hass.entity.getCurrentState(
         entity_id,
       ) as ByIdProxy<ENTITY_ID>;
+      let loaded = false;
+
+      function keys() {
+        const entityDomain = domain(entity_id);
+        return [
+          "attributes",
+          "entity_id",
+          "history",
+          "last",
+          "nextState",
+          "once",
+          "onUpdate",
+          "previous",
+          "removeAllListeners",
+          "state",
+          "waitForState",
+          ...hass.configure
+            .getServices()
+            .filter(({ domain }) => domain === entityDomain)
+            .flatMap(i => Object.keys(i.services))
+            .sort((a, b) => (a > b ? UP : DOWN)),
+        ];
+      }
+      function appendKeys(force = false) {
+        if (loaded && !force) {
+          return;
+        }
+        // Not gonna build types for this, and ts-expect-error fails in jest
+        // This is a weird hack for an obscure feature, so sue me
+        //
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        keys().forEach(i => (thing[i] ??= () => {}));
+        if (!is.empty(hass.configure.getServices())) {
+          loaded = true;
+        }
+      }
+      event.on(SERVICE_LIST_UPDATED, () => appendKeys(true));
       ENTITY_PROXIES.set(
         entity_id,
         // just because you can't do generics properly....
@@ -217,6 +258,14 @@ export function ReferenceExtension({
               };
             }
             return proxyGetLogic(entity_id, property);
+          },
+          has(_, property: string) {
+            appendKeys();
+            return property in thing;
+          },
+          ownKeys() {
+            appendKeys();
+            return Object.keys(thing);
           },
           set(
             _,

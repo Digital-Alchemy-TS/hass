@@ -140,4 +140,69 @@ describe("Workflows", () => {
       );
     });
   });
+
+  describe("Call", () => {
+    const EXPECTED_KEYS = [
+      "persistent_notification",
+      "homeassistant",
+      "system_log",
+      "logger",
+      "recorder",
+      "person",
+      "frontend",
+      "cloud",
+      "ffmpeg",
+      "tts",
+      "scene",
+      "timer",
+      "input_number",
+      "conversation",
+      "input_select",
+      "zone",
+      "input_button",
+      "script",
+      "automation",
+      "logbook",
+      "input_boolean",
+      "button",
+      "switch",
+      "input_datetime",
+      "backup",
+      "shopping_list",
+      "counter",
+      "schedule",
+      "input_text",
+      "synapse",
+      "todo",
+      "notify",
+      "calendar",
+    ];
+    it("does not allow set", async () => {
+      expect.assertions(1);
+      await runner(undefined, async ({ hass }) => {
+        try {
+          // @ts-expect-error testing
+          hass.call.button = {};
+        } catch (error) {
+          expect(error).toBeDefined();
+        }
+      });
+    });
+
+    it("provides keys via ownKeys", async () => {
+      expect.assertions(1);
+      await runner(undefined, async ({ hass }) => {
+        const keys = Object.keys(hass.call);
+        expect(keys).toEqual(EXPECTED_KEYS);
+      });
+    });
+
+    it("does has correctly", async () => {
+      expect.assertions(34);
+      await runner(undefined, async ({ hass }) => {
+        EXPECTED_KEYS.forEach(i => expect(i in hass.call).toBe(true));
+        expect("unknown_property" in hass.call).toBe(false);
+      });
+    });
+  });
 });

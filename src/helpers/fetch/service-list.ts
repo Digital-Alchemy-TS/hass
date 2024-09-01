@@ -60,5 +60,5 @@ export interface ResponseOptional {
 
 export interface HassServiceDTO {
   domain: ALL_DOMAINS;
-  services: Record<string, ServiceListField>;
+  services: Record<string /* via .name */, ServiceListField>;
 }

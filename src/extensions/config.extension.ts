@@ -20,9 +20,12 @@ import {
 const MAX_ATTEMPTS = 50;
 const FAILED = 1;
 
+export const SERVICE_LIST_UPDATED = "SERVICE_LIST_UPDATED";
+
 export function Configure({
   logger,
   lifecycle,
+  event,
   hass,
   config,
   internal,
@@ -96,8 +99,10 @@ export function Configure({
       );
       await sleep(config.hass.RETRY_INTERVAL * SECOND);
       await loadServiceList(recursion + INCREMENT);
+    } else {
+      event.emit(SERVICE_LIST_UPDATED, services);
+      checkedServices = new Map();
     }
-    checkedServices = new Map();
   }
   let checkedServices = new Map<string, boolean>();
 
