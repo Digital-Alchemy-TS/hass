@@ -87,6 +87,14 @@ export function CallProxy({
       (config.hass.CALL_PROXY_ALLOW_REST === "allow" &&
         hass.socket.connectionState !== "connected") ||
       config.hass.CALL_PROXY_ALLOW_REST === "prefer";
+    if (sendViaRest && return_response) {
+      // See https://github.com/home-assistant/core/issues/106379#issuecomment-1878548124 for the reason for this warning
+      logger.warn(
+        { name: sendMessage },
+        "Services that require a return_response are not allowed to be sent via REST, they must use WebSockets",
+      );
+    }
+
     if (sendViaRest) {
       return await hass.fetch.callService(serviceName, service_data);
     }
