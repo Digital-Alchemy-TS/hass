@@ -48,15 +48,15 @@ export function CallProxy({
             parameters: object,
           ) => {
             const data = value.services[key];
-            if (is.boolean(data?.response?.optional)) {
-              // https://github.com/Digital-Alchemy-TS/hass/issues/34
-              logger.warn(`calling services with responses not supported`);
-            }
 
             const service = `${value.domain}.${key}` as SERVICE;
-            await sendMessage(service, {
-              ...parameters,
-            } as PICK_SERVICE_PARAMETERS<ALL_SERVICE_DOMAINS, SERVICE>);
+            return await sendMessage(
+              service,
+              {
+                ...parameters,
+              } as PICK_SERVICE_PARAMETERS<ALL_SERVICE_DOMAINS, SERVICE>,
+              is.boolean(data?.response?.optional),
+            );
           },
         ]),
       );
@@ -77,6 +77,7 @@ export function CallProxy({
   >(
     serviceName: SERVICE,
     service_data: PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>,
+    return_response: boolean,
   ) {
     // pause for rest also
     if (hass.socket.pauseMessages) {
@@ -94,7 +95,13 @@ export function CallProxy({
     // User can just not await this call if they don't care about the "waitForChange"
 
     return await hass.socket.sendMessage(
-      { domain, service, service_data, type: "call_service" },
+      {
+        domain,
+        return_response,
+        service,
+        service_data,
+        type: "call_service",
+      },
       true,
     );
   }
