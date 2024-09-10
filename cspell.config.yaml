@@ -30,5 +30,7 @@ words:
   - systype
   - tvshow
   - zeroconf
+  - templow
+  - partlycloudy
 ignoreWords: []
 import: []
