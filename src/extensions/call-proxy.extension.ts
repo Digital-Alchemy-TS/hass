@@ -91,7 +91,7 @@ export function CallProxy({
       // See https://github.com/home-assistant/core/issues/106379#issuecomment-1878548124 for the reason for this warning
       logger.warn(
         { name: sendMessage },
-        "Services that require a return_response are not allowed to be sent via REST, they must use WebSockets",
+        "return_response calls must use websocket",
       );
     }
 
@@ -102,16 +102,25 @@ export function CallProxy({
     CALL_PROXY_SERVICE_CALL.labels({ domain, service }).inc();
     // User can just not await this call if they don't care about the "waitForChange"
 
-    return await hass.socket.sendMessage(
-      {
-        domain,
-        return_response,
-        service,
-        service_data,
-        type: "call_service",
-      },
+    if (!return_response) {
+      return await hass.socket.sendMessage(
+        { domain, service, service_data, type: "call_service" },
+        true,
+      );
+    }
+    const result = (await hass.socket.sendMessage(
+      { domain, return_response, service, service_data, type: "call_service" },
       true,
-    );
+    )) as { response: unknown };
+    if (!result?.response) {
+      logger.warn(
+        { result },
+        `{%s}.{%s} did not return a response`,
+        domain,
+        service,
+      );
+    }
+    return result?.response;
   }
 
   function buildCallProxy(): iCallService {

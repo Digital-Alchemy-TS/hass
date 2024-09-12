@@ -965,7 +965,7 @@ __metadata:
     "@cspell/eslint-plugin": "npm:^8.8.4"
     "@digital-alchemy/core": "npm:^24.8.4"
     "@digital-alchemy/synapse": "npm:^24.9.3"
-    "@digital-alchemy/type-writer": "npm:^24.9.1"
+    "@digital-alchemy/type-writer": "npm:^24.9.2"
     "@types/figlet": "npm:^1.5.8"
     "@types/jest": "npm:^29.5.12"
     "@types/js-yaml": "npm:^4.0.9"
@@ -1022,9 +1022,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digital-alchemy/type-writer@npm:^24.9.1":
-  version: 24.9.1
-  resolution: "@digital-alchemy/type-writer@npm:24.9.1"
+"@digital-alchemy/type-writer@npm:^24.9.2":
+  version: 24.9.2
+  resolution: "@digital-alchemy/type-writer@npm:24.9.2"
   dependencies:
     js-yaml: "npm:^4.1.0"
     quicktype: "npm:^23.0.170"
@@ -1035,7 +1035,7 @@ __metadata:
     "@digital-alchemy/hass": "*"
   bin:
     type-writer: dist/main.js
-  checksum: 10/4bfb84859cf63a48a421829da42f71e0133815e92da489b66d030a46a7039ee239f03ed42ad514ff4a868866c9f7ebbf32a2a8f8e4454ae094acb7f7c05a8ddb
+  checksum: 10/0616878c1b0963a34fe0190fe60a95da4f7fb74923a2aa008050531ab2515ba6bb328bbd9c8ccb0a00a73743d66f64d20f78ecf3cc75bc83ed9eca03f1d6d80b
   languageName: node
   linkType: hard
 
