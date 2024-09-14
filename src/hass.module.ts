@@ -9,6 +9,7 @@ import {
   EntityManager,
   Events,
   FetchAPI,
+  FetchInternals,
   Floor,
   Label,
   Registry,
@@ -163,6 +164,8 @@ export const LIB_HASS = CreateLibrary({
      * search for entity ids in a type safe way
      */
     idBy: IDByExtension,
+
+    internals: FetchInternals,
 
     /**
      * home assistant label interactions

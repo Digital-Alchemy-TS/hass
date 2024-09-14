@@ -1,32 +1,45 @@
 import {
   ApplicationDefinition,
+  iTestRunner,
   OptionalModuleConfiguration,
   ServiceMap,
+  TestRunner,
   TServiceParams,
 } from "@digital-alchemy/core";
 import { env } from "process";
 
-import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import { HassConfig, LIB_HASS } from "..";
+import { CreateTestingApplication, LIB_MOCK_ASSISTANT, SILENT_BOOT } from "../mock_assistant";
 
 const DEFAULTS = "DEFAULTS";
 
 describe("Config", () => {
-  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
+  let runner: iTestRunner;
 
-  beforeAll(() => {
+  beforeEach(() => {
     delete env.HASSIO_TOKEN;
     delete env.SUPERVISOR_TOKEN;
     delete env.HASS_SERVER;
+    runner = TestRunner({ target: LIB_HASS })
+      .appendLibrary(LIB_MOCK_ASSISTANT)
+      .appendService(({ hass }) => {
+        jest
+          .spyOn(hass.fetch, "getConfig")
+          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
+      })
+      .configure({
+        configuration: {
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            MOCK_SOCKET: true,
+          },
+        },
+      });
   });
 
   afterEach(async () => {
-    if (application) {
-      await application.teardown();
-      application = undefined;
-    }
-    delete env.HASSIO_TOKEN;
-    delete env.SUPERVISOR_TOKEN;
-    delete env.HASS_SERVER;
+    await runner.teardown();
     jest.restoreAllMocks();
   });
 
@@ -35,25 +48,21 @@ describe("Config", () => {
     it("should do nothing if variables do not exist", async () => {
       expect.assertions(2);
       const URL = "http://localhost:9123";
-      application = CreateTestingApplication({
-        Test({ config, lifecycle }: TServiceParams) {
+      await runner
+        .configure({
+          configuration: {
+            hass: {
+              BASE_URL: URL,
+              TOKEN: DEFAULTS,
+            },
+          },
+        })
+        .run(({ lifecycle, config }) => {
           lifecycle.onPostConfig(() => {
             expect(config.hass.BASE_URL).toBe(URL);
             expect(config.hass.TOKEN).toBe(DEFAULTS);
           });
-        },
-      });
-
-      await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            BASE_URL: URL,
-            TOKEN: DEFAULTS,
-          },
-        }),
-      );
+        });
     });
 
     // # Should set BASE_URL & TOKEN if provided env

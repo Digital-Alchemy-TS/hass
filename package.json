@@ -105,10 +105,16 @@
     "@digital-alchemy/core": "*"
   },
   "jest": {
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
     "collectCoverage": true,
     "coverageReporters": [
       "text",
       "cobertura"
+    ],
+    "coveragePathIgnorePatterns": [
+      "testing/"
     ],
     "preset": "ts-jest",
     "testEnvironment": "node",
@@ -119,16 +125,23 @@
       "node"
     ],
     "testMatch": [
-      "**/?(*.)+(spec|test).ts"
+      "**/testing/?(*.)+(spec|test).ts"
+    ],
+    "setupFiles": [
+      "<rootDir>/test-setup.ts"
     ],
     "transform": {
       "^.+\\.ts$": [
         "ts-jest",
         {
-          "tsconfig": "tsconfig.spec.json"
+          "tsconfig": "tsconfig.spec.json",
+          "useESM": true
         }
       ]
     }
   },
-  "packageManager": "yarn@4.4.0"
+  "packageManager": "yarn@4.4.0",
+  "resolutions": {
+    "@digital-alchemy/core": "portal:/home/zoe/DigitalAlchemyTS/core"
+  }
 }

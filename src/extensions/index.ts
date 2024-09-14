@@ -8,6 +8,7 @@ export * from "./events.extension";
 export * from "./fetch-api.extension";
 export * from "./floor.extension";
 export * from "./id-by.extension";
+export * from "./internal.extension";
 export * from "./label.extension";
 export * from "./reference.extension";
 export * from "./registry.extension";

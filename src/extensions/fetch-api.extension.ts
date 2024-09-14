@@ -1,13 +1,4 @@
-import {
-  DOWN,
-  FilteredFetchArguments,
-  is,
-  NO_CHANGE,
-  SECOND,
-  TFetchBody,
-  TServiceParams,
-  UP,
-} from "@digital-alchemy/core";
+import { DOWN, is, NO_CHANGE, SECOND, TServiceParams, UP } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import { exit } from "process";
 import { lt } from "semver";
@@ -19,6 +10,7 @@ import {
   CalendarFetchOptions,
   CheckConfigResult,
   ENTITY_STATE,
+  FilteredFetchArguments,
   HassConfig,
   HassServiceDTO,
   HomeAssistantServerLogItem,
@@ -27,6 +19,7 @@ import {
   PICK_SERVICE_PARAMETERS,
   PostConfigPriorities,
   RawCalendarEvent,
+  TFetchBody,
 } from "..";
 
 type SendBody<STATE extends string | number = string, ATTRIBUTES extends object = object> = {
@@ -34,8 +27,8 @@ type SendBody<STATE extends string | number = string, ATTRIBUTES extends object 
   state?: STATE;
 };
 
-export function FetchAPI({ logger, lifecycle, context, hass, internal, config }: TServiceParams) {
-  const fetcher = internal.boilerplate.fetch({ context });
+export function FetchAPI({ logger, lifecycle, context, hass, config }: TServiceParams) {
+  const fetcher = hass.internals({ context });
   const { download: downloader } = fetcher;
 
   // Load configurations
