@@ -1,10 +1,20 @@
 import { CreateLibrary, createModule } from "@digital-alchemy/core";
 import { join } from "path";
 import { cwd } from "process";
+import { inspect } from "util";
 
-import { HassConfig, LIB_HASS } from "..";
-import { Events, Fixtures } from "./extensions";
-import { MockWebsocketAPI } from "./extensions/websocket-api.extension";
+import { LIB_HASS } from "..";
+import {
+  Events,
+  Fixtures,
+  MockAreaExtension,
+  MockDeviceExtension,
+  MockEntityExtension,
+  MockFloorExtension,
+  MockLabelExtension,
+  MockWebsocketAPI,
+  MockZoneExtension,
+} from "./extensions";
 
 export const LIB_MOCK_ASSISTANT = CreateLibrary({
   configuration: {
@@ -13,11 +23,24 @@ export const LIB_MOCK_ASSISTANT = CreateLibrary({
       description: [],
       type: "string",
     },
+    PASS_AUTH: {
+      default: true,
+      description: "Auto pass for auth challenges",
+      type: "boolean",
+    },
   },
+  depends: [LIB_HASS],
   name: "mock_assistant",
   services: {
+    area: MockAreaExtension,
+    device: MockDeviceExtension,
+    entity: MockEntityExtension,
     events: Events,
     fixtures: Fixtures,
+    floor: MockFloorExtension,
+    label: MockLabelExtension,
+    socket: MockWebsocketAPI,
+    zone: MockZoneExtension,
   },
 });
 
@@ -27,11 +50,10 @@ declare module "@digital-alchemy/core" {
   }
 }
 
-export const LIB_MOCK_HASS = createModule
+export const HassTestRunner = createModule
   .fromLibrary(LIB_HASS)
   .extend()
-  .replaceService("socket", MockWebsocketAPI)
-  .appendService("_fetchReplacer", ({ hass }) => {
-    hass.fetch.getConfig = async () => ({ version: "2024.4.1" }) as HassConfig;
-  })
-  .toLibrary();
+  .toTest()
+  .appendLibrary(LIB_MOCK_ASSISTANT);
+
+inspect.defaultOptions.depth = 10;

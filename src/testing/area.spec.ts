@@ -1,9 +1,8 @@
-import { LibraryTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
+import { sleep } from "@digital-alchemy/core";
 
-import { LIB_HASS } from "..";
 import { TAreaId } from "../dynamic";
 import { AREA_REGISTRY_UPDATED, AreaDetails } from "../helpers";
-import { LIB_MOCK_HASS } from "../mock_assistant";
+import { HassTestRunner, INTERNAL_MESSAGE } from "../mock_assistant";
 
 describe("Area", () => {
   const EXAMPLE_AREA = {
@@ -14,14 +13,9 @@ describe("Area", () => {
     name: "Empty Area",
     picture: null,
   } as AreaDetails;
-  let runner: LibraryTestRunner<typeof LIB_HASS>;
-
-  beforeEach(() => {
-    runner = TestRunner({ target: LIB_MOCK_HASS });
-  });
 
   afterEach(async () => {
-    await runner.teardown();
+    await HassTestRunner.teardown();
     jest.restoreAllMocks();
   });
 
@@ -29,10 +23,16 @@ describe("Area", () => {
     fit("should force values to be available before ready", async () => {
       expect.assertions(1);
 
-      await runner.run(({ lifecycle, hass }) => {
-        const spy = jest
-          .spyOn(hass.socket, "sendMessage")
-          .mockImplementation(async () => [EXAMPLE_AREA]);
+      await HassTestRunner.configure({
+        // configuration: { boilerplate: { LOG_LEVEL: "warn" } },
+        // emitLogs: true,
+        // forceTeardown: true,
+      }).run(({ mock_assistant, lifecycle, hass }) => {
+        const spy = jest.fn();
+        // const spy = jest
+        // .spyOn(hass.socket, "sendMessage")
+        // .mockImplementation(async () => [EXAMPLE_AREA]);
+        mock_assistant.socket.connection.on(INTERNAL_MESSAGE, spy);
         lifecycle.onReady(async () => {
           await hass.area.list();
           expect(spy).toHaveBeenCalledWith(
@@ -47,7 +47,7 @@ describe("Area", () => {
     describe("Formatting", () => {
       it("should call list properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass }) => {
+        await HassTestRunner.run(({ lifecycle, hass }) => {
           const spy = jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => []);
           lifecycle.onReady(async () => {
             await hass.area.list();
@@ -60,7 +60,7 @@ describe("Area", () => {
 
       it("should call update properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await HassTestRunner.run(({ lifecycle, hass, event }) => {
           const spy = jest
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
@@ -78,7 +78,7 @@ describe("Area", () => {
 
       it("should debounce updates properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass }) => {
+        await HassTestRunner.run(({ lifecycle, hass }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           let counter = 0;
           hass.events.onAreaRegistryUpdate(() => counter++);
@@ -101,7 +101,7 @@ describe("Area", () => {
       it("should call delete properly", async () => {
         expect.assertions(1);
 
-        await runner.run(({ lifecycle, hass, event }) => {
+        await HassTestRunner.run(({ lifecycle, hass, event }) => {
           const spy = jest
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
@@ -119,7 +119,7 @@ describe("Area", () => {
 
       it("should call create properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await HassTestRunner.run(({ lifecycle, hass, event }) => {
           const spy = jest
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
@@ -139,7 +139,7 @@ describe("Area", () => {
     describe("Order of operations", () => {
       it("should wait for an update before returning when updating", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await HassTestRunner.run(({ lifecycle, hass, event }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
             const response = hass.area.update(EXAMPLE_AREA);
@@ -157,7 +157,7 @@ describe("Area", () => {
 
       it("should wait for an update before returning when deleting", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await HassTestRunner.run(({ lifecycle, hass, event }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
             const response = hass.area.delete("example_area" as TAreaId);
@@ -175,7 +175,7 @@ describe("Area", () => {
 
       it("should wait for an update before returning when creating", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await HassTestRunner.run(({ lifecycle, hass, event }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
             const response = hass.area.create(EXAMPLE_AREA);

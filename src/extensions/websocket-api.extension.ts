@@ -19,7 +19,6 @@ import {
   SocketSubscribeOptions,
 } from "..";
 
-let connection: WS;
 const CONNECTION_OPEN = 1;
 const CLEANUP_INTERVAL = 5;
 const UNLIMITED = 0;
@@ -53,7 +52,7 @@ export function WebsocketAPI({
    * Local attachment points for socket events
    */
   const socketEvents = new EventEmitter();
-  event.setMaxListeners(UNLIMITED);
+  socketEvents.setMaxListeners(UNLIMITED);
 
   let MESSAGE_TIMESTAMPS: number[] = [];
   let onSocketReady: () => void;
@@ -209,14 +208,14 @@ export function WebsocketAPI({
 
   // #MARK: teardown
   async function teardown() {
-    if (!connection) {
+    if (!hass.socket.connection) {
       return;
     }
-    if (connection.readyState === CONNECTION_OPEN) {
+    if (hass.socket.connection.readyState === CONNECTION_OPEN) {
       logger.debug({ name: teardown }, `closing current connection`);
-      connection.close();
+      hass.socket.connection.close();
     }
-    connection = undefined;
+    hass.socket.connection = undefined;
     hass.socket.setConnectionState("offline");
   }
 
@@ -256,7 +255,7 @@ export function WebsocketAPI({
     const sentAt = new Date();
 
     // ? not defined for unit tests
-    connection?.send(json);
+    hass.socket.connection?.send(json);
     if (subscription) {
       return data.id as RESPONSE_VALUE;
     }
@@ -328,7 +327,7 @@ export function WebsocketAPI({
 
   // #MARK: init
   async function init(): Promise<void> {
-    if (connection) {
+    if (hass.socket.connection) {
       throw new InternalError(
         context,
         "ExistingConnection",
@@ -338,8 +337,8 @@ export function WebsocketAPI({
     messageCount = START;
     const url = getUrl();
     try {
-      connection = new WS(url);
-      connection.on("message", async (message: string) => {
+      hass.socket.connection = hass.socket.createConnection(url);
+      hass.socket.connection.on("message", async (message: string) => {
         try {
           lastReceivedMessage = dayjs();
           const data = JSON.parse(message.toString());
@@ -356,14 +355,14 @@ export function WebsocketAPI({
         }
       });
 
-      connection.on("error", async (error: Error) => {
+      hass.socket.connection.on("error", async (error: Error) => {
         logger.error({ error: error, name: init }, "socket error");
         if (hass.socket.connectionState === "connected") {
           hass.socket.setConnectionState("unknown");
         }
       });
 
-      connection.on("close", async (code, reason) => {
+      hass.socket.connection.on("close", async (code, reason) => {
         logger.warn({ code, name: init, reason: reason.toString() }, "connection closed");
         await hass.socket.teardown();
       });
@@ -541,10 +540,14 @@ export function WebsocketAPI({
 
   // #MARK: return object
   return {
+    connection: undefined as WS,
+
     /**
      * the current state of the websocket
      */
     connectionState: "offline" as ConnectionState,
+
+    createConnection: (url: string) => new WS(url),
 
     /**
      * Convenient wrapper for sendMessage
