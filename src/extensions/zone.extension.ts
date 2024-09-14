@@ -10,9 +10,6 @@ import {
 
 export function Zone({ config, hass, event, logger, context, lifecycle }: TServiceParams) {
   hass.socket.onConnect(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
-      return;
-    }
     let loading = new Promise<void>(async done => {
       hass.zone.current = await hass.zone.list();
       loading = undefined;

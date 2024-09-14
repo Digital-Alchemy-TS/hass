@@ -1,4 +1,4 @@
-import { CreateLibrary, StringConfig } from "@digital-alchemy/core";
+import { CreateLibrary } from "@digital-alchemy/core";
 
 import {
   Area,
@@ -19,34 +19,13 @@ import {
 import { IDByExtension } from "./extensions/id-by.extension";
 import { ReferenceExtension } from "./extensions/reference.extension";
 
-type AllowRestOptions = "prefer" | "allow" | "forbid";
-
 export const LIB_HASS = CreateLibrary({
   configuration: {
-    AUTO_CONNECT_SOCKET: {
-      default: true,
-      description: "Websocket must be manually initialized if set to false",
-      type: "boolean",
-    },
-    AUTO_SCAN_CALL_PROXY: {
-      default: true,
-      description: "Should the call proxy request a service listing at bootstrap?",
-      type: "boolean",
-    },
     BASE_URL: {
       default: "http://homeassistant.local:8123",
       description: "Url to reach Home Assistant at",
       type: "string",
     },
-    CALL_PROXY_ALLOW_REST: {
-      default: "allow",
-      description: [
-        "Send commands from hass.call via rest instead of socket",
-        "Allow = only if socket is not connected",
-      ],
-      enum: ["prefer", "forbid", "allow"],
-      type: "string",
-    } as StringConfig<AllowRestOptions>,
     EVENT_DEBOUNCE_MS: {
       default: 50,
       description: "Debounce reactions to registry changes",
@@ -57,16 +36,6 @@ export const LIB_HASS = CreateLibrary({
       description:
         "If sendMessage was set to expect a response, a warning will be emitted after this delay if one is not received",
       type: "number",
-    },
-    MANAGE_REGISTRY: {
-      default: true,
-      description: "Live track registry data",
-      type: "boolean",
-    },
-    MOCK_SOCKET: {
-      default: false,
-      description: ["Operate with an artificial socket connection", "For unit testing"],
-      type: "boolean",
     },
     RETRY_INTERVAL: {
       default: 5,
@@ -96,19 +65,10 @@ export const LIB_HASS = CreateLibrary({
       required: true,
       type: "string",
     },
-    TRACK_ENTITIES: {
-      default: true,
-      description: "Set to false to not fetch entity info at boot, and maintain states",
-      type: "boolean",
-    },
     VALIDATE_CONFIGURATION: {
       default: false,
       description: "Validate the credentials, then quit",
       type: "boolean",
-    },
-    WEBSOCKET_URL: {
-      description: `Override calculated value if it's breaking or you want something custom. Make sure to use "ws[s]://" scheme.`,
-      type: "string",
     },
   },
   name: "hass",

@@ -1,4 +1,4 @@
-import { BootstrapException, InternalError, is, TServiceParams } from "@digital-alchemy/core";
+import { BootstrapException, is, TServiceParams } from "@digital-alchemy/core";
 import { existsSync, readFileSync } from "fs";
 
 import { ANY_ENTITY, ENTITY_STATE } from "../../helpers";
@@ -28,18 +28,7 @@ export function Fixtures({
   hass.fetch.getConfig = async () => mock_assistant.fixtures.data?.config;
 
   lifecycle.onPreInit(() => {
-    const { MOCK_SOCKET } = config.hass;
-
     const { FIXTURES_FILE } = config.mock_assistant;
-    if (!MOCK_SOCKET) {
-      // There needs to be a shared understanding that nobody is actually sending message traffic anywhere
-      // Otherwise the mocking is gonna cause some weirdness
-      throw new InternalError(
-        context,
-        "SOCKET_NOT_MOCKED",
-        "Not for testing with live connections",
-      );
-    }
     if (!existsSync(FIXTURES_FILE)) {
       throw new BootstrapException(
         context,

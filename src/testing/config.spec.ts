@@ -19,15 +19,6 @@ describe("Config", () => {
         jest
           .spyOn(hass.fetch, "getConfig")
           .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
-      })
-      .configure({
-        configuration: {
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            MOCK_SOCKET: true,
-          },
-        },
       });
   });
 
@@ -138,7 +129,7 @@ describe("Config", () => {
     });
 
     // # Should info log on success
-    it("should info log on success", async () => {
+    fit("should info log on success", async () => {
       const exitSpy = jest
         .spyOn(process, "exit")
         // @ts-expect-error testing

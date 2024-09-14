@@ -63,11 +63,9 @@ export function WebsocketAPI({
 
   // Start the socket
   lifecycle.onBootstrap(async () => {
-    if (config.hass.AUTO_CONNECT_SOCKET) {
-      logger.debug({ name: "onBootstrap" }, `auto starting connection`);
-      await manageConnection();
-      attachScheduledFunctions();
-    }
+    logger.debug({ name: "onBootstrap" }, `auto starting connection`);
+    await manageConnection();
+    attachScheduledFunctions();
   });
 
   let lastReceivedMessage: Dayjs;
@@ -93,18 +91,13 @@ export function WebsocketAPI({
     logger.trace({ name }, `emitting ping`);
     lastPingAttempt = now;
 
-    if (config.hass.MOCK_SOCKET) {
-      // artificial ping
-      lastReceivedMessage = now;
-    } else {
-      // emit a ping, do not wait for reply (inline)
-      hass.socket.sendMessage({ type: "ping" }, false);
+    // emit a ping, do not wait for reply (inline)
+    hass.socket.sendMessage({ type: "ping" }, false);
 
-      // reply will be captured by this, waiting at most a second
-      pingSleep = sleep(SECOND);
-      await pingSleep;
-      pingSleep = undefined;
-    }
+    // reply will be captured by this, waiting at most a second
+    pingSleep = sleep(SECOND);
+    await pingSleep;
+    pingSleep = undefined;
 
     if (!isOld(lastReceivedMessage)) {
       // received a least a pong
@@ -271,10 +264,6 @@ export function WebsocketAPI({
       return undefined;
     }
     return new Promise<RESPONSE_VALUE>(async done => {
-      if (config.hass.MOCK_SOCKET) {
-        done(undefined); // do something else if you want a real value
-        return;
-      }
       waitingCallback.set(id, done as (result: unknown) => TBlackHole);
       await sleep(config.hass.EXPECT_RESPONSE_AFTER * SECOND);
       if (!waitingCallback.has(id)) {
@@ -334,7 +323,7 @@ export function WebsocketAPI({
     const protocol = url.protocol === `http:` ? `ws:` : `wss:`;
     const path = url.pathname === "/" ? "" : url.pathname;
     const port = url.port ? `:${url.port}` : "";
-    return config.hass.WEBSOCKET_URL || `${protocol}//${url.hostname}${port}${path}/api/websocket`;
+    return `${protocol}//${url.hostname}${port}${path}/api/websocket`;
   }
 
   // #MARK: init
@@ -347,11 +336,6 @@ export function WebsocketAPI({
       );
     }
     messageCount = START;
-    if (config.hass.MOCK_SOCKET) {
-      hass.socket.setConnectionState("connected");
-      setImmediate(() => event.emit(SOCKET_CONNECTED));
-      return;
-    }
     const url = getUrl();
     try {
       connection = new WS(url);

@@ -4,9 +4,6 @@ import { DEVICE_REGISTRY_UPDATED, DeviceDetails, EARLY_ON_READY } from "../helpe
 
 export function Device({ hass, config, context, logger, lifecycle, event }: TServiceParams) {
   hass.socket.onConnect(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
-      return;
-    }
     let loading = new Promise<void>(async done => {
       hass.device.current = await hass.device.list();
       loading = undefined;

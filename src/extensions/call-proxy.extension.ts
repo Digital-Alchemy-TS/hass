@@ -2,7 +2,7 @@ import { is, TServiceParams } from "@digital-alchemy/core";
 
 import { ALL_SERVICE_DOMAINS, iCallService, PICK_SERVICE, PICK_SERVICE_PARAMETERS } from "..";
 
-export function CallProxy({ logger, lifecycle, internal, hass, config }: TServiceParams) {
+export function CallProxy({ logger, lifecycle, internal, hass }: TServiceParams) {
   let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
@@ -11,10 +11,6 @@ export function CallProxy({ logger, lifecycle, internal, hass, config }: TServic
    * This API matches the api at the time the this function is run, which may be different from any generated typescript definitions from the past.
    */
   lifecycle.onBootstrap(async () => {
-    if (!config.hass.AUTO_SCAN_CALL_PROXY) {
-      logger.debug({ name: "onBootstrap" }, `skip service populate`);
-      return;
-    }
     logger.debug({ name: "onBootstrap" }, `runtime populate service interfaces`);
     await loadServiceList();
     loaded = true;
@@ -61,18 +57,6 @@ export function CallProxy({ logger, lifecycle, internal, hass, config }: TServic
     // pause for rest also
     if (hass.socket.pauseMessages) {
       return undefined;
-    }
-    const sendViaRest =
-      (config.hass.CALL_PROXY_ALLOW_REST === "allow" &&
-        hass.socket.connectionState !== "connected") ||
-      config.hass.CALL_PROXY_ALLOW_REST === "prefer";
-    if (sendViaRest && return_response) {
-      // See https://github.com/home-assistant/core/issues/106379#issuecomment-1878548124 for the reason for this warning
-      logger.warn({ name: sendMessage }, "return_response calls must use websocket");
-    }
-
-    if (sendViaRest) {
-      return await hass.fetch.callService(serviceName, service_data);
     }
     const [domain, service] = serviceName.split(".");
     // User can just not await this call if they don't care about the "waitForChange"

@@ -12,9 +12,6 @@ import {
 
 export function Area({ hass, context, config, logger, event, lifecycle }: TServiceParams) {
   hass.socket.onConnect(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
-      return;
-    }
     let loading = new Promise<void>(async done => {
       hass.area.current = await hass.area.list();
       loading = undefined;

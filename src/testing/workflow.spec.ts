@@ -46,15 +46,6 @@ describe("Workflows", () => {
             });
           }
         });
-      })
-      .configure({
-        configuration: {
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            MOCK_SOCKET: true,
-          },
-        },
       });
   });
 

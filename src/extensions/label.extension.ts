@@ -5,9 +5,6 @@ import { EARLY_ON_READY, LABEL_REGISTRY_UPDATED, LabelDefinition, LabelOptions }
 
 export function Label({ hass, config, logger, lifecycle, event, context }: TServiceParams) {
   hass.socket.onConnect(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
-      return;
-    }
     let loading = new Promise<void>(async done => {
       hass.label.current = await hass.label.list();
       loading = undefined;

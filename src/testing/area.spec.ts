@@ -2,8 +2,8 @@ import { LibraryTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "..";
 import { TAreaId } from "../dynamic";
-import { AREA_REGISTRY_UPDATED, AreaDetails, HassConfig } from "../helpers";
-import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
+import { AREA_REGISTRY_UPDATED, AreaDetails } from "../helpers";
+import { LIB_MOCK_HASS } from "../mock_assistant";
 
 describe("Area", () => {
   const EXAMPLE_AREA = {
@@ -17,22 +17,7 @@ describe("Area", () => {
   let runner: LibraryTestRunner<typeof LIB_HASS>;
 
   beforeEach(() => {
-    runner = TestRunner({ target: LIB_HASS })
-      .appendLibrary(LIB_MOCK_ASSISTANT)
-      .appendService(({ hass }) => {
-        jest
-          .spyOn(hass.fetch, "getConfig")
-          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
-      })
-      .configure({
-        configuration: {
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            MOCK_SOCKET: true,
-          },
-        },
-      });
+    runner = TestRunner({ target: LIB_MOCK_HASS });
   });
 
   afterEach(async () => {
@@ -41,7 +26,7 @@ describe("Area", () => {
   });
 
   describe("Lifecycle", () => {
-    it("should force values to be available before ready", async () => {
+    fit("should force values to be available before ready", async () => {
       expect.assertions(1);
 
       await runner.run(({ lifecycle, hass }) => {

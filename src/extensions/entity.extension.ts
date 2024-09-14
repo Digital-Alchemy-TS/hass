@@ -233,9 +233,6 @@ export function EntityManager({
 
   // #MARK: onPostConfig
   lifecycle.onPostConfig(async function HassEntityPostConfig() {
-    if (!config.hass.AUTO_CONNECT_SOCKET) {
-      return;
-    }
     logger.debug({ name: HassEntityPostConfig }, `pre populate {MASTER_STATE}`);
     await hass.entity.refresh();
   });
@@ -310,9 +307,6 @@ export function EntityManager({
 
   // #MARK: onConnect
   hass.socket.onConnect(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
-      return;
-    }
     hass.entity.registry.current = await hass.entity.registry.list();
   });
 

@@ -38,10 +38,6 @@ export function FetchAPI({ logger, lifecycle, context, hass, config }: TServiceP
   }, PostConfigPriorities.FETCH);
 
   lifecycle.onBootstrap(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET) {
-      // shorthand for is unit test right now
-      return;
-    }
     const target = await hass.fetch.getConfig();
     if (lt(target.version, MIN_SUPPORTED_HASS_VERSION)) {
       logger.fatal(

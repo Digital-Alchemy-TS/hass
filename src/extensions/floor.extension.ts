@@ -5,9 +5,6 @@ import { EARLY_ON_READY, FLOOR_REGISTRY_UPDATED, FloorCreate, FloorDetails } fro
 
 export function Floor({ hass, config, context, event, logger, lifecycle }: TServiceParams) {
   hass.socket.onConnect(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
-      return;
-    }
     let loading = new Promise<void>(async done => {
       hass.floor.current = await hass.floor.list();
       loading = undefined;
