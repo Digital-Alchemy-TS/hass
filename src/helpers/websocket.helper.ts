@@ -111,7 +111,6 @@ export type OnHassEventCallback<T = object> = (event: T) => TBlackHole;
 
 export type OnHassEventOptions<T = object> = {
   context: TContext;
-  label?: string;
   exec: OnHassEventCallback<T>;
   event: string;
   once?: boolean;

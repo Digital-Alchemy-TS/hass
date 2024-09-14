@@ -63,10 +63,8 @@ export default [
       "unicorn/prefer-module": "off",
       "@typescript-eslint/no-magic-numbers": "warn",
       "unicorn/no-object-as-default-parameter": "off",
-      "@cspell/spellchecker": ["warn", { checkComments: false, autoFix: true }],
       "unicorn/no-null": "off",
       "unicorn/no-empty-file": "off",
-      "sonarjs/sonar-no-fallthrough": "off",
       "sonarjs/prefer-single-boolean-return": "off",
       "unicorn/no-array-callback-reference": "off",
       "sonarjs/prefer-nullish-coalescing": "off",
@@ -75,28 +73,36 @@ export default [
       "sonarjs/no-nested-functions": "off",
       "unicorn/no-useless-undefined": "off",
       "@typescript-eslint/unbound-method": "error",
-      "import/no-extraneous-dependencies": ["error", { packageDir: "./" }],
+      "sonarjs/sonar-no-fallthrough": "off",
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          "packageDir": "./"
+        }
+      ],
       "sonarjs/prefer-immediate-return": "off",
       "unicorn/prevent-abbreviations": [
         "error",
         {
-          replacements: {
-            docs: false,
-            e: false,
-            dir: false,
-            i: false,
-            params: false,
-            props: false,
-            ref: false,
-            temp: false,
-          },
-        },
+          "replacements": {
+            "docs": false,
+            "e": false,
+            "dir": false,
+            "i": false,
+            "params": false,
+            "props": false,
+            "ref": false,
+            "temp": false
+          }
+        }
       ],
       "no-case-declarations": "off",
       "no-async-promise-executor": "off",
       "unicorn/prefer-node-protocol": "off",
       "unicorn/no-array-for-each": "off",
+      "sonarjs/no-clear-text-protocols": "off",
       "unicorn/import-style": "off",
+      "sonarjs/fixme-tag": "off",
       "sort-keys-fix/sort-keys-fix": "warn",
       "unicorn/prefer-event-target": "off",
       "simple-import-sort/imports": "warn",
@@ -104,38 +110,21 @@ export default [
       "sonarjs/no-commented-code": "off",
       "sonarjs/todo-tag": "off",
       "simple-import-sort/exports": "warn",
-      "no-console": ["error"],
+      "no-console": [
+        "error"
+      ],
       "@typescript-eslint/no-unnecessary-type-constraint": "off",
       "@typescript-eslint/no-unused-vars": [
         "warn",
-        { varsIgnorePattern: "_|logger" },
+        {
+          "varsIgnorePattern": "_|logger"
+        }
       ],
-      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-explicit-any": "error"
     },
   },
   {
-    files: ["src/**/*.spec.ts"],
-    languageOptions: {
-      globals: { ...globals.jest },
-      parser: tsParser,
-      ecmaVersion: 5,
-      sourceType: "script",
-      parserOptions: {
-        project: ["tsconfig.spec.json"],
-      },
-    },
-    rules: {
-      "@typescript-eslint/unbound-method": "off",
-      "@typescript-eslint/no-magic-numbers": "off",
-      "sonarjs/no-duplicate-string": "off",
-      "sonarjs/no-commented-code": "off",
-      "sonarjs/no-dead-store": "off",
-      "sonarjs/no-unused-collection": "warn",
-      "unicorn/consistent-function-scoping": "off",
-    },
-  },
-  {
-    files: ["**/metrics.helper.ts", "**/*.module.ts"],
+    files: ["src/testing/**/*.spec.ts"],
     languageOptions: {
       parser: tsParser,
       ecmaVersion: 5,
@@ -144,8 +133,13 @@ export default [
         project: ["tsconfig.json"],
       },
     },
-    rules: {
+    rules:  {
+      "@typescript-eslint/unbound-method": "off",
       "@typescript-eslint/no-magic-numbers": "off",
+      "sonarjs/no-duplicate-string": "off",
+      "sonarjs/no-unused-collection": "warn",
+      "unicorn/consistent-function-scoping": "off",
+      "sonarjs/prefer-promise-shorthand": "off"
     },
   },
 ];

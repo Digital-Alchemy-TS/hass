@@ -15,12 +15,6 @@ import WS from "ws";
 import {
   EntityUpdateEvent,
   OnHassEventOptions,
-  SOCKET_CONNECTION_STATE,
-  SOCKET_EVENT_ERRORS,
-  SOCKET_EVENT_EXECUTION_COUNT,
-  SOCKET_EVENT_EXECUTION_TIME,
-  SOCKET_RECEIVED_MESSAGES,
-  SOCKET_SENT_MESSAGES,
   SocketMessageDTO,
   SocketSubscribeOptions,
 } from "..";
@@ -33,7 +27,7 @@ const CONNECTION_FAILED = 2;
 let messageCount = START;
 export const SOCKET_CONNECTED = "SOCKET_CONNECTED";
 
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-magic-numbers, @typescript-eslint/no-unused-vars */
 enum WebsocketConnectionState {
   offline = 1,
   connecting = 2,
@@ -71,7 +65,7 @@ export function WebsocketAPI({
   lifecycle.onBootstrap(async () => {
     if (config.hass.AUTO_CONNECT_SOCKET) {
       logger.debug({ name: "onBootstrap" }, `auto starting connection`);
-      await ManageConnection();
+      await manageConnection();
       attachScheduledFunctions();
     }
   });
@@ -84,7 +78,6 @@ export function WebsocketAPI({
   // #MARK: setConnectionState
   function setConnectionState(state: ConnectionState) {
     hass.socket.connectionState = state;
-    SOCKET_CONNECTION_STATE.labels({ state }).set(WebsocketConnectionState[state]);
   }
 
   // #MARK: handleUnknownConnectionState
@@ -132,9 +125,9 @@ export function WebsocketAPI({
   }
 
   // #MARK: ManageConnection
-  async function ManageConnection() {
+  async function manageConnection() {
     const now = dayjs();
-    const name = ManageConnection;
+    const name = manageConnection;
     switch (hass.socket.connectionState) {
       // * connected
       case "connected": {
@@ -167,7 +160,7 @@ export function WebsocketAPI({
         // reset and try again
         await hass.socket.teardown();
         logger.warn({ name }, "connection failed {connecting} => {offline}");
-        await ManageConnection();
+        await manageConnection();
         return;
       }
 
@@ -202,7 +195,7 @@ export function WebsocketAPI({
   function attachScheduledFunctions() {
     logger.trace({ name: attachScheduledFunctions }, `attaching interval schedules`);
     scheduler.interval({
-      exec: async () => await ManageConnection(),
+      exec: async () => await manageConnection(),
       interval: config.hass.RETRY_INTERVAL * SECOND,
     });
     scheduler.interval({
@@ -261,7 +254,7 @@ export function WebsocketAPI({
     if (hass.socket.pauseMessages && data.type !== "ping") {
       return undefined;
     }
-    countMessage(data.type);
+    countMessage();
     const id = messageCount;
     if (data.type !== "auth") {
       data.id = id;
@@ -303,7 +296,7 @@ export function WebsocketAPI({
   }
 
   // #MARK: countMessage
-  function countMessage(type: string): void | never {
+  function countMessage(): void | never {
     messageCount++;
     const now = Date.now();
     MESSAGE_TIMESTAMPS.push(now);
@@ -312,7 +305,6 @@ export function WebsocketAPI({
     const perSecondAverage = Math.ceil(
       MESSAGE_TIMESTAMPS.filter(time => time > now - SECOND * avgWindow).length / avgWindow,
     );
-    SOCKET_SENT_MESSAGES.labels({ type }).inc();
 
     const { SOCKET_CRASH_REQUESTS_PER_SEC: crashCount, SOCKET_WARN_REQUESTS_PER_SEC: warnCount } =
       config.hass;
@@ -418,7 +410,6 @@ export function WebsocketAPI({
    */
   async function onMessage(message: SocketMessageDTO) {
     const id = Number(message.id);
-    SOCKET_RECEIVED_MESSAGES.labels({ type: message.type }).inc();
     switch (message.type) {
       case "auth_required": {
         logger.trace({ name: onMessage }, `sending authentication`);
@@ -518,22 +509,10 @@ export function WebsocketAPI({
   }
 
   // #MARK: onEvent
-  function onEvent<DATA extends object>({
-    context,
-    label,
-    event,
-    once,
-    exec,
-  }: OnHassEventOptions<DATA>) {
+  function onEvent<DATA extends object>({ context, event, once, exec }: OnHassEventOptions<DATA>) {
     logger.trace({ context, event, name: onEvent }, `attaching socket event listener`);
     const callback = async (data: EntityUpdateEvent) => {
-      await internal.safeExec({
-        duration: SOCKET_EVENT_EXECUTION_TIME,
-        errors: SOCKET_EVENT_ERRORS,
-        exec: async () => await exec(data as DATA),
-        executions: SOCKET_EVENT_EXECUTION_COUNT,
-        labels: { context, event, label },
-      });
+      await internal.safeExec(async () => await exec(data as DATA));
     };
     if (once) {
       socketEvents.once(event, callback);

@@ -106,6 +106,7 @@ export function ReferenceExtension({ hass, logger, internal, event }: TServicePa
         // just because you can't do generics properly....
         new Proxy(thing, {
           // things that shouldn't be needed: this extract
+          // eslint-disable-next-line sonarjs/function-return-type
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
             switch (property) {
               // * onUpdate

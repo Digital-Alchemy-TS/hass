@@ -13,7 +13,7 @@ export function Device({ hass, config, context, logger, lifecycle, event }: TSer
       done();
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
-    await SubscribeUpdates();
+    await subscribeUpdates();
   });
 
   hass.socket.subscribe({
@@ -27,7 +27,7 @@ export function Device({ hass, config, context, logger, lifecycle, event }: TSer
     },
   });
 
-  async function SubscribeUpdates() {
+  async function subscribeUpdates() {
     await hass.socket.sendMessage({
       event_type: "device_registry_updated",
       type: "subscribe_events",

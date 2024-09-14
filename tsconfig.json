@@ -33,6 +33,6 @@
     "node_modules",
     "tmp",
     "dist",
-    "src/e2e/*",
+    "e2e/*",
   ]
 }

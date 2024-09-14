@@ -5,7 +5,7 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import { CreateTestingApplication, SILENT_BOOT } from "../src/mock_assistant";
 import { BASE_URL, TOKEN } from "./utils";
 
 describe("Device E2E", () => {

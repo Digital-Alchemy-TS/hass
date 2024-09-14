@@ -193,7 +193,7 @@ export function EntityManager({
       await each(
         emitUpdates,
         async entity =>
-          await EntityUpdateReceiver(
+          await entityUpdateReceiver(
             entity.entity_id,
             entity satisfies ENTITY_STATE<ANY_ENTITY>,
             internal.utils.object.get(oldState, entity.entity_id),
@@ -204,7 +204,7 @@ export function EntityManager({
   }
 
   // #MARK: EntityUpdateReceiver
-  function EntityUpdateReceiver<ENTITY extends ANY_ENTITY = ANY_ENTITY>(
+  function entityUpdateReceiver<ENTITY extends ANY_ENTITY = ANY_ENTITY>(
     entity_id: ENTITY,
     new_state: ENTITY_STATE<ENTITY>,
     old_state: ENTITY_STATE<ENTITY>,
@@ -212,7 +212,7 @@ export function EntityManager({
     PREVIOUS_STATE.set(entity_id, old_state);
     if (new_state === null) {
       logger.warn(
-        { name: EntityUpdateReceiver },
+        { name: entityUpdateReceiver },
         `removing deleted entity [%s] from {MASTER_STATE}`,
         entity_id,
       );
@@ -242,7 +242,7 @@ export function EntityManager({
 
   async function AddLabel({ entity, label }: EditLabelOptions) {
     await each([entity].flat(), async entity => {
-      const current = await EntityGet(entity);
+      const current = await entityGet(entity);
       if (current?.labels?.includes(label)) {
         logger.debug({ name: entity }, `already has label {%s}`, label);
         return;
@@ -274,7 +274,7 @@ export function EntityManager({
 
   // #MARK: RemoveLabel
   async function RemoveLabel({ entity, label }: EditLabelOptions) {
-    const current = await EntityGet(entity);
+    const current = await entityGet(entity);
     if (!current?.labels?.includes(label)) {
       logger.debug({ name: entity }, `does not have label {%s}`, label);
       return;
@@ -291,7 +291,7 @@ export function EntityManager({
   }
 
   // #MARK: EntityGet
-  async function EntityGet<ENTITY extends ANY_ENTITY>(entity_id: ENTITY) {
+  async function entityGet<ENTITY extends ANY_ENTITY>(entity_id: ENTITY) {
     return await hass.socket.sendMessage<EntityRegistryItem<ENTITY>>({
       entity_id: entity_id,
       type: "config/entity_registry/get",
@@ -333,7 +333,7 @@ export function EntityManager({
     /**
      * Internal library use only
      */
-    _entityUpdateReceiver: EntityUpdateReceiver,
+    _entityUpdateReceiver: entityUpdateReceiver,
 
     _masterState: () => MASTER_STATE,
 
@@ -380,7 +380,7 @@ export function EntityManager({
     registry: {
       addLabel: AddLabel,
       current: [] as EntityRegistryItem<ANY_ENTITY>[],
-      get: EntityGet,
+      get: entityGet,
       list: EntityList,
       registryList: EntityList,
       removeEntity: RemoveEntity,

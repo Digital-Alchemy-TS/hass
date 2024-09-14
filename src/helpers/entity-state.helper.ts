@@ -2,7 +2,7 @@ import { FIRST, TBlackHole } from "@digital-alchemy/core";
 import { Dayjs } from "dayjs";
 import { Except } from "type-fest";
 
-import { iCallService, TAreaId, TDeviceId, TLabelId, TRawDomains } from "../dynamic";
+import { iCallService, TAreaId, TDeviceId, TLabelId, TPlatformId, TRawDomains } from "../dynamic";
 import { SensorUnitOfMeasurement } from "./registry";
 import {
   ALL_DOMAINS,
@@ -93,7 +93,7 @@ type CallRewrite<
   D extends Extract<ALL_DOMAINS, ALL_SERVICE_DOMAINS>,
   S extends keyof iCallService[D],
 > = (
-  // @ts-expect-error fixme another day, the transformation is valid
+  // @ts-expect-error fix another day, the transformation is valid
   data?: Except<Parameters<iCallService[D][S]>[typeof FIRST], "entity_id">,
 ) => Promise<void>;
 
@@ -147,11 +147,12 @@ export interface EntityDetails<ENTITY extends ANY_ENTITY> {
   name: null | string;
   options: Options;
   original_name: null | string;
-  platform: TPlatform;
+  platform: TPlatformId;
   translation_key: null | string;
   unique_id: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface Categories {}
 
 export interface Options {
@@ -173,5 +174,3 @@ export interface Sensor {
 export interface SensorPrivate {
   suggested_unit_of_measurement: string;
 }
-
-export type TPlatform = string;

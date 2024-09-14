@@ -70,11 +70,10 @@ export function FetchAPI({ logger, lifecycle, context, hass, internal, config }:
       const list = await Promise.all(
         calendar.map(async cal => await calendarSearch({ calendar: cal, end, start })),
       );
-      return list
-        .flat()
-        .sort((a, b) =>
-          a.start.isSame(b.start) ? NO_CHANGE : a.start.isAfter(b.start) ? UP : DOWN,
-        );
+      return list.flat().sort((a, b) =>
+        // eslint-disable-next-line sonarjs/no-nested-conditional
+        a.start.isSame(b.start) ? NO_CHANGE : a.start.isAfter(b.start) ? UP : DOWN,
+      );
     }
 
     const params = { end: end.toISOString(), start: start.toISOString() };

@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-
+/* eslint-disable sonarjs/redundant-type-aliases */
 /* eslint-disable @cspell/spellchecker */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable sonarjs/no-redundant-type-constituents */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+
 // @ts-nocheck
 import {
   AndroidNotificationData,

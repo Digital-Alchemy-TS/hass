@@ -22,7 +22,7 @@ import {
   PICK_FROM_PLATFORM,
 } from "../helpers";
 
-const process = <RAW extends ANY_ENTITY>(raw: RAW[], domains: ALL_DOMAINS[]) => {
+const check = <RAW extends ANY_ENTITY>(raw: RAW[], domains: ALL_DOMAINS[]) => {
   if (!is.empty(domains)) {
     raw = raw.filter(entity => is.domain(entity, domains));
   }
@@ -63,7 +63,7 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
     ...domains: DOMAIN[]
   ) {
     hass.entity.warnEarly("label");
-    return process(
+    return check(
       hass.entity.registry.current
         .filter(i => i.labels.includes(label))
         .map(i => i.entity_id as PICK_FROM_LABEL<LABEL, DOMAIN>),
@@ -93,7 +93,7 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
       .filter(entity => devices.has(entity.device_id) && is.empty(entity.area_id))
       .map(i => i.entity_id);
 
-    return process(
+    return check(
       // merge lists
       is.unique([...fromEntity, ...fromDevice]),
       domains,
@@ -106,7 +106,7 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
     ...domains: DOMAIN[]
   ): PICK_FROM_DEVICE<DEVICE, DOMAIN>[] {
     hass.entity.warnEarly("device");
-    return process(
+    return check(
       hass.entity.registry.current
         .filter(i => i.device_id === device)
         .map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>),
@@ -123,7 +123,7 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
     const areas = new Set<TAreaId>(
       hass.area.current.filter(i => i.floor_id === floor).map(i => i.area_id),
     );
-    return process(
+    return check(
       hass.entity.registry.current
         .filter(i => areas.has(i.area_id))
         .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>),
@@ -137,7 +137,7 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
     ...domains: DOMAIN[]
   ): PICK_FROM_PLATFORM<PLATFORM, DOMAIN>[] {
     hass.entity.warnEarly("platform");
-    return process(
+    return check(
       hass.entity.registry.current
         .filter(i => i.platform === platform)
         .map(i => i.entity_id as PICK_FROM_PLATFORM<PLATFORM, DOMAIN>),

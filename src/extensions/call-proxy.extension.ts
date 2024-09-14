@@ -1,12 +1,6 @@
 import { is, TServiceParams } from "@digital-alchemy/core";
 
-import {
-  ALL_SERVICE_DOMAINS,
-  CALL_PROXY_SERVICE_CALL,
-  iCallService,
-  PICK_SERVICE,
-  PICK_SERVICE_PARAMETERS,
-} from "..";
+import { ALL_SERVICE_DOMAINS, iCallService, PICK_SERVICE, PICK_SERVICE_PARAMETERS } from "..";
 
 export function CallProxy({ logger, lifecycle, internal, hass, config }: TServiceParams) {
   let loaded = false;
@@ -81,7 +75,6 @@ export function CallProxy({ logger, lifecycle, internal, hass, config }: TServic
       return await hass.fetch.callService(serviceName, service_data);
     }
     const [domain, service] = serviceName.split(".");
-    CALL_PROXY_SERVICE_CALL.labels({ domain, service }).inc();
     // User can just not await this call if they don't care about the "waitForChange"
 
     if (!return_response) {
