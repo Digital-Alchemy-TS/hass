@@ -113,7 +113,7 @@ export const LIB_HASS = CreateLibrary({
   },
   name: "hass",
   // no internal dependency ones first
-  priorityInit: ["fetch", "socket"],
+  priorityInit: ["internals", "fetch", "socket"],
   services: {
     /**
      * home assistant areas

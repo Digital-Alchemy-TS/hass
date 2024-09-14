@@ -1,7 +1,6 @@
 import { DOWN, is, NONE, sleep, TAnyFunction, TServiceParams, UP } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import { Get } from "type-fest";
-import { isNumeric } from "validator";
 
 import { SERVICE_LIST_UPDATED } from "..";
 import {
@@ -49,7 +48,7 @@ export function ReferenceExtension({ hass, logger, internal, event }: TServicePa
       return dayjs(value) as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
     }
     if (property === "state") {
-      if (domain(entity) === "sensor" && isNumeric(current.state)) {
+      if (domain(entity) === "sensor" && is.number(Number(current.state))) {
         return Number(current.state) as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
       }
       return current.state as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
