@@ -1,15 +1,11 @@
-import {
-  iTestRunner,
-  SINGLE,
-  TestRunner
-} from "@digital-alchemy/core";
+import { LibraryTestRunner, SINGLE, TestRunner } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "..";
 import { BackupResponse, HassConfig } from "../helpers";
 import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
 
 describe("Backup", () => {
-  let runner: iTestRunner;
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
 
   beforeEach(() => {
     runner = TestRunner({ target: LIB_HASS })
