@@ -1,15 +1,8 @@
-import {
-  ApplicationDefinition,
-  iTestRunner,
-  OptionalModuleConfiguration,
-  ServiceMap,
-  TestRunner,
-  TServiceParams,
-} from "@digital-alchemy/core";
+import { iTestRunner, TestRunner } from "@digital-alchemy/core";
 import { env } from "process";
 
 import { HassConfig, LIB_HASS } from "..";
-import { CreateTestingApplication, LIB_MOCK_ASSISTANT, SILENT_BOOT } from "../mock_assistant";
+import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
 
 const DEFAULTS = "DEFAULTS";
 
@@ -69,24 +62,21 @@ describe("Config", () => {
     it("should set BASE_URL & TOKEN if provided env", async () => {
       expect.assertions(2);
       env.HASSIO_TOKEN = "FOO";
-      application = CreateTestingApplication({
-        Test({ config, lifecycle }: TServiceParams) {
+      await runner
+        .configure({
+          configuration: {
+            hass: {
+              BASE_URL: "http://localhost:9123",
+              TOKEN: DEFAULTS,
+            },
+          },
+        })
+        .run(({ lifecycle, config }) => {
           lifecycle.onPostConfig(() => {
             expect(config.hass.BASE_URL).toBe("http://supervisor/core");
             expect(config.hass.TOKEN).toBe("FOO");
           });
-        },
-      });
-      await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            BASE_URL: "http://localhost:9123",
-            TOKEN: DEFAULTS,
-          },
-        }),
-      );
+        });
     });
 
     // # Should use HASSIO_TOKEN over SUPERVISOR_TOKEN
@@ -94,42 +84,23 @@ describe("Config", () => {
       expect.assertions(1);
       env.HASSIO_TOKEN = "FOO";
       env.SUPERVISOR_TOKEN = "BAR";
-      application = CreateTestingApplication({
-        Test({ config, lifecycle }: TServiceParams) {
-          lifecycle.onPostConfig(() => {
-            expect(config.hass.TOKEN).toBe("FOO");
-          });
-        },
+
+      await runner.run(({ lifecycle, config }) => {
+        lifecycle.onPostConfig(() => {
+          expect(config.hass.TOKEN).toBe("FOO");
+        });
       });
-      await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-          },
-        }),
-      );
     });
 
     // # Should allow SUPERVISOR_TOKEN
     it("should allow SUPERVISOR_TOKEN", async () => {
       expect.assertions(1);
       env.SUPERVISOR_TOKEN = "BAR";
-      application = CreateTestingApplication({
-        Test({ config, lifecycle }: TServiceParams) {
-          lifecycle.onPostConfig(() => {
-            expect(config.hass.TOKEN).toBe("BAR");
-          });
-        },
+      await runner.run(({ lifecycle, config }) => {
+        lifecycle.onPostConfig(() => {
+          expect(config.hass.TOKEN).toBe("BAR");
+        });
       });
-      await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-          },
-        }),
-      );
     });
 
     // # Should allow HASS_SERVER
@@ -137,22 +108,13 @@ describe("Config", () => {
       expect.assertions(2);
       env.HASSIO_TOKEN = "FOO";
       env.HASS_SERVER = "http://test/url";
-      application = CreateTestingApplication({
-        Test({ config, lifecycle }: TServiceParams) {
-          lifecycle.onPostConfig(() => {
-            expect(config.hass.TOKEN).toBe("FOO");
-            expect(config.hass.BASE_URL).toBe("http://test/url");
-          });
-        },
+
+      await runner.run(({ lifecycle, config }) => {
+        lifecycle.onPostConfig(() => {
+          expect(config.hass.TOKEN).toBe("FOO");
+          expect(config.hass.BASE_URL).toBe("http://test/url");
+        });
       });
-      await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-          },
-        }),
-      );
     });
   });
 
@@ -163,18 +125,15 @@ describe("Config", () => {
         .spyOn(process, "exit")
         // @ts-expect-error testing
         .mockImplementation(() => {});
-      application = CreateTestingApplication({
-        Test() {},
-      });
-      await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            TOKEN: "TEST",
-          },
-        }),
-      );
+
+      await runner
+        .configure({ configuration: { hass: { TOKEN: "TEST" } } })
+        .run(({ lifecycle, config }) => {
+          lifecycle.onPostConfig(() => {
+            expect(config.hass.TOKEN).toBe("FOO");
+            expect(config.hass.BASE_URL).toBe("http://test/url");
+          });
+        });
       expect(exitSpy).not.toHaveBeenCalled();
     });
 
@@ -185,24 +144,23 @@ describe("Config", () => {
         // @ts-expect-error testing
         .mockImplementation(() => {});
       let spy: jest.SpyInstance;
-      application = CreateTestingApplication({
-        Test({ internal, hass }: TServiceParams) {
+
+      await runner
+        .configure({
+          configuration: {
+            hass: {
+              VALIDATE_CONFIGURATION: true,
+            },
+          },
+        })
+        .run(({ internal, hass }) => {
           const logger = internal.boilerplate.logger.getBaseLogger();
           spy = jest.spyOn(logger, "info").mockImplementation(() => {});
           jest
             .spyOn(hass.fetch, "checkCredentials")
             .mockImplementation(async () => ({ message: "ok" }));
-        },
-      });
-      await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            VALIDATE_CONFIGURATION: true,
-          },
-        }),
-      );
+        });
+
       expect(exitSpy).toHaveBeenCalledWith(1);
       expect(spy).toHaveBeenCalledWith("hass:configure", { name: "onPostConfig" }, "ok");
     });
@@ -214,26 +172,25 @@ describe("Config", () => {
         .spyOn(process, "exit")
         // @ts-expect-error testing
         .mockImplementation(() => {});
-      application = CreateTestingApplication({
-        Test({ internal, hass }: TServiceParams) {
+
+      await runner
+        .configure({
+          configuration: {
+            hass: {
+              TOKEN: "TEST",
+              VALIDATE_CONFIGURATION: true,
+            },
+          },
+        })
+        .run(({ internal, hass }) => {
           const logger = internal.boilerplate.logger.getBaseLogger();
           spy = jest.spyOn(logger, "error").mockImplementation(() => {});
           jest
             .spyOn(hass.fetch, "checkCredentials")
             // anything that isn't the success works
             .mockImplementation(async () => ({ message: "big_bad_error" }));
-        },
-      });
-      await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            TOKEN: "TEST",
-            VALIDATE_CONFIGURATION: true,
-          },
-        }),
-      );
+        });
+
       expect(exitSpy).toHaveBeenCalledWith(0);
       expect(spy).toHaveBeenCalledWith(
         "hass:configure",
@@ -251,9 +208,19 @@ describe("Config", () => {
         // @ts-expect-error testing
         .mockImplementation(() => {});
       jest.spyOn(console, "log").mockImplementation(() => {});
+
       jest.spyOn(console, "error").mockImplementation(() => {});
-      application = CreateTestingApplication({
-        Test({ internal, hass }: TServiceParams) {
+
+      await runner
+        .configure({
+          configuration: {
+            hass: {
+              TOKEN: "TEST",
+              VALIDATE_CONFIGURATION: true,
+            },
+          },
+        })
+        .run(({ internal, hass }) => {
           const logger = internal.boilerplate.logger.getBaseLogger();
           spy = jest.spyOn(logger, "error").mockImplementation(() => {});
           jest
@@ -262,18 +229,8 @@ describe("Config", () => {
             .mockImplementation(async () => {
               throw error;
             });
-        },
-      });
-      await application.bootstrap(
-        SILENT_BOOT({
-          hass: {
-            AUTO_CONNECT_SOCKET: false,
-            AUTO_SCAN_CALL_PROXY: false,
-            TOKEN: "TEST",
-            VALIDATE_CONFIGURATION: true,
-          },
-        }),
-      );
+        });
+
       expect(exitSpy).toHaveBeenCalledWith(0);
       expect(spy).toHaveBeenCalledWith(
         "hass:configure",

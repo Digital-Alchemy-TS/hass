@@ -1,16 +1,12 @@
 import {
-  ApplicationDefinition,
   iTestRunner,
-  OptionalModuleConfiguration,
-  ServiceMap,
   SINGLE,
-  TestRunner,
-  TServiceParams,
+  TestRunner
 } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "..";
 import { BackupResponse, HassConfig } from "../helpers";
-import { CreateTestingApplication, LIB_MOCK_ASSISTANT, SILENT_BOOT } from "../mock_assistant";
+import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
 
 describe("Backup", () => {
   let runner: iTestRunner;
