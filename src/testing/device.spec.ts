@@ -1,4 +1,4 @@
-import { iTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
+import { LibraryTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "..";
 import { DeviceDetails, HassConfig } from "../helpers";
@@ -24,7 +24,7 @@ describe("Device", () => {
     sw_version: "2024.4.3",
     via_device_id: null,
   } as unknown as DeviceDetails;
-  let runner: iTestRunner;
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
 
   beforeEach(() => {
     runner = TestRunner({ target: LIB_HASS })

@@ -1,4 +1,4 @@
-import { iTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
+import { LibraryTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "..";
 import { TLabelId } from "../dynamic";
@@ -13,7 +13,7 @@ describe("Label", () => {
     label_id: "synapse",
     name: "synapse",
   } as unknown as LabelDefinition;
-  let runner: iTestRunner;
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
 
   beforeEach(() => {
     runner = TestRunner({ target: LIB_HASS })

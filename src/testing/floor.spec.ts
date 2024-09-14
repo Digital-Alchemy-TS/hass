@@ -1,4 +1,4 @@
-import { iTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
+import { LibraryTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "..";
 import { TFloorId } from "../dynamic";
@@ -13,7 +13,7 @@ describe("Floor", () => {
     level: 2,
     name: "Upstairs",
   } as unknown as FloorDetails;
-  let runner: iTestRunner;
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
 
   beforeEach(() => {
     runner = TestRunner({ target: LIB_HASS })

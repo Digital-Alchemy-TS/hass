@@ -1,4 +1,4 @@
-import { iTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
+import { LibraryTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "..";
 import { TAreaId } from "../dynamic";
@@ -14,7 +14,7 @@ describe("Area", () => {
     name: "Empty Area",
     picture: null,
   } as AreaDetails;
-  let runner: iTestRunner;
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
 
   beforeEach(() => {
     runner = TestRunner({ target: LIB_HASS })

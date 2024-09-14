@@ -1,4 +1,4 @@
-import { iTestRunner, TestRunner } from "@digital-alchemy/core";
+import { LibraryTestRunner, TestRunner } from "@digital-alchemy/core";
 import { env } from "process";
 
 import { HassConfig, LIB_HASS } from "..";
@@ -7,7 +7,7 @@ import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
 const DEFAULTS = "DEFAULTS";
 
 describe("Config", () => {
-  let runner: iTestRunner;
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
 
   beforeEach(() => {
     delete env.HASSIO_TOKEN;

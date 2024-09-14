@@ -1,12 +1,14 @@
 import {
   ApplicationDefinition,
+  LibraryTestRunner,
   ModuleConfiguration,
-  OptionalModuleConfiguration,
-  ServiceMap,
+  TestRunner,
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import { LIB_HASS } from "..";
+import { HassConfig } from "../helpers";
+import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
 
 declare module "@digital-alchemy/core" {
   export interface LoadedModules {
@@ -18,77 +20,84 @@ declare module "@digital-alchemy/core" {
 }
 
 describe("Websocket", () => {
-  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
+
+  beforeEach(() => {
+    runner = TestRunner({ target: LIB_HASS })
+      .appendLibrary(LIB_MOCK_ASSISTANT)
+      .appendService(({ hass }) => {
+        jest
+          .spyOn(hass.fetch, "getConfig")
+          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
+      })
+      .configure({
+        configuration: {
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            MOCK_SOCKET: true,
+          },
+        },
+      });
+  });
 
   afterEach(async () => {
-    if (application) {
-      await application.teardown();
-      application = undefined;
-    }
+    await runner.teardown();
     jest.restoreAllMocks();
   });
 
   describe("API Interactions", () => {
     it("should emit events onConnect", async () => {
       expect.assertions(1);
-      application = CreateTestingApplication({
-        Test({ lifecycle, hass }: TServiceParams) {
-          let hit = false;
-          hass.socket.onConnect(() => (hit = true));
-          lifecycle.onReady(() => {
-            expect(hit).toBe(true);
-          });
-        },
+      await runner.run(({ lifecycle, hass }) => {
+        let hit = false;
+        hass.socket.onConnect(() => (hit = true));
+        lifecycle.onReady(() => {
+          expect(hit).toBe(true);
+        });
       });
-      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should emit a socket message with subscribeEvents", async () => {
       expect.assertions(1);
-      application = CreateTestingApplication({
-        Test({ lifecycle, hass, context }: TServiceParams) {
-          const spy = jest
-            .spyOn(hass.socket, "sendMessage")
-            .mockImplementation(async () => undefined);
-          lifecycle.onReady(async () => {
-            await hass.socket.subscribe({
-              context,
-              event_type: "test",
-              exec: () => {},
-            });
-            expect(spy).toHaveBeenCalledWith(
-              expect.objectContaining({
-                event_type: "test",
-                type: "subscribe_events",
-              }),
-            );
+      await runner.run(({ lifecycle, hass, context }) => {
+        const spy = jest
+          .spyOn(hass.socket, "sendMessage")
+          .mockImplementation(async () => undefined);
+        lifecycle.onReady(async () => {
+          await hass.socket.subscribe({
+            context,
+            event_type: "test",
+            exec: () => {},
           });
-        },
+          expect(spy).toHaveBeenCalledWith(
+            expect.objectContaining({
+              event_type: "test",
+              type: "subscribe_events",
+            }),
+          );
+        });
       });
-      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should emit a socket message with fireEvent", async () => {
       expect.assertions(1);
-      application = CreateTestingApplication({
-        Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(hass.socket, "sendMessage")
-            .mockImplementation(async () => undefined);
-          lifecycle.onReady(async () => {
-            const data = { example: "data" };
-            await hass.socket.fireEvent("test_event", data);
-            expect(spy).toHaveBeenCalledWith(
-              expect.objectContaining({
-                event_data: data,
-                event_type: "test_event",
-                type: "fire_event",
-              }),
-            );
-          });
-        },
+      await runner.run(({ lifecycle, hass }) => {
+        const spy = jest
+          .spyOn(hass.socket, "sendMessage")
+          .mockImplementation(async () => undefined);
+        lifecycle.onReady(async () => {
+          const data = { example: "data" };
+          await hass.socket.fireEvent("test_event", data);
+          expect(spy).toHaveBeenCalledWith(
+            expect.objectContaining({
+              event_data: data,
+              event_type: "test_event",
+              type: "fire_event",
+            }),
+          );
+        });
       });
-      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
   });
 });

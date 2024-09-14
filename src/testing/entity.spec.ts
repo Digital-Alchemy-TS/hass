@@ -1,11 +1,11 @@
-import { iTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
+import { LibraryTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "..";
 import { ANY_ENTITY, ENTITY_STATE, HassConfig } from "../helpers";
 import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
 
 describe("Entity", () => {
-  let runner: iTestRunner;
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
 
   beforeEach(() => {
     runner = TestRunner({ target: LIB_HASS })

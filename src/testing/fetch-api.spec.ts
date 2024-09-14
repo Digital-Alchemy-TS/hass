@@ -1,4 +1,4 @@
-import { iTestRunner, TestRunner } from "@digital-alchemy/core";
+import { LibraryTestRunner, TestRunner } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
 import { LIB_HASS } from "..";
@@ -14,7 +14,7 @@ describe("FetchAPI", () => {
   // values are hard coded into tests, update carefully
   const start = dayjs("2024-01-01 00:00:00:00");
   const end = start.add(1, "day");
-  let runner: iTestRunner;
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
 
   beforeEach(() => {
     runner = TestRunner({ target: LIB_HASS })

@@ -1,22 +1,27 @@
 import {
-  CreateApplication,
   CronExpression,
+  LibraryTestRunner,
   SECOND,
   sleep,
-  TServiceParams,
+  TestRunner,
 } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
-import { LIB_HASS } from "..";
-import { CreateTestRunner } from "../mock_assistant";
+import { HassConfig, LIB_HASS } from "..";
+import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
 
 describe("Workflows", () => {
-  const application = CreateApplication({
-    libraries: [LIB_HASS],
-    // @ts-expect-error testing
-    name: "testing",
-    services: {
-      Test({ hass, scheduler }: TServiceParams) {
+  let runner: LibraryTestRunner<typeof LIB_HASS>;
+
+  beforeEach(() => {
+    runner = TestRunner({ target: LIB_HASS })
+      .appendLibrary(LIB_MOCK_ASSISTANT)
+      .appendService(({ hass }) => {
+        jest
+          .spyOn(hass.fetch, "getConfig")
+          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
+      })
+      .setup(({ hass, scheduler }) => {
         scheduler.cron({
           async exec() {
             await hass.call.switch.turn_on({
@@ -41,45 +46,51 @@ describe("Workflows", () => {
             });
           }
         });
-      },
-    },
+      })
+      .configure({
+        configuration: {
+          hass: {
+            AUTO_CONNECT_SOCKET: false,
+            AUTO_SCAN_CALL_PROXY: false,
+            MOCK_SOCKET: true,
+          },
+        },
+      });
   });
 
-  const runner = CreateTestRunner(application);
-
   afterEach(async () => {
-    await application.teardown();
+    await runner.teardown();
     jest.restoreAllMocks();
   });
 
   describe("Event and Response", () => {
     it("should be able to trigger a workflow", async () => {
       expect.assertions(2);
-      await runner(undefined, async ({ mock_assistant, hass }) => {
-        const turnOn = jest.spyOn(hass.call.switch, "turn_on");
-        const turnOff = jest.spyOn(hass.call.switch, "turn_off");
-        await mock_assistant.events.emitEntityUpdate("sensor.magic", {
-          state: "test",
+      await runner.run(({ mock_assistant, hass, lifecycle }) => {
+        lifecycle.onReady(async () => {
+          const turnOn = jest.spyOn(hass.call.switch, "turn_on");
+          const turnOff = jest.spyOn(hass.call.switch, "turn_off");
+          await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+            state: "test",
+          });
+          await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+            state: "foo",
+          });
+          expect(turnOn).toHaveBeenCalledTimes(1);
+          expect(turnOff).toHaveBeenCalledTimes(1);
         });
-        await mock_assistant.events.emitEntityUpdate("sensor.magic", {
-          state: "foo",
-        });
-        expect(turnOn).toHaveBeenCalledTimes(1);
-        expect(turnOff).toHaveBeenCalledTimes(1);
       });
     });
 
     it("should be able to trigger a from an initial state", async () => {
       expect.assertions(1);
-      await runner(
-        ({ mock_assistant }) => {
-          mock_assistant.fixtures.setState({
-            "sensor.magic": {
-              state: "away",
-            },
-          });
-        },
-        async ({ hass, mock_assistant }) => {
+      await runner.run(({ mock_assistant, hass, lifecycle }) => {
+        mock_assistant.fixtures.setState({
+          "sensor.magic": {
+            state: "away",
+          },
+        });
+        lifecycle.onReady(async () => {
           const turnOn = jest.spyOn(hass.call.switch, "turn_on");
           await mock_assistant.events.emitEntityUpdate("sensor.magic", {
             state: "here",
@@ -88,20 +99,19 @@ describe("Workflows", () => {
           expect(turnOn).toHaveBeenCalledWith({
             entity_id: "switch.living_room_mood_lights",
           });
-        },
-      );
+        });
+      });
     });
 
     it("should not trigger a from an invalid initial state", async () => {
       expect.assertions(1);
-      await runner(
-        ({ mock_assistant }) =>
-          mock_assistant.fixtures.setState({
-            "sensor.magic": {
-              state: "mars",
-            },
-          }),
-        async ({ hass, mock_assistant }) => {
+      await runner.run(({ mock_assistant, hass, lifecycle }) => {
+        mock_assistant.fixtures.setState({
+          "sensor.magic": {
+            state: "mars",
+          },
+        });
+        lifecycle.onReady(async () => {
           const turnOn = jest.spyOn(hass.call.switch, "turn_on");
           await mock_assistant.events.emitEntityUpdate("sensor.magic", {
             state: "here",
@@ -109,8 +119,8 @@ describe("Workflows", () => {
           expect(turnOn).not.toHaveBeenCalledWith({
             entity_id: "switch.living_room_mood_lights",
           });
-        },
-      );
+        });
+      });
     });
   });
 
@@ -125,19 +135,15 @@ describe("Workflows", () => {
 
     it("should run at 3PM", async () => {
       expect.assertions(1);
-      await runner(
-        () => {
-          jest.setSystemTime(dayjs("2024-01-01 19:59:59").toDate());
-          jest.runOnlyPendingTimersAsync();
-        },
-        ({ hass }) => {
-          const turnOn = jest.spyOn(hass.call.switch, "turn_on");
-          jest.advanceTimersByTime(2 * SECOND);
-          expect(turnOn).toHaveBeenCalledWith({
-            entity_id: "switch.bedroom_lamp",
-          });
-        },
-      );
+      jest.setSystemTime(dayjs("2024-01-01 19:59:59").toDate());
+      jest.runOnlyPendingTimersAsync();
+      await runner.run(({ hass }) => {
+        const turnOn = jest.spyOn(hass.call.switch, "turn_on");
+        jest.advanceTimersByTime(2 * SECOND);
+        expect(turnOn).toHaveBeenCalledWith({
+          entity_id: "switch.bedroom_lamp",
+        });
+      });
     });
   });
 
@@ -179,7 +185,7 @@ describe("Workflows", () => {
     ];
     it("does not allow set", async () => {
       expect.assertions(1);
-      await runner(undefined, async ({ hass }) => {
+      await runner.run(({ hass }) => {
         try {
           // @ts-expect-error testing
           hass.call.button = {};
@@ -191,7 +197,7 @@ describe("Workflows", () => {
 
     it("provides keys via ownKeys", async () => {
       expect.assertions(1);
-      await runner(undefined, async ({ hass }) => {
+      await runner.run(({ hass }) => {
         const keys = Object.keys(hass.call);
         expect(keys).toEqual(EXPECTED_KEYS);
       });
@@ -199,7 +205,7 @@ describe("Workflows", () => {
 
     it("does has correctly", async () => {
       expect.assertions(34);
-      await runner(undefined, async ({ hass }) => {
+      await runner.run(({ hass }) => {
         EXPECTED_KEYS.forEach(i => expect(i in hass.call).toBe(true));
         expect("unknown_property" in hass.call).toBe(false);
       });
