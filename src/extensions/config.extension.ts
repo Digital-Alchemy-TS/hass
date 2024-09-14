@@ -10,26 +10,14 @@ import {
 } from "@digital-alchemy/core";
 import { env, exit } from "process";
 
-import {
-  ALL_SERVICE_DOMAINS,
-  HassServiceDTO,
-  iCallService,
-  PostConfigPriorities,
-} from "..";
+import { ALL_SERVICE_DOMAINS, HassServiceDTO, iCallService, PostConfigPriorities } from "..";
 
 const MAX_ATTEMPTS = 50;
 const FAILED = 1;
 
 export const SERVICE_LIST_UPDATED = "SERVICE_LIST_UPDATED";
 
-export function Configure({
-  logger,
-  lifecycle,
-  event,
-  hass,
-  config,
-  internal,
-}: TServiceParams) {
+export function Configure({ logger, lifecycle, event, hass, config, internal }: TServiceParams) {
   lifecycle.onPreInit(() => {
     // HASSIO_TOKEN provided by home assistant to addons
     // SUPERVISOR_TOKEN used as alias elsewhere
@@ -37,10 +25,7 @@ export function Configure({
     if (is.empty(token)) {
       return;
     }
-    logger.debug(
-      { name: "onPreInit" },
-      `auto configuring from addon environment`,
-    );
+    logger.debug({ name: "onPreInit" }, `auto configuring from addon environment`);
     internal.boilerplate.configuration.set(
       "hass",
       "BASE_URL",
@@ -85,10 +70,7 @@ export function Configure({
     services = await hass.fetch.listServices();
     if (is.empty(services)) {
       if (recursion > MAX_ATTEMPTS) {
-        logger.fatal(
-          { name: loadServiceList },
-          `failed to load service list from Home Assistant`,
-        );
+        logger.fatal({ name: loadServiceList }, `failed to load service list from Home Assistant`);
         exit(FAILED);
       }
       logger.warn(
@@ -115,9 +97,7 @@ export function Configure({
       if (checkedServices.has(service)) {
         return checkedServices.get(service);
       }
-      const exists = services.some(
-        i => i.domain === domain && !is.undefined(i.services[service]),
-      );
+      const exists = services.some(i => i.domain === domain && !is.undefined(i.services[service]));
       checkedServices.set(service, exists);
       return exists;
     },

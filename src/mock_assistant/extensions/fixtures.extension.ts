@@ -1,9 +1,4 @@
-import {
-  BootstrapException,
-  InternalError,
-  is,
-  TServiceParams,
-} from "@digital-alchemy/core";
+import { BootstrapException, InternalError, is, TServiceParams } from "@digital-alchemy/core";
 import { existsSync, readFileSync } from "fs";
 
 import { ANY_ENTITY, ENTITY_STATE } from "../../helpers";
@@ -27,12 +22,9 @@ export function Fixtures({
   hass.floor.list = async () => mock_assistant.fixtures.data?.floors ?? [];
   hass.label.list = async () => mock_assistant.fixtures.data?.labels ?? [];
   hass.device.list = async () => mock_assistant.fixtures.data?.devices ?? [];
-  hass.entity.registry.list = async () =>
-    mock_assistant.fixtures.data.entity_registry ?? [];
-  hass.fetch.getAllEntities = async () =>
-    mock_assistant.fixtures.data?.entities ?? [];
-  hass.fetch.listServices = async () =>
-    mock_assistant.fixtures.data?.services ?? [];
+  hass.entity.registry.list = async () => mock_assistant.fixtures.data.entity_registry ?? [];
+  hass.fetch.getAllEntities = async () => mock_assistant.fixtures.data?.entities ?? [];
+  hass.fetch.listServices = async () => mock_assistant.fixtures.data?.services ?? [];
   hass.fetch.getConfig = async () => mock_assistant.fixtures.data?.config;
 
   lifecycle.onPreInit(() => {
@@ -60,9 +52,7 @@ export function Fixtures({
       internal.boilerplate.configuration.set("hass", "TOKEN", "--");
     }
 
-    mock_assistant.fixtures.data = JSON.parse(
-      readFileSync(FIXTURES_FILE, "utf8"),
-    );
+    mock_assistant.fixtures.data = JSON.parse(readFileSync(FIXTURES_FILE, "utf8"));
   }, MEGA_HIGH_PRIORITY);
 
   function setState(options: StateOptions) {
@@ -73,9 +63,7 @@ export function Fixtures({
   }
 
   function byId(entity: ANY_ENTITY) {
-    return mock_assistant.fixtures.data.entities.find(
-      i => i.entity_id === entity,
-    );
+    return mock_assistant.fixtures.data.entities.find(i => i.entity_id === entity);
   }
 
   function replace<ENTITY extends ANY_ENTITY>(

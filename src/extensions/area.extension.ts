@@ -1,9 +1,4 @@
-import {
-  debounce,
-  eachSeries,
-  InternalError,
-  TServiceParams,
-} from "@digital-alchemy/core";
+import { debounce, eachSeries, InternalError, TServiceParams } from "@digital-alchemy/core";
 
 import { TAreaId } from "../dynamic";
 import {
@@ -15,14 +10,7 @@ import {
   ENTITY_REGISTRY_UPDATED,
 } from "../helpers";
 
-export function Area({
-  hass,
-  context,
-  config,
-  logger,
-  event,
-  lifecycle,
-}: TServiceParams) {
+export function Area({ hass, context, config, logger, event, lifecycle }: TServiceParams) {
   hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;
@@ -78,9 +66,7 @@ export function Area({
   async function apply(area: TAreaId, entities: ANY_ENTITY[]) {
     const out = { updated: [] as ANY_ENTITY[] };
     await eachSeries(entities, async (entity: ANY_ENTITY) => {
-      const details = hass.entity.registry.current.find(
-        item => item.entity_id === entity,
-      );
+      const details = hass.entity.registry.current.find(item => item.entity_id === entity);
       if (!details) {
         throw new InternalError(
           context,

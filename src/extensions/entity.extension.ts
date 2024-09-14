@@ -260,9 +260,9 @@ export function EntityManager({
 
   // #MARK: EntitySource
   async function EntitySource() {
-    return await hass.socket.sendMessage<
-      Record<ANY_ENTITY, { domain: string }>
-    >({ type: "entity/source" });
+    return await hass.socket.sendMessage<Record<ANY_ENTITY, { domain: string }>>({
+      type: "entity/source",
+    });
   }
 
   // #MARK: EntityList

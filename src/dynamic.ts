@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable sonarjs/no-duplicate-string */
+
 /* eslint-disable @cspell/spellchecker */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/ban-types */
@@ -11,10 +11,10 @@ import {
   PICK_ENTITY,
 } from "./helpers";
 
-type PICK_FROM_PLATFORM<
-  ID extends TPlatformId,
-  DOMAIN extends TRawDomains = TRawDomains,
-> = Extract<REGISTRY_SETUP["platform"][`_${ID}`], PICK_ENTITY<DOMAIN>>;
+type PICK_FROM_PLATFORM<ID extends TPlatformId, DOMAIN extends TRawDomains = TRawDomains> = Extract<
+  REGISTRY_SETUP["platform"][`_${ID}`],
+  PICK_ENTITY<DOMAIN>
+>;
 
 // #MARK: ENTITY_SETUP
 export type ENTITY_SETUP = {
@@ -1495,9 +1495,7 @@ export type iCallService = {
        * >       - input_datetime
        * > ```
        */
-      entity_id:
-        | PICK_ENTITY<"input_datetime">
-        | PICK_ENTITY<"input_datetime">[];
+      entity_id: PICK_ENTITY<"input_datetime"> | PICK_ENTITY<"input_datetime">[];
     }): Promise<void>;
   };
   // # MARK: input_number
@@ -2691,8 +2689,7 @@ export type iCallService = {
        * > object: null
        * > ```
        */
-      data?: NotificationData &
-        (AndroidNotificationData | AppleNotificationData);
+      data?: NotificationData & (AndroidNotificationData | AppleNotificationData);
       /**
        * ## message
        *
@@ -2761,8 +2758,7 @@ export type iCallService = {
        * > object: null
        * > ```
        */
-      data?: NotificationData &
-        (AndroidNotificationData | AppleNotificationData);
+      data?: NotificationData & (AndroidNotificationData | AppleNotificationData);
       /**
        * ## Message
        *
@@ -4025,9 +4021,7 @@ export type iCallService = {
        *
        * > Media players to play the message.
        */
-      media_player_entity_id:
-        | PICK_ENTITY<"media_player">
-        | PICK_ENTITY<"media_player">[];
+      media_player_entity_id: PICK_ENTITY<"media_player"> | PICK_ENTITY<"media_player">[];
       /**
        * ## Message
        *
@@ -4152,9 +4146,7 @@ export type REGISTRY_SETUP = {
 export type TAreaId = "living_room" | "kitchen" | "bedroom" | "test";
 
 // #MARK: TDeviceId
-export type TDeviceId =
-  | "308e39cf50a9fc6c30b4110724ed1f2e"
-  | "e58841e47cf86097b310316e55d6bb12";
+export type TDeviceId = "308e39cf50a9fc6c30b4110724ed1f2e" | "e58841e47cf86097b310316e55d6bb12";
 
 // #MARK: TFloorId
 export type TFloorId = "downstairs" | "upstairs";

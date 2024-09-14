@@ -7,16 +7,10 @@ import {
 import dayjs from "dayjs";
 
 import { HassConfig } from "../helpers";
-import {
-  CreateTestingApplication,
-  SILENT_BOOT,
-} from "../mock_assistant/helpers/utils";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant/helpers/utils";
 
 describe("FetchAPI", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
   const BASE_URL = "http://homeassistant.some.domain:9123";
   const TOKEN =
     // eslint-disable-next-line @cspell/spellchecker
@@ -39,13 +33,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "[]",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "[]",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             // Calling the base level fetch provided by service
             // The same call is wrapped internally to power everything else
@@ -80,13 +72,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "[]",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "[]",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.calendarSearch({
               calendar: "calendar.united_states_tx",
@@ -118,13 +108,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.callService("switch.toggle", {
               entity_id: "switch.porch_light",
@@ -157,13 +145,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.checkConfig();
             expect(spy).toHaveBeenCalledWith(
@@ -196,9 +182,7 @@ describe("FetchAPI", () => {
         Test({ hass }: TServiceParams) {
           mock = jest
             .spyOn(hass.fetch, "getConfig")
-            .mockImplementation(
-              async () => ({ version: "2024.1.0" }) as HassConfig,
-            );
+            .mockImplementation(async () => ({ version: "2024.1.0" }) as HassConfig);
           exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
             throw new Error("EXPECTED TESTING ERROR");
           });
@@ -230,9 +214,7 @@ describe("FetchAPI", () => {
         Test({ hass }: TServiceParams) {
           mock = jest
             .spyOn(hass.fetch, "getConfig")
-            .mockImplementation(
-              async () => ({ version: "2024.4.1" }) as HassConfig,
-            );
+            .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
           exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
             throw new Error("EXPECTED TESTING ERROR");
           });
@@ -259,13 +241,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.fetchEntityCustomizations("switch.porch_light");
             expect(spy).toHaveBeenCalledWith(
@@ -293,19 +273,13 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
-            await hass.fetch.fetchEntityHistory(
-              "switch.porch_light",
-              start,
-              end,
-            );
+            await hass.fetch.fetchEntityHistory("switch.porch_light", start, end);
             expect(spy).toHaveBeenCalledWith(
               `${BASE_URL}/api/history/period/${encodeURIComponent(start.toISOString())}?end_time=${encodeURIComponent(end.toISOString())}&filter_entity_id=switch.porch_light`,
               expect.objectContaining({
@@ -332,13 +306,11 @@ describe("FetchAPI", () => {
       const body = { magic: true };
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.fireEvent("testing_event", body);
             expect(spy).toHaveBeenCalledWith(
@@ -367,13 +339,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.getAllEntities();
             expect(spy).toHaveBeenCalledWith(
@@ -401,13 +371,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.getConfig();
             expect(spy).toHaveBeenCalledWith(
@@ -439,13 +407,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "[]",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "[]",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.getLogs();
             expect(spy).toHaveBeenCalledWith(
@@ -473,13 +439,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.getRawLogs();
             expect(spy).toHaveBeenCalledWith(
@@ -507,13 +471,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.listServices();
             expect(spy).toHaveBeenCalledWith(
@@ -541,13 +503,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.updateEntity("switch.porch_light", {
               attributes: { something: "special" },
@@ -587,13 +547,11 @@ describe("FetchAPI", () => {
       };
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.webhook("magic_webhook", body);
             expect(spy).toHaveBeenCalledWith(
@@ -622,13 +580,11 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(global, "fetch")
-            .mockImplementation(async () => {
-              return {
-                text: () => "{}",
-              } as unknown as Response;
-            });
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
           lifecycle.onReady(async () => {
             await hass.fetch.checkCredentials();
             expect(spy).toHaveBeenCalledWith(

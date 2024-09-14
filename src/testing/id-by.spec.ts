@@ -9,10 +9,7 @@ import { PICK_ENTITY } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("ID By", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   afterEach(async () => {
     if (application) {
@@ -35,9 +32,7 @@ describe("ID By", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("finds entities only related by device", async () => {
@@ -53,15 +48,11 @@ describe("ID By", () => {
               "climate.hallway_thermostat",
               "binary_sensor.garage_door",
             ] as PICK_ENTITY[];
-            expect(expected.every(expected => list.includes(expected))).toBe(
-              true,
-            );
+            expect(expected.every(expected => list.includes(expected))).toBe(true);
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("find entities by area limiting by domain", async () => {
@@ -76,9 +67,7 @@ describe("ID By", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
   });
 
@@ -93,9 +82,7 @@ describe("ID By", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("find entities by label limiting by domain", async () => {
@@ -108,9 +95,7 @@ describe("ID By", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
   });
 
@@ -120,16 +105,12 @@ describe("ID By", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
-            const synapse = hass.idBy.device(
-              "308e39cf50a9fc6c30b4110724ed1f2e",
-            );
+            const synapse = hass.idBy.device("308e39cf50a9fc6c30b4110724ed1f2e");
             expect(synapse.length).toBe(9);
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("find entities by device limiting by domain", async () => {
@@ -137,17 +118,12 @@ describe("ID By", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
-            const synapse = hass.idBy.device(
-              "308e39cf50a9fc6c30b4110724ed1f2e",
-              "light",
-            );
+            const synapse = hass.idBy.device("308e39cf50a9fc6c30b4110724ed1f2e", "light");
             expect(synapse.length).toBe(0);
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
   });
 
@@ -162,9 +138,7 @@ describe("ID By", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("find entities by platform limiting by domain", async () => {
@@ -177,9 +151,7 @@ describe("ID By", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
   });
 
@@ -194,9 +166,7 @@ describe("ID By", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("find entities by floor limiting by domain", async () => {
@@ -209,9 +179,7 @@ describe("ID By", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
   });
 });

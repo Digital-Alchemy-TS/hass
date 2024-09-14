@@ -18,10 +18,7 @@ declare module "@digital-alchemy/core" {
 }
 
 describe("Websocket", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   afterEach(async () => {
     if (application) {
@@ -43,9 +40,7 @@ describe("Websocket", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should emit a socket message with subscribeEvents", async () => {
@@ -70,9 +65,7 @@ describe("Websocket", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should emit a socket message with fireEvent", async () => {
@@ -95,9 +88,7 @@ describe("Websocket", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
   });
 });

@@ -11,10 +11,7 @@ import { AREA_REGISTRY_UPDATED, AreaDetails } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("Area", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
   const EXAMPLE_AREA = {
     area_id: "empty_area" as TAreaId,
     floor_id: null,
@@ -65,9 +62,7 @@ describe("Area", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            const spy = jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => []);
+            const spy = jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => []);
             lifecycle.onReady(async () => {
               await hass.area.list();
               expect(spy).toHaveBeenCalledWith(
@@ -118,9 +113,7 @@ describe("Area", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             let counter = 0;
             hass.events.onAreaRegistryUpdate(() => counter++);
             lifecycle.onReady(async () => {
@@ -210,9 +203,7 @@ describe("Area", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.area.update(EXAMPLE_AREA);
               let order = "";
@@ -240,9 +231,7 @@ describe("Area", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.area.delete("example_area" as TAreaId);
               let order = "";
@@ -270,9 +259,7 @@ describe("Area", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.area.create(EXAMPLE_AREA);
               let order = "";

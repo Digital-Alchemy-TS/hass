@@ -49,10 +49,7 @@ export const COLOR_MODES_BRIGHTNESS = new Set([
   ColorMode.WHITE,
 ]);
 
-export const VALID_COLOR_MODES = new Set([
-  ...COLOR_MODES_BRIGHTNESS.values(),
-  ColorMode.ONOFF,
-]);
+export const VALID_COLOR_MODES = new Set([...COLOR_MODES_BRIGHTNESS.values(), ColorMode.ONOFF]);
 
 /**
  * Supported features of the fan entity.

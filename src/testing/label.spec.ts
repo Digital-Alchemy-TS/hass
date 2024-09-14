@@ -8,16 +8,10 @@ import {
 
 import { TLabelId } from "../dynamic";
 import { LABEL_REGISTRY_UPDATED, LabelDefinition } from "../helpers";
-import {
-  CreateTestingApplication,
-  SILENT_BOOT,
-} from "../mock_assistant/helpers/utils";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant/helpers/utils";
 
 describe("Label", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
   const EXAMPLE_LABEL = {
     color: "accent",
     description: "test",
@@ -67,9 +61,7 @@ describe("Label", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            const spy = jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => []);
+            const spy = jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => []);
             lifecycle.onReady(async () => {
               await hass.label.list();
               expect(spy).toHaveBeenCalledWith(
@@ -178,9 +170,7 @@ describe("Label", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.label.update(EXAMPLE_LABEL);
               let order = "";
@@ -208,9 +198,7 @@ describe("Label", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             let counter = 0;
             hass.events.onLabelRegistryUpdate(() => counter++);
             lifecycle.onReady(async () => {
@@ -242,9 +230,7 @@ describe("Label", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.label.delete("example_label" as TLabelId);
               let order = "";
@@ -272,9 +258,7 @@ describe("Label", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.label.create(EXAMPLE_LABEL);
               let order = "";

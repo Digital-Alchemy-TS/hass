@@ -1,12 +1,6 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import {
-  ConfigEntry,
-  HassConfig,
-  ManifestItem,
-  UpdateCoreOptions,
-  ZoneDetails,
-} from "../helpers";
+import { ConfigEntry, HassConfig, ManifestItem, UpdateCoreOptions, ZoneDetails } from "../helpers";
 
 export function Registry({ hass }: TServiceParams) {
   async function ManifestList() {

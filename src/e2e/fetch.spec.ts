@@ -13,10 +13,7 @@ import { BASE_URL, TOKEN } from "./utils";
 const SETTLE_TIMEOUT = 1000;
 
 describe("Fetch API E2E", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   afterEach(async () => {
     if (application) {

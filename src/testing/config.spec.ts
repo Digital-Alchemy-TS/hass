@@ -11,10 +11,7 @@ import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 const DEFAULTS = "DEFAULTS";
 
 describe("Config", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   beforeAll(() => {
     delete env.HASSIO_TOKEN;
@@ -198,11 +195,7 @@ describe("Config", () => {
         }),
       );
       expect(exitSpy).toHaveBeenCalledWith(1);
-      expect(spy).toHaveBeenCalledWith(
-        "hass:configure",
-        { name: "onPostConfig" },
-        "ok",
-      );
+      expect(spy).toHaveBeenCalledWith("hass:configure", { name: "onPostConfig" }, "ok");
     });
 
     // # Should error log on bad token

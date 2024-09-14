@@ -1,11 +1,4 @@
-import {
-  TAreaId,
-  TDeviceId,
-  TFloorId,
-  TLabelId,
-  TPlatformId,
-  TZoneId,
-} from "../dynamic";
+import { TAreaId, TDeviceId, TFloorId, TLabelId, TPlatformId, TZoneId } from "../dynamic";
 import { ANY_ENTITY } from "./utility.helper";
 
 export type LabelOptions = {

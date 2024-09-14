@@ -16,10 +16,7 @@ import {
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("Events", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   afterEach(async () => {
     if (application) {
@@ -40,9 +37,7 @@ describe("Events", () => {
           expect(spy).toHaveBeenCalledWith(AREA_REGISTRY_UPDATED, callback);
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should register callback for DEVICE_REGISTRY_UPDATED", async () => {
@@ -55,9 +50,7 @@ describe("Events", () => {
           expect(spy).toHaveBeenCalledWith(DEVICE_REGISTRY_UPDATED, callback);
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should register callback for ENTITY_REGISTRY_UPDATED", async () => {
@@ -70,9 +63,7 @@ describe("Events", () => {
           expect(spy).toHaveBeenCalledWith(ENTITY_REGISTRY_UPDATED, callback);
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should register callback for FLOOR_REGISTRY_UPDATED", async () => {
@@ -85,9 +76,7 @@ describe("Events", () => {
           expect(spy).toHaveBeenCalledWith(FLOOR_REGISTRY_UPDATED, callback);
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should register callback for LABEL_REGISTRY_UPDATED", async () => {
@@ -100,9 +89,7 @@ describe("Events", () => {
           expect(spy).toHaveBeenCalledWith(LABEL_REGISTRY_UPDATED, callback);
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should register callback for ZONE_REGISTRY_UPDATED", async () => {
@@ -115,9 +102,7 @@ describe("Events", () => {
           expect(spy).toHaveBeenCalledWith(ZONE_REGISTRY_UPDATED, callback);
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
   });
 });

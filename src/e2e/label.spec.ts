@@ -12,10 +12,7 @@ import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 import { BASE_URL, TOKEN } from "./utils";
 
 describe("Label E2E", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
   const testLabel = "test" as TLabelId;
 
   afterEach(async () => {
@@ -53,9 +50,7 @@ describe("Label E2E", () => {
             icon: "mdi:account",
             name: testLabel,
           });
-          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(
-            true,
-          );
+          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(true);
           await application.teardown();
         });
       },
@@ -73,9 +68,7 @@ describe("Label E2E", () => {
             ...item,
             name: "extra test",
           });
-          expect(
-            hass.label.current.find(i => i.label_id === testLabel)?.name,
-          ).toBe("extra test");
+          expect(hass.label.current.find(i => i.label_id === testLabel)?.name).toBe("extra test");
           await application.teardown();
         });
       },
@@ -88,13 +81,9 @@ describe("Label E2E", () => {
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(
-            true,
-          );
+          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(true);
           await hass.label.delete(testLabel);
-          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(
-            false,
-          );
+          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(false);
           await application.teardown();
         });
       },

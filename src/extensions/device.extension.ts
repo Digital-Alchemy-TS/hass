@@ -1,19 +1,8 @@
 import { debounce, TServiceParams } from "@digital-alchemy/core";
 
-import {
-  DEVICE_REGISTRY_UPDATED,
-  DeviceDetails,
-  EARLY_ON_READY,
-} from "../helpers";
+import { DEVICE_REGISTRY_UPDATED, DeviceDetails, EARLY_ON_READY } from "../helpers";
 
-export function Device({
-  hass,
-  config,
-  context,
-  logger,
-  lifecycle,
-  event,
-}: TServiceParams) {
+export function Device({ hass, config, context, logger, lifecycle, event }: TServiceParams) {
   hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;

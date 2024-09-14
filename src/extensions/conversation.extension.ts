@@ -24,11 +24,7 @@ export function Conversation({ hass, logger }: TServiceParams) {
     await hass.socket.sendMessage({ entity_id: entity, type: UPDATE_REGISTRY });
   }
 
-  async function setConversational({
-    entity_ids,
-    assistants,
-    should_expose,
-  }: ToggleExpose) {
+  async function setConversational({ entity_ids, assistants, should_expose }: ToggleExpose) {
     await hass.socket.sendMessage({
       assistants: [assistants].flat(),
       entity_ids: [entity_ids].flat(),

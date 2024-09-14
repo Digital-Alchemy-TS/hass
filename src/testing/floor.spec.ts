@@ -8,16 +8,10 @@ import {
 
 import { TFloorId } from "../dynamic";
 import { FLOOR_REGISTRY_UPDATED, FloorDetails } from "../helpers";
-import {
-  CreateTestingApplication,
-  SILENT_BOOT,
-} from "../mock_assistant/helpers/utils";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant/helpers/utils";
 
 describe("Floor", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
   const EXAMPLE_FLOOR = {
     aliases: [],
     floor_id: "upstairs",
@@ -67,9 +61,7 @@ describe("Floor", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            const spy = jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => []);
+            const spy = jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => []);
             lifecycle.onReady(async () => {
               await hass.floor.list();
               expect(spy).toHaveBeenCalledWith(
@@ -178,9 +170,7 @@ describe("Floor", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.floor.update(EXAMPLE_FLOOR);
               let order = "";
@@ -208,9 +198,7 @@ describe("Floor", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             let counter = 0;
             hass.events.onFloorRegistryUpdate(() => counter++);
             lifecycle.onReady(async () => {
@@ -242,9 +230,7 @@ describe("Floor", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.floor.delete("example_floor" as TFloorId);
               let order = "";
@@ -272,9 +258,7 @@ describe("Floor", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.floor.create(EXAMPLE_FLOOR);
               let order = "";

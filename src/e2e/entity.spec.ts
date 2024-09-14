@@ -11,10 +11,7 @@ import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 import { BASE_URL, TOKEN } from "./utils";
 
 describe("Entity E2E", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   afterEach(async () => {
     if (application) {
@@ -250,15 +247,11 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            expect(hass.idBy.area("bedroom")).toEqual([
-              "switch.bedroom_lamp",
-            ] as PICK_ENTITY[]);
+            expect(hass.idBy.area("bedroom")).toEqual(["switch.bedroom_lamp"] as PICK_ENTITY[]);
             expect(hass.idBy.area("living_room")).toEqual([
               "switch.living_room_mood_lights",
             ] as PICK_ENTITY[]);
-            expect(hass.idBy.area("kitchen")).toEqual([
-              "switch.kitchen_cabinets",
-            ] as PICK_ENTITY[]);
+            expect(hass.idBy.area("kitchen")).toEqual(["switch.kitchen_cabinets"] as PICK_ENTITY[]);
             await application.teardown();
           });
         },
@@ -271,9 +264,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            expect(hass.idBy.floor("upstairs")).toEqual([
-              "switch.bedroom_lamp",
-            ] as PICK_ENTITY[]);
+            expect(hass.idBy.floor("upstairs")).toEqual(["switch.bedroom_lamp"] as PICK_ENTITY[]);
             expect(hass.idBy.floor("downstairs")).toEqual([
               "switch.kitchen_cabinets",
               "switch.living_room_mood_lights",
@@ -332,9 +323,7 @@ describe("Entity E2E", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(async () => {
-            expect(
-              hass.idBy.device("308e39cf50a9fc6c30b4110724ed1f2e"),
-            ).toEqual([
+            expect(hass.idBy.device("308e39cf50a9fc6c30b4110724ed1f2e")).toEqual([
               "sensor.sun_next_dawn",
               "sensor.sun_next_dusk",
               "sensor.sun_next_midnight",

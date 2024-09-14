@@ -1,21 +1,9 @@
 import { debounce, TServiceParams } from "@digital-alchemy/core";
 
 import { TFloorId } from "../dynamic";
-import {
-  EARLY_ON_READY,
-  FLOOR_REGISTRY_UPDATED,
-  FloorCreate,
-  FloorDetails,
-} from "../helpers";
+import { EARLY_ON_READY, FLOOR_REGISTRY_UPDATED, FloorCreate, FloorDetails } from "../helpers";
 
-export function Floor({
-  hass,
-  config,
-  context,
-  event,
-  logger,
-  lifecycle,
-}: TServiceParams) {
+export function Floor({ hass, config, context, event, logger, lifecycle }: TServiceParams) {
   hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;

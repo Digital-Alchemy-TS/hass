@@ -10,10 +10,7 @@ import { ANY_ENTITY, ENTITY_STATE } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("References", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   afterEach(async () => {
     if (application) {
@@ -36,9 +33,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
 
@@ -53,9 +48,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
 
@@ -72,9 +65,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
 
@@ -89,9 +80,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       it("load references by label limiting by domain", async () => {
@@ -104,9 +93,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
 
@@ -123,9 +110,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       it("load references by area limiting by domain", async () => {
@@ -140,9 +125,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
 
@@ -152,16 +135,12 @@ describe("References", () => {
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
             lifecycle.onReady(() => {
-              const synapse = hass.refBy.device(
-                "308e39cf50a9fc6c30b4110724ed1f2e",
-              );
+              const synapse = hass.refBy.device("308e39cf50a9fc6c30b4110724ed1f2e");
               expect(synapse.length).toBe(9);
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       it("load references by device limiting by domain", async () => {
@@ -169,17 +148,12 @@ describe("References", () => {
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
             lifecycle.onReady(() => {
-              const synapse = hass.refBy.device(
-                "308e39cf50a9fc6c30b4110724ed1f2e",
-                "light",
-              );
+              const synapse = hass.refBy.device("308e39cf50a9fc6c30b4110724ed1f2e", "light");
               expect(synapse.length).toBe(0);
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
 
@@ -194,9 +168,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       it("load references by platform limiting by domain", async () => {
@@ -209,9 +181,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
 
@@ -226,9 +196,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       it("load references by floor limiting by domain", async () => {
@@ -241,9 +209,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
   });
@@ -278,9 +244,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       it("ownKeys", async () => {
@@ -316,9 +280,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
       describe("set", () => {
         it("state", () => {
@@ -347,9 +309,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       // mental note: legacy test
@@ -365,9 +325,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       it("references provide last_* as dayjs", async () => {
@@ -382,9 +340,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       it("passes through history calls", async () => {
@@ -407,9 +363,7 @@ describe("References", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
   });

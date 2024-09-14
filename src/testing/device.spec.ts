@@ -7,16 +7,10 @@ import {
 } from "@digital-alchemy/core";
 
 import { DeviceDetails } from "../helpers";
-import {
-  CreateTestingApplication,
-  SILENT_BOOT,
-} from "../mock_assistant/helpers/utils";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant/helpers/utils";
 
 describe("Device", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
   const EXAMPLE_DEVICE = {
     area_id: null,
     config_entries: ["42816b768aa8697c18c1b6d241112cef"],
@@ -76,9 +70,7 @@ describe("Device", () => {
     expect.assertions(1);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
-        jest
-          .spyOn(hass.socket, "sendMessage")
-          .mockImplementation(async () => undefined);
+        jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
         let counter = 0;
         hass.events.onDeviceRegistryUpdate(() => counter++);
         lifecycle.onReady(async () => {
@@ -112,9 +104,7 @@ describe("Device", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            const spy = jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => []);
+            const spy = jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => []);
             lifecycle.onReady(async () => {
               await hass.device.list();
               expect(spy).toHaveBeenCalledWith(

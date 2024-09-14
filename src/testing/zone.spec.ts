@@ -10,10 +10,7 @@ import { ZONE_REGISTRY_UPDATED, ZoneDetails } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("Zone", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
   const EXAMPLE_ZONE = {
     icon: "",
     latitude: 0,
@@ -40,9 +37,7 @@ describe("Zone", () => {
             .mockImplementation(async () => [EXAMPLE_ZONE]);
           lifecycle.onReady(async () => {
             await hass.zone.list();
-            expect(spy).toHaveBeenCalledWith(
-              expect.objectContaining({ type: "zone/list" }),
-            );
+            expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: "zone/list" }));
           });
         },
       });
@@ -63,14 +58,10 @@ describe("Zone", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            const spy = jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => []);
+            const spy = jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => []);
             lifecycle.onReady(async () => {
               await hass.zone.list();
-              expect(spy).toHaveBeenCalledWith(
-                expect.objectContaining({ type: "zone/list" }),
-              );
+              expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: "zone/list" }));
             });
           },
         });
@@ -118,9 +109,7 @@ describe("Zone", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             let counter = 0;
             hass.events.onZoneRegistryUpdate(() => counter++);
             lifecycle.onReady(async () => {
@@ -152,9 +141,7 @@ describe("Zone", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass, event }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             lifecycle.onReady(async () => {
               const response = hass.zone.create(EXAMPLE_ZONE);
               let order = "";

@@ -8,14 +8,7 @@ import {
   ZoneOptions,
 } from "../helpers";
 
-export function Zone({
-  config,
-  hass,
-  event,
-  logger,
-  context,
-  lifecycle,
-}: TServiceParams) {
+export function Zone({ config, hass, event, logger, context, lifecycle }: TServiceParams) {
   hass.socket.onConnect(async () => {
     if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
       return;

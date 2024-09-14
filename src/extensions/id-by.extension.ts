@@ -22,10 +22,7 @@ import {
   PICK_FROM_PLATFORM,
 } from "../helpers";
 
-const process = <RAW extends ANY_ENTITY>(
-  raw: RAW[],
-  domains: ALL_DOMAINS[],
-) => {
+const process = <RAW extends ANY_ENTITY>(raw: RAW[], domains: ALL_DOMAINS[]) => {
   if (!is.empty(domains)) {
     raw = raw.filter(entity => is.domain(entity, domains));
   }
@@ -44,10 +41,10 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
   // #MARK: byUniqueId
   function unique_id<
     UNIQUE_ID extends TUniqueId,
-    ENTITY_ID extends Extract<
+    ENTITY_ID extends Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
       TUniqueIDMapping[UNIQUE_ID],
       ANY_ENTITY
-    > = Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY>,
+    >,
   >(unique_id: UNIQUE_ID): ENTITY_ID {
     hass.entity.warnEarly("byUniqueId");
     const entity = hass.entity.registry.current.find(
@@ -88,16 +85,12 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
 
     // identify devices
     const devices = new Set(
-      hass.device.current
-        .filter(device => device.area_id === area)
-        .map(i => i.id),
+      hass.device.current.filter(device => device.area_id === area).map(i => i.id),
     );
 
     // extract entities associated with device, that have not been assigned to a room
     const fromDevice = hass.entity.registry.current
-      .filter(
-        entity => devices.has(entity.device_id) && is.empty(entity.area_id),
-      )
+      .filter(entity => devices.has(entity.device_id) && is.empty(entity.area_id))
       .map(i => i.entity_id);
 
     return process(

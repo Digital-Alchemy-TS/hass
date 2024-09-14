@@ -10,10 +10,7 @@ import { ANY_ENTITY, ENTITY_STATE } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("Entity", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   afterEach(async () => {
     if (application) {
@@ -29,9 +26,7 @@ describe("Entity", () => {
         expect.assertions(1);
         application = CreateTestingApplication({
           Test({ lifecycle, hass }: TServiceParams) {
-            jest
-              .spyOn(hass.socket, "sendMessage")
-              .mockImplementation(async () => undefined);
+            jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
             let counter = 0;
             hass.events.onEntityRegistryUpdate(() => counter++);
             lifecycle.onReady(async () => {
@@ -68,17 +63,9 @@ describe("Entity", () => {
               const old_state = hass.entity.getCurrentState("sensor.magic");
               const new_state = { ...old_state, state: "test" };
               const spy = jest.spyOn(event, "emit");
-              hass.entity._entityUpdateReceiver(
-                "sensor.magic",
-                new_state,
-                old_state,
-              );
+              hass.entity._entityUpdateReceiver("sensor.magic", new_state, old_state);
               expect(spy).toHaveReturnedTimes(2);
-              expect(spy).toHaveBeenCalledWith(
-                "sensor.magic",
-                new_state,
-                old_state,
-              );
+              expect(spy).toHaveBeenCalledWith("sensor.magic", new_state, old_state);
               expect(spy).toHaveBeenCalledWith(
                 "e1806fdc93296bbd5ab42967003cd38729ff9ba6cfeefc3e15a03ad01ac894fe",
                 new_state,
@@ -87,9 +74,7 @@ describe("Entity", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
 
       it("returns undefined from nextState when timeout is exceeded", async () => {
@@ -101,20 +86,14 @@ describe("Entity", () => {
               const old_state = hass.entity.getCurrentState("sensor.magic");
 
               // Set a timeout of 100ms
-              const wait = new Promise<ENTITY_STATE<ANY_ENTITY> | undefined>(
-                async done => {
-                  done(await entity.nextState(25));
-                },
-              );
+              const wait = new Promise<ENTITY_STATE<ANY_ENTITY> | undefined>(async done => {
+                done(await entity.nextState(25));
+              });
 
               // Simulate delay longer than the timeout to ensure timeout is exceeded
               setTimeout(() => {
                 const new_state = { ...old_state, state: "test" };
-                hass.entity._entityUpdateReceiver(
-                  "sensor.magic",
-                  new_state,
-                  old_state,
-                );
+                hass.entity._entityUpdateReceiver("sensor.magic", new_state, old_state);
               }, 50); // 200ms delay
 
               const result = await wait;
@@ -122,9 +101,7 @@ describe("Entity", () => {
             });
           },
         });
-        await application.bootstrap(
-          SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-        );
+        await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
       });
     });
 
@@ -133,17 +110,13 @@ describe("Entity", () => {
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
           lifecycle.onReady(() => {
-            const entity = hass.refBy.unique_id(
-              "5622d76001a335e3ea893c4d60d31b3d-next_dawn",
-            );
+            const entity = hass.refBy.unique_id("5622d76001a335e3ea893c4d60d31b3d-next_dawn");
             expect(entity).toBeDefined();
             expect(entity.entity_id).toBe("sensor.sun_next_dawn");
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should return unmodified entity state with .raw", async () => {
@@ -157,9 +130,7 @@ describe("Entity", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should return previous entity state with .previous", async () => {
@@ -181,9 +152,7 @@ describe("Entity", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should return undefined for no matches", async () => {
@@ -199,9 +168,7 @@ describe("Entity", () => {
           });
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
   });
 
@@ -210,9 +177,7 @@ describe("Entity", () => {
       expect.assertions(2);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(hass.entity, "refresh")
-            .mockImplementation(async () => undefined);
+          const spy = jest.spyOn(hass.entity, "refresh").mockImplementation(async () => undefined);
 
           lifecycle.onPostConfig(function latePostConfig() {
             expect(spy).toHaveBeenCalled();
@@ -222,18 +187,14 @@ describe("Entity", () => {
           }, 0);
         },
       });
-      await application.bootstrap(
-        SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-      );
+      await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
     });
 
     it("should not attempt to load entities onBootstrap if AUTO_CONNECT_SOCKET is false", async () => {
       expect.assertions(1);
       application = CreateTestingApplication({
         Test({ lifecycle, hass }: TServiceParams) {
-          const spy = jest
-            .spyOn(hass.entity, "refresh")
-            .mockImplementation(async () => undefined);
+          const spy = jest.spyOn(hass.entity, "refresh").mockImplementation(async () => undefined);
 
           lifecycle.onBootstrap(() => {
             expect(spy).not.toHaveBeenCalled();
@@ -241,10 +202,7 @@ describe("Entity", () => {
         },
       });
       await application.bootstrap(
-        SILENT_BOOT(
-          { hass: { AUTO_CONNECT_SOCKET: false, MOCK_SOCKET: true } },
-          true,
-        ),
+        SILENT_BOOT({ hass: { AUTO_CONNECT_SOCKET: false, MOCK_SOCKET: true } }, true),
       );
     });
 

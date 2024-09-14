@@ -10,10 +10,7 @@ import { BackupResponse } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 
 describe("Backup", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   afterEach(async () => {
     if (application) {
@@ -39,9 +36,7 @@ describe("Backup", () => {
         });
       },
     });
-    await application.bootstrap(
-      SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-    );
+    await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
   });
 
   it("should format list requests properly", async () => {
@@ -59,9 +54,7 @@ describe("Backup", () => {
         });
       },
     });
-    await application.bootstrap(
-      SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-    );
+    await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
   });
 
   it("should first attempt to sign with downloads", async () => {
@@ -82,9 +75,7 @@ describe("Backup", () => {
         });
       },
     });
-    await application.bootstrap(
-      SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-    );
+    await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
   });
 
   it("should use the sign path to download", async () => {
@@ -94,23 +85,14 @@ describe("Backup", () => {
         lifecycle.onReady(async () => {
           const path = "/test/thing";
           const destination = "/foo/bar";
-          jest
-            .spyOn(hass.socket, "sendMessage")
-            .mockImplementation(async () => ({ path }));
-          const spy = jest
-            .spyOn(hass.fetch, "download")
-            .mockImplementation(async () => undefined);
+          jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => ({ path }));
+          const spy = jest.spyOn(hass.fetch, "download").mockImplementation(async () => undefined);
           await hass.backup.download("test", destination);
-          expect(spy).toHaveBeenCalledWith(
-            destination,
-            expect.objectContaining({ url: path }),
-          );
+          expect(spy).toHaveBeenCalledWith(destination, expect.objectContaining({ url: path }));
         });
       },
     });
-    await application.bootstrap(
-      SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-    );
+    await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
   });
 
   it("should use the sign path to download", async () => {
@@ -120,23 +102,14 @@ describe("Backup", () => {
         lifecycle.onReady(async () => {
           const path = "/test/thing";
           const destination = "/foo/bar";
-          jest
-            .spyOn(hass.socket, "sendMessage")
-            .mockImplementation(async () => ({ path }));
-          const spy = jest
-            .spyOn(hass.fetch, "download")
-            .mockImplementation(async () => undefined);
+          jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => ({ path }));
+          const spy = jest.spyOn(hass.fetch, "download").mockImplementation(async () => undefined);
           await hass.backup.download("test", destination);
-          expect(spy).toHaveBeenCalledWith(
-            destination,
-            expect.objectContaining({ url: path }),
-          );
+          expect(spy).toHaveBeenCalledWith(destination, expect.objectContaining({ url: path }));
         });
       },
     });
-    await application.bootstrap(
-      SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true),
-    );
+    await application.bootstrap(SILENT_BOOT({ hass: { MOCK_SOCKET: true } }, true));
   });
 
   it("should not start a new backup if one is already in progress", async () => {
@@ -150,9 +123,7 @@ describe("Backup", () => {
             { backing_up: false, backups: [] },
           ] as BackupResponse[];
 
-          jest
-            .spyOn(hass.backup, "list")
-            .mockImplementation(async () => responses.shift());
+          jest.spyOn(hass.backup, "list").mockImplementation(async () => responses.shift());
 
           await hass.backup.generate();
           expect(spy).not.toHaveBeenCalledWith({ type: "backup/generate" });
@@ -176,14 +147,10 @@ describe("Backup", () => {
             { backing_up: false, backups: [] },
           ] as BackupResponse[];
 
-          jest
-            .spyOn(hass.backup, "list")
-            .mockImplementation(async () => responses.shift());
+          jest.spyOn(hass.backup, "list").mockImplementation(async () => responses.shift());
 
           await hass.backup.generate();
-          expect(spy).toHaveBeenCalledWith(
-            expect.objectContaining({ type: "backup/generate" }),
-          );
+          expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: "backup/generate" }));
         });
       },
     });

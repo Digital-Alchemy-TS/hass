@@ -84,9 +84,7 @@ export function WebsocketAPI({
   // #MARK: setConnectionState
   function setConnectionState(state: ConnectionState) {
     hass.socket.connectionState = state;
-    SOCKET_CONNECTION_STATE.labels({ state }).set(
-      WebsocketConnectionState[state],
-    );
+    SOCKET_CONNECTION_STATE.labels({ state }).set(WebsocketConnectionState[state]);
   }
 
   // #MARK: handleUnknownConnectionState
@@ -146,10 +144,7 @@ export function WebsocketAPI({
         }
         // 🦗 haven't heard from hass in a while
         hass.socket.setConnectionState("unknown");
-        logger.trace(
-          { name },
-          "no replies in a while {connected} => {unknown}",
-        );
+        logger.trace({ name }, "no replies in a while {connected} => {unknown}");
       }
 
       // * unknown
@@ -183,19 +178,13 @@ export function WebsocketAPI({
         messageCount = START;
         lastConnectAttempt = now;
         hass.socket.setConnectionState("connecting");
-        logger.debug(
-          { name },
-          "initializing new socket {offline} => {connecting}",
-        );
+        logger.debug({ name }, "initializing new socket {offline} => {connecting}");
         try {
           await hass.socket.init();
           hass.socket.setConnectionState("connected");
           logger.debug({ name }, "auth success {connecting} => {connected}");
         } catch (error) {
-          logger.error(
-            { error, name },
-            "init failed {connecting} => {offline}",
-          );
+          logger.error({ error, name }, "init failed {connecting} => {offline}");
           await hass.socket.teardown();
         }
         return;
@@ -203,10 +192,7 @@ export function WebsocketAPI({
 
       case "invalid": {
         // ### error
-        logger.error(
-          { name },
-          "socket received error, check credentials and restart application",
-        );
+        logger.error({ name }, "socket received error, check credentials and restart application");
         return;
       }
     }
@@ -214,10 +200,7 @@ export function WebsocketAPI({
 
   // #MARK: attachScheduledFunctions
   function attachScheduledFunctions() {
-    logger.trace(
-      { name: attachScheduledFunctions },
-      `attaching interval schedules`,
-    );
+    logger.trace({ name: attachScheduledFunctions }, `attaching interval schedules`);
     scheduler.interval({
       exec: async () => await ManageConnection(),
       interval: config.hass.RETRY_INTERVAL * SECOND,
@@ -234,10 +217,7 @@ export function WebsocketAPI({
   }
 
   lifecycle.onShutdownStart(async () => {
-    logger.debug(
-      { name: "onShutdownStart" },
-      `shutdown - tearing down connection`,
-    );
+    logger.debug({ name: "onShutdownStart" }, `shutdown - tearing down connection`);
     await hass.socket.teardown();
   });
 
@@ -274,10 +254,7 @@ export function WebsocketAPI({
     subscription?: () => void,
   ): Promise<RESPONSE_VALUE> {
     if (hass.socket.connectionState === "offline") {
-      logger.error(
-        { name: sendMessage },
-        "socket is closed, cannot send message",
-      );
+      logger.error({ name: sendMessage }, "socket is closed, cannot send message");
       return undefined;
     }
 
@@ -333,15 +310,12 @@ export function WebsocketAPI({
     const avgWindow = config.hass.SOCKET_AVG_DURATION;
 
     const perSecondAverage = Math.ceil(
-      MESSAGE_TIMESTAMPS.filter(time => time > now - SECOND * avgWindow)
-        .length / avgWindow,
+      MESSAGE_TIMESTAMPS.filter(time => time > now - SECOND * avgWindow).length / avgWindow,
     );
     SOCKET_SENT_MESSAGES.labels({ type }).inc();
 
-    const {
-      SOCKET_CRASH_REQUESTS_PER_SEC: crashCount,
-      SOCKET_WARN_REQUESTS_PER_SEC: warnCount,
-    } = config.hass;
+    const { SOCKET_CRASH_REQUESTS_PER_SEC: crashCount, SOCKET_WARN_REQUESTS_PER_SEC: warnCount } =
+      config.hass;
 
     if (perSecondAverage > crashCount) {
       logger.fatal(
@@ -368,10 +342,7 @@ export function WebsocketAPI({
     const protocol = url.protocol === `http:` ? `ws:` : `wss:`;
     const path = url.pathname === "/" ? "" : url.pathname;
     const port = url.port ? `:${url.port}` : "";
-    return (
-      config.hass.WEBSOCKET_URL ||
-      `${protocol}//${url.hostname}${port}${path}/api/websocket`
-    );
+    return config.hass.WEBSOCKET_URL || `${protocol}//${url.hostname}${port}${path}/api/websocket`;
   }
 
   // #MARK: init
@@ -417,10 +388,7 @@ export function WebsocketAPI({
       });
 
       connection.on("close", async (code, reason) => {
-        logger.warn(
-          { code, name: init, reason: reason.toString() },
-          "connection closed",
-        );
+        logger.warn({ code, name: init, reason: reason.toString() }, "connection closed");
         await hass.socket.teardown();
       });
 
@@ -454,10 +422,7 @@ export function WebsocketAPI({
     switch (message.type) {
       case "auth_required": {
         logger.trace({ name: onMessage }, `sending authentication`);
-        hass.socket.sendMessage(
-          { access_token: config.hass.TOKEN, type: "auth" },
-          false,
-        );
+        hass.socket.sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
         return;
       }
 
@@ -497,10 +462,7 @@ export function WebsocketAPI({
 
       default: {
         // Code error probably?
-        logger.error(
-          { name: onMessage },
-          `unknown websocket message type: ${message.type}`,
-        );
+        logger.error({ name: onMessage }, `unknown websocket message type: ${message.type}`);
       }
     }
   }
@@ -563,10 +525,7 @@ export function WebsocketAPI({
     once,
     exec,
   }: OnHassEventOptions<DATA>) {
-    logger.trace(
-      { context, event, name: onEvent },
-      `attaching socket event listener`,
-    );
+    logger.trace({ context, event, name: onEvent }, `attaching socket event listener`);
     const callback = async (data: EntityUpdateEvent) => {
       await internal.safeExec({
         duration: SOCKET_EVENT_EXECUTION_TIME,
@@ -582,10 +541,7 @@ export function WebsocketAPI({
       socketEvents.on(event, callback);
     }
     return () => {
-      logger.trace(
-        { context, event, name: onEvent },
-        `removing socket event listener`,
-      );
+      logger.trace({ context, event, name: onEvent }, `removing socket event listener`);
       socketEvents.removeListener(event, callback);
     };
   }

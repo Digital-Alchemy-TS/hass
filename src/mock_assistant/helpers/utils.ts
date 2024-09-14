@@ -48,10 +48,7 @@ export function CreateTestingApplication(services: ServiceMap) {
   });
 }
 
-export const CreateTestRunner = <
-  S extends ServiceMap,
-  C extends OptionalModuleConfiguration,
->(
+export const CreateTestRunner = <S extends ServiceMap, C extends OptionalModuleConfiguration>(
   UNIT_TESTING_APP: ApplicationDefinition<S, C>,
 ) => {
   // setup runs at construction
@@ -62,9 +59,7 @@ export const CreateTestRunner = <
     }
     return await UNIT_TESTING_APP.bootstrap({
       appendLibrary: LIB_MOCK_ASSISTANT,
-      appendService: is.function(setup)
-        ? { Rewire, setup, test }
-        : { Rewire, test },
+      appendService: is.function(setup) ? { Rewire, setup, test } : { Rewire, test },
       configuration: {
         boilerplate: { LOG_LEVEL: "error" },
         hass: { MOCK_SOCKET: true },

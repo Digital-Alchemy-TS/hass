@@ -2,13 +2,7 @@ import { FIRST, TBlackHole } from "@digital-alchemy/core";
 import { Dayjs } from "dayjs";
 import { Except } from "type-fest";
 
-import {
-  iCallService,
-  TAreaId,
-  TDeviceId,
-  TLabelId,
-  TRawDomains,
-} from "../dynamic";
+import { iCallService, TAreaId, TDeviceId, TLabelId, TRawDomains } from "../dynamic";
 import { SensorUnitOfMeasurement } from "./registry";
 import {
   ALL_DOMAINS,
@@ -55,56 +49,44 @@ export type RemovableCallback<ENTITY_ID extends ANY_ENTITY> = (
   remove: () => void;
 };
 
-export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> =
-  ENTITY_STATE<ENTITY_ID> & {
-    entity_id: ENTITY_ID;
-    /**
-     * Run callback
-     */
-    onUpdate: RemovableCallback<ENTITY_ID>;
-    /**
-     * Retrieve state changes for an entity in a date range
-     */
-    history: (
-      from: Dayjs | Date,
-      to: Dayjs | Date,
-    ) => Promise<ENTITY_STATE<ENTITY_ID>[]>;
-    /**
-     * Run callback once, for next update
-     */
-    once: (callback: TEntityUpdateCallback<ENTITY_ID>) => void;
-    /**
-     * Will resolve with the next state of the next value. No time limit
-     */
-    nextState: (timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
-    /**
-     * Will resolve when state
-     */
-    waitForState: (
-      state: string | number,
-      timeoutMs?: number,
-    ) => Promise<ENTITY_STATE<ENTITY_ID>>;
-    /**
-     * Access the immediate previous entity state
-     */
-    previous: ENTITY_STATE<ENTITY_ID>;
-    /**
-     * Remove all `.onUpdate` listeners for this entity
-     *
-     * If you want to remove a particular one, use use the return value of the `.onUpdate` call instead
-     */
-    removeAllListeners: () => void;
-  } & (GetDomain<ENTITY_ID> extends ALL_SERVICE_DOMAINS
-      ? DomainServiceCalls<GetDomain<ENTITY_ID>>
-      : object);
+export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & {
+  entity_id: ENTITY_ID;
+  /**
+   * Run callback
+   */
+  onUpdate: RemovableCallback<ENTITY_ID>;
+  /**
+   * Retrieve state changes for an entity in a date range
+   */
+  history: (from: Dayjs | Date, to: Dayjs | Date) => Promise<ENTITY_STATE<ENTITY_ID>[]>;
+  /**
+   * Run callback once, for next update
+   */
+  once: (callback: TEntityUpdateCallback<ENTITY_ID>) => void;
+  /**
+   * Will resolve with the next state of the next value. No time limit
+   */
+  nextState: (timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
+  /**
+   * Will resolve when state
+   */
+  waitForState: (state: string | number, timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
+  /**
+   * Access the immediate previous entity state
+   */
+  previous: ENTITY_STATE<ENTITY_ID>;
+  /**
+   * Remove all `.onUpdate` listeners for this entity
+   *
+   * If you want to remove a particular one, use use the return value of the `.onUpdate` call instead
+   */
+  removeAllListeners: () => void;
+} & (GetDomain<ENTITY_ID> extends ALL_SERVICE_DOMAINS
+    ? DomainServiceCalls<GetDomain<ENTITY_ID>>
+    : object);
 
-type DomainServiceCalls<
-  DOMAIN extends Extract<ALL_DOMAINS, ALL_SERVICE_DOMAINS>,
-> = {
-  [SERVICE in Extract<keyof iCallService[DOMAIN], string>]: CallRewrite<
-    DOMAIN,
-    SERVICE
-  >;
+type DomainServiceCalls<DOMAIN extends Extract<ALL_DOMAINS, ALL_SERVICE_DOMAINS>> = {
+  [SERVICE in Extract<keyof iCallService[DOMAIN], string>]: CallRewrite<DOMAIN, SERVICE>;
 };
 
 type CallRewrite<

@@ -29,8 +29,7 @@ export const LIB_HASS = CreateLibrary({
     },
     AUTO_SCAN_CALL_PROXY: {
       default: true,
-      description:
-        "Should the call proxy request a service listing at bootstrap?",
+      description: "Should the call proxy request a service listing at bootstrap?",
       type: "boolean",
     },
     BASE_URL: {
@@ -65,16 +64,12 @@ export const LIB_HASS = CreateLibrary({
     },
     MOCK_SOCKET: {
       default: false,
-      description: [
-        "Operate with an artificial socket connection",
-        "For unit testing",
-      ],
+      description: ["Operate with an artificial socket connection", "For unit testing"],
       type: "boolean",
     },
     RETRY_INTERVAL: {
       default: 5,
-      description:
-        "How often to retry connecting on connection failure (seconds).",
+      description: "How often to retry connecting on connection failure (seconds).",
       type: "number",
     },
     SOCKET_AVG_DURATION: {
@@ -102,8 +97,7 @@ export const LIB_HASS = CreateLibrary({
     },
     TRACK_ENTITIES: {
       default: true,
-      description:
-        "Set to false to not fetch entity info at boot, and maintain states",
+      description: "Set to false to not fetch entity info at boot, and maintain states",
       type: "boolean",
     },
     VALIDATE_CONFIGURATION: {
