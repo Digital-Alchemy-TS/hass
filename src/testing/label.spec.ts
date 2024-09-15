@@ -1,9 +1,8 @@
-import { LibraryTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
+import { sleep } from "@digital-alchemy/core";
 
-import { LIB_HASS } from "..";
 import { TLabelId } from "../dynamic";
-import { HassConfig, LABEL_REGISTRY_UPDATED, LabelDefinition } from "../helpers";
-import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
+import { LABEL_REGISTRY_UPDATED, LabelDefinition } from "../helpers";
+import { hassTestRunner } from "../mock_assistant";
 
 describe("Label", () => {
   const EXAMPLE_LABEL = {
@@ -13,27 +12,16 @@ describe("Label", () => {
     label_id: "synapse",
     name: "synapse",
   } as unknown as LabelDefinition;
-  let runner: LibraryTestRunner<typeof LIB_HASS>;
-
-  beforeEach(() => {
-    runner = TestRunner({ target: LIB_HASS })
-      .appendLibrary(LIB_MOCK_ASSISTANT)
-      .appendService(({ hass }) => {
-        jest
-          .spyOn(hass.fetch, "getConfig")
-          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
-      });
-  });
 
   afterEach(async () => {
-    await runner.teardown();
+    await hassTestRunner.teardown();
     jest.restoreAllMocks();
   });
 
   describe("Lifecycle", () => {
     it("should force values to be available before ready", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest
           .spyOn(hass.socket, "sendMessage")
           .mockImplementation(async () => [EXAMPLE_LABEL]);
@@ -51,7 +39,7 @@ describe("Label", () => {
     describe("Formatting", () => {
       it("should call list properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass }) => {
+        await hassTestRunner.run(({ lifecycle, hass }) => {
           const spy = jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => []);
           lifecycle.onReady(async () => {
             await hass.label.list();
@@ -64,7 +52,7 @@ describe("Label", () => {
 
       it("should call update properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           const spy = jest
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
@@ -82,7 +70,7 @@ describe("Label", () => {
 
       it("should call delete properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           const spy = jest
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
@@ -100,7 +88,7 @@ describe("Label", () => {
 
       it("should call create properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           const spy = jest
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
@@ -120,7 +108,7 @@ describe("Label", () => {
     describe("Order of operations", () => {
       it("should wait for an update before returning when updating", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
             const response = hass.label.update(EXAMPLE_LABEL);
@@ -138,7 +126,7 @@ describe("Label", () => {
 
       it("should debounce updates properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass }) => {
+        await hassTestRunner.run(({ lifecycle, hass }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           let counter = 0;
           hass.events.onLabelRegistryUpdate(() => counter++);
@@ -160,7 +148,7 @@ describe("Label", () => {
 
       it("should wait for an update before returning when deleting", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
             const response = hass.label.delete("example_label" as TLabelId);
@@ -178,7 +166,7 @@ describe("Label", () => {
 
       it("should wait for an update before returning when creating", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
             const response = hass.label.create(EXAMPLE_LABEL);

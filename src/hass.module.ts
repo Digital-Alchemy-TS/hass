@@ -39,7 +39,7 @@ export const LIB_HASS = CreateLibrary({
     },
     RETRY_INTERVAL: {
       default: 5,
-      description: "How often to retry connecting on connection failure (seconds).",
+      description: "How often to retry connecting on connection failure (seconds)",
       type: "number",
     },
     SOCKET_AVG_DURATION: {
@@ -51,23 +51,23 @@ export const LIB_HASS = CreateLibrary({
     SOCKET_CRASH_REQUESTS_PER_SEC: {
       default: 500,
       description:
-        "Socket service will commit sudoku if more than this many outgoing messages are sent to Home Assistant in a second. Usually indicates runaway code.",
+        "Socket service will commit sudoku if more than this many outgoing messages are sent to Home Assistant in a second. Usually indicates runaway code",
       type: "number",
     },
     SOCKET_WARN_REQUESTS_PER_SEC: {
       default: 300,
       description:
-        "Emit warnings if the home controller attempts to send more than X messages to Home Assistant inside of a second.",
+        "Emit warnings if the home controller attempts to send more than X messages to Home Assistant inside of a second",
       type: "number",
     },
     TOKEN: {
-      description: "Long lived access token to Home Assistant.",
+      description: "Long lived access token to Home Assistant",
       required: true,
       type: "string",
     },
     VALIDATE_CONFIGURATION: {
       default: false,
-      description: "Validate the credentials, then quit",
+      description: "Validate the credentials then quit",
       type: "boolean",
     },
   },

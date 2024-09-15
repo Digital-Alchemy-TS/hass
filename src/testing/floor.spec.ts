@@ -1,9 +1,8 @@
-import { LibraryTestRunner, sleep, TestRunner } from "@digital-alchemy/core";
+import { sleep } from "@digital-alchemy/core";
 
-import { LIB_HASS } from "..";
 import { TFloorId } from "../dynamic";
-import { FLOOR_REGISTRY_UPDATED, FloorDetails, HassConfig } from "../helpers";
-import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
+import { FLOOR_REGISTRY_UPDATED, FloorDetails } from "../helpers";
+import { hassTestRunner } from "../mock_assistant";
 
 describe("Floor", () => {
   const EXAMPLE_FLOOR = {
@@ -13,27 +12,16 @@ describe("Floor", () => {
     level: 2,
     name: "Upstairs",
   } as unknown as FloorDetails;
-  let runner: LibraryTestRunner<typeof LIB_HASS>;
-
-  beforeEach(() => {
-    runner = TestRunner({ target: LIB_HASS })
-      .appendLibrary(LIB_MOCK_ASSISTANT)
-      .appendService(({ hass }) => {
-        jest
-          .spyOn(hass.fetch, "getConfig")
-          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
-      });
-  });
 
   afterEach(async () => {
-    await runner.teardown();
+    await hassTestRunner.teardown();
     jest.restoreAllMocks();
   });
 
   describe("Lifecycle", () => {
     it("should force values to be available before ready", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest
           .spyOn(hass.socket, "sendMessage")
           .mockImplementation(async () => [EXAMPLE_FLOOR]);
@@ -51,7 +39,7 @@ describe("Floor", () => {
     describe("Formatting", () => {
       it("should call list properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass }) => {
+        await hassTestRunner.run(({ lifecycle, hass }) => {
           const spy = jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => []);
           lifecycle.onReady(async () => {
             await hass.floor.list();
@@ -64,7 +52,7 @@ describe("Floor", () => {
 
       it("should call update properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           const spy = jest
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
@@ -82,7 +70,7 @@ describe("Floor", () => {
 
       it("should call delete properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           const spy = jest
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
@@ -100,7 +88,7 @@ describe("Floor", () => {
 
       it("should call create properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           const spy = jest
             .spyOn(hass.socket, "sendMessage")
             .mockImplementation(async () => undefined);
@@ -120,7 +108,7 @@ describe("Floor", () => {
     describe("Order of operations", () => {
       it("should wait for an update before returning when updating", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
             const response = hass.floor.update(EXAMPLE_FLOOR);
@@ -138,7 +126,7 @@ describe("Floor", () => {
 
       it("should debounce updates properly", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass }) => {
+        await hassTestRunner.run(({ lifecycle, hass }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           let counter = 0;
           hass.events.onFloorRegistryUpdate(() => counter++);
@@ -160,7 +148,7 @@ describe("Floor", () => {
 
       it("should wait for an update before returning when deleting", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
             const response = hass.floor.delete("example_floor" as TFloorId);
@@ -178,7 +166,7 @@ describe("Floor", () => {
 
       it("should wait for an update before returning when creating", async () => {
         expect.assertions(1);
-        await runner.run(({ lifecycle, hass, event }) => {
+        await hassTestRunner.run(({ lifecycle, hass, event }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
           lifecycle.onReady(async () => {
             const response = hass.floor.create(EXAMPLE_FLOOR);

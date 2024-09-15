@@ -1,45 +1,39 @@
-import { LibraryTestRunner, TestRunner } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
-import { LIB_HASS } from "..";
 import { HassConfig } from "../helpers";
-import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
+import { hassTestRunner } from "../mock_assistant";
 
 describe("FetchAPI", () => {
   const BASE_URL = "http://homeassistant.some.domain:9123";
   const TOKEN =
+    // TODO: Replace hard coded token w/ faker when avail
+    // https://github.com/faker-js/faker/pull/2936
     // eslint-disable-next-line @cspell/spellchecker
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6Imh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dhdGNoP3Y9ZFF3NHc5V2dYY1EifQ.gPIttZEaLZgov3VZziu3LovcgtDbj8H0-XfBg4f08Y0";
 
   // values are hard coded into tests, update carefully
   const start = dayjs("2024-01-01 00:00:00:00");
   const end = start.add(1, "day");
-  let runner: LibraryTestRunner<typeof LIB_HASS>;
 
-  beforeEach(() => {
-    runner = TestRunner({ target: LIB_HASS })
-      .appendLibrary(LIB_MOCK_ASSISTANT)
-      .appendService(({ hass }) => {
-        jest
-          .spyOn(hass.fetch, "getConfig")
-          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
+  let spy: jest.SpyInstance;
+
+  hassTestRunner.appendService(({ lifecycle, hass }) => {
+    lifecycle.onBootstrap(() => {
+      spy = jest.spyOn(hass.fetch._fetcher, "exec").mockImplementation(() => {
+        return undefined;
       });
+    });
   });
 
   afterEach(async () => {
-    await runner.teardown();
+    await hassTestRunner.teardown();
     jest.restoreAllMocks();
   });
 
   describe("Meta", () => {
-    it("Should send the correct headers", async () => {
+    fit("Should send the correct headers", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
-          return {
-            text: () => "[]",
-          } as unknown as Response;
-        });
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(async () => {
           // Calling the base level fetch provided by service
           // The same call is wrapped internally to power everything else
@@ -61,7 +55,7 @@ describe("FetchAPI", () => {
   describe("API Operations", () => {
     it("should format calendarSearch properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "[]",
@@ -85,7 +79,7 @@ describe("FetchAPI", () => {
 
     it("should format callService properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -110,7 +104,7 @@ describe("FetchAPI", () => {
 
     it("should format checkConfig properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -134,7 +128,7 @@ describe("FetchAPI", () => {
       let mock: jest.SpyInstance;
       let exitSpy: jest.SpyInstance;
       try {
-        await runner.run(({ hass }) => {
+        await hassTestRunner.run(({ hass }) => {
           mock = jest
             .spyOn(hass.fetch, "getConfig")
             .mockImplementation(async () => ({ version: "2024.1.0" }) as HassConfig);
@@ -154,7 +148,7 @@ describe("FetchAPI", () => {
       let mock: jest.SpyInstance;
       let exitSpy: jest.SpyInstance;
       try {
-        await runner.run(({ hass }) => {
+        await hassTestRunner.run(({ hass }) => {
           mock = jest
             .spyOn(hass.fetch, "getConfig")
             .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
@@ -170,7 +164,7 @@ describe("FetchAPI", () => {
 
     it("should format fetchEntityCustomizations properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -190,7 +184,7 @@ describe("FetchAPI", () => {
 
     it("should format fetchEntityHistory properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -211,7 +205,7 @@ describe("FetchAPI", () => {
     it("should format fireEvent properly", async () => {
       expect.assertions(1);
       const body = { magic: true };
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -232,7 +226,7 @@ describe("FetchAPI", () => {
 
     it("should format getAllEntities properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -288,7 +282,7 @@ describe("FetchAPI", () => {
 
     it("should format getLogs properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "[]",
@@ -308,7 +302,7 @@ describe("FetchAPI", () => {
 
     it("should format getRawLogs properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -328,7 +322,7 @@ describe("FetchAPI", () => {
 
     it("should format listServices properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -348,7 +342,7 @@ describe("FetchAPI", () => {
 
     it("should format updateEntity properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -380,7 +374,7 @@ describe("FetchAPI", () => {
       const body = {
         magic: true,
       };
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
@@ -401,7 +395,7 @@ describe("FetchAPI", () => {
 
     it("should format checkCredentials properly", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",

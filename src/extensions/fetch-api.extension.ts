@@ -1,6 +1,5 @@
 import { DOWN, is, NO_CHANGE, SECOND, TServiceParams, UP } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
-import { exit } from "process";
 import { lt } from "semver";
 
 import {
@@ -10,6 +9,7 @@ import {
   CalendarFetchOptions,
   CheckConfigResult,
   ENTITY_STATE,
+  FetchArguments,
   FilteredFetchArguments,
   HassConfig,
   HassServiceDTO,
@@ -247,12 +247,14 @@ export function FetchAPI({ logger, lifecycle, context, hass, config }: TServiceP
   }
 
   return {
+    _fetcher: fetcher,
     calendarSearch,
     callService,
     checkConfig,
     checkCredentials,
     download,
-    fetch: fetcher.fetch,
+    fetch: async <T, BODY extends TFetchBody = undefined>(options: Partial<FetchArguments<BODY>>) =>
+      await fetcher.exec<T, BODY>(options),
     fetchEntityCustomizations,
     fetchEntityHistory,
     fireEvent,

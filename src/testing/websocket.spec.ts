@@ -1,46 +1,15 @@
-import {
-  ApplicationDefinition,
-  LibraryTestRunner,
-  ModuleConfiguration,
-  TestRunner,
-  TServiceParams,
-} from "@digital-alchemy/core";
-
-import { LIB_HASS } from "..";
-import { HassConfig } from "../helpers";
-import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
-
-declare module "@digital-alchemy/core" {
-  export interface LoadedModules {
-    testing_host: ApplicationDefinition<
-      { Loader(PARAMS: TServiceParams): void },
-      ModuleConfiguration
-    >;
-  }
-}
+import { hassTestRunner } from "../mock_assistant";
 
 describe("Websocket", () => {
-  let runner: LibraryTestRunner<typeof LIB_HASS>;
-
-  beforeEach(() => {
-    runner = TestRunner({ target: LIB_HASS })
-      .appendLibrary(LIB_MOCK_ASSISTANT)
-      .appendService(({ hass }) => {
-        jest
-          .spyOn(hass.fetch, "getConfig")
-          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
-      });
-  });
-
   afterEach(async () => {
-    await runner.teardown();
+    await hassTestRunner.teardown();
     jest.restoreAllMocks();
   });
 
   describe("API Interactions", () => {
     it("should emit events onConnect", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         let hit = false;
         hass.socket.onConnect(() => (hit = true));
         lifecycle.onReady(() => {
@@ -51,7 +20,7 @@ describe("Websocket", () => {
 
     it("should emit a socket message with subscribeEvents", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass, context }) => {
+      await hassTestRunner.run(({ lifecycle, hass, context }) => {
         const spy = jest
           .spyOn(hass.socket, "sendMessage")
           .mockImplementation(async () => undefined);
@@ -73,7 +42,7 @@ describe("Websocket", () => {
 
     it("should emit a socket message with fireEvent", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         const spy = jest
           .spyOn(hass.socket, "sendMessage")
           .mockImplementation(async () => undefined);

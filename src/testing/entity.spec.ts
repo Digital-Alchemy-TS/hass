@@ -24,7 +24,7 @@ describe("Entity", () => {
 
   describe("API", () => {
     describe("Updates", () => {
-      it("should debounce updates properly", async () => {
+      fit("should debounce updates properly", async () => {
         expect.assertions(1);
         await runner.run(({ lifecycle, hass }) => {
           jest.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);

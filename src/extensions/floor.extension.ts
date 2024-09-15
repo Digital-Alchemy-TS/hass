@@ -11,17 +11,17 @@ export function Floor({ hass, config, context, event, logger, lifecycle }: TServ
       done();
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
-  });
 
-  hass.socket.subscribe({
-    context,
-    event_type: "floor_registry_updated",
-    async exec() {
-      await debounce(FLOOR_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
-      hass.floor.current = await hass.floor.list();
-      logger.debug(`floor registry updated`);
-      event.emit(FLOOR_REGISTRY_UPDATED);
-    },
+    hass.socket.subscribe({
+      context,
+      event_type: "floor_registry_updated",
+      async exec() {
+        await debounce(FLOOR_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
+        hass.floor.current = await hass.floor.list();
+        logger.debug(`floor registry updated`);
+        event.emit(FLOOR_REGISTRY_UPDATED);
+      },
+    });
   });
 
   return {

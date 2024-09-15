@@ -1,4 +1,5 @@
 export * from "./area.extension";
+export * from "./config.extension";
 export * from "./device.extension";
 export * from "./entity.extension";
 export * from "./events.extension";

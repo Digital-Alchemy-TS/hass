@@ -1,31 +1,16 @@
-import { LibraryTestRunner, TestRunner } from "@digital-alchemy/core";
-
-import { LIB_HASS } from "..";
-import { HassConfig, PICK_ENTITY } from "../helpers";
-import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
+import { PICK_ENTITY } from "../helpers";
+import { hassTestRunner } from "../mock_assistant";
 
 describe("ID By", () => {
-  let runner: LibraryTestRunner<typeof LIB_HASS>;
-
-  beforeEach(() => {
-    runner = TestRunner({ target: LIB_HASS })
-      .appendLibrary(LIB_MOCK_ASSISTANT)
-      .appendService(({ hass }) => {
-        jest
-          .spyOn(hass.fetch, "getConfig")
-          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
-      });
-  });
-
   afterEach(async () => {
-    await runner.teardown();
+    await hassTestRunner.teardown();
     jest.restoreAllMocks();
   });
 
   describe("area", () => {
     it("find entities by area", async () => {
       expect.assertions(2);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const bedroom = hass.idBy.area("bedroom");
           const kitchen = hass.idBy.area("kitchen");
@@ -37,7 +22,7 @@ describe("ID By", () => {
 
     it("finds entities only related by device", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           // merges 1 from direct area, 2 via device
           // ignores 2 from the device assigned to another area
@@ -54,7 +39,7 @@ describe("ID By", () => {
 
     it("find entities by area limiting by domain", async () => {
       expect.assertions(2);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const bedroom = hass.idBy.area("bedroom", "light");
           const kitchen = hass.idBy.area("kitchen", "light");
@@ -68,7 +53,7 @@ describe("ID By", () => {
   describe("label", () => {
     it("find entities by label", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.label("synapse");
           expect(synapse.length).toBe(7);
@@ -78,7 +63,7 @@ describe("ID By", () => {
 
     it("find entities by label limiting by domain", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.label("synapse", "light");
           expect(synapse.length).toBe(0);
@@ -90,7 +75,7 @@ describe("ID By", () => {
   describe("device", () => {
     it("find entities by device", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.device("308e39cf50a9fc6c30b4110724ed1f2e");
           expect(synapse.length).toBe(9);
@@ -100,7 +85,7 @@ describe("ID By", () => {
 
     it("find entities by device limiting by domain", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.device("308e39cf50a9fc6c30b4110724ed1f2e", "light");
           expect(synapse.length).toBe(0);
@@ -112,7 +97,7 @@ describe("ID By", () => {
   describe("platform", () => {
     it("find entities by platform", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.platform("synapse");
           expect(synapse.length).toBe(7);
@@ -122,7 +107,7 @@ describe("ID By", () => {
 
     it("find entities by platform limiting by domain", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.platform("synapse", "light");
           expect(synapse.length).toBe(0);
@@ -134,7 +119,7 @@ describe("ID By", () => {
   describe("floor", () => {
     it("find entities by floor", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.floor("downstairs");
           expect(synapse.length).toBe(3);
@@ -144,7 +129,7 @@ describe("ID By", () => {
 
     it("find entities by floor limiting by domain", async () => {
       expect.assertions(1);
-      await runner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.floor("downstairs", "light");
           expect(synapse.length).toBe(0);

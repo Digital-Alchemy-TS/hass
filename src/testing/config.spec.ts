@@ -1,6 +1,6 @@
 import { env } from "process";
 
-import { HassTestRunner } from "../mock_assistant";
+import { hassTestRunner } from "../mock_assistant";
 
 const TOKEN = "DEFAULTS";
 
@@ -12,7 +12,7 @@ describe("Config", () => {
   });
 
   afterEach(async () => {
-    await HassTestRunner.teardown();
+    await hassTestRunner.teardown();
     jest.restoreAllMocks();
   });
 
@@ -21,7 +21,7 @@ describe("Config", () => {
     it("should do nothing if variables do not exist", async () => {
       expect.assertions(2);
       const BASE_URL = "http://localhost:9123";
-      await HassTestRunner.configure({ hass: { BASE_URL, TOKEN } }).run(({ lifecycle, config }) => {
+      await hassTestRunner.configure({ hass: { BASE_URL, TOKEN } }).run(({ lifecycle, config }) => {
         lifecycle.onPostConfig(() => {
           expect(config.hass.BASE_URL).toBe(BASE_URL);
           expect(config.hass.TOKEN).toBe(TOKEN);
@@ -33,14 +33,16 @@ describe("Config", () => {
     it("should set BASE_URL & TOKEN if provided env", async () => {
       expect.assertions(2);
       env.HASSIO_TOKEN = "FOO";
-      await HassTestRunner.configure({
-        hass: { BASE_URL: "http://localhost:9123", TOKEN: TOKEN },
-      }).run(({ lifecycle, config }) => {
-        lifecycle.onPostConfig(() => {
-          expect(config.hass.BASE_URL).toBe("http://supervisor/core");
-          expect(config.hass.TOKEN).toBe("FOO");
+      await hassTestRunner
+        .configure({
+          hass: { BASE_URL: "http://localhost:9123", TOKEN: TOKEN },
+        })
+        .run(({ lifecycle, config }) => {
+          lifecycle.onPostConfig(() => {
+            expect(config.hass.BASE_URL).toBe("http://supervisor/core");
+            expect(config.hass.TOKEN).toBe("FOO");
+          });
         });
-      });
     });
 
     // # Should use HASSIO_TOKEN over SUPERVISOR_TOKEN
@@ -49,7 +51,7 @@ describe("Config", () => {
       env.HASSIO_TOKEN = "FOO";
       env.SUPERVISOR_TOKEN = "BAR";
 
-      await HassTestRunner.run(({ lifecycle, config }) => {
+      await hassTestRunner.run(({ lifecycle, config }) => {
         lifecycle.onPostConfig(() => {
           expect(config.hass.TOKEN).toBe("FOO");
         });
@@ -60,7 +62,7 @@ describe("Config", () => {
     it("should allow SUPERVISOR_TOKEN", async () => {
       expect.assertions(1);
       env.SUPERVISOR_TOKEN = "BAR";
-      await HassTestRunner.run(({ lifecycle, config }) => {
+      await hassTestRunner.run(({ lifecycle, config }) => {
         lifecycle.onPostConfig(() => {
           expect(config.hass.TOKEN).toBe("BAR");
         });
@@ -73,7 +75,7 @@ describe("Config", () => {
       env.HASSIO_TOKEN = "FOO";
       env.HASS_SERVER = "http://test/url";
 
-      await HassTestRunner.run(({ lifecycle, config }) => {
+      await hassTestRunner.run(({ lifecycle, config }) => {
         lifecycle.onPostConfig(() => {
           expect(config.hass.TOKEN).toBe("FOO");
           expect(config.hass.BASE_URL).toBe("http://test/url");
@@ -91,9 +93,11 @@ describe("Config", () => {
         // @ts-expect-error testing
         .mockImplementation(() => {});
 
-      await HassTestRunner.configure({
-        hass: { TOKEN: "TEST" },
-      }).run(() => {});
+      await hassTestRunner
+        .configure({
+          hass: { TOKEN: "TEST" },
+        })
+        .run(() => {});
       expect(exitSpy).not.toHaveBeenCalled();
     });
 
@@ -105,15 +109,17 @@ describe("Config", () => {
         .mockImplementation(() => {});
       let spy: jest.SpyInstance;
 
-      await HassTestRunner.configure({
-        hass: { VALIDATE_CONFIGURATION: true },
-      }).run(({ internal, hass }) => {
-        const logger = internal.boilerplate.logger.getBaseLogger();
-        spy = jest.spyOn(logger, "info").mockImplementation(() => {});
-        jest
-          .spyOn(hass.fetch, "checkCredentials")
-          .mockImplementation(async () => ({ message: "ok" }));
-      });
+      await hassTestRunner
+        .configure({
+          hass: { VALIDATE_CONFIGURATION: true },
+        })
+        .run(({ internal, hass }) => {
+          const logger = internal.boilerplate.logger.getBaseLogger();
+          spy = jest.spyOn(logger, "info").mockImplementation(() => {});
+          jest
+            .spyOn(hass.fetch, "checkCredentials")
+            .mockImplementation(async () => ({ message: "ok" }));
+        });
 
       expect(exitSpy).toHaveBeenCalledWith(1);
       expect(spy).toHaveBeenCalledWith("hass:configure", { name: "onPostConfig" }, "ok");
@@ -127,16 +133,16 @@ describe("Config", () => {
         // @ts-expect-error testing
         .mockImplementation(() => {});
 
-      await HassTestRunner.configure({ hass: { TOKEN: "TEST", VALIDATE_CONFIGURATION: true } }).run(
-        ({ internal, hass }) => {
+      await hassTestRunner
+        .configure({ hass: { TOKEN: "TEST", VALIDATE_CONFIGURATION: true } })
+        .run(({ internal, hass }) => {
           const logger = internal.boilerplate.logger.getBaseLogger();
           spy = jest.spyOn(logger, "error").mockImplementation(() => {});
           jest
             .spyOn(hass.fetch, "checkCredentials")
             // anything that isn't the success works
             .mockImplementation(async () => ({ message: "big_bad_error" }));
-        },
-      );
+        });
 
       expect(exitSpy).toHaveBeenCalledWith(0);
       expect(spy).toHaveBeenCalledWith(
@@ -158,8 +164,9 @@ describe("Config", () => {
 
       jest.spyOn(console, "error").mockImplementation(() => {});
 
-      await HassTestRunner.configure({ hass: { TOKEN: "TEST", VALIDATE_CONFIGURATION: true } }).run(
-        ({ internal, hass }) => {
+      await hassTestRunner
+        .configure({ hass: { TOKEN: "TEST", VALIDATE_CONFIGURATION: true } })
+        .run(({ internal, hass }) => {
           const logger = internal.boilerplate.logger.getBaseLogger();
           spy = jest.spyOn(logger, "error").mockImplementation(() => {});
           jest
@@ -168,8 +175,7 @@ describe("Config", () => {
             .mockImplementation(async () => {
               throw error;
             });
-        },
-      );
+        });
 
       expect(exitSpy).toHaveBeenCalledWith(0);
       expect(spy).toHaveBeenCalledWith(

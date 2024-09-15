@@ -10,7 +10,6 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
-import { exit } from "process";
 
 import {
   ALL_DOMAINS,
@@ -294,19 +293,19 @@ export function EntityManager({
       type: "config/entity_registry/get",
     });
   }
-  hass.socket.subscribe({
-    context,
-    event_type: "entity_registry_updated",
-    async exec() {
-      await debounce(ENTITY_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
-      logger.debug("entity registry updated");
-      hass.entity.registry.current = await hass.entity.registry.list();
-      event.emit(ENTITY_REGISTRY_UPDATED);
-    },
-  });
 
   // #MARK: onConnect
   hass.socket.onConnect(async () => {
+    hass.socket.subscribe({
+      context,
+      event_type: "entity_registry_updated",
+      async exec() {
+        await debounce(ENTITY_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
+        logger.debug("entity registry updated");
+        hass.entity.registry.current = await hass.entity.registry.list();
+        event.emit(ENTITY_REGISTRY_UPDATED);
+      },
+    });
     hass.entity.registry.current = await hass.entity.registry.list();
   });
 

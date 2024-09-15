@@ -86,7 +86,7 @@ export function FetchInternals({ logger, context: parentContext }: TServiceParam
     }
 
     // #MARK: execFetch
-    async function execFetch<T, BODY extends TFetchBody = undefined>({
+    async function exec<T, BODY extends TFetchBody = undefined>({
       body,
       headers = {},
       method = "get",
@@ -129,7 +129,7 @@ export function FetchInternals({ logger, context: parentContext }: TServiceParam
       base_headers,
       base_url,
       download,
-      fetch: execFetch,
+      exec,
       /**
        * @deprecated set base_url directly
        */

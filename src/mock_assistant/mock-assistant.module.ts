@@ -1,13 +1,13 @@
 import { CreateLibrary, createModule } from "@digital-alchemy/core";
 import { join } from "path";
 import { cwd } from "process";
-import { inspect } from "util";
 
 import { LIB_HASS } from "..";
 import {
   Events,
   Fixtures,
   MockAreaExtension,
+  MockConfig,
   MockDeviceExtension,
   MockEntityExtension,
   MockFloorExtension,
@@ -34,6 +34,7 @@ export const LIB_MOCK_ASSISTANT = CreateLibrary({
   priorityInit: ["fixtures", "socket"],
   services: {
     area: MockAreaExtension,
+    config: MockConfig,
     device: MockDeviceExtension,
     entity: MockEntityExtension,
     events: Events,
@@ -51,16 +52,11 @@ declare module "@digital-alchemy/core" {
   }
 }
 
-export const HassTestRunner = createModule
+export const hassTestRunner = createModule
   .fromLibrary(LIB_HASS)
   .extend()
   .toTest()
   .configure({
-    boilerplate: {
-      // best for debugging tests imo
-      LOG_LEVEL: "warn",
-    },
+    boilerplate: { IS_TEST: true },
   })
   .appendLibrary(LIB_MOCK_ASSISTANT);
-
-inspect.defaultOptions.depth = 10;

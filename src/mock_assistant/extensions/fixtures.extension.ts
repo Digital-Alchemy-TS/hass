@@ -1,7 +1,7 @@
 import { BootstrapException, is, TServiceParams } from "@digital-alchemy/core";
 import { existsSync, readFileSync } from "fs";
 
-import { ANY_ENTITY, ENTITY_STATE, HassConfig } from "../../helpers";
+import { ANY_ENTITY, ENTITY_STATE } from "../../helpers";
 import { ScannerCacheData } from "../helpers";
 
 const MEGA_HIGH_PRIORITY = 1000;
@@ -18,13 +18,7 @@ export function Fixtures({
   context,
   mock_assistant,
 }: TServiceParams) {
-  hass.fetch.getAllEntities = async () => mock_assistant.fixtures.data?.entities ?? [];
   hass.fetch.listServices = async () => mock_assistant.fixtures.data?.services ?? [];
-  hass.fetch.getConfig = async () =>
-    mock_assistant.fixtures.data?.config ?? ({ version: "2024.4.1" } as HassConfig);
-
-  // hass.socket.attachScheduledFunctions = async () => {};
-  // hass.socket.waitForReply = async () => {};
 
   lifecycle.onPreInit(() => {
     const { FIXTURES_FILE } = config.mock_assistant;
@@ -45,6 +39,12 @@ export function Fixtures({
     mock_assistant.floor.set(data.floors);
     mock_assistant.area.set(data.areas);
     mock_assistant.label.set(data.labels);
+    mock_assistant.config.set(data.config);
+    mock_assistant.entity.setEntities(data.entities);
+    mock_assistant.entity.setRegistry(data.entity_registry);
+    // TODO zones are not currently included in fixtures
+    // more of a completion thing than them having any particular use
+    //
     // mock_assistant.zone.set(data.);
   }, MEGA_HIGH_PRIORITY);
 

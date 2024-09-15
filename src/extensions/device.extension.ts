@@ -11,17 +11,17 @@ export function Device({ hass, config, context, logger, lifecycle, event }: TSer
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
     await subscribeUpdates();
-  });
 
-  hass.socket.subscribe({
-    context,
-    event_type: "device_registry_updated",
-    async exec() {
-      await debounce(DEVICE_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
-      hass.device.current = await hass.device.list();
-      logger.debug(`device registry updated`);
-      event.emit(DEVICE_REGISTRY_UPDATED);
-    },
+    hass.socket.subscribe({
+      context,
+      event_type: "device_registry_updated",
+      async exec() {
+        await debounce(DEVICE_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
+        hass.device.current = await hass.device.list();
+        logger.debug(`device registry updated`);
+        event.emit(DEVICE_REGISTRY_UPDATED);
+      },
+    });
   });
 
   async function subscribeUpdates() {

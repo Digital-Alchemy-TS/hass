@@ -367,7 +367,9 @@ export function WebsocketAPI({
       });
 
       hass.socket.connection.on("close", async (code, reason) => {
-        logger.warn({ code, name: init, reason: reason.toString() }, "connection closed");
+        if (!config.boilerplate.IS_TEST) {
+          logger.warn({ code, name: init, reason: reason.toString() }, "connection closed");
+        }
         await hass.socket.teardown();
       });
 
@@ -532,7 +534,7 @@ export function WebsocketAPI({
       await internal.safeExec(async () => await callback());
     };
     if (hass.socket.connectionState === "connected") {
-      logger.warn(
+      logger.debug(
         { name: "onConnect" },
         `added callback after socket was already connected, running immediately`,
       );
