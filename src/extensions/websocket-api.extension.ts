@@ -64,7 +64,7 @@ export function WebsocketAPI({
   lifecycle.onBootstrap(async () => {
     logger.debug({ name: "onBootstrap" }, `auto starting connection`);
     await manageConnection();
-    attachScheduledFunctions();
+    hass.socket.attachScheduledFunctions();
   });
 
   let lastReceivedMessage: Dayjs;
@@ -204,6 +204,7 @@ export function WebsocketAPI({
   lifecycle.onShutdownStart(async () => {
     logger.debug({ name: "onShutdownStart" }, `shutdown - tearing down connection`);
     await hass.socket.teardown();
+    socketEvents.removeAllListeners();
   });
 
   // #MARK: teardown
@@ -262,25 +263,29 @@ export function WebsocketAPI({
     if (!waitForResponse) {
       return undefined;
     }
-    return new Promise<RESPONSE_VALUE>(async done => {
+    return await new Promise<RESPONSE_VALUE>(async done => {
       waitingCallback.set(id, done as (result: unknown) => TBlackHole);
-      await sleep(config.hass.EXPECT_RESPONSE_AFTER * SECOND);
-      if (!waitingCallback.has(id)) {
-        return;
-      }
-      // this could happen around dropped connections, or a number of other reasons
-      //
-      // discard the promise so whatever flow is depending on this can get garbage collected
-      waitingCallback.delete(id);
-      logger.warn(
-        {
-          message: data,
-          name: sendMessage,
-          sentAt: internal.utils.relativeDate(sentAt),
-        },
-        `sent message, did not receive reply`,
-      );
+      await hass.socket.waitForReply(id, data, sentAt);
     });
+  }
+
+  async function waitForReply(id: number, data: object, sentAt: Date) {
+    await sleep(config.hass.EXPECT_RESPONSE_AFTER * SECOND);
+    if (!waitingCallback.has(id)) {
+      return;
+    }
+    // this could happen around dropped connections, or a number of other reasons
+    //
+    // discard the promise so whatever flow is depending on this can get garbage collected
+    waitingCallback.delete(id);
+    logger.warn(
+      {
+        message: data,
+        name: waitForReply,
+        sentAt: internal.utils.relativeDate(sentAt),
+      },
+      `sent message, did not receive reply`,
+    );
   }
 
   // #MARK: countMessage
@@ -540,6 +545,7 @@ export function WebsocketAPI({
 
   // #MARK: return object
   return {
+    attachScheduledFunctions,
     connection: undefined as WS,
 
     /**
@@ -615,5 +621,6 @@ export function WebsocketAPI({
      * will need to call init() again to start up
      */
     teardown,
+    waitForReply,
   };
 }

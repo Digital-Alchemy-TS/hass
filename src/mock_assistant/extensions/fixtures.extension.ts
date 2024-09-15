@@ -23,6 +23,9 @@ export function Fixtures({
   hass.fetch.getConfig = async () =>
     mock_assistant.fixtures.data?.config ?? ({ version: "2024.4.1" } as HassConfig);
 
+  // hass.socket.attachScheduledFunctions = async () => {};
+  // hass.socket.waitForReply = async () => {};
+
   lifecycle.onPreInit(() => {
     const { FIXTURES_FILE } = config.mock_assistant;
     if (!existsSync(FIXTURES_FILE)) {

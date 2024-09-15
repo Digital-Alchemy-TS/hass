@@ -14,7 +14,7 @@ export interface SocketMessageDTO {
   event?: EntityUpdateEvent;
   id: string | number;
   message?: string;
-  result?: Record<string, unknown>;
+  result?: Record<string, unknown> | Array<unknown>;
   type: `${HassSocketMessageTypes}`;
 }
 

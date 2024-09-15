@@ -31,6 +31,7 @@ export const LIB_MOCK_ASSISTANT = CreateLibrary({
   },
   depends: [LIB_HASS],
   name: "mock_assistant",
+  priorityInit: ["fixtures", "socket"],
   services: {
     area: MockAreaExtension,
     device: MockDeviceExtension,

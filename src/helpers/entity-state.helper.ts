@@ -13,11 +13,6 @@ import {
   PICK_ENTITY,
 } from "./utility.helper";
 
-export enum HassEvents {
-  state_changed = "state_changed",
-  hue_event = "hue_event",
-}
-
 export interface HassEntityContext {
   id: string | null;
   parent_id: string | null;
@@ -124,7 +119,7 @@ export type EntityUpdateEvent<
 > = {
   context: CONTEXT;
   data: EventData<ID>;
-  event_type: HassEvents;
+  event_type: string;
   origin: "local";
   result?: string;
   time_fired: Date;

@@ -23,23 +23,17 @@ describe("Area", () => {
     fit("should force values to be available before ready", async () => {
       expect.assertions(1);
 
-      await HassTestRunner.configure({
-        // configuration: { boilerplate: { LOG_LEVEL: "warn" } },
-        // emitLogs: true,
-        // forceTeardown: true,
-      }).run(({ mock_assistant, lifecycle, hass }) => {
+      const app = await HassTestRunner.run(({ mock_assistant, lifecycle, hass }) => {
         const spy = jest.fn();
-        // const spy = jest
-        // .spyOn(hass.socket, "sendMessage")
-        // .mockImplementation(async () => [EXAMPLE_AREA]);
         mock_assistant.socket.connection.on(INTERNAL_MESSAGE, spy);
         lifecycle.onReady(async () => {
           await hass.area.list();
           expect(spy).toHaveBeenCalledWith(
             expect.objectContaining({ type: "config/area_registry/list" }),
           );
-        });
+        }, -1);
       });
+      await app.teardown();
     });
   });
 

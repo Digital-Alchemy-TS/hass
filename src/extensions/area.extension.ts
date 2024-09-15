@@ -36,6 +36,7 @@ export function Area({ hass, context, config, logger, event, lifecycle }: TServi
       type: "config/area_registry/list",
     });
   }
+
   async function deleteArea(area_id: TAreaId) {
     return await new Promise<void>(async done => {
       event.once(AREA_REGISTRY_UPDATED, done);
