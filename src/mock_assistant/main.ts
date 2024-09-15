@@ -38,7 +38,7 @@ const writeFixtures = CreateApplication({
           ),
           "utf8",
         );
-        exit();
+        process.exit();
       });
     },
   },

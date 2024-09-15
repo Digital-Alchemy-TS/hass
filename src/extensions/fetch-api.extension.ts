@@ -45,7 +45,7 @@ export function FetchAPI({ logger, lifecycle, context, hass, config }: TServiceP
         "minimum supported version of home assistant: %s",
         MIN_SUPPORTED_HASS_VERSION,
       );
-      exit();
+      process.exit();
     }
     logger.debug(`hass version %s`, target.version);
   });

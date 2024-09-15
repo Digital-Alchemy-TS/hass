@@ -9,7 +9,6 @@ import {
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import EventEmitter from "events";
-import { exit } from "process";
 import WS from "ws";
 
 import {
@@ -308,7 +307,7 @@ export function WebsocketAPI({
         `exceeded {CRASH_REQUESTS_PER_MIN} ([%s]) threshold`,
         crashCount,
       );
-      exit();
+      process.exit();
     }
     if (perSecondAverage > warnCount) {
       logger.warn(
@@ -435,7 +434,7 @@ export function WebsocketAPI({
           "received auth invalid {connecting} => {invalid}",
         );
         // ? If you have a use case for making this exit configurable, open a ticket
-        exit();
+        process.exit();
         return;
       }
 

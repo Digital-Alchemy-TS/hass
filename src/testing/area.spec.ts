@@ -20,7 +20,7 @@ describe("Area", () => {
   });
 
   describe("Lifecycle", () => {
-    fit("should force values to be available before ready", async () => {
+    it("should force values to be available before ready", async () => {
       expect.assertions(1);
 
       const app = await HassTestRunner.run(({ mock_assistant, lifecycle, hass }) => {

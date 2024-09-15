@@ -68,6 +68,7 @@ export default [
       "sonarjs/prefer-single-boolean-return": "off",
       "unicorn/no-array-callback-reference": "off",
       "sonarjs/prefer-nullish-coalescing": "off",
+      "unicorn/no-process-exit": "off",
       "unicorn/no-await-expression-member": "off",
       "sonarjs/no-invalid-await": "off",
       "sonarjs/no-nested-functions": "off",

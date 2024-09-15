@@ -144,7 +144,7 @@ export function EntityManager({
           { name: refresh },
           `failed to load service list from Home Assistant. validate configuration`,
         );
-        exit();
+        process.exit();
       }
       logger.warn(
         { name: refresh, response: states },

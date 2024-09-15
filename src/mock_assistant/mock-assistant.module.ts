@@ -55,6 +55,12 @@ export const HassTestRunner = createModule
   .fromLibrary(LIB_HASS)
   .extend()
   .toTest()
+  .configure({
+    boilerplate: {
+      // best for debugging tests imo
+      LOG_LEVEL: "warn",
+    },
+  })
   .appendLibrary(LIB_MOCK_ASSISTANT);
 
 inspect.defaultOptions.depth = 10;

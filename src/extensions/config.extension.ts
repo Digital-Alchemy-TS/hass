@@ -8,7 +8,7 @@ import {
   START,
   TServiceParams,
 } from "@digital-alchemy/core";
-import { env, exit } from "process";
+import { env } from "process";
 
 import { ALL_SERVICE_DOMAINS, HassServiceDTO, iCallService, PostConfigPriorities } from "..";
 
@@ -52,15 +52,15 @@ export function Configure({ logger, lifecycle, event, hass, config, internal }: 
       if (is.object(result)) {
         // * all good
         logger.info({ name: "onPostConfig" }, result.message);
-        exit(1);
+        process.exit(1);
       }
       // * bad token
       logger.error({ name: "onPostConfig" }, String(result));
-      exit(0);
+      process.exit(0);
     } catch (error) {
       // * bad BASE_URL
       logger.error({ error, name: "onPostConfig" }, "failed to send request");
-      exit(0);
+      process.exit(0);
     }
   }, PostConfigPriorities.VALIDATE);
 
@@ -71,7 +71,7 @@ export function Configure({ logger, lifecycle, event, hass, config, internal }: 
     if (is.empty(services)) {
       if (recursion > MAX_ATTEMPTS) {
         logger.fatal({ name: loadServiceList }, `failed to load service list from Home Assistant`);
-        exit(FAILED);
+        process.exit(FAILED);
       }
       logger.warn(
         { name: loadServiceList },
