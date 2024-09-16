@@ -12,7 +12,9 @@ import EventEmitter from "events";
 import WS from "ws";
 
 import {
+  ConnectionState,
   EntityUpdateEvent,
+  HassWebsocketAPI,
   OnHassEventOptions,
   SocketMessageDTO,
   SocketSubscribeOptions,
@@ -25,18 +27,6 @@ const CONNECTION_FAILED = 2;
 let messageCount = START;
 export const SOCKET_CONNECTED = "SOCKET_CONNECTED";
 
-/* eslint-disable @typescript-eslint/no-magic-numbers, @typescript-eslint/no-unused-vars */
-enum WebsocketConnectionState {
-  offline = 1,
-  connecting = 2,
-  connected = 3,
-  unknown = 4,
-  invalid = 5,
-}
-/* eslint-enable @typescript-eslint/no-magic-numbers */
-
-type ConnectionState = `${keyof typeof WebsocketConnectionState}`;
-
 export function WebsocketAPI({
   context,
   event,
@@ -46,7 +36,7 @@ export function WebsocketAPI({
   lifecycle,
   logger,
   scheduler,
-}: TServiceParams) {
+}: TServiceParams): HassWebsocketAPI {
   /**
    * Local attachment points for socket events
    */
@@ -548,79 +538,18 @@ export function WebsocketAPI({
   return {
     attachScheduledFunctions,
     connection: undefined as WS,
-
-    /**
-     * the current state of the websocket
-     */
     connectionState: "offline" as ConnectionState,
-
     createConnection: (url: string) => new WS(url),
-
-    /**
-     * Convenient wrapper for sendMessage
-     */
     fireEvent,
-
-    /**
-     * Set up a new websocket connection to home assistant
-     *f
-     * This doesn't normally need to be called by applications, the extension self manages
-     */
     init,
-
-    /**
-     * run a callback when the socket finishes connecting
-     */
     onConnect,
-
-    /**
-     * Attach to the incoming stream of socket events. Do your own filtering and processing from there
-     *
-     * Returns removal function
-     */
     onEvent,
-
-    /**
-     * for unit testing
-     */
     onMessage,
-
-    /**
-     * when true:
-     * - outgoing socket messages are blocked
-     * - entities don't emit updates
-     */
     pauseMessages: false,
-
-    /**
-     * Send a message to home assistant via the socket connection
-     *
-     * Applications probably want a higher level function than this
-     */
     sendMessage,
-
-    /**
-     * internal
-     */
     setConnectionState,
-
-    /**
-     * internal
-     */
     socketEvents,
-
-    /**
-     * Subscribe to hass core registry updates.
-     *
-     * Not the same as `onEvent` (you probably want that)
-     */
     subscribe,
-
-    /**
-     * remove the current socket connection to home assistant
-     *
-     * will need to call init() again to start up
-     */
     teardown,
     waitForReply,
   };

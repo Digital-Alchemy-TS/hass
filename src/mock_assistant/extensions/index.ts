@@ -6,5 +6,6 @@ export * from "./events.extension";
 export * from "./fixtures.extension";
 export * from "./floor.extension";
 export * from "./label.extension";
+export * from "./services.extension";
 export * from "./websocket-api.extension";
 export * from "./zone.extension";

@@ -21,15 +21,13 @@ import {
   EntityHistoryItem,
   EntityHistoryResult,
   EntityRegistryItem,
+  HassEntityManager,
   PICK_ENTITY,
+  TMasterState,
 } from "..";
 
 const MAX_ATTEMPTS = 10;
 const RECENT = 5;
-
-type TMasterState = {
-  [DOMAIN in ALL_DOMAINS]: Record<string, ENTITY_STATE<PICK_ENTITY<DOMAIN>>>;
-};
 
 export function EntityManager({
   logger,
@@ -39,7 +37,7 @@ export function EntityManager({
   event,
   context,
   internal,
-}: TServiceParams) {
+}: TServiceParams): HassEntityManager {
   // #MARK: Local vars
   /**
    * MASTER_STATE.switch.desk_light = {entity_id,state,attributes,...}
@@ -114,13 +112,6 @@ export function EntityManager({
       Object.keys(MASTER_STATE[domain as ALL_DOMAINS]).map(
         id => `${domain}.${id}` as PICK_ENTITY<DOMAIN>,
       ),
-    );
-  }
-
-  // #MARK: findByDomain
-  function findByDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
-    return Object.keys(MASTER_STATE[domain] ?? {}).map(i =>
-      hass.refBy.id(`${domain}.${i}` as PICK_ENTITY<DOMAIN>),
     );
   }
 
@@ -323,20 +314,9 @@ export function EntityManager({
 
   // #MARK: return object
   return {
-    /**
-     * Internal library use only
-     */
     _entityUpdateReceiver: entityUpdateReceiver,
 
     _masterState: () => MASTER_STATE,
-
-    /**
-     * Lists all entities within a specified domain. This is useful for
-     * domain-specific operations or queries.
-     *
-     * @deprecated use `hass.idBy.domain` | `hass.refBy.domain`
-     */
-    findByDomain,
 
     /**
      * Retrieves the current state of a given entity. This method returns
@@ -344,32 +324,10 @@ export function EntityManager({
      */
     getCurrentState,
 
-    /**
-     * Retrieves the historical state data of entities over a specified time
-     * period. Useful for analysis or tracking changes over time.
-     */
     history,
-
-    /**
-     * Provides a simple listing of all entity IDs. Useful for enumeration
-     * and quick reference to all available entities.
-     */
     listEntities,
-
-    /**
-     * Returns the previous entity state (not a proxy)
-     */
     previousState: (entity_id: ANY_ENTITY) => PREVIOUS_STATE.get(entity_id),
-
-    /**
-     * Initiates a refresh of the current entity states. Useful for ensuring
-     * synchronization with the latest state data from Home Assistant.
-     */
     refresh,
-
-    /**
-     * Interact with the entity registry
-     */
     registry: {
       addLabel: AddLabel,
       current: [] as EntityRegistryItem<ANY_ENTITY>[],
@@ -380,7 +338,6 @@ export function EntityManager({
       removeLabel: RemoveLabel,
       source: EntitySource,
     },
-
     warnEarly,
   };
 }

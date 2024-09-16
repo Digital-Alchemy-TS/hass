@@ -34,6 +34,7 @@ export function MockAreaExtension({ mock_assistant }: TServiceParams) {
       type: "result",
     });
   });
+
   mock_assistant.socket.onMessage<AreaDetails>("config/area_registry/update", message => {
     areas.set(message.area_id as TAreaId, message);
     sendUpdate();

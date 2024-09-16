@@ -6,6 +6,7 @@ export * from "./features.helper";
 export * from "./fetch";
 export * from "./fetch.helper";
 export * from "./id-by.helper";
+export * from "./interfaces.helper";
 export * from "./notify.helper";
 export * from "./registry";
 export * from "./utility.helper";

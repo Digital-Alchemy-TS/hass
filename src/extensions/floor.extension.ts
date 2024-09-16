@@ -1,9 +1,22 @@
 import { debounce, TServiceParams } from "@digital-alchemy/core";
 
 import { TFloorId } from "../dynamic";
-import { EARLY_ON_READY, FLOOR_REGISTRY_UPDATED, FloorCreate, FloorDetails } from "../helpers";
+import {
+  EARLY_ON_READY,
+  FLOOR_REGISTRY_UPDATED,
+  FloorCreate,
+  FloorDetails,
+  HassFloorService,
+} from "../helpers";
 
-export function Floor({ hass, config, context, event, logger, lifecycle }: TServiceParams) {
+export function Floor({
+  hass,
+  config,
+  context,
+  event,
+  logger,
+  lifecycle,
+}: TServiceParams): HassFloorService {
   hass.socket.onConnect(async () => {
     let loading = new Promise<void>(async done => {
       hass.floor.current = await hass.floor.list();

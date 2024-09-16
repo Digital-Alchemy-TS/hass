@@ -11,19 +11,12 @@ describe("FetchAPI", () => {
     // eslint-disable-next-line @cspell/spellchecker
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6Imh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dhdGNoP3Y9ZFF3NHc5V2dYY1EifQ.gPIttZEaLZgov3VZziu3LovcgtDbj8H0-XfBg4f08Y0";
 
+  hassTestRunner.configure({
+    hass: { BASE_URL, TOKEN },
+  });
   // values are hard coded into tests, update carefully
   const start = dayjs("2024-01-01 00:00:00:00");
   const end = start.add(1, "day");
-
-  let spy: jest.SpyInstance;
-
-  hassTestRunner.appendService(({ lifecycle, hass }) => {
-    lifecycle.onBootstrap(() => {
-      spy = jest.spyOn(hass.fetch._fetcher, "exec").mockImplementation(() => {
-        return undefined;
-      });
-    });
-  });
 
   afterEach(async () => {
     await hassTestRunner.teardown();
@@ -31,10 +24,15 @@ describe("FetchAPI", () => {
   });
 
   describe("Meta", () => {
-    fit("Should send the correct headers", async () => {
+    it("Should send the correct headers", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(async () => {
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "[]",
+            } as unknown as Response;
+          });
           // Calling the base level fetch provided by service
           // The same call is wrapped internally to power everything else
           await hass.fetch.fetch({ url: "/api/" });
@@ -122,24 +120,27 @@ describe("FetchAPI", () => {
       });
     });
 
-    // TODO: Need a way to make this pass without breaking all other tests
-    it.skip("exits for low version at boot", async () => {
+    // TODO: this results in an open handle
+    // not sure why
+    xit("exits for low version at boot", async () => {
       expect.assertions(2);
-      let mock: jest.SpyInstance;
-      let exitSpy: jest.SpyInstance;
+      const exitSpy = jest.spyOn(process, "exit");
+
+      // .mockImplementation(() => {
+      //   throw new Error("EXPECTED TESTING ERROR");
+      // });
+      jest.spyOn(console, "error").mockImplementation(() => undefined);
       try {
-        await hassTestRunner.run(({ hass }) => {
-          mock = jest
-            .spyOn(hass.fetch, "getConfig")
-            .mockImplementation(async () => ({ version: "2024.1.0" }) as HassConfig);
-          exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
-            throw new Error("EXPECTED TESTING ERROR");
-          });
+        await hassTestRunner.run(({ hass, lifecycle, mock_assistant }) => {
+          lifecycle.onPreInit(() => {
+            mock_assistant.config.set({ version: "2024.1.0" } as HassConfig);
+          }, -1000);
         });
-      } finally {
-        expect(mock).toHaveBeenCalled();
-        expect(exitSpy).toHaveBeenCalled();
+      } catch (error) {
+        expect(error).toBeDefined();
       }
+      await hassTestRunner.teardown();
+      expect(exitSpy).toHaveBeenCalled();
     });
 
     // TODO: Need a way to make this pass without breaking all other tests
@@ -226,20 +227,12 @@ describe("FetchAPI", () => {
 
     it("should format getAllEntities properly", async () => {
       expect.assertions(1);
-      await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
-          return {
-            text: () => "{}",
-          } as unknown as Response;
-        });
+      await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
         lifecycle.onReady(async () => {
+          mock_assistant.entity.reset();
+          const spy = jest.spyOn(hass.fetch, "fetch").mockImplementation(async () => []);
           await hass.fetch.getAllEntities();
-          expect(spy).toHaveBeenCalledWith(
-            `${BASE_URL}/api/states`,
-            expect.objectContaining({
-              method: "get",
-            }),
-          );
+          expect(spy).toHaveBeenCalledWith({ url: "/api/states" });
         });
       });
     });
@@ -322,13 +315,14 @@ describe("FetchAPI", () => {
 
     it("should format listServices properly", async () => {
       expect.assertions(1);
-      await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
-          return {
-            text: () => "{}",
-          } as unknown as Response;
-        });
+      await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
         lifecycle.onReady(async () => {
+          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+            return {
+              text: () => "{}",
+            } as unknown as Response;
+          });
+          mock_assistant.services.reset();
           await hass.fetch.listServices();
           expect(spy).toHaveBeenCalledWith(
             `${BASE_URL}/api/services`,

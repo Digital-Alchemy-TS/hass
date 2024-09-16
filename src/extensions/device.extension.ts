@@ -1,8 +1,20 @@
 import { debounce, TServiceParams } from "@digital-alchemy/core";
 
-import { DEVICE_REGISTRY_UPDATED, DeviceDetails, EARLY_ON_READY } from "../helpers";
+import {
+  DEVICE_REGISTRY_UPDATED,
+  DeviceDetails,
+  EARLY_ON_READY,
+  HassDeviceService,
+} from "../helpers";
 
-export function Device({ hass, config, context, logger, lifecycle, event }: TServiceParams) {
+export function Device({
+  hass,
+  config,
+  context,
+  logger,
+  lifecycle,
+  event,
+}: TServiceParams): HassDeviceService {
   hass.socket.onConnect(async () => {
     let loading = new Promise<void>(async done => {
       hass.device.current = await hass.device.list();

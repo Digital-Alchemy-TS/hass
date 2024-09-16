@@ -10,16 +10,15 @@ type StateOptions = Partial<{
   [entity in ANY_ENTITY]: Partial<ENTITY_STATE<entity>>;
 }>;
 
-export function Fixtures({
-  hass,
+// this naming pattern is confusing sometimes
+// don't think about it too much
+export function MockFixtures({
   lifecycle,
   config,
   internal,
   context,
   mock_assistant,
 }: TServiceParams) {
-  hass.fetch.listServices = async () => mock_assistant.fixtures.data?.services ?? [];
-
   lifecycle.onPreInit(() => {
     const { FIXTURES_FILE } = config.mock_assistant;
     if (!existsSync(FIXTURES_FILE)) {
@@ -42,6 +41,7 @@ export function Fixtures({
     mock_assistant.config.set(data.config);
     mock_assistant.entity.setEntities(data.entities);
     mock_assistant.entity.setRegistry(data.entity_registry);
+    mock_assistant.services.set(data.services);
     // TODO zones are not currently included in fixtures
     // more of a completion thing than them having any particular use
     //

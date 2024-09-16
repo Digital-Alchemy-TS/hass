@@ -1,8 +1,13 @@
 import { is, SECOND, sleep, TServiceParams } from "@digital-alchemy/core";
 
-import { BackupResponse, HomeAssistantBackup, SignRequestResponse } from "../helpers";
+import {
+  BackupResponse,
+  HassBackupService,
+  HomeAssistantBackup,
+  SignRequestResponse,
+} from "../helpers";
 
-export function Backup({ logger, hass, config }: TServiceParams) {
+export function Backup({ logger, hass, config }: TServiceParams): HassBackupService {
   async function download(slug: string, destination: string): Promise<void> {
     const result = await hass.socket.sendMessage<SignRequestResponse>({
       path: `/api/backup/download/${slug}`,

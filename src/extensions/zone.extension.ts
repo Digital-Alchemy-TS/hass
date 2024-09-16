@@ -2,13 +2,21 @@ import { debounce, TServiceParams } from "@digital-alchemy/core";
 
 import {
   EARLY_ON_READY,
+  HassZoneService,
   ManifestItem,
   ZONE_REGISTRY_UPDATED,
   ZoneDetails,
   ZoneOptions,
 } from "../helpers";
 
-export function Zone({ config, hass, event, logger, context, lifecycle }: TServiceParams) {
+export function Zone({
+  config,
+  hass,
+  event,
+  logger,
+  context,
+  lifecycle,
+}: TServiceParams): HassZoneService {
   hass.socket.onConnect(async () => {
     let loading = new Promise<void>(async done => {
       hass.zone.current = await hass.zone.list();

@@ -8,9 +8,17 @@ import {
   AreaDetails,
   EARLY_ON_READY,
   ENTITY_REGISTRY_UPDATED,
+  HassAreaService,
 } from "../helpers";
 
-export function Area({ hass, context, config, logger, event, lifecycle }: TServiceParams) {
+export function Area({
+  hass,
+  context,
+  config,
+  logger,
+  event,
+  lifecycle,
+}: TServiceParams): HassAreaService {
   hass.socket.onConnect(async () => {
     let loading = new Promise<void>(async done => {
       hass.area.current = await hass.area.list();

@@ -10,14 +10,27 @@ import {
 } from "@digital-alchemy/core";
 import { env } from "process";
 
-import { ALL_SERVICE_DOMAINS, HassServiceDTO, iCallService, PostConfigPriorities } from "..";
+import {
+  ALL_SERVICE_DOMAINS,
+  HassConfigService,
+  HassServiceDTO,
+  iCallService,
+  PostConfigPriorities,
+} from "..";
 
 const MAX_ATTEMPTS = 50;
 const FAILED = 1;
 
 export const SERVICE_LIST_UPDATED = "SERVICE_LIST_UPDATED";
 
-export function Configure({ logger, lifecycle, event, hass, config, internal }: TServiceParams) {
+export function Configure({
+  logger,
+  lifecycle,
+  event,
+  hass,
+  config,
+  internal,
+}: TServiceParams): HassConfigService {
   lifecycle.onPreInit(() => {
     // HASSIO_TOKEN provided by home assistant to addons
     // SUPERVISOR_TOKEN used as alias elsewhere

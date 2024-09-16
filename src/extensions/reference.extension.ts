@@ -19,6 +19,7 @@ import {
   ByIdProxy,
   domain,
   ENTITY_STATE,
+  HassReferenceService,
   PICK_ENTITY,
   PICK_FROM_AREA,
   PICK_FROM_DEVICE,
@@ -27,7 +28,12 @@ import {
   PICK_FROM_PLATFORM,
 } from "../helpers";
 
-export function ReferenceExtension({ hass, logger, internal, event }: TServiceParams) {
+export function ReferenceExtension({
+  hass,
+  logger,
+  internal,
+  event,
+}: TServiceParams): HassReferenceService {
   const ENTITY_PROXIES = new Map<ANY_ENTITY, ByIdProxy<ANY_ENTITY>>();
   // #MARK:proxyGetLogic
   function proxyGetLogic<ENTITY extends ANY_ENTITY = ANY_ENTITY, PROPERTY extends string = string>(

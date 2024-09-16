@@ -2,7 +2,7 @@ import { is, TServiceParams } from "@digital-alchemy/core";
 
 import { ALL_SERVICE_DOMAINS, iCallService, PICK_SERVICE, PICK_SERVICE_PARAMETERS } from "..";
 
-export function CallProxy({ logger, lifecycle, internal, hass }: TServiceParams) {
+export function CallProxy({ logger, lifecycle, internal, hass }: TServiceParams): iCallService {
   let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**

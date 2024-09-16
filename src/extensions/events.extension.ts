@@ -1,17 +1,17 @@
-import { TBlackHole, TServiceParams } from "@digital-alchemy/core";
+import { TServiceParams } from "@digital-alchemy/core";
 
 import {
   AREA_REGISTRY_UPDATED,
   DEVICE_REGISTRY_UPDATED,
   ENTITY_REGISTRY_UPDATED,
   FLOOR_REGISTRY_UPDATED,
+  HassEventsService,
   LABEL_REGISTRY_UPDATED,
+  SimpleCallback,
   ZONE_REGISTRY_UPDATED,
 } from "../helpers";
 
-type SimpleCallback = () => TBlackHole;
-
-export function Events({ event }: TServiceParams) {
+export function Events({ event }: TServiceParams): HassEventsService {
   return {
     onAreaRegistryUpdate: (callback: SimpleCallback) => event.on(AREA_REGISTRY_UPDATED, callback),
     onDeviceRegistryUpdate: (callback: SimpleCallback) =>

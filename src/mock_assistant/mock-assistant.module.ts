@@ -4,14 +4,15 @@ import { cwd } from "process";
 
 import { LIB_HASS } from "..";
 import {
-  Events,
-  Fixtures,
   MockAreaExtension,
   MockConfig,
   MockDeviceExtension,
   MockEntityExtension,
+  MockEvents,
+  MockFixtures,
   MockFloorExtension,
   MockLabelExtension,
+  MockServices,
   MockWebsocketAPI,
   MockZoneExtension,
 } from "./extensions";
@@ -37,10 +38,11 @@ export const LIB_MOCK_ASSISTANT = CreateLibrary({
     config: MockConfig,
     device: MockDeviceExtension,
     entity: MockEntityExtension,
-    events: Events,
-    fixtures: Fixtures,
+    events: MockEvents,
+    fixtures: MockFixtures,
     floor: MockFloorExtension,
     label: MockLabelExtension,
+    services: MockServices,
     socket: MockWebsocketAPI,
     zone: MockZoneExtension,
   },

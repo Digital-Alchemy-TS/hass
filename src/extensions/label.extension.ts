@@ -1,9 +1,22 @@
 import { debounce, TServiceParams } from "@digital-alchemy/core";
 
 import { TLabelId } from "../dynamic";
-import { EARLY_ON_READY, LABEL_REGISTRY_UPDATED, LabelDefinition, LabelOptions } from "../helpers";
+import {
+  EARLY_ON_READY,
+  HassLabelService,
+  LABEL_REGISTRY_UPDATED,
+  LabelDefinition,
+  LabelOptions,
+} from "../helpers";
 
-export function Label({ hass, config, logger, lifecycle, event, context }: TServiceParams) {
+export function Label({
+  hass,
+  config,
+  logger,
+  lifecycle,
+  event,
+  context,
+}: TServiceParams): HassLabelService {
   hass.socket.onConnect(async () => {
     let loading = new Promise<void>(async done => {
       hass.label.current = await hass.label.list();
