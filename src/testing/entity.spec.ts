@@ -14,7 +14,7 @@ describe("Entity", () => {
       xit("should debounce updates properly", async () => {
         expect.assertions(1);
         await new Promise<void>(async done => {
-          await hassTestRunner.run(({ lifecycle, hass }) => {
+          await hassTestRunner.run(({ hass }) => {
             const spy = jest.fn();
             hass.events.onEntityRegistryUpdate(spy);
             hass.socket.onConnect(async () => {

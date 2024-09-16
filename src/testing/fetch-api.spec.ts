@@ -131,7 +131,7 @@ describe("FetchAPI", () => {
       // });
       jest.spyOn(console, "error").mockImplementation(() => undefined);
       try {
-        await hassTestRunner.run(({ hass, lifecycle, mock_assistant }) => {
+        await hassTestRunner.run(({ lifecycle, mock_assistant }) => {
           lifecycle.onPreInit(() => {
             mock_assistant.config.set({ version: "2024.1.0" } as HassConfig);
           }, -1000);

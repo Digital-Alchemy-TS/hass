@@ -2,7 +2,7 @@
 import { CreateApplication, TServiceParams } from "@digital-alchemy/core";
 import { writeFileSync } from "fs";
 import { join } from "path";
-import { cwd, exit } from "process";
+import { cwd } from "process";
 
 import { LIB_HASS } from "..";
 import { ScannerCacheData } from "./helpers";
