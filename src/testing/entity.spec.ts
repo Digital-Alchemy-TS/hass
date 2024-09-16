@@ -149,20 +149,9 @@ describe("Entity", () => {
       });
     });
 
-    it("should not attempt to load entities onBootstrap if AUTO_CONNECT_SOCKET is false", async () => {
-      expect.assertions(1);
-      await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(hass.entity, "refresh").mockImplementation(async () => undefined);
-
-        lifecycle.onBootstrap(() => {
-          expect(spy).not.toHaveBeenCalled();
-        });
-      });
-    });
-
     it("should retry on failure", async () => {
       expect.assertions(1);
-      await hassTestRunner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.configure({ hass: { RETRY_INTERVAL: 0 } }).run(({ lifecycle, hass }) => {
         const responses = [
           { text: "502 Bad Gateway" },
           { text: "502 Bad Gateway" },

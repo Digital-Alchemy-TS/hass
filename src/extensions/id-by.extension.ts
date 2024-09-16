@@ -30,7 +30,7 @@ const check = <RAW extends ANY_ENTITY>(raw: RAW[], domains: ALL_DOMAINS[]) => {
 };
 
 export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
-  // * label
+  // * byDomain
   function byDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
     const MASTER_STATE = hass.entity._masterState();
     return Object.keys(MASTER_STATE[domain] ?? {}).map(
@@ -38,7 +38,7 @@ export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
     );
   }
 
-  // #MARK: byUniqueId
+  // * unique_id
   function unique_id<
     UNIQUE_ID extends TUniqueId,
     ENTITY_ID extends Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY> = Extract<

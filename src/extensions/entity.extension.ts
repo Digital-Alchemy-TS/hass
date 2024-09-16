@@ -127,6 +127,7 @@ export function EntityManager({
     lastRefresh = now;
     // - Fetch list of entities
     const states = await hass.fetch.getAllEntities();
+
     // - Keep retrying until max failures reached
     if (!is.array(states) || is.empty(states)) {
       if (recursion > MAX_ATTEMPTS) {

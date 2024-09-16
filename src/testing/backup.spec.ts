@@ -1,30 +1,17 @@
-import { LibraryTestRunner, SINGLE, TestRunner } from "@digital-alchemy/core";
+import { SINGLE } from "@digital-alchemy/core";
 
-import { LIB_HASS } from "..";
-import { BackupResponse, HassConfig } from "../helpers";
-import { LIB_MOCK_ASSISTANT } from "../mock_assistant";
+import { BackupResponse } from "../helpers";
+import { hassTestRunner } from "../mock_assistant";
 
 describe("Backup", () => {
-  let runner: LibraryTestRunner<typeof LIB_HASS>;
-
-  beforeEach(() => {
-    runner = TestRunner({ target: LIB_HASS })
-      .appendLibrary(LIB_MOCK_ASSISTANT)
-      .appendService(({ hass }) => {
-        jest
-          .spyOn(hass.fetch, "getConfig")
-          .mockImplementation(async () => ({ version: "2024.4.1" }) as HassConfig);
-      });
-  });
-
   afterEach(async () => {
-    await runner.teardown();
+    await hassTestRunner.teardown();
     jest.restoreAllMocks();
   });
 
   it("should format removes properly", async () => {
     expect.assertions(1);
-    await runner.run(({ lifecycle, hass }) => {
+    await hassTestRunner.run(({ lifecycle, hass }) => {
       lifecycle.onReady(async () => {
         const spy = jest.spyOn(hass.socket, "sendMessage");
         await hass.backup.remove("test");
@@ -40,7 +27,7 @@ describe("Backup", () => {
 
   it("should format list requests properly", async () => {
     expect.assertions(1);
-    await runner.run(({ lifecycle, hass }) => {
+    await hassTestRunner.run(({ lifecycle, hass }) => {
       lifecycle.onReady(async () => {
         const spy = jest.spyOn(hass.socket, "sendMessage");
         await hass.backup.list();
@@ -55,7 +42,7 @@ describe("Backup", () => {
 
   it("should first attempt to sign with downloads", async () => {
     expect.assertions(1);
-    await runner.run(({ lifecycle, hass }) => {
+    await hassTestRunner.run(({ lifecycle, hass }) => {
       lifecycle.onReady(async () => {
         const spy = jest
           .spyOn(hass.socket, "sendMessage")
@@ -73,7 +60,7 @@ describe("Backup", () => {
 
   it("should use the sign path to download", async () => {
     expect.assertions(1);
-    await runner.run(({ lifecycle, hass }) => {
+    await hassTestRunner.run(({ lifecycle, hass }) => {
       lifecycle.onReady(async () => {
         const path = "/test/thing";
         const destination = "/foo/bar";
@@ -87,7 +74,7 @@ describe("Backup", () => {
 
   it("should use the sign path to download", async () => {
     expect.assertions(1);
-    await runner.run(({ lifecycle, hass }) => {
+    await hassTestRunner.run(({ lifecycle, hass }) => {
       lifecycle.onReady(async () => {
         const path = "/test/thing";
         const destination = "/foo/bar";
@@ -101,7 +88,7 @@ describe("Backup", () => {
 
   it("should not start a new backup if one is already in progress", async () => {
     expect.assertions(1);
-    await runner.run(({ lifecycle, hass }) => {
+    await hassTestRunner.configure({ hass: { RETRY_INTERVAL: 0 } }).run(({ lifecycle, hass }) => {
       lifecycle.onReady(async () => {
         const spy = jest.spyOn(hass.socket, "sendMessage");
         const responses = [
@@ -119,7 +106,7 @@ describe("Backup", () => {
 
   it("should start a new backup if one is not already in progress", async () => {
     expect.assertions(1);
-    await runner.run(({ lifecycle, hass }) => {
+    await hassTestRunner.configure({ hass: { RETRY_INTERVAL: 0 } }).run(({ lifecycle, hass }) => {
       lifecycle.onReady(async () => {
         const spy = jest.spyOn(hass.socket, "sendMessage");
         const responses = [
@@ -138,7 +125,7 @@ describe("Backup", () => {
 
   it("should confirm a new backup is in progress before monitoring", async () => {
     expect.assertions(1);
-    await runner.run(({ lifecycle, hass }) => {
+    await hassTestRunner.configure({ hass: { RETRY_INTERVAL: 0 } }).run(({ lifecycle, hass }) => {
       lifecycle.onReady(async () => {
         const responses = [
           // not backing up
