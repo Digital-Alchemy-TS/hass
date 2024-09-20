@@ -38,7 +38,7 @@ export function MockFixtures({
     mock_assistant.floor.set(data.floors);
     mock_assistant.area.set(data.areas);
     mock_assistant.label.set(data.labels);
-    mock_assistant.config.set(data.config);
+    mock_assistant.config.replace(data.config);
     mock_assistant.entity.setEntities(data.entities);
     mock_assistant.entity.setRegistry(data.entity_registry);
     mock_assistant.services.set(data.services);

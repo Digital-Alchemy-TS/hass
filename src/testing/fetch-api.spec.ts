@@ -133,7 +133,7 @@ describe("FetchAPI", () => {
       try {
         await hassTestRunner.run(({ lifecycle, mock_assistant }) => {
           lifecycle.onPreInit(() => {
-            mock_assistant.config.set({ version: "2024.1.0" } as HassConfig);
+            mock_assistant.config.replace({ version: "2024.1.0" } as HassConfig);
           }, -1000);
         });
       } catch (error) {

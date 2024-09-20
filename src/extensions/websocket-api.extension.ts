@@ -181,10 +181,8 @@ export function WebsocketAPI({
     });
     scheduler.interval({
       exec: () => {
-        const now = Date.now();
-        MESSAGE_TIMESTAMPS = MESSAGE_TIMESTAMPS.filter(
-          time => time > now - SECOND * config.hass.SOCKET_AVG_DURATION,
-        );
+        const target = Date.now() - SECOND * config.hass.SOCKET_AVG_DURATION;
+        MESSAGE_TIMESTAMPS = MESSAGE_TIMESTAMPS.filter(time => time > target);
       },
       interval: CLEANUP_INTERVAL * SECOND,
     });

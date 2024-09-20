@@ -6,8 +6,8 @@ import WS from "ws";
 import { SocketMessageDTO } from "../../helpers";
 
 const CONNECTION_CLOSED = 0;
-const CONNECTION_OPEN = 1;
-const CONNECTION_FAILED = 2;
+// const CONNECTION_OPEN = 1;
+// const CONNECTION_FAILED = 2;
 const UNLIMITED = 0;
 
 export const INTERNAL_MESSAGE = "INTERNAL_MESSAGE";

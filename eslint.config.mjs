@@ -125,7 +125,7 @@ export default [
     },
   },
   {
-    files: ["src/testing/**/*.spec.ts"],
+    files: ["src/**/*.spec.ts"],
     languageOptions: {
       parser: tsParser,
       ecmaVersion: 5,
