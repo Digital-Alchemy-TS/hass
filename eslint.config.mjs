@@ -124,6 +124,21 @@ export default [
       "@typescript-eslint/no-explicit-any": "error"
     },
   },
+  // module definitions
+  {
+    files: ["src/**/*.module.ts"],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 5,
+      sourceType: "script",
+      parserOptions: {
+        project: ["tsconfig.json"],
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-magic-numbers": "off",
+    },
+  },
   {
     files: ["src/**/*.spec.ts"],
     languageOptions: {
