@@ -18,7 +18,7 @@ describe("Fixtures", () => {
         expect.assertions(1);
         const state = v4();
         await runner
-          .setOptions({ bootLibrariesFirst: true })
+          .bootLibrariesFirst()
           .setup(({ mock_assistant }) => {
             mock_assistant.entity.setupState({
               "switch.porch_light": { state },

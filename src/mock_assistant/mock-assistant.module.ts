@@ -1,4 +1,4 @@
-import { CreateLibrary, createModule } from "@digital-alchemy/core";
+import { CreateLibrary, createModule, SINGLE } from "@digital-alchemy/core";
 import { join } from "path";
 import { cwd } from "process";
 
@@ -20,6 +20,11 @@ import {
 
 export const LIB_MOCK_ASSISTANT = CreateLibrary({
   configuration: {
+    EMIT_SLEEP: {
+      default: SINGLE,
+      description: "Time in ms to wait after emitting entity update events",
+      type: "number",
+    },
     FIXTURES_FILE: {
       default: join(cwd(), "fixtures.json"),
       description: [],

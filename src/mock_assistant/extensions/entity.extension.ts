@@ -1,4 +1,4 @@
-import { deepExtend, InternalError, is, NONE, sleep, TServiceParams } from "@digital-alchemy/core";
+import { deepExtend, InternalError, is, sleep, TServiceParams } from "@digital-alchemy/core";
 
 import { TRawEntityIds } from "../../dynamic";
 import { ENTITY_STATE, PICK_ENTITY } from "../../helpers";
@@ -8,6 +8,7 @@ export function MockEntityExtension({
   internal,
   context,
   logger,
+  config,
   mock_assistant,
 }: TServiceParams) {
   let entities = new Map<TRawEntityIds, ENTITY_STATE<TRawEntityIds>>();
@@ -63,7 +64,7 @@ export function MockEntityExtension({
     });
 
     // allow changes to propagate properly
-    await sleep(NONE);
+    await sleep(config.mock_assistant.EMIT_SLEEP);
   }
 
   return {
