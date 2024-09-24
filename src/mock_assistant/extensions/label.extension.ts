@@ -54,7 +54,10 @@ export function MockLabelExtension({ mock_assistant }: TServiceParams) {
     });
 
   return {
-    set(incoming: LabelDefinition[]) {
+    /**
+     * @internal
+     */
+    loadFixtures(incoming: LabelDefinition[]) {
       labels = new Map(incoming.map(i => [i.label_id, i]));
     },
   };

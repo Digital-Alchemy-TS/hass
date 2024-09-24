@@ -12,15 +12,21 @@ export function MockConfig({ hass }: TServiceParams) {
     current() {
       return config;
     },
-    merge(incoming: Partial<HassConfig>) {
-      config = deepExtend(config, incoming);
-    },
-    replace(incoming: HassConfig) {
+    /**
+     * @internal
+     */
+    loadFixtures(incoming: HassConfig) {
       if (incoming) {
         config = incoming;
       }
     },
-    reset() {
+    merge(incoming: Partial<HassConfig>) {
+      config = deepExtend(config, incoming);
+    },
+    /**
+     * @internal
+     */
+    monkeyReset() {
       hass.fetch.getConfig = origConfig;
     },
   };

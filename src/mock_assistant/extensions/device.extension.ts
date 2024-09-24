@@ -34,7 +34,10 @@ export function MockDeviceExtension({ mock_assistant }: TServiceParams) {
     });
 
   return {
-    set(incoming: DeviceDetails[]) {
+    /**
+     * @internal
+     */
+    loadFixtures(incoming: DeviceDetails[]) {
       devices = new Map(incoming.map(i => [i.id, i]));
     },
   };

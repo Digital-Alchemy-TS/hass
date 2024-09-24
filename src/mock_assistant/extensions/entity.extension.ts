@@ -1,60 +1,52 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import { InternalError, TServiceParams } from "@digital-alchemy/core";
 
 import { TRawEntityIds } from "../../dynamic";
-import { ENTITY_STATE, EntityRegistryItem } from "../../helpers";
+import { ENTITY_STATE, PICK_ENTITY } from "../../helpers";
 
-export function MockEntityExtension({ mock_assistant, hass }: TServiceParams) {
-  let entityRegistry = new Map<TRawEntityIds, EntityRegistryItem<TRawEntityIds>>();
+export function MockEntityExtension({ hass, internal, context }: TServiceParams) {
   let entities = new Map<TRawEntityIds, ENTITY_STATE<TRawEntityIds>>();
 
   const origGetAll = hass.fetch.getAllEntities;
 
-  hass.entity.registry.list = async () => [...entityRegistry.values()];
-
   hass.fetch.getAllEntities = async () => [...entities.values()];
 
-  const sendUpdate = () =>
-    mock_assistant.socket.sendMessage({
-      event: { event_type: "entity_registry_updated" },
-      type: "event",
-    });
-
-  mock_assistant.socket.onMessage<{ entity_id: TRawEntityIds }>(
-    "config/entity_registry/get",
-    message => {
-      mock_assistant.socket.sendMessage({
-        id: message.id,
-        result: entityRegistry.get(message.entity_id),
-        type: "result",
+  function setupState(data: Record<PICK_ENTITY, { state: string | number }>) {
+    if (internal.boot.completedLifecycleEvents.has("PreInit")) {
+      throw new InternalError(context, "LATE_SETUP", "Must call setupState before preInit");
+    }
+    const list = Object.keys(data) as PICK_ENTITY[];
+    list.forEach((key: PICK_ENTITY) => {
+      const data = entities.get(key);
+      entities.set(key, {
+        ...data,
+        // @ts-expect-error i don't care
+        state: data[key].state,
       });
-    },
-  );
+    });
+  }
 
   return {
     /**
-     * restores code references, only used for testing internals
+     * @internal
      */
-    reset() {
-      hass.fetch.getAllEntities = origGetAll;
-    },
-
-    /**
-     * emit entity_registry_updated
-     */
-    sendUpdate,
-
-    /**
-     * does not imply sendUpdate
-     */
-    setEntities(incoming: ENTITY_STATE<TRawEntityIds>[]) {
+    loadFixtures(incoming: ENTITY_STATE<TRawEntityIds>[]) {
       entities = new Map(incoming.map(i => [i.entity_id, i]));
     },
 
     /**
-     * does not imply sendUpdate
+     * @internal
+     *
+     * restores code references, only used for testing internals
      */
-    setRegistry(incoming: EntityRegistryItem<TRawEntityIds>[]) {
-      entityRegistry = new Map(incoming.map(i => [i.entity_id, i]));
+    monkeyReset() {
+      hass.fetch.getAllEntities = origGetAll;
     },
+
+    /**
+     * Does not emit update event
+     *
+     * Intended for test setup
+     */
+    setupState,
   };
 }

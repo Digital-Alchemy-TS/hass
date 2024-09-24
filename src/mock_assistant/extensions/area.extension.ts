@@ -52,7 +52,10 @@ export function MockAreaExtension({ mock_assistant }: TServiceParams) {
     });
 
   return {
-    set(incoming: AreaDetails[]) {
+    /**
+     * @internal
+     */
+    loadFixtures(incoming: AreaDetails[]) {
       areas = new Map(incoming.map(i => [i.area_id, i]));
     },
   };

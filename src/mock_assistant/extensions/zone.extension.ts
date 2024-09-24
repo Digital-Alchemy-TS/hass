@@ -55,7 +55,10 @@ export function MockZoneExtension({ mock_assistant }: TServiceParams) {
     });
 
   return {
-    set(incoming: ZoneDetails[]) {
+    /**
+     * @internal
+     */
+    loadFixtures(incoming: ZoneDetails[]) {
       zones = new Map(incoming.map(i => [i.id, i]));
     },
   };

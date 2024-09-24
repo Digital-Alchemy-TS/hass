@@ -98,12 +98,18 @@ export type HassConfigService = {
 };
 
 export type HassWebsocketAPI = {
+  /**
+   * @internal
+   */
   attachScheduledFunctions: () => void;
   connection: WS;
   /**
    * the current state of the websocket
    */
   connectionState: ConnectionState;
+  /**
+   * can override as part of unit tests
+   */
   createConnection: (url: string) => WS;
   /**
    * Convenient wrapper for sendMessage
@@ -111,12 +117,12 @@ export type HassWebsocketAPI = {
   fireEvent: (event_type: string, event_data?: object) => Promise<unknown>;
   /**
    * Set up a new websocket connection to home assistant
-   *f
+   *
    * This doesn't normally need to be called by applications, the extension self manages
    */
   init: () => Promise<void>;
   /**
-   * run a callback when the socket finishes connecting
+   * run a callback when the socket finishes (re)connecting
    */
   onConnect: (callback: () => TBlackHole) => void;
   /**
@@ -131,6 +137,8 @@ export type HassWebsocketAPI = {
     exec,
   }: OnHassEventOptions<DATA>) => () => void;
   /**
+   * @internal
+   *
    * for unit testing
    */
   onMessage: (message: SocketMessageDTO) => Promise<void>;
@@ -263,6 +271,9 @@ export type HassEntityManager = {
    * Interact with the entity registry
    */
   registry: HassEntityManagerRegistry;
+  /**
+   * @internal
+   */
   warnEarly: (method: string) => void;
 };
 

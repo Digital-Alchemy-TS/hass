@@ -2,6 +2,7 @@ export * from "./area.extension";
 export * from "./config.extension";
 export * from "./device.extension";
 export * from "./entity.extension";
+export * from "./entity-registry.extension";
 export * from "./events.extension";
 export * from "./fixtures.extension";
 export * from "./floor.extension";

@@ -97,20 +97,22 @@ export type GetDomain<ENTITY extends ANY_ENTITY> = ENTITY extends `${infer domai
   ? domain
   : never;
 
-is.domain = <DOMAIN extends ALL_DOMAINS>(
+function isDomain<DOMAIN extends ALL_DOMAINS>(
   entity: string,
   domain: DOMAIN | DOMAIN[],
-): entity is PICK_ENTITY<DOMAIN> => {
+): entity is PICK_ENTITY<DOMAIN> {
   const [test] = entity.split(".") as [DOMAIN, string];
   return [domain].flat().includes(test);
-};
+}
+
+is.domain = isDomain;
 
 declare module "@digital-alchemy/core" {
   export interface IsIt {
-    domain: <DOMAIN extends ALL_DOMAINS>(
-      entity: string,
-      domain: DOMAIN | DOMAIN[],
-    ) => entity is PICK_ENTITY<DOMAIN>;
+    /**
+     * Check to see if an entity matches
+     */
+    domain: typeof isDomain;
   }
 }
 

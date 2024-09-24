@@ -34,14 +34,14 @@ export function MockFixtures({
     }
     const data = JSON.parse(readFileSync(FIXTURES_FILE, "utf8")) as ScannerCacheData;
     mock_assistant.fixtures.data = data;
-    mock_assistant.device.set(data.devices);
-    mock_assistant.floor.set(data.floors);
-    mock_assistant.area.set(data.areas);
-    mock_assistant.label.set(data.labels);
-    mock_assistant.config.replace(data.config);
-    mock_assistant.entity.setEntities(data.entities);
-    mock_assistant.entity.setRegistry(data.entity_registry);
-    mock_assistant.services.set(data.services);
+    mock_assistant.device.loadFixtures(data.devices);
+    mock_assistant.floor.loadFixtures(data.floors);
+    mock_assistant.area.loadFixtures(data.areas);
+    mock_assistant.label.loadFixtures(data.labels);
+    mock_assistant.config.loadFixtures(data.config);
+    mock_assistant.entity.loadFixtures(data.entities);
+    mock_assistant.entity_registry.loadFixtures(data.entity_registry);
+    mock_assistant.services.loadFixtures(data.services);
     // TODO zones are not currently included in fixtures
     // more of a completion thing than them having any particular use
     //

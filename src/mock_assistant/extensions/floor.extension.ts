@@ -54,7 +54,10 @@ export function MockFloorExtension({ mock_assistant }: TServiceParams) {
     });
 
   return {
-    set(incoming: FloorDetails[]) {
+    /**
+     * @internal
+     */
+    loadFixtures(incoming: FloorDetails[]) {
       floors = new Map(incoming.map(i => [i.floor_id, i]));
     },
   };

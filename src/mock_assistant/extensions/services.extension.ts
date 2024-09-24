@@ -9,11 +9,17 @@ export function MockServices({ hass }: TServiceParams) {
   hass.fetch.listServices = async () => services;
 
   return {
-    reset() {
-      hass.fetch.listServices = origList;
-    },
-    set(incoming: HassServiceDTO[]) {
+    /**
+     * @internal
+     */
+    loadFixtures(incoming: HassServiceDTO[]) {
       services = incoming;
+    },
+    /**
+     * @internal
+     */
+    monkeyReset() {
+      hass.fetch.listServices = origList;
     },
   };
 }
