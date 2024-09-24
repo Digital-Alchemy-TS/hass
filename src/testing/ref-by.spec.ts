@@ -36,7 +36,7 @@ describe("References", () => {
     });
 
     describe("unique_id", () => {
-      fit("load references by unique_id", async () => {
+      it("load references by unique_id", async () => {
         expect.assertions(1);
         await hassTestRunner.run(({ lifecycle, hass }) => {
           lifecycle.onReady(() => {

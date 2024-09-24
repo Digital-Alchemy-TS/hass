@@ -4,8 +4,6 @@ import { existsSync, readFileSync } from "fs";
 import { ANY_ENTITY, ENTITY_STATE } from "../../helpers";
 import { ScannerCacheData } from "../helpers";
 
-const MEGA_HIGH_PRIORITY = 1000;
-
 type StateOptions = Partial<{
   [entity in ANY_ENTITY]: Partial<ENTITY_STATE<entity>>;
 }>;
@@ -19,34 +17,34 @@ export function MockFixtures({
   context,
   mock_assistant,
 }: TServiceParams) {
-  lifecycle.onPreInit(() => {
-    const { FIXTURES_FILE } = config.mock_assistant;
-    if (!existsSync(FIXTURES_FILE)) {
-      throw new BootstrapException(
-        context,
-        "MISSING_FIXTURES_FILE",
-        `${FIXTURES_FILE} does not exist`,
-      );
-    }
-    if (is.empty(config.hass.TOKEN)) {
-      // prevents throwing errors
-      internal.boilerplate.configuration.set("hass", "TOKEN", "--");
-    }
-    const data = JSON.parse(readFileSync(FIXTURES_FILE, "utf8")) as ScannerCacheData;
-    mock_assistant.fixtures.data = data;
-    mock_assistant.device.loadFixtures(data.devices);
-    mock_assistant.floor.loadFixtures(data.floors);
-    mock_assistant.area.loadFixtures(data.areas);
-    mock_assistant.label.loadFixtures(data.labels);
-    mock_assistant.config.loadFixtures(data.config);
-    mock_assistant.entity.loadFixtures(data.entities);
-    mock_assistant.entity_registry.loadFixtures(data.entity_registry);
-    mock_assistant.services.loadFixtures(data.services);
-    // TODO zones are not currently included in fixtures
-    // more of a completion thing than them having any particular use
-    //
-    // mock_assistant.zone.set(data.);
-  }, MEGA_HIGH_PRIORITY);
+  // This file DELIBERATELY breaks some rules
+  // Setup actions that depend on config are not NORMALLY expected to run inside constructor
+
+  const { FIXTURES_FILE } = config.mock_assistant;
+  if (!existsSync(FIXTURES_FILE)) {
+    throw new BootstrapException(
+      context,
+      "MISSING_FIXTURES_FILE",
+      `${FIXTURES_FILE} does not exist`,
+    );
+  }
+  if (is.empty(config.hass.TOKEN)) {
+    // prevents throwing errors
+    internal.boilerplate.configuration.set("hass", "TOKEN", "--");
+  }
+  const data = JSON.parse(readFileSync(FIXTURES_FILE, "utf8")) as ScannerCacheData;
+  mock_assistant.device.loadFixtures(data.devices);
+  mock_assistant.floor.loadFixtures(data.floors);
+  mock_assistant.area.loadFixtures(data.areas);
+  mock_assistant.label.loadFixtures(data.labels);
+  mock_assistant.config.loadFixtures(data.config);
+  mock_assistant.entity.loadFixtures(data.entities);
+  mock_assistant.entity_registry.loadFixtures(data.entity_registry);
+  mock_assistant.services.loadFixtures(data.services);
+  // TODO zones are not currently included in fixtures
+  // more of a completion thing than them having any particular use
+  //
+  // mock_assistant.zone.set(data.);
 
   function setState(options: StateOptions) {
     lifecycle.onPreInit(() => {
@@ -74,7 +72,7 @@ export function MockFixtures({
 
   return {
     byId,
-    data: undefined as ScannerCacheData,
+    data,
     replace,
     setState,
   };

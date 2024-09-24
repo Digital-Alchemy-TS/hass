@@ -315,7 +315,7 @@ export type ENTITY_SETUP = {
     };
     entity_id: "switch.porch_light";
 
-    state: "unavailable";
+    state: string;
   };
   "todo.shopping_list": {
     attributes: {

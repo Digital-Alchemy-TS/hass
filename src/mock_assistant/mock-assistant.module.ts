@@ -33,7 +33,18 @@ export const LIB_MOCK_ASSISTANT = CreateLibrary({
   },
   depends: [LIB_HASS],
   name: "mock_assistant",
-  priorityInit: ["fixtures", "socket"],
+  priorityInit: [
+    "socket",
+    "floor",
+    "device",
+    "area",
+    "label",
+    "config",
+    "entity",
+    "entity_registry",
+    "services",
+    "fixtures",
+  ],
   services: {
     area: MockAreaExtension,
     config: MockConfig,
@@ -56,11 +67,19 @@ declare module "@digital-alchemy/core" {
   }
 }
 
-export const hassTestRunner = createModule
-  .fromLibrary(LIB_HASS)
-  .extend()
-  .toTest()
-  .configure({
-    boilerplate: { IS_TEST: true },
-  })
-  .appendLibrary(LIB_MOCK_ASSISTANT);
+/**
+ * @internal
+ *
+ * Make your own
+ */
+export const createTestRunner = () =>
+  createModule
+    .fromLibrary(LIB_HASS)
+    .extend()
+    .toTest()
+    .configure({
+      boilerplate: { IS_TEST: true },
+    })
+    .appendLibrary(LIB_MOCK_ASSISTANT);
+
+export const hassTestRunner = createTestRunner();

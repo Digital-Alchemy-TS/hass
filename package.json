@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "semver": "^7.6.3",
+    "uuid": "^10.0.0",
     "ws": "^8.18.0"
   },
   "license": "MIT",
@@ -64,22 +65,22 @@
     "@digital-alchemy/type-writer": "^24.9.2",
     "@eslint/compat": "^1.1.1",
     "@eslint/eslintrc": "^3.1.0",
-    "@eslint/js": "^9.10.0",
-    "@faker-js/faker": "^9.0.1",
+    "@eslint/js": "^9.11.1",
+    "@faker-js/faker": "^9.0.2",
     "@types/figlet": "^1.5.8",
     "@types/jest": "^29.5.13",
     "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.5",
     "@types/mute-stream": "^0.0.4",
-    "@types/node": "^22.5.5",
+    "@types/node": "^22.6.1",
     "@types/semver": "^7.5.8",
     "@types/uuid": "^10.0.0",
     "@types/validator": "^13.12.2",
     "@types/ws": "^8.5.12",
-    "@typescript-eslint/eslint-plugin": "8.6.0",
-    "@typescript-eslint/parser": "8.6.0",
+    "@typescript-eslint/eslint-plugin": "8.7.0",
+    "@typescript-eslint/parser": "8.7.0",
     "dayjs": "^1.11.13",
-    "eslint": "9.10.0",
+    "eslint": "9.11.1",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-jsonc": "^2.16.0",
@@ -113,7 +114,8 @@
       "cobertura"
     ],
     "coveragePathIgnorePatterns": [
-      "testing/"
+      "testing/",
+      "src/mock_assistant"
     ],
     "preset": "ts-jest",
     "testEnvironment": "node",

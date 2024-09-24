@@ -229,7 +229,7 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
         lifecycle.onReady(async () => {
-          mock_assistant.entity_registry.reset();
+          mock_assistant.entity.monkeyReset();
           const spy = jest.spyOn(hass.fetch, "fetch").mockImplementation(async () => []);
           await hass.fetch.getAllEntities();
           expect(spy).toHaveBeenCalledWith({ url: "/api/states" });
