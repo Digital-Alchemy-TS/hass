@@ -1,15 +1,5 @@
-import {
-  DOWN,
-  FilteredFetchArguments,
-  is,
-  NO_CHANGE,
-  SECOND,
-  TFetchBody,
-  TServiceParams,
-  UP,
-} from "@digital-alchemy/core";
+import { DOWN, is, NO_CHANGE, SECOND, TServiceParams, UP } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
-import { exit } from "process";
 import { lt } from "semver";
 
 import {
@@ -19,6 +9,8 @@ import {
   CalendarFetchOptions,
   CheckConfigResult,
   ENTITY_STATE,
+  FetchArguments,
+  FilteredFetchArguments,
   HassConfig,
   HassServiceDTO,
   HomeAssistantServerLogItem,
@@ -27,25 +19,16 @@ import {
   PICK_SERVICE_PARAMETERS,
   PostConfigPriorities,
   RawCalendarEvent,
+  TFetchBody,
 } from "..";
 
-type SendBody<
-  STATE extends string | number = string,
-  ATTRIBUTES extends object = object,
-> = {
+type SendBody<STATE extends string | number = string, ATTRIBUTES extends object = object> = {
   attributes?: ATTRIBUTES;
   state?: STATE;
 };
 
-export function FetchAPI({
-  logger,
-  lifecycle,
-  context,
-  hass,
-  internal,
-  config,
-}: TServiceParams) {
-  const fetcher = internal.boilerplate.fetch({ context });
+export function FetchAPI({ logger, lifecycle, context, hass, config }: TServiceParams) {
+  const fetcher = hass.internals({ context });
   const { download: downloader } = fetcher;
 
   // Load configurations
@@ -55,10 +38,6 @@ export function FetchAPI({
   }, PostConfigPriorities.FETCH);
 
   lifecycle.onBootstrap(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET) {
-      // shorthand for is unit test right now
-      return;
-    }
     const target = await hass.fetch.getConfig();
     if (lt(target.version, MIN_SUPPORTED_HASS_VERSION)) {
       logger.fatal(
@@ -66,7 +45,7 @@ export function FetchAPI({
         "minimum supported version of home assistant: %s",
         MIN_SUPPORTED_HASS_VERSION,
       );
-      exit();
+      process.exit();
     }
     logger.debug(`hass version %s`, target.version);
   });
@@ -78,19 +57,12 @@ export function FetchAPI({
   }: CalendarFetchOptions): Promise<CalendarEvent[]> {
     if (Array.isArray(calendar)) {
       const list = await Promise.all(
-        calendar.map(
-          async cal => await calendarSearch({ calendar: cal, end, start }),
-        ),
+        calendar.map(async cal => await calendarSearch({ calendar: cal, end, start })),
       );
-      return list
-        .flat()
-        .sort((a, b) =>
-          a.start.isSame(b.start)
-            ? NO_CHANGE
-            : a.start.isAfter(b.start)
-              ? UP
-              : DOWN,
-        );
+      return list.flat().sort((a, b) =>
+        // eslint-disable-next-line sonarjs/no-nested-conditional
+        a.start.isSame(b.start) ? NO_CHANGE : a.start.isAfter(b.start) ? UP : DOWN,
+      );
     }
 
     const params = { end: end.toISOString(), start: start.toISOString() };
@@ -114,10 +86,7 @@ export function FetchAPI({
   async function callService<
     DOMAIN extends ALL_SERVICE_DOMAINS,
     SERVICE extends PICK_SERVICE<DOMAIN>,
-  >(
-    serviceName: SERVICE,
-    data: PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>,
-  ): Promise<void> {
+  >(serviceName: SERVICE, data: PICK_SERVICE_PARAMETERS<DOMAIN, SERVICE>): Promise<void> {
     const [domain, service] = serviceName.split(".");
     await hass.fetch.fetch({
       body: data as TFetchBody,
@@ -134,10 +103,7 @@ export function FetchAPI({
     });
   }
 
-  async function download(
-    destination: string,
-    fetchWith: FilteredFetchArguments,
-  ): Promise<void> {
+  async function download(destination: string, fetchWith: FilteredFetchArguments): Promise<void> {
     logger.trace({ name: download }, `send`);
     await downloader({
       ...fetchWith,
@@ -148,10 +114,7 @@ export function FetchAPI({
   }
 
   async function fetchEntityCustomizations<
-    T extends Record<never, unknown> = Record<
-      "global" | "local",
-      Record<string, string>
-    >,
+    T extends Record<never, unknown> = Record<"global" | "local", Record<string, string>>,
   >(entityId: ANY_ENTITY): Promise<T> {
     logger.trace({ name: fetchEntityCustomizations }, `send`);
     return await hass.fetch.fetch<T>({
@@ -186,10 +149,7 @@ export function FetchAPI({
       url: `/api/history/period/${encodeURIComponent(from.toISOString())}`,
     });
     if (!Array.isArray(result)) {
-      logger.error(
-        { name: fetchEntityHistory, result },
-        `unexpected return result`,
-      );
+      logger.error({ name: fetchEntityHistory, result }, `unexpected return result`);
       return [];
     }
     const [out] = result;
@@ -207,10 +167,7 @@ export function FetchAPI({
       url: `/api/events/${encodeURIComponent(event)}`,
     });
     if (response?.message !== `Event ${event} fired.`) {
-      logger.debug(
-        { name: fetchEntityHistory, response },
-        `unexpected response from firing event`,
-      );
+      logger.debug({ name: fetchEntityHistory, response }, `unexpected response from firing event`);
     }
   }
 
@@ -254,10 +211,7 @@ export function FetchAPI({
   async function updateEntity<
     STATE extends string | number = string,
     ATTRIBUTES extends object = object,
-  >(
-    entity_id: ANY_ENTITY,
-    { attributes, state }: SendBody<STATE, ATTRIBUTES>,
-  ): Promise<void> {
+  >(entity_id: ANY_ENTITY, { attributes, state }: SendBody<STATE, ATTRIBUTES>): Promise<void> {
     const body: SendBody<STATE> = {};
     // ! ORDER MATTERS FOR APPLYING
     // Must be applied in alphabetical order for unit test reasons
@@ -267,10 +221,7 @@ export function FetchAPI({
     if (state !== undefined) {
       body.state = state;
     }
-    logger.trace(
-      { ...body, entity_id, name: updateEntity },
-      `set entity state`,
-    );
+    logger.trace({ ...body, entity_id, name: updateEntity }, `set entity state`);
     await hass.fetch.fetch({
       body,
       method: "post",
@@ -278,10 +229,7 @@ export function FetchAPI({
     });
   }
 
-  async function webhook(
-    webhook_name: string,
-    data: object = {},
-  ): Promise<void> {
+  async function webhook(webhook_name: string, data: object = {}): Promise<void> {
     logger.trace({ data, name: webhook, webhook_name }, `send`);
     await hass.fetch.fetch({
       body: data,
@@ -299,12 +247,14 @@ export function FetchAPI({
   }
 
   return {
+    _fetcher: fetcher,
     calendarSearch,
     callService,
     checkConfig,
     checkCredentials,
     download,
-    fetch: fetcher.fetch,
+    fetch: async <T, BODY extends TFetchBody = undefined>(options: Partial<FetchArguments<BODY>>) =>
+      await fetcher.exec<T, BODY>(options),
     fetchEntityCustomizations,
     fetchEntityHistory,
     fireEvent,

@@ -3,6 +3,7 @@ import { debounce, TServiceParams } from "@digital-alchemy/core";
 import { TLabelId } from "../dynamic";
 import {
   EARLY_ON_READY,
+  HassLabelService,
   LABEL_REGISTRY_UPDATED,
   LabelDefinition,
   LabelOptions,
@@ -15,28 +16,25 @@ export function Label({
   lifecycle,
   event,
   context,
-}: TServiceParams) {
+}: TServiceParams): HassLabelService {
   hass.socket.onConnect(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
-      return;
-    }
     let loading = new Promise<void>(async done => {
       hass.label.current = await hass.label.list();
       loading = undefined;
       done();
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
-  });
 
-  hass.socket.subscribe({
-    context,
-    event_type: "label_registry_updated",
-    async exec() {
-      await debounce(LABEL_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
-      hass.label.current = await hass.label.list();
-      logger.debug(`label registry updated`);
-      event.emit(LABEL_REGISTRY_UPDATED);
-    },
+    hass.socket.subscribe({
+      context,
+      event_type: "label_registry_updated",
+      async exec() {
+        await debounce(LABEL_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
+        hass.label.current = await hass.label.list();
+        logger.debug(`label registry updated`);
+        event.emit(LABEL_REGISTRY_UPDATED);
+      },
+    });
   });
 
   async function create(details: LabelOptions) {

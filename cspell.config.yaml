@@ -26,6 +26,7 @@ words:
   - mbit
   - datetime
   - kbit
+  - postdata
   - ssdp
   - systype
   - tvshow

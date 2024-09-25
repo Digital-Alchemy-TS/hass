@@ -32,9 +32,7 @@ export type PICK_ENTITY<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> = Extract<
 /**
  * Pick any valid service call, optionally limiting by domain
  */
-export type PICK_SERVICE<
-  DOMAIN extends ALL_SERVICE_DOMAINS = ALL_SERVICE_DOMAINS,
-> = {
+export type PICK_SERVICE<DOMAIN extends ALL_SERVICE_DOMAINS = ALL_SERVICE_DOMAINS> = {
   [key in DOMAIN]: `${key}.${keyof iCallService[key] & string}`;
 }[DOMAIN];
 
@@ -42,9 +40,7 @@ export type PICK_SERVICE_PARAMETERS<
   DOMAINS extends ALL_SERVICE_DOMAINS,
   SERVICE extends PICK_SERVICE<DOMAINS>,
 > =
-  Get<iCallService, SERVICE> extends (
-    serviceParams: infer ServiceParams,
-  ) => TBlackHole
+  Get<iCallService, SERVICE> extends (serviceParams: infer ServiceParams) => TBlackHole
     ? ServiceParams
     : never;
 
@@ -59,31 +55,24 @@ export function entity_split(
 /**
  * Extract the domain from an entity with type safety
  */
-export function domain(
-  entity: { entity_id: ANY_ENTITY } | ANY_ENTITY,
-): ALL_DOMAINS {
+export function domain(entity: { entity_id: ANY_ENTITY } | ANY_ENTITY): ALL_DOMAINS {
   if (is.object(entity)) {
     entity = entity.entity_id;
   }
   return entity_split(entity).shift() as ALL_DOMAINS;
 }
 
-export type ENTITY_PROP<
-  ENTITY_ID extends PICK_ENTITY,
-  PROP extends "state" | "attributes",
-> = Get<ENTITY_SETUP, `${ENTITY_ID}.${PROP}`>;
+export type ENTITY_PROP<ENTITY_ID extends PICK_ENTITY, PROP extends "state" | "attributes"> = Get<
+  ENTITY_SETUP,
+  `${ENTITY_ID}.${PROP}`
+>;
 
 /**
  * Type definitions to match a specific entity.
  */
 export type ENTITY_STATE<ENTITY_ID extends ANY_ENTITY> = Omit<
   ENTITY_SETUP[ENTITY_ID],
-  | "state"
-  | "context"
-  | "last_changed"
-  | "last_updated"
-  | "entity_id"
-  | "attributes"
+  "state" | "context" | "last_changed" | "last_updated" | "entity_id" | "attributes"
 > & {
   last_reported: Dayjs;
   last_changed: Dayjs;
@@ -104,23 +93,26 @@ export type ALL_DOMAINS = TRawDomains;
  */
 export type ALL_SERVICE_DOMAINS = keyof iCallService;
 
-export type GetDomain<ENTITY extends ANY_ENTITY> =
-  ENTITY extends `${infer domain}.${string}` ? domain : never;
+export type GetDomain<ENTITY extends ANY_ENTITY> = ENTITY extends `${infer domain}.${string}`
+  ? domain
+  : never;
 
-is.domain = <DOMAIN extends ALL_DOMAINS>(
+function isDomain<DOMAIN extends ALL_DOMAINS>(
   entity: string,
   domain: DOMAIN | DOMAIN[],
-): entity is PICK_ENTITY<DOMAIN> => {
+): entity is PICK_ENTITY<DOMAIN> {
   const [test] = entity.split(".") as [DOMAIN, string];
   return [domain].flat().includes(test);
-};
+}
+
+is.domain = isDomain;
 
 declare module "@digital-alchemy/core" {
   export interface IsIt {
-    domain: <DOMAIN extends ALL_DOMAINS>(
-      entity: string,
-      domain: DOMAIN | DOMAIN[],
-    ) => entity is PICK_ENTITY<DOMAIN>;
+    /**
+     * Check to see if an entity matches
+     */
+    domain: typeof isDomain;
   }
 }
 
@@ -129,10 +121,10 @@ export const PostConfigPriorities = {
   VALIDATE: -1,
 } as const;
 
-export type PICK_FROM_AREA<
-  ID extends TAreaId,
-  DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
-> = Extract<REGISTRY_SETUP["area"][`_${ID}`], PICK_ENTITY<DOMAIN>>;
+export type PICK_FROM_AREA<ID extends TAreaId, DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> = Extract<
+  REGISTRY_SETUP["area"][`_${ID}`],
+  PICK_ENTITY<DOMAIN>
+>;
 
 export type PICK_FROM_LABEL<
   ID extends TLabelId,

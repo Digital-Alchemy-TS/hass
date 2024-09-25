@@ -4,8 +4,10 @@ export type AppleNotificationPush = {
    *
    * The sound to play for the notification.
    * [More info](https://companion.home-assistant.io/docs/notifications/notifications-basic#sounds)
+   *
+   * > default: "none"
    */
-  sound?: "none" | string;
+  sound?: string;
 
   /**
    * **iOS | MacOS**
@@ -35,9 +37,15 @@ export type AppleNotificationPush = {
 export type NotificationAction = {
   /**
    * Key passed back in events.
+   *
+   * ## REPLY
+   *
    * When set to `REPLY`, you will be prompted for text to send with the event.
+   *
+   * ## URI
+   *
    */
-  action: "REPLY" | "URI" | string;
+  action: string;
   /**
    * Shown on the action button to the user.
    */
@@ -49,8 +57,7 @@ export type NotificationAction = {
   uri?: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type AndroidNotificationActionOptions = {};
+export type AndroidNotificationActionOptions = Record<string, unknown>;
 
 export type AppleNotificationActionOptions = {
   /**

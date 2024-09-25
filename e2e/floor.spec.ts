@@ -12,10 +12,7 @@ import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 import { BASE_URL, TOKEN } from "./utils";
 
 describe("Floor E2E", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
   const testFloor = "test" as TFloorId;
 
   afterEach(async () => {
@@ -52,9 +49,7 @@ describe("Floor E2E", () => {
             level: 1,
             name: "test",
           });
-          expect(hass.floor.current.some(i => i.floor_id === testFloor)).toBe(
-            true,
-          );
+          expect(hass.floor.current.some(i => i.floor_id === testFloor)).toBe(true);
           await application.teardown();
         });
       },
@@ -73,9 +68,7 @@ describe("Floor E2E", () => {
             ...item,
             name: "extra test",
           });
-          expect(
-            hass.floor.current.find(i => i.floor_id === testFloor)?.name,
-          ).toBe("extra test");
+          expect(hass.floor.current.find(i => i.floor_id === testFloor)?.name).toBe("extra test");
           await application.teardown();
         });
       },
@@ -88,13 +81,9 @@ describe("Floor E2E", () => {
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          expect(hass.floor.current.some(i => i.floor_id === testFloor)).toBe(
-            true,
-          );
+          expect(hass.floor.current.some(i => i.floor_id === testFloor)).toBe(true);
           await hass.floor.delete(testFloor);
-          expect(hass.floor.current.some(i => i.floor_id === testFloor)).toBe(
-            false,
-          );
+          expect(hass.floor.current.some(i => i.floor_id === testFloor)).toBe(false);
           await application.teardown();
         });
       },

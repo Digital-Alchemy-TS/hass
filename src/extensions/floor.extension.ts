@@ -6,6 +6,7 @@ import {
   FLOOR_REGISTRY_UPDATED,
   FloorCreate,
   FloorDetails,
+  HassFloorService,
 } from "../helpers";
 
 export function Floor({
@@ -15,28 +16,25 @@ export function Floor({
   event,
   logger,
   lifecycle,
-}: TServiceParams) {
+}: TServiceParams): HassFloorService {
   hass.socket.onConnect(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
-      return;
-    }
     let loading = new Promise<void>(async done => {
       hass.floor.current = await hass.floor.list();
       loading = undefined;
       done();
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
-  });
 
-  hass.socket.subscribe({
-    context,
-    event_type: "floor_registry_updated",
-    async exec() {
-      await debounce(FLOOR_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
-      hass.floor.current = await hass.floor.list();
-      logger.debug(`floor registry updated`);
-      event.emit(FLOOR_REGISTRY_UPDATED);
-    },
+    hass.socket.subscribe({
+      context,
+      event_type: "floor_registry_updated",
+      async exec() {
+        await debounce(FLOOR_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
+        hass.floor.current = await hass.floor.list();
+        logger.debug(`floor registry updated`);
+        event.emit(FLOOR_REGISTRY_UPDATED);
+      },
+    });
   });
 
   return {

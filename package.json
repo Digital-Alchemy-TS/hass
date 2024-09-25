@@ -1,15 +1,16 @@
 {
+  "type": "module",
   "name": "@digital-alchemy/hass",
   "repository": "https://github.com/Digital-Alchemy-TS/hass",
   "homepage": "https://docs.digital-alchemy.app",
-  "version": "24.9.3",
+  "version": "24.9.4",
   "description": "Typescript APIs for Home Assistant. Includes rest & websocket bindings",
   "scripts": {
     "build": "rm -rf dist/; tsc",
     "lint": "eslint src",
     "test": "./scripts/test.sh",
     "prepublishOnly": "yarn build",
-    "upgrade": "ncu -f '@digital-alchemy/*' -u; yarn"
+    "upgrade": "yarn up '@digital-alchemy/*'"
   },
   "bugs": {
     "email": "bugs@digital-alchemy.app",
@@ -51,59 +52,70 @@
     ".": "./dist/index.js",
     "./mock-assistant": "./dist/mock_assistant/index.js"
   },
-  "dependencies": {
-    "dayjs": "^1.11.11",
-    "prom-client": "^15.1.2",
-    "semver": "^7.6.3",
-    "validator": "^13.12.0",
-    "ws": "^8.17.0"
-  },
   "license": "MIT",
   "devDependencies": {
-    "@cspell/eslint-plugin": "^8.8.4",
-    "@digital-alchemy/core": "^24.8.4",
+    "@cspell/eslint-plugin": "^8.14.4",
+    "@digital-alchemy/core": "^24.9.3",
     "@digital-alchemy/synapse": "^24.9.3",
     "@digital-alchemy/type-writer": "^24.9.2",
-    "@types/figlet": "^1.5.8",
-    "@types/jest": "^29.5.12",
+    "@eslint/compat": "^1.1.1",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.11.1",
+    "@faker-js/faker": "^9.0.2",
+    "@types/jest": "^29.5.13",
     "@types/js-yaml": "^4.0.9",
-    "@types/minimist": "^1.2.5",
-    "@types/mute-stream": "^0.0.4",
-    "@types/node": "^20.14.2",
+    "@types/node": "^22.6.1",
+    "@types/node-cron": "^3",
     "@types/semver": "^7.5.8",
-    "@types/uuid": "^9.0.8",
-    "@types/validator": "^13.11.10",
-    "@types/ws": "^8.5.10",
-    "@typescript-eslint/eslint-plugin": "7.13.0",
-    "@typescript-eslint/parser": "7.13.0",
-    "eslint": "8.57.0",
+    "@types/uuid": "^10.0.0",
+    "@types/ws": "^8.5.12",
+    "@typescript-eslint/eslint-plugin": "8.7.0",
+    "@typescript-eslint/parser": "8.7.0",
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.4.5",
+    "eslint": "9.11.1",
     "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsonc": "^2.15.1",
-    "eslint-plugin-no-unsanitized": "^4.0.2",
-    "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-security": "^3.0.0",
-    "eslint-plugin-simple-import-sort": "^12.1.0",
-    "eslint-plugin-sonarjs": "^0.25.1",
+    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-jsonc": "^2.16.0",
+    "eslint-plugin-no-unsanitized": "^4.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-security": "^3.0.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-sonarjs": "^2.0.2",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
-    "eslint-plugin-unicorn": "^52.0.0",
+    "eslint-plugin-unicorn": "^55.0.0",
+    "globals": "^15.9.0",
     "jest": "^29.7.0",
     "jest-environment-node": "^29.7.0",
-    "npm-check-updates": "^16.14.20",
-    "prettier": "^3.3.2",
-    "ts-jest": "^29.1.4",
-    "tsx": "^4.15.3",
-    "type-fest": "^4.20.0",
-    "typescript": "^5.4.5"
+    "node-cron": "^3.0.3",
+    "prettier": "^3.3.3",
+    "semver": "^7.6.3",
+    "ts-jest": "^29.2.5",
+    "tsx": "^4.19.1",
+    "type-fest": "^4.26.1",
+    "typescript": "^5.6.2",
+    "uuid": "^10.0.0",
+    "ws": "^8.18.0"
   },
   "peerDependencies": {
-    "@digital-alchemy/core": "*"
+    "@digital-alchemy/core": "*",
+    "dayjs": "^1",
+    "semver": "^7",
+    "uuid": "^10",
+    "ws": "^8"
   },
   "jest": {
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
     "collectCoverage": true,
     "coverageReporters": [
       "text",
       "cobertura"
+    ],
+    "coveragePathIgnorePatterns": [
+      "testing/",
+      "src/mock_assistant"
     ],
     "preset": "ts-jest",
     "testEnvironment": "node",
@@ -114,16 +126,20 @@
       "node"
     ],
     "testMatch": [
-      "**/?(*.)+(spec|test).ts"
+      "**/testing/?(*.)+(spec|test).ts"
+    ],
+    "setupFiles": [
+      "<rootDir>/test-setup.ts"
     ],
     "transform": {
       "^.+\\.ts$": [
         "ts-jest",
         {
-          "tsconfig": "tsconfig.spec.json"
+          "tsconfig": "tsconfig.spec.json",
+          "useESM": true
         }
       ]
     }
   },
-  "packageManager": "yarn@4.4.0"
+  "packageManager": "yarn@4.5.0"
 }

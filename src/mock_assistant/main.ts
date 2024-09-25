@@ -2,7 +2,7 @@
 import { CreateApplication, TServiceParams } from "@digital-alchemy/core";
 import { writeFileSync } from "fs";
 import { join } from "path";
-import { cwd, exit } from "process";
+import { cwd } from "process";
 
 import { LIB_HASS } from "..";
 import { ScannerCacheData } from "./helpers";
@@ -27,9 +27,7 @@ const writeFixtures = CreateApplication({
               areas: hass.area.current,
               config: await hass.fetch.getConfig(),
               devices: hass.device.current,
-              entities: hass.entity
-                .listEntities()
-                .map(i => hass.entity.getCurrentState(i)),
+              entities: hass.entity.listEntities().map(i => hass.entity.getCurrentState(i)),
               entity_registry: hass.entity.registry.current,
               floors: hass.floor.current,
               labels: hass.label.current,
@@ -40,7 +38,7 @@ const writeFixtures = CreateApplication({
           ),
           "utf8",
         );
-        exit();
+        process.exit();
       });
     },
   },

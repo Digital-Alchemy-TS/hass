@@ -1,22 +1,19 @@
 import {
   ApplicationDefinition,
+  is,
   OptionalModuleConfiguration,
   ServiceMap,
   sleep,
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { TLabelId } from "../dynamic";
-import { LABEL_REGISTRY_UPDATED } from "../helpers";
 import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 import { BASE_URL, TOKEN } from "./utils";
 
-describe("Label E2E", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
-  const testLabel = "test" as TLabelId;
+const SETTLE_TIMEOUT = 1000;
+
+describe("Fetch API E2E", () => {
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
 
   afterEach(async () => {
     if (application) {
@@ -26,15 +23,21 @@ describe("Label E2E", () => {
     jest.restoreAllMocks();
   });
 
-  it("should fire events on registry updated", async () => {
+  it("should perform service calls", async () => {
     expect.assertions(1);
     application = CreateTestingApplication({
-      Test({ lifecycle, hass, event }: TServiceParams) {
+      Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
           let hit = false;
-          event.on(LABEL_REGISTRY_UPDATED, () => (hit = true));
-          await hass.socket.fireEvent("label_registry_updated");
-          await sleep(100);
+          const wait = sleep(SETTLE_TIMEOUT);
+          hass.refBy.id("switch.porch_light").onUpdate(() => {
+            hit = true;
+            wait.kill("continue");
+          });
+          await hass.fetch.callService("switch.toggle", {
+            entity_id: "switch.porch_light",
+          });
+          await wait;
           expect(hit).toBe(true);
           await application.teardown();
         });
@@ -43,19 +46,13 @@ describe("Label E2E", () => {
     await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
   });
 
-  it("should create a label", async () => {
+  it("should check config", async () => {
     expect.assertions(1);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          await hass.label.create({
-            color: "accent",
-            icon: "mdi:account",
-            name: testLabel,
-          });
-          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(
-            true,
-          );
+          const result = await hass.fetch.checkConfig();
+          expect(result.result).toBe("valid");
           await application.teardown();
         });
       },
@@ -63,19 +60,13 @@ describe("Label E2E", () => {
     await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
   });
 
-  it("should update a label", async () => {
+  it("should retrieve entities", async () => {
     expect.assertions(1);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          const item = hass.label.current.find(i => i.label_id === testLabel);
-          await hass.label.update({
-            ...item,
-            name: "extra test",
-          });
-          expect(
-            hass.label.current.find(i => i.label_id === testLabel)?.name,
-          ).toBe("extra test");
+          const result = await hass.fetch.getAllEntities();
+          expect(result.length).toBe(hass.entity.listEntities().length);
           await application.teardown();
         });
       },
@@ -83,18 +74,14 @@ describe("Label E2E", () => {
     await application.bootstrap(SILENT_BOOT({ hass: { BASE_URL, TOKEN } }));
   });
 
-  it("should delete a label", async () => {
+  it("should retrieve services", async () => {
     expect.assertions(2);
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(
-            true,
-          );
-          await hass.label.delete(testLabel);
-          expect(hass.label.current.some(i => i.label_id === testLabel)).toBe(
-            false,
-          );
+          const result = await hass.fetch.getAllEntities();
+          expect(is.array(result)).toBe(true);
+          expect(result.length).toBe(18);
           await application.teardown();
         });
       },

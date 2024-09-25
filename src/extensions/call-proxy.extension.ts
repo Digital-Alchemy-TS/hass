@@ -1,20 +1,8 @@
 import { is, TServiceParams } from "@digital-alchemy/core";
 
-import {
-  ALL_SERVICE_DOMAINS,
-  CALL_PROXY_SERVICE_CALL,
-  iCallService,
-  PICK_SERVICE,
-  PICK_SERVICE_PARAMETERS,
-} from "..";
+import { ALL_SERVICE_DOMAINS, iCallService, PICK_SERVICE, PICK_SERVICE_PARAMETERS } from "..";
 
-export function CallProxy({
-  logger,
-  lifecycle,
-  internal,
-  hass,
-  config,
-}: TServiceParams) {
+export function CallProxy({ logger, lifecycle, internal, hass }: TServiceParams): iCallService {
   let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
@@ -23,14 +11,7 @@ export function CallProxy({
    * This API matches the api at the time the this function is run, which may be different from any generated typescript definitions from the past.
    */
   lifecycle.onBootstrap(async () => {
-    if (!config.hass.AUTO_SCAN_CALL_PROXY) {
-      logger.debug({ name: "onBootstrap" }, `skip service populate`);
-      return;
-    }
-    logger.debug(
-      { name: "onBootstrap" },
-      `runtime populate service interfaces`,
-    );
+    logger.debug({ name: "onBootstrap" }, `runtime populate service interfaces`);
     await loadServiceList();
     loaded = true;
   });
@@ -44,9 +25,7 @@ export function CallProxy({
       rawProxy[value.domain] = Object.fromEntries(
         Object.entries(value.services).map(([key]) => [
           key,
-          async <SERVICE extends PICK_SERVICE<ALL_SERVICE_DOMAINS>>(
-            parameters: object,
-          ) => {
+          async <SERVICE extends PICK_SERVICE<ALL_SERVICE_DOMAINS>>(parameters: object) => {
             const data = value.services[key];
 
             const service = `${value.domain}.${key}` as SERVICE;
@@ -60,11 +39,7 @@ export function CallProxy({
           },
         ]),
       );
-      logger.trace(
-        { name: loadServiceList, services },
-        `loaded domain [%s]`,
-        value.domain,
-      );
+      logger.trace({ name: loadServiceList, services }, `loaded domain [%s]`, value.domain);
     });
   }
 
@@ -83,23 +58,7 @@ export function CallProxy({
     if (hass.socket.pauseMessages) {
       return undefined;
     }
-    const sendViaRest =
-      (config.hass.CALL_PROXY_ALLOW_REST === "allow" &&
-        hass.socket.connectionState !== "connected") ||
-      config.hass.CALL_PROXY_ALLOW_REST === "prefer";
-    if (sendViaRest && return_response) {
-      // See https://github.com/home-assistant/core/issues/106379#issuecomment-1878548124 for the reason for this warning
-      logger.warn(
-        { name: sendMessage },
-        "return_response calls must use websocket",
-      );
-    }
-
-    if (sendViaRest) {
-      return await hass.fetch.callService(serviceName, service_data);
-    }
     const [domain, service] = serviceName.split(".");
-    CALL_PROXY_SERVICE_CALL.labels({ domain, service }).inc();
     // User can just not await this call if they don't care about the "waitForChange"
 
     if (!return_response) {
@@ -113,12 +72,7 @@ export function CallProxy({
       true,
     )) as { response: unknown };
     if (!result?.response) {
-      logger.warn(
-        { result },
-        `{%s}.{%s} did not return a response`,
-        domain,
-        service,
-      );
+      logger.warn({ result }, `{%s}.{%s} did not return a response`, domain, service);
     }
     return result?.response;
   }

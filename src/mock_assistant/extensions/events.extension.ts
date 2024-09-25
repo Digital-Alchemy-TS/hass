@@ -4,7 +4,7 @@ import { ANY_ENTITY, ENTITY_STATE, EntityUpdateEvent } from "../../helpers";
 
 const SUPER_SHORT = 1;
 
-export function Events({ mock_assistant, hass }: TServiceParams) {
+export function MockEvents({ mock_assistant, hass }: TServiceParams) {
   let id = 1000;
 
   async function emitEvent(event: string, data: object) {

@@ -3,12 +3,13 @@ import { TServiceParams } from "@digital-alchemy/core";
 import {
   ConfigEntry,
   HassConfig,
+  HassRegistryService,
   ManifestItem,
   UpdateCoreOptions,
   ZoneDetails,
 } from "../helpers";
 
-export function Registry({ hass }: TServiceParams) {
+export function Registry({ hass }: TServiceParams): HassRegistryService {
   async function ManifestList() {
     return await hass.socket.sendMessage<ManifestItem[]>({
       type: "manifest/list",

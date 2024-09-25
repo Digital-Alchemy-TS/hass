@@ -6,11 +6,9 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": [
-      "ESNext"
-    ],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "noImplicitAny": true,
     "declaration": true,
     "noImplicitReturns": true,
@@ -35,6 +33,6 @@
     "node_modules",
     "tmp",
     "dist",
-    "src/e2e/*",
+    "e2e/*",
   ]
 }

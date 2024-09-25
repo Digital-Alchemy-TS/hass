@@ -8,10 +8,11 @@ import {
   START,
   TServiceParams,
 } from "@digital-alchemy/core";
-import { env, exit } from "process";
+import { env } from "process";
 
 import {
   ALL_SERVICE_DOMAINS,
+  HassConfigService,
   HassServiceDTO,
   iCallService,
   PostConfigPriorities,
@@ -29,7 +30,7 @@ export function Configure({
   hass,
   config,
   internal,
-}: TServiceParams) {
+}: TServiceParams): HassConfigService {
   lifecycle.onPreInit(() => {
     // HASSIO_TOKEN provided by home assistant to addons
     // SUPERVISOR_TOKEN used as alias elsewhere
@@ -37,10 +38,7 @@ export function Configure({
     if (is.empty(token)) {
       return;
     }
-    logger.debug(
-      { name: "onPreInit" },
-      `auto configuring from addon environment`,
-    );
+    logger.debug({ name: "onPreInit" }, `auto configuring from addon environment`);
     internal.boilerplate.configuration.set(
       "hass",
       "BASE_URL",
@@ -67,15 +65,15 @@ export function Configure({
       if (is.object(result)) {
         // * all good
         logger.info({ name: "onPostConfig" }, result.message);
-        exit(1);
+        process.exit(1);
       }
       // * bad token
       logger.error({ name: "onPostConfig" }, String(result));
-      exit(0);
+      process.exit(0);
     } catch (error) {
       // * bad BASE_URL
       logger.error({ error, name: "onPostConfig" }, "failed to send request");
-      exit(0);
+      process.exit(0);
     }
   }, PostConfigPriorities.VALIDATE);
 
@@ -85,11 +83,8 @@ export function Configure({
     services = await hass.fetch.listServices();
     if (is.empty(services)) {
       if (recursion > MAX_ATTEMPTS) {
-        logger.fatal(
-          { name: loadServiceList },
-          `failed to load service list from Home Assistant`,
-        );
-        exit(FAILED);
+        logger.fatal({ name: loadServiceList }, `failed to load service list from Home Assistant`);
+        process.exit(FAILED);
       }
       logger.warn(
         { name: loadServiceList },
@@ -115,9 +110,7 @@ export function Configure({
       if (checkedServices.has(service)) {
         return checkedServices.get(service);
       }
-      const exists = services.some(
-        i => i.domain === domain && !is.undefined(i.services[service]),
-      );
+      const exists = services.some(i => i.domain === domain && !is.undefined(i.services[service]));
       checkedServices.set(service, exists);
       return exists;
     },

@@ -43,10 +43,10 @@ export type IDByInterface = {
   ) => PICK_FROM_PLATFORM<PLATFORM, DOMAIN>[];
   unique_id: <
     UNIQUE_ID extends TUniqueId,
-    ENTITY_ID extends Extract<
+    ENTITY_ID extends Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
       TUniqueIDMapping[UNIQUE_ID],
-      ANY_ENTITY
-    > = Extract<TUniqueIDMapping[UNIQUE_ID], TRawEntityIds>,
+      TRawEntityIds
+    >,
   >(
     unique_id: UNIQUE_ID,
   ) => ENTITY_ID;

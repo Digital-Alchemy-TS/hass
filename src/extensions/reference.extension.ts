@@ -1,15 +1,6 @@
-import {
-  DOWN,
-  is,
-  NONE,
-  sleep,
-  TAnyFunction,
-  TServiceParams,
-  UP,
-} from "@digital-alchemy/core";
+import { DOWN, is, NONE, sleep, TAnyFunction, TServiceParams, UP } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import { Get } from "type-fest";
-import { isNumeric } from "validator";
 
 import { SERVICE_LIST_UPDATED } from "..";
 import {
@@ -28,6 +19,7 @@ import {
   ByIdProxy,
   domain,
   ENTITY_STATE,
+  HassReferenceService,
   PICK_ENTITY,
   PICK_FROM_AREA,
   PICK_FROM_DEVICE,
@@ -41,36 +33,28 @@ export function ReferenceExtension({
   logger,
   internal,
   event,
-}: TServiceParams) {
+}: TServiceParams): HassReferenceService {
   const ENTITY_PROXIES = new Map<ANY_ENTITY, ByIdProxy<ANY_ENTITY>>();
   // #MARK:proxyGetLogic
-  function proxyGetLogic<
-    ENTITY extends ANY_ENTITY = ANY_ENTITY,
-    PROPERTY extends string = string,
-  >(entity: ENTITY, property: PROPERTY): Get<ENTITY_STATE<ENTITY>, PROPERTY> {
-    const valid = ["state", "attributes", "last"].some(i =>
-      property.startsWith(i),
-    );
+  function proxyGetLogic<ENTITY extends ANY_ENTITY = ANY_ENTITY, PROPERTY extends string = string>(
+    entity: ENTITY,
+    property: PROPERTY,
+  ): Get<ENTITY_STATE<ENTITY>, PROPERTY> {
+    const valid = ["state", "attributes", "last"].some(i => property.startsWith(i));
     if (!valid) {
-      logger.error(
-        { entity, name: proxyGetLogic, property },
-        `invalid property lookup`,
-      );
+      logger.error({ entity, name: proxyGetLogic, property }, `invalid property lookup`);
       return undefined;
     }
     const current = hass.entity.getCurrentState(entity);
     if (!current) {
-      logger.error(
-        { name: entity, property },
-        `proxyGetLogic cannot find entity`,
-      );
+      logger.error({ name: entity, property }, `proxyGetLogic cannot find entity`);
     }
     if (property.startsWith("last")) {
       const value = internal.utils.object.get(current, property) as string;
       return dayjs(value) as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
     }
     if (property === "state") {
-      if (domain(entity) === "sensor" && isNumeric(current.state)) {
+      if (domain(entity) === "sensor" && is.number(Number(current.state))) {
         return Number(current.state) as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
       }
       return current.state as Get<ENTITY_STATE<ENTITY>, PROPERTY>;
@@ -80,14 +64,10 @@ export function ReferenceExtension({
   }
 
   // #MARK: byId
-  function byId<ENTITY_ID extends ANY_ENTITY>(
-    entity_id: ENTITY_ID,
-  ): ByIdProxy<ENTITY_ID> {
+  function byId<ENTITY_ID extends ANY_ENTITY>(entity_id: ENTITY_ID): ByIdProxy<ENTITY_ID> {
     const entity_domain = domain(entity_id) as ALL_SERVICE_DOMAINS;
     if (!ENTITY_PROXIES.has(entity_id)) {
-      const { ...thing } = hass.entity.getCurrentState(
-        entity_id,
-      ) as ByIdProxy<ENTITY_ID>;
+      const { ...thing } = hass.entity.getCurrentState(entity_id) as ByIdProxy<ENTITY_ID>;
       let loaded = false;
 
       function keys() {
@@ -131,6 +111,7 @@ export function ReferenceExtension({
         // just because you can't do generics properly....
         new Proxy(thing, {
           // things that shouldn't be needed: this extract
+          // eslint-disable-next-line sonarjs/function-return-type
           get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
             switch (property) {
               // * onUpdate
@@ -139,8 +120,7 @@ export function ReferenceExtension({
                   const removableCallback = async (
                     a: ENTITY_STATE<ENTITY_ID>,
                     b: ENTITY_STATE<ENTITY_ID>,
-                  ) =>
-                    await internal.safeExec(async () => callback(a, b, remove));
+                  ) => await internal.safeExec(async () => callback(a, b, remove));
                   function remove() {
                     event.removeListener(entity_id, removableCallback);
                   }
@@ -160,11 +140,7 @@ export function ReferenceExtension({
               // * history
               case "history": {
                 return async function (from: Dayjs | Date, to: Dayjs | Date) {
-                  return await hass.fetch.fetchEntityHistory(
-                    entity_id,
-                    from,
-                    to,
-                  );
+                  return await hass.fetch.fetchEntityHistory(entity_id, from, to);
                 };
               }
 
@@ -198,10 +174,7 @@ export function ReferenceExtension({
                     if (is.number(timeout) && timeout > NONE) {
                       await sleep(timeout);
                       if (done) {
-                        logger.debug(
-                          { entity_id, name: "nextState", timeout },
-                          "timed out",
-                        );
+                        logger.debug({ entity_id, name: "nextState", timeout }, "timed out");
                         done(undefined);
                         done = undefined;
                         event.removeListener(entity_id, complete);
@@ -236,10 +209,7 @@ export function ReferenceExtension({
                     if (is.number(timeout) && timeout > NONE) {
                       await sleep(timeout);
                       if (done) {
-                        logger.debug(
-                          { entity_id, name: "waitForState", timeout },
-                          "timed out",
-                        );
+                        logger.debug({ entity_id, name: "waitForState", timeout }, "timed out");
                         done(undefined);
                         done = undefined;
                         event.removeListener(entity_id, complete);
@@ -267,18 +237,11 @@ export function ReferenceExtension({
             appendKeys();
             return Object.keys(thing);
           },
-          set(
-            _,
-            property: Extract<keyof ByIdProxy<ENTITY_ID>, string>,
-            value: unknown,
-          ) {
+          set(_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>, value: unknown) {
             // * state
             if (property === "state") {
               setImmediate(async () => {
-                logger.debug(
-                  { entity_id, state: value },
-                  `emitting set state via rest`,
-                );
+                logger.debug({ entity_id, state: value }, `emitting set state via rest`);
                 await hass.fetch.updateEntity(entity_id, {
                   state: value as string | number,
                 });
@@ -302,10 +265,7 @@ export function ReferenceExtension({
               });
               return true;
             }
-            logger.error(
-              { entity_id, property },
-              `cannot set property on entity`,
-            );
+            logger.error({ entity_id, property }, `cannot set property on entity`);
             return false;
           },
         }),
@@ -321,10 +281,7 @@ export function ReferenceExtension({
     ): ByIdProxy<PICK_FROM_AREA<AREA, DOMAINS>>[] =>
       hass.idBy.area<AREA, DOMAINS>(area, ...domains).map(id => byId(id)),
 
-    device: <
-      DEVICE extends TDeviceId,
-      DOMAINS extends TRawDomains = TRawDomains,
-    >(
+    device: <DEVICE extends TDeviceId, DOMAINS extends TRawDomains = TRawDomains>(
       device: DEVICE,
       ...domains: DOMAINS[]
     ): ByIdProxy<PICK_FROM_DEVICE<DEVICE, DOMAINS>>[] =>
@@ -332,8 +289,7 @@ export function ReferenceExtension({
 
     domain: <DOMAIN extends TRawDomains = TRawDomains>(
       domain: DOMAIN,
-    ): ByIdProxy<PICK_ENTITY<DOMAIN>>[] =>
-      hass.idBy.domain<DOMAIN>(domain).map(id => byId(id)),
+    ): ByIdProxy<PICK_ENTITY<DOMAIN>>[] => hass.idBy.domain<DOMAIN>(domain).map(id => byId(id)),
 
     floor: <FLOOR extends TFloorId, DOMAINS extends TRawDomains = TRawDomains>(
       floor: FLOOR,
@@ -349,23 +305,18 @@ export function ReferenceExtension({
     ): ByIdProxy<PICK_FROM_LABEL<LABEL, DOMAINS>>[] =>
       hass.idBy.label<LABEL, DOMAINS>(label, ...domains).map(id => byId(id)),
 
-    platform: <
-      PLATFORM extends TPlatformId,
-      DOMAINS extends TRawDomains = TRawDomains,
-    >(
+    platform: <PLATFORM extends TPlatformId, DOMAINS extends TRawDomains = TRawDomains>(
       platform: PLATFORM,
       ...domains: DOMAINS[]
     ): ByIdProxy<PICK_FROM_PLATFORM<PLATFORM, DOMAINS>>[] =>
-      hass.idBy
-        .platform<PLATFORM, DOMAINS>(platform, ...domains)
-        .map(id => byId(id)),
+      hass.idBy.platform<PLATFORM, DOMAINS>(platform, ...domains).map(id => byId(id)),
 
     unique_id: <
       UNIQUE_ID extends TUniqueId,
-      ENTITY_ID extends Extract<
+      ENTITY_ID extends Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
         TUniqueIDMapping[UNIQUE_ID],
         ANY_ENTITY
-      > = Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY>,
+      >,
     >(
       unique_id: UNIQUE_ID,
     ): ByIdProxy<ENTITY_ID> => {

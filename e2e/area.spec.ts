@@ -12,10 +12,7 @@ import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
 import { BASE_URL, TOKEN } from "./utils";
 
 describe("Area E2E", () => {
-  let application: ApplicationDefinition<
-    ServiceMap,
-    OptionalModuleConfiguration
-  >;
+  let application: ApplicationDefinition<ServiceMap, OptionalModuleConfiguration>;
   const testArea = "test" as TAreaId;
 
   afterEach(async () => {
@@ -52,9 +49,7 @@ describe("Area E2E", () => {
             floor_id: "downstairs",
             name: "test",
           });
-          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(
-            true,
-          );
+          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(true);
           await application.teardown();
         });
       },
@@ -73,9 +68,7 @@ describe("Area E2E", () => {
             ...item,
             name: "extra test",
           });
-          expect(
-            hass.area.current.find(i => i.area_id === testArea)?.name,
-          ).toBe("extra test");
+          expect(hass.area.current.find(i => i.area_id === testArea)?.name).toBe("extra test");
           await application.teardown();
         });
       },
@@ -91,17 +84,13 @@ describe("Area E2E", () => {
           await hass.area.apply(testArea, ["switch.porch_light"]);
           await sleep(10);
           expect(
-            hass.entity.registry.current.find(
-              i => i.entity_id === "switch.porch_light",
-            )?.area_id,
+            hass.entity.registry.current.find(i => i.entity_id === "switch.porch_light")?.area_id,
           ).toBe(testArea);
           expect(hass.idBy.area(testArea).length).toBe(1);
           await hass.area.apply("" as TAreaId, ["switch.porch_light"]);
           await sleep(10);
           expect(
-            hass.entity.registry.current.find(
-              i => i.entity_id === "switch.porch_light",
-            )?.area_id,
+            hass.entity.registry.current.find(i => i.entity_id === "switch.porch_light")?.area_id,
           ).toBe("");
           await application.teardown();
         });
@@ -115,13 +104,9 @@ describe("Area E2E", () => {
     application = CreateTestingApplication({
       Test({ lifecycle, hass }: TServiceParams) {
         lifecycle.onReady(async () => {
-          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(
-            true,
-          );
+          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(true);
           await hass.area.delete(testArea);
-          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(
-            false,
-          );
+          expect(hass.area.current.some(i => i.area_id === testArea)).toBe(false);
           await application.teardown();
         });
       },

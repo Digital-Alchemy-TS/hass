@@ -12,8 +12,7 @@ export enum HassSocketMessageTypes {
   auth_invalid = "auth_invalid",
 }
 
-export const HOME_ASSISTANT_MODULE_CONFIGURATION =
-  "HOME_ASSISTANT_MODULE_CONFIGURATION";
+export const HOME_ASSISTANT_MODULE_CONFIGURATION = "HOME_ASSISTANT_MODULE_CONFIGURATION";
 
 /**
  * Required for label support, which is an automatic process at boot

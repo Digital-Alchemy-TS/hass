@@ -1,69 +1,50 @@
-import {
-  BootstrapException,
-  InternalError,
-  is,
-  TServiceParams,
-} from "@digital-alchemy/core";
+import { BootstrapException, is, TServiceParams } from "@digital-alchemy/core";
 import { existsSync, readFileSync } from "fs";
 
 import { ANY_ENTITY, ENTITY_STATE } from "../../helpers";
 import { ScannerCacheData } from "../helpers";
 
-const MEGA_HIGH_PRIORITY = 1000;
-
 type StateOptions = Partial<{
   [entity in ANY_ENTITY]: Partial<ENTITY_STATE<entity>>;
 }>;
 
-export function Fixtures({
-  hass,
+// this naming pattern is confusing sometimes
+// don't think about it too much
+export function MockFixtures({
   lifecycle,
   config,
   internal,
   context,
   mock_assistant,
 }: TServiceParams) {
-  hass.area.list = async () => mock_assistant.fixtures.data?.areas ?? [];
-  hass.floor.list = async () => mock_assistant.fixtures.data?.floors ?? [];
-  hass.label.list = async () => mock_assistant.fixtures.data?.labels ?? [];
-  hass.device.list = async () => mock_assistant.fixtures.data?.devices ?? [];
-  hass.entity.registry.list = async () =>
-    mock_assistant.fixtures.data.entity_registry ?? [];
-  hass.fetch.getAllEntities = async () =>
-    mock_assistant.fixtures.data?.entities ?? [];
-  hass.fetch.listServices = async () =>
-    mock_assistant.fixtures.data?.services ?? [];
-  hass.fetch.getConfig = async () => mock_assistant.fixtures.data?.config;
+  // This file DELIBERATELY breaks some rules
+  // Setup actions that depend on config are not NORMALLY expected to run inside constructor
 
-  lifecycle.onPreInit(() => {
-    const { MOCK_SOCKET } = config.hass;
-
-    const { FIXTURES_FILE } = config.mock_assistant;
-    if (!MOCK_SOCKET) {
-      // There needs to be a shared understanding that nobody is actually sending message traffic anywhere
-      // Otherwise the mocking is gonna cause some weirdness
-      throw new InternalError(
-        context,
-        "SOCKET_NOT_MOCKED",
-        "Not for testing with live connections",
-      );
-    }
-    if (!existsSync(FIXTURES_FILE)) {
-      throw new BootstrapException(
-        context,
-        "MISSING_FIXTURES_FILE",
-        `${FIXTURES_FILE} does not exist`,
-      );
-    }
-    if (is.empty(config.hass.TOKEN)) {
-      // prevents throwing errors
-      internal.boilerplate.configuration.set("hass", "TOKEN", "--");
-    }
-
-    mock_assistant.fixtures.data = JSON.parse(
-      readFileSync(FIXTURES_FILE, "utf8"),
+  const { FIXTURES_FILE } = config.mock_assistant;
+  if (!existsSync(FIXTURES_FILE)) {
+    throw new BootstrapException(
+      context,
+      "MISSING_FIXTURES_FILE",
+      `${FIXTURES_FILE} does not exist`,
     );
-  }, MEGA_HIGH_PRIORITY);
+  }
+  if (is.empty(config.hass.TOKEN)) {
+    // prevents throwing errors
+    internal.boilerplate.configuration.set("hass", "TOKEN", "--");
+  }
+  const data = JSON.parse(readFileSync(FIXTURES_FILE, "utf8")) as ScannerCacheData;
+  mock_assistant.device.loadFixtures(data.devices);
+  mock_assistant.floor.loadFixtures(data.floors);
+  mock_assistant.area.loadFixtures(data.areas);
+  mock_assistant.label.loadFixtures(data.labels);
+  mock_assistant.config.loadFixtures(data.config);
+  mock_assistant.entity.loadFixtures(data.entities);
+  mock_assistant.entity_registry.loadFixtures(data.entity_registry);
+  mock_assistant.services.loadFixtures(data.services);
+  // TODO zones are not currently included in fixtures
+  // more of a completion thing than them having any particular use
+  //
+  // mock_assistant.zone.set(data.);
 
   function setState(options: StateOptions) {
     lifecycle.onPreInit(() => {
@@ -73,9 +54,7 @@ export function Fixtures({
   }
 
   function byId(entity: ANY_ENTITY) {
-    return mock_assistant.fixtures.data.entities.find(
-      i => i.entity_id === entity,
-    );
+    return mock_assistant.fixtures.data.entities.find(i => i.entity_id === entity);
   }
 
   function replace<ENTITY extends ANY_ENTITY>(
@@ -93,7 +72,7 @@ export function Fixtures({
 
   return {
     byId,
-    data: undefined as ScannerCacheData,
+    data,
     replace,
     setState,
   };

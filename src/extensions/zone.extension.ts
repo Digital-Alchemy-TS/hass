@@ -2,6 +2,7 @@ import { debounce, TServiceParams } from "@digital-alchemy/core";
 
 import {
   EARLY_ON_READY,
+  HassZoneService,
   ManifestItem,
   ZONE_REGISTRY_UPDATED,
   ZoneDetails,
@@ -15,28 +16,25 @@ export function Zone({
   logger,
   context,
   lifecycle,
-}: TServiceParams) {
+}: TServiceParams): HassZoneService {
   hass.socket.onConnect(async () => {
-    if (!config.hass.AUTO_CONNECT_SOCKET || !config.hass.MANAGE_REGISTRY) {
-      return;
-    }
     let loading = new Promise<void>(async done => {
       hass.zone.current = await hass.zone.list();
       loading = undefined;
       done();
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
-  });
 
-  hass.socket.subscribe({
-    context,
-    event_type: "zone_registry_updated",
-    async exec() {
-      await debounce(ZONE_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
-      hass.zone.current = await hass.zone.list();
-      logger.debug(`zone registry updated`);
-      event.emit(ZONE_REGISTRY_UPDATED);
-    },
+    hass.socket.subscribe({
+      context,
+      event_type: "zone_registry_updated",
+      async exec() {
+        await debounce(ZONE_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
+        hass.zone.current = await hass.zone.list();
+        logger.debug(`zone registry updated`);
+        event.emit(ZONE_REGISTRY_UPDATED);
+      },
+    });
   });
 
   async function ZoneCreate(options: ZoneOptions) {

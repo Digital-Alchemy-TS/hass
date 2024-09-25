@@ -3,12 +3,7 @@ import { Dayjs } from "dayjs";
 
 import { HassSocketMessageTypes } from "./constants.helper";
 import { EntityUpdateEvent } from "./entity-state.helper";
-import {
-  ALL_DOMAINS,
-  ANY_ENTITY,
-  ENTITY_STATE,
-  PICK_ENTITY,
-} from "./utility.helper";
+import { ALL_DOMAINS, ANY_ENTITY, ENTITY_STATE, PICK_ENTITY } from "./utility.helper";
 
 export interface SignRequestResponse {
   path: string;
@@ -19,7 +14,7 @@ export interface SocketMessageDTO {
   event?: EntityUpdateEvent;
   id: string | number;
   message?: string;
-  result?: Record<string, unknown>;
+  result?: Record<string, unknown> | Array<unknown>;
   type: `${HassSocketMessageTypes}`;
 }
 
@@ -43,9 +38,7 @@ export interface SendSocketMessageDTO {
   type: string;
 }
 
-export interface UpdateEntityMessageDTO<
-  DOMAIN extends ALL_DOMAINS = ALL_DOMAINS,
-> {
+export interface UpdateEntityMessageDTO<DOMAIN extends ALL_DOMAINS = ALL_DOMAINS> {
   area_id?: string;
   disabled_by?: "user";
   entity_id: PICK_ENTITY<DOMAIN>;
@@ -98,9 +91,7 @@ export interface RemoveBackupDTO {
   type: "backup/remove";
 }
 
-export interface EntityHistoryDTO<
-  ENTITIES extends ANY_ENTITY[] = ANY_ENTITY[],
-> {
+export interface EntityHistoryDTO<ENTITIES extends ANY_ENTITY[] = ANY_ENTITY[]> {
   end_time: Date | string | Dayjs;
   entity_ids: ENTITIES;
   minimal_response?: boolean;
@@ -112,10 +103,7 @@ export interface EntityHistoryDTO<
 export type EntityHistoryResult<
   ENTITY extends ANY_ENTITY = ANY_ENTITY,
   ATTRIBUTES extends object = object,
-> = Pick<
-  ENTITY_STATE<ENTITY> & { attributes: ATTRIBUTES },
-  "attributes" | "state"
-> & {
+> = Pick<ENTITY_STATE<ENTITY> & { attributes: ATTRIBUTES }, "attributes" | "state"> & {
   date: Date;
 };
 
@@ -123,7 +111,6 @@ export type OnHassEventCallback<T = object> = (event: T) => TBlackHole;
 
 export type OnHassEventOptions<T = object> = {
   context: TContext;
-  label?: string;
   exec: OnHassEventCallback<T>;
   event: string;
   once?: boolean;

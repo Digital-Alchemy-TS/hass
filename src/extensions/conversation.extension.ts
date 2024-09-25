@@ -1,8 +1,13 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { EditAliasOptions, ToggleExpose, UPDATE_REGISTRY } from "../helpers";
+import {
+  EditAliasOptions,
+  HassConversationService,
+  ToggleExpose,
+  UPDATE_REGISTRY,
+} from "../helpers";
 
-export function Conversation({ hass, logger }: TServiceParams) {
+export function Conversation({ hass, logger }: TServiceParams): HassConversationService {
   async function addAlias({ entity, alias }: EditAliasOptions) {
     const current = await hass.entity.registry.get(entity);
     if (current?.aliases?.includes(alias)) {
@@ -24,11 +29,7 @@ export function Conversation({ hass, logger }: TServiceParams) {
     await hass.socket.sendMessage({ entity_id: entity, type: UPDATE_REGISTRY });
   }
 
-  async function setConversational({
-    entity_ids,
-    assistants,
-    should_expose,
-  }: ToggleExpose) {
+  async function setConversational({ entity_ids, assistants, should_expose }: ToggleExpose) {
     await hass.socket.sendMessage({
       assistants: [assistants].flat(),
       entity_ids: [entity_ids].flat(),
