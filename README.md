@@ -1,4 +1,3 @@
-
 [![stars](https://img.shields.io/github/stars/Digital-Alchemy-TS/hass)](https://github.com/Digital-Alchemy-TS/hass)
 ![discord](https://img.shields.io/discord/1219758743848489147?label=Discord&logo=discord)
 
