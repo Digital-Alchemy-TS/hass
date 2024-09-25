@@ -52,11 +52,6 @@
     ".": "./dist/index.js",
     "./mock-assistant": "./dist/mock_assistant/index.js"
   },
-  "dependencies": {
-    "semver": "^7.6.3",
-    "uuid": "^10.0.0",
-    "ws": "^8.18.0"
-  },
   "license": "MIT",
   "devDependencies": {
     "@cspell/eslint-plugin": "^8.14.4",
@@ -70,6 +65,7 @@
     "@types/jest": "^29.5.13",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.6.1",
+    "@types/semver": "^7.5.8",
     "@types/uuid": "^10.0.0",
     "@types/ws": "^8.5.12",
     "@typescript-eslint/eslint-plugin": "8.7.0",
@@ -90,14 +86,20 @@
     "jest": "^29.7.0",
     "jest-environment-node": "^29.7.0",
     "prettier": "^3.3.3",
+    "semver": "^7.6.3",
     "ts-jest": "^29.2.5",
     "tsx": "^4.19.1",
     "type-fest": "^4.26.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "uuid": "^10.0.0",
+    "ws": "^8.18.0"
   },
   "peerDependencies": {
     "@digital-alchemy/core": "*",
-    "dayjs": "^1"
+    "dayjs": "^1",
+    "semver": "^7",
+    "uuid": "^10",
+    "ws": "^8"
   },
   "jest": {
     "extensionsToTreatAsEsm": [

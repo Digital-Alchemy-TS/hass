@@ -2213,6 +2213,7 @@ __metadata:
     "@types/jest": "npm:^29.5.13"
     "@types/js-yaml": "npm:^4.0.9"
     "@types/node": "npm:^22.6.1"
+    "@types/semver": "npm:^7.5.8"
     "@types/uuid": "npm:^10.0.0"
     "@types/ws": "npm:^8.5.12"
     "@typescript-eslint/eslint-plugin": "npm:8.7.0"
@@ -2243,6 +2244,9 @@ __metadata:
   peerDependencies:
     "@digital-alchemy/core": "*"
     dayjs: ^1
+    semver: ^7
+    uuid: ^10
+    ws: ^8
   bin:
     mock-assistant: ./dist/mock_assistant/main.js
   languageName: unknown
@@ -3186,6 +3190,13 @@ __metadata:
   version: 2.4.4
   resolution: "@types/normalize-package-data@npm:2.4.4"
   checksum: 10/65dff72b543997b7be8b0265eca7ace0e34b75c3e5fee31de11179d08fa7124a7a5587265d53d0409532ecb7f7fba662c2012807963e1f9b059653ec2c83ee05
+  languageName: node
+  linkType: hard
+
+"@types/semver@npm:^7.5.8":
+  version: 7.5.8
+  resolution: "@types/semver@npm:7.5.8"
+  checksum: 10/3496808818ddb36deabfe4974fd343a78101fa242c4690044ccdc3b95dcf8785b494f5d628f2f47f38a702f8db9c53c67f47d7818f2be1b79f2efb09692e1178
   languageName: node
   linkType: hard
 
