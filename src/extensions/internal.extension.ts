@@ -1,4 +1,4 @@
-import { FetchRequestError, FIRST, is, TServiceParams } from "@digital-alchemy/core";
+import { FIRST, InternalError, is, TServiceParams } from "@digital-alchemy/core";
 import { createWriteStream } from "fs";
 import { pipeline } from "stream";
 import { promisify } from "util";
@@ -36,12 +36,7 @@ export function FetchInternals({ logger, context: parentContext }: TServiceParam
 
         // Throw a FetchRequestError
         // throw new FetchRequestError(maybeError);
-        throw new FetchRequestError(
-          logContext || parentContext,
-          maybeError.statusCode,
-          maybeError.error,
-          maybeError.message,
-        );
+        throw new InternalError(logContext || parentContext, maybeError.error, maybeError.message);
       }
 
       return maybeError as T;
