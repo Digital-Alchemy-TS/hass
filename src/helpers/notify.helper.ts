@@ -126,7 +126,7 @@ export type AppleNotificationData = {
   /**
    * iOS Supports ~10 actions.
    */
-  actions: Array<NotificationAction & AppleNotificationActionOptions>;
+  actions?: Array<NotificationAction & AppleNotificationActionOptions>;
 };
 
 export type AndroidNotificationData = {
@@ -284,7 +284,7 @@ export type AndroidNotificationData = {
   /**
    * Android Supports 3 actions.
    */
-  actions: Array<NotificationAction & AndroidNotificationActionOptions>;
+  actions?: Array<NotificationAction & AndroidNotificationActionOptions>;
 };
 
 export type NotificationData = {
