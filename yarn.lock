@@ -2269,8 +2269,8 @@ __metadata:
   linkType: hard
 
 "@digital-alchemy/type-writer@npm:^24.9.2":
-  version: 24.9.2
-  resolution: "@digital-alchemy/type-writer@npm:24.9.2"
+  version: 24.9.7
+  resolution: "@digital-alchemy/type-writer@npm:24.9.7"
   dependencies:
     js-yaml: "npm:^4.1.0"
     quicktype: "npm:^23.0.170"
@@ -2280,8 +2280,8 @@ __metadata:
     "@digital-alchemy/core": "*"
     "@digital-alchemy/hass": "*"
   bin:
-    type-writer: dist/main.js
-  checksum: 10/0616878c1b0963a34fe0190fe60a95da4f7fb74923a2aa008050531ab2515ba6bb328bbd9c8ccb0a00a73743d66f64d20f78ecf3cc75bc83ed9eca03f1d6d80b
+    type-writer: scripts/run.sh
+  checksum: 10/20a3cf0f760d903c21aec0194454c51b5761046d1047eff043cb3aff76d2488db5fab8885c5ca67fe63f83470b0889a378d4f7d8165cb3fc2b811c6374d29794
   languageName: node
   linkType: hard
 
