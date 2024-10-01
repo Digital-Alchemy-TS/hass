@@ -26,7 +26,7 @@
     "digital-alchemy"
   ],
   "bin": {
-    "mock-assistant": "./dist/mock_assistant/main.js"
+    "mock-assistant": "./scripts/mock-assistant.sh"
   },
   "funding": [
     {
@@ -50,7 +50,7 @@
   },
   "exports": {
     ".": "./dist/index.js",
-    "./mock-assistant": "./scripts/mock-assistant.sh"
+    "./mock-assistant": "./dist/mock_assistant/index.js"
   },
   "license": "MIT",
   "devDependencies": {
