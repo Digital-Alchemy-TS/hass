@@ -43,7 +43,9 @@
     "name": "Zoe Codez"
   },
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "scripts/**/*",
+    "src/**/*"
   ],
   "engines": {
     "node": ">=20"
