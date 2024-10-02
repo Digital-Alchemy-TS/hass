@@ -2289,7 +2289,7 @@ __metadata:
     uuid: ^10
     ws: ^8
   bin:
-    mock-assistant: ./dist/mock_assistant/main.js
+    mock-assistant: ./scripts/mock-assistant.sh
   languageName: unknown
   linkType: soft
 
