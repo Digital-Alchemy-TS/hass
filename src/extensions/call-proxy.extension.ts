@@ -91,8 +91,11 @@ export function CallProxy({
         if (!internal.boot.constructComplete.has("hass")) {
           return undefined;
         }
-        if (!loaded && config.boilerplate.LOG_LEVEL === "trace") {
+        if (!loaded) {
           lifecycle.onReady(() => {
+            if (config.boilerplate.LOG_LEVEL !== "trace") {
+              return;
+            }
             logger.error(
               `attempted to use {hass.call} before data loaded. use {lifecycle.onReady}`,
             );

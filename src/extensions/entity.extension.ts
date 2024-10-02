@@ -46,8 +46,11 @@ export function EntityManager({
   const PREVIOUS_STATE = new Map<ANY_ENTITY, ENTITY_STATE<ANY_ENTITY>>();
   let lastRefresh: Dayjs;
   function warnEarly(method: string) {
-    if (!init && config.boilerplate.LOG_LEVEL === "trace") {
+    if (!init) {
       lifecycle.onReady(() => {
+        if (config.boilerplate.LOG_LEVEL !== "trace") {
+          return;
+        }
         logger.error(
           "attempted to use [%s] before application booted. use {lifecycle.onReady}",
           method,
