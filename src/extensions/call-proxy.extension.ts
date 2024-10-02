@@ -2,7 +2,13 @@ import { is, TServiceParams } from "@digital-alchemy/core";
 
 import { ALL_SERVICE_DOMAINS, iCallService, PICK_SERVICE, PICK_SERVICE_PARAMETERS } from "..";
 
-export function CallProxy({ logger, lifecycle, internal, hass }: TServiceParams): iCallService {
+export function CallProxy({
+  logger,
+  lifecycle,
+  internal,
+  hass,
+  config,
+}: TServiceParams): iCallService {
   let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**
@@ -87,6 +93,9 @@ export function CallProxy({ logger, lifecycle, internal, hass }: TServiceParams)
         }
         if (!loaded) {
           lifecycle.onReady(() => {
+            if (config.boilerplate.LOG_LEVEL !== "trace") {
+              return;
+            }
             logger.error(
               `attempted to use {hass.call} before data loaded. use {lifecycle.onReady}`,
             );

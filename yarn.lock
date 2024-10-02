@@ -2220,9 +2220,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digital-alchemy/core@npm:^24.9.5":
-  version: 24.9.5
-  resolution: "@digital-alchemy/core@npm:24.9.5"
+"@digital-alchemy/core@npm:^24.10.1":
+  version: 24.10.1
+  resolution: "@digital-alchemy/core@npm:24.10.1"
   dependencies:
     chalk: "npm:^5"
     dayjs: "npm:^1"
@@ -2232,7 +2232,7 @@ __metadata:
     minimist: "npm:^1"
     node-cron: "npm:^3"
     uuid: "npm:^9 || ^10"
-  checksum: 10/efbefc2c620654d65fb8588e20f3ba23616712118d5bd7d0edbcbac92719b3a9152112c1e8dee8ecbb12dfdac45e6845afe57e2c42f964c8be3122b2e9a254c1
+  checksum: 10/3ad27f30fb49f559ef18db21390e5aa0e9c7abbd70a51bf3c114f9d4c108eaf3a7265d5f1e9ec43e22a5c719986dd85a2972c17e82bb1a30a6c43ccbae80c61e
   languageName: node
   linkType: hard
 
@@ -2241,7 +2241,7 @@ __metadata:
   resolution: "@digital-alchemy/hass@workspace:."
   dependencies:
     "@cspell/eslint-plugin": "npm:^8.14.4"
-    "@digital-alchemy/core": "npm:^24.9.5"
+    "@digital-alchemy/core": "npm:^24.10.1"
     "@digital-alchemy/synapse": "npm:^24.9.4"
     "@digital-alchemy/type-writer": "npm:^24.9.7"
     "@eslint/compat": "npm:^1.1.1"
@@ -2289,7 +2289,7 @@ __metadata:
     uuid: ^10
     ws: ^8
   bin:
-    mock-assistant: ./dist/mock_assistant/main.js
+    mock-assistant: ./scripts/mock-assistant.sh
   languageName: unknown
   linkType: soft
 

@@ -48,6 +48,9 @@ export function EntityManager({
   function warnEarly(method: string) {
     if (!init) {
       lifecycle.onReady(() => {
+        if (config.boilerplate.LOG_LEVEL !== "trace") {
+          return;
+        }
         logger.error(
           "attempted to use [%s] before application booted. use {lifecycle.onReady}",
           method,
