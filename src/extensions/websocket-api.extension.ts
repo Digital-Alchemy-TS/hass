@@ -175,17 +175,14 @@ export function WebsocketAPI({
   // #MARK: attachScheduledFunctions
   function attachScheduledFunctions() {
     logger.trace({ name: attachScheduledFunctions }, `attaching interval schedules`);
-    scheduler.interval({
-      exec: async () => await manageConnection(),
-      interval: config.hass.RETRY_INTERVAL * SECOND,
-    });
-    scheduler.interval({
-      exec: () => {
-        const target = Date.now() - SECOND * config.hass.SOCKET_AVG_DURATION;
-        MESSAGE_TIMESTAMPS = MESSAGE_TIMESTAMPS.filter(time => time > target);
-      },
-      interval: CLEANUP_INTERVAL * SECOND,
-    });
+    scheduler.setInterval(
+      async () => await manageConnection(),
+      config.hass.RETRY_INTERVAL * SECOND,
+    );
+    scheduler.setInterval(() => {
+      const target = Date.now() - SECOND * config.hass.SOCKET_AVG_DURATION;
+      MESSAGE_TIMESTAMPS = MESSAGE_TIMESTAMPS.filter(time => time > target);
+    }, CLEANUP_INTERVAL * SECOND);
   }
 
   lifecycle.onShutdownStart(async () => {
