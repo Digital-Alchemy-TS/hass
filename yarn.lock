@@ -2221,8 +2221,8 @@ __metadata:
   linkType: hard
 
 "@digital-alchemy/core@npm:^24.10.1":
-  version: 24.10.1
-  resolution: "@digital-alchemy/core@npm:24.10.1"
+  version: 24.10.4
+  resolution: "@digital-alchemy/core@npm:24.10.4"
   dependencies:
     chalk: "npm:^5"
     dayjs: "npm:^1"
@@ -2232,7 +2232,7 @@ __metadata:
     minimist: "npm:^1"
     node-cron: "npm:^3"
     uuid: "npm:^9 || ^10"
-  checksum: 10/3ad27f30fb49f559ef18db21390e5aa0e9c7abbd70a51bf3c114f9d4c108eaf3a7265d5f1e9ec43e22a5c719986dd85a2972c17e82bb1a30a6c43ccbae80c61e
+  checksum: 10/19c904f8641c2a4f6030086307b831b0bab1c4addc36379cefa67bbca3e804c0a9556e009e57cdfd4557adec78190b8569f97c2f0d755532c6700d511b215ddc
   languageName: node
   linkType: hard
 
