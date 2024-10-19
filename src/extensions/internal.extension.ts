@@ -89,7 +89,7 @@ export function FetchInternals({ logger, context: parentContext }: TServiceParam
       ...fetchWith
     }: Partial<FetchArguments<BODY>>) {
       const contentType = is.object(body) ? { "Content-Type": "application/json" } : {};
-      const result = await global.fetch(fetchCreateUrl(fetchWith), {
+      const result = await globalThis.fetch(fetchCreateUrl(fetchWith), {
         body: is.object(body) ? JSON.stringify(body) : body,
         headers: {
           ...contentType,
