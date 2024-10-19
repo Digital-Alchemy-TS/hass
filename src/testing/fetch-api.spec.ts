@@ -28,7 +28,7 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(async () => {
-          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+          const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
             return {
               text: () => "[]",
             } as unknown as Response;
@@ -54,7 +54,7 @@ describe("FetchAPI", () => {
     it("should format calendarSearch properly", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "[]",
           } as unknown as Response;
@@ -78,7 +78,7 @@ describe("FetchAPI", () => {
     it("should format callService properly", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
           } as unknown as Response;
@@ -103,7 +103,7 @@ describe("FetchAPI", () => {
     it("should format checkConfig properly", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
           } as unknown as Response;
@@ -166,7 +166,7 @@ describe("FetchAPI", () => {
     it("should format fetchEntityCustomizations properly", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
           } as unknown as Response;
@@ -186,7 +186,7 @@ describe("FetchAPI", () => {
     it("should format fetchEntityHistory properly", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
           } as unknown as Response;
@@ -207,7 +207,7 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       const body = { magic: true };
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
           } as unknown as Response;
@@ -276,7 +276,7 @@ describe("FetchAPI", () => {
     it("should format getLogs properly", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "[]",
           } as unknown as Response;
@@ -296,7 +296,7 @@ describe("FetchAPI", () => {
     it("should format getRawLogs properly", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
           } as unknown as Response;
@@ -317,7 +317,7 @@ describe("FetchAPI", () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
         lifecycle.onReady(async () => {
-          const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+          const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
             return {
               text: () => "{}",
             } as unknown as Response;
@@ -337,7 +337,7 @@ describe("FetchAPI", () => {
     it("should format updateEntity properly", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
           } as unknown as Response;
@@ -369,7 +369,7 @@ describe("FetchAPI", () => {
         magic: true,
       };
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
           } as unknown as Response;
@@ -390,7 +390,7 @@ describe("FetchAPI", () => {
     it("should format checkCredentials properly", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = jest.spyOn(global, "fetch").mockImplementation(async () => {
+        const spy = jest.spyOn(globalThis, "fetch").mockImplementation(async () => {
           return {
             text: () => "{}",
           } as unknown as Response;
