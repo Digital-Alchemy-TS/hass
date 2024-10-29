@@ -38,8 +38,16 @@ export type TEntityUpdateCallback<ENTITY_ID extends ANY_ENTITY> = (
   remove: () => TBlackHole,
 ) => TBlackHole;
 
+export type RemovableCallbackOptions = {
+  /**
+   * Entity will emit an update event in response to `lifecycle.onReady` (when current state is settled)
+   */
+  runOnInit?: boolean;
+};
+
 export type RemovableCallback<ENTITY_ID extends ANY_ENTITY> = (
   callback: TEntityUpdateCallback<ENTITY_ID>,
+  options?: RemovableCallbackOptions,
 ) => {
   remove: () => void;
 };

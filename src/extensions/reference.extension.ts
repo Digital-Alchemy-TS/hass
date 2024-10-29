@@ -26,6 +26,7 @@ import {
   PICK_FROM_FLOOR,
   PICK_FROM_LABEL,
   PICK_FROM_PLATFORM,
+  RemovableCallbackOptions,
 } from "../helpers";
 
 export function ReferenceExtension({
@@ -33,6 +34,7 @@ export function ReferenceExtension({
   logger,
   internal,
   event,
+  lifecycle,
 }: TServiceParams): HassReferenceService {
   const ENTITY_PROXIES = new Map<ANY_ENTITY, ByIdProxy<ANY_ENTITY>>();
   // #MARK:proxyGetLogic
@@ -116,16 +118,22 @@ export function ReferenceExtension({
             switch (property) {
               // * onUpdate
               case "onUpdate": {
-                return (callback: TAnyFunction) => {
+                return (callback: TAnyFunction, options: RemovableCallbackOptions = {}) => {
                   const removableCallback = async (
-                    a: ENTITY_STATE<ENTITY_ID>,
-                    b: ENTITY_STATE<ENTITY_ID>,
-                  ) => await internal.safeExec(async () => callback(a, b, remove));
+                    new_state: ENTITY_STATE<ENTITY_ID>,
+                    old_state: ENTITY_STATE<ENTITY_ID>,
+                  ) => await internal.safeExec(async () => callback(new_state, old_state, remove));
                   function remove() {
                     event.removeListener(entity_id, removableCallback);
                   }
 
                   event.on(entity_id, removableCallback);
+                  if (options.runOnInit) {
+                    lifecycle.onReady(() => {
+                      const current = hass.entity.getCurrentState(entity_id);
+                      removableCallback(current, current);
+                    });
+                  }
                   return { remove };
                 };
               }
