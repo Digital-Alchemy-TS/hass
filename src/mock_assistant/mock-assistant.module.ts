@@ -85,6 +85,13 @@ export const createTestRunner = () =>
     .configure({
       boilerplate: { IS_TEST: true },
     })
+    .setOptions({
+      configSources: {
+        argv: false,
+        env: false,
+        file: false,
+      },
+    })
     .appendLibrary(LIB_MOCK_ASSISTANT);
 
 export const hassTestRunner = createTestRunner();
