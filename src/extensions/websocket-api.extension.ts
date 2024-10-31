@@ -493,10 +493,10 @@ export function WebsocketAPI({
     } else {
       socketEvents.on(event, callback);
     }
-    return () => {
+    return is.removeFn(() => {
       logger.trace({ context, event, name: onEvent }, `removing socket event listener`);
       socketEvents.removeListener(event, callback);
-    };
+    });
   }
 
   // #MARK: subscribe
@@ -506,7 +506,7 @@ export function WebsocketAPI({
     exec,
   }: SocketSubscribeOptions<EVENT>) {
     await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
-    hass.socket.onEvent({
+    return hass.socket.onEvent({
       context,
       event: event_type,
       exec,
@@ -527,6 +527,7 @@ export function WebsocketAPI({
       // attach anyways, for restarts or whatever
     }
     event.on(SOCKET_CONNECTED, wrapped);
+    return is.removeFn(() => event.removeListener(SOCKET_CONNECTED, wrapped));
   }
 
   // #MARK: return object

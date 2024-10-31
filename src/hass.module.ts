@@ -7,13 +7,13 @@ import {
   Configure,
   Device,
   EntityManager,
-  Events,
+  EventsService,
   FetchAPI,
   FetchInternals,
   Floor,
   IDByExtension,
   Label,
-  ReferenceExtension,
+  ReferenceService,
   Registry,
   WebsocketAPI,
   Zone,
@@ -158,7 +158,7 @@ export const LIB_HASS = CreateLibrary({
     /**
      * named event attachments
      */
-    events: Events,
+    events: EventsService,
 
     /**
      * rest api commands
@@ -188,7 +188,7 @@ export const LIB_HASS = CreateLibrary({
     /**
      * obtain references to entities
      */
-    refBy: ReferenceExtension,
+    refBy: ReferenceService,
 
     /**
      * interact with the home assistant registry
