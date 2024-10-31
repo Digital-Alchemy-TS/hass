@@ -184,7 +184,7 @@ export function ReferenceService({
               event.on(SOCKET_CONNECTED, removableCallback);
               listeners.add(remove);
 
-              return { remove };
+              return is.removeFn(remove);
             };
           }
 
@@ -217,6 +217,7 @@ export function ReferenceService({
               };
               listeners.add(remove);
               event.once(entity_id, wrapped);
+              return is.removeFn(remove);
             };
           }
 
