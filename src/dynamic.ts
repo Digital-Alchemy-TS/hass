@@ -6,6 +6,8 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 
 // @ts-nocheck
+import { RequireAtLeastOne } from "type-fest";
+
 import {
   AndroidNotificationData,
   AppleNotificationData,
@@ -3991,83 +3993,86 @@ export type iCallService = {
      *
      * > Speaks something using text-to-speech on a media player.
      */
-    speak(service_data?: {
-      /**
-       * ## Cache
-       *
-       * > Stores this message locally so that when the text is requested again, the output can be produced more quickly.
-       *
-       * ### Default
-       *
-       * > ```json
-       * > true
-       * > ```
-       */
-      cache?: boolean;
-      /**
-       * ## Language
-       *
-       * > Language to use for speech generation.
-       *
-       * ### Example
-       *
-       * > ```json
-       * > {
-       * >   "language": "ru"
-       * > }
-       * > ```
-       */
-      language?: string;
-      /**
-       * ## Media player entity
-       *
-       * > Media players to play the message.
-       */
-      media_player_entity_id: PICK_ENTITY<"media_player"> | PICK_ENTITY<"media_player">[];
-      /**
-       * ## Message
-       *
-       * > The text you want to convert into speech so that you can listen to it on your device.
-       *
-       * ### Example
-       *
-       * > ```json
-       * > {
-       * >   "message": "My name is hanna"
-       * > }
-       * > ```
-       */
-      message: string;
-      /**
-       * ## Options
-       *
-       * > A dictionary containing integration-specific options.
-       *
-       * ### Example
-       *
-       * > ```json
-       * > {
-       * >   "options": "platform specific"
-       * > }
-       * > ```
-       *
-       * ## Selector
-       *
-       * > ```yaml
-       * > object: null
-       * > ```
-       */
-      options?: unknown;
-      /**
-       * Assisted definition
-       * > ```yaml
-       * > entity:
-       * >   - domain:
-       * >       - tts
-       * > ```
-       */
-      entity_id: PICK_ENTITY<"tts"> | PICK_ENTITY<"tts">[];
-    }): Promise<void>;
+    speak(
+      service_data?: {
+        /**
+         * ## Cache
+         *
+         * > Stores this message locally so that when the text is requested again, the output can be produced more quickly.
+         *
+         * ### Default
+         *
+         * > ```json
+         * > true
+         * > ```
+         */
+        cache?: boolean;
+        /**
+         * ## Language
+         *
+         * > Language to use for speech generation.
+         *
+         * ### Example
+         *
+         * > ```json
+         * > {
+         * >   "language": "ru"
+         * > }
+         * > ```
+         */
+        language?: string;
+        /**
+         * ## Media player entity
+         *
+         * > Media players to play the message.
+         */
+        media_player_entity_id: PICK_ENTITY<"media_player"> | PICK_ENTITY<"media_player">[];
+        /**
+         * ## Message
+         *
+         * > The text you want to convert into speech so that you can listen to it on your device.
+         *
+         * ### Example
+         *
+         * > ```json
+         * > {
+         * >   "message": "My name is hanna"
+         * > }
+         * > ```
+         */
+        message: string;
+        /**
+         * ## Options
+         *
+         * > A dictionary containing integration-specific options.
+         *
+         * ### Example
+         *
+         * > ```json
+         * > {
+         * >   "options": "platform specific"
+         * > }
+         * > ```
+         *
+         * ## Selector
+         *
+         * > ```yaml
+         * > object: null
+         * > ```
+         */
+        options?: unknown;
+      } & RequireAtLeastOne<{
+        /**
+         * Assisted definition
+         * > ```yaml
+         * > entity:
+         * >   - domain:
+         * >       - tts
+         * > ```
+         */
+        entity_id: PICK_ENTITY<"tts"> | PICK_ENTITY<"tts">[];
+      }>,
+    ): Promise<void>;
   };
   // # MARK: zone
   zone: {

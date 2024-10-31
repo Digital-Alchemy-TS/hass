@@ -43,6 +43,7 @@ import {
   PICK_FROM_FLOOR,
   PICK_FROM_LABEL,
   PICK_FROM_PLATFORM,
+  RemoveCallback,
 } from "./utility.helper";
 import {
   EntityHistoryDTO,
@@ -124,7 +125,7 @@ export type HassWebsocketAPI = {
   /**
    * run a callback when the socket finishes (re)connecting
    */
-  onConnect: (callback: () => TBlackHole) => void;
+  onConnect: (callback: () => TBlackHole) => RemoveCallback;
   /**
    * Attach to the incoming stream of socket events. Do your own filtering and processing from there
    *
@@ -135,7 +136,7 @@ export type HassWebsocketAPI = {
     event,
     once,
     exec,
-  }: OnHassEventOptions<DATA>) => () => void;
+  }: OnHassEventOptions<DATA>) => RemoveCallback;
   /**
    * @internal
    *
@@ -179,7 +180,7 @@ export type HassWebsocketAPI = {
     event_type,
     context,
     exec,
-  }: SocketSubscribeOptions<EVENT>) => Promise<void>;
+  }: SocketSubscribeOptions<EVENT>) => Promise<RemoveCallback>;
   /**
    * remove the current socket connection to home assistant
    *
@@ -280,12 +281,12 @@ export type HassEntityManager = {
 export type SimpleCallback = () => TBlackHole;
 
 export type HassEventsService = {
-  onAreaRegistryUpdate: (callback: SimpleCallback) => void;
-  onDeviceRegistryUpdate: (callback: SimpleCallback) => void;
-  onEntityRegistryUpdate: (callback: SimpleCallback) => void;
-  onFloorRegistryUpdate: (callback: SimpleCallback) => void;
-  onLabelRegistryUpdate: (callback: SimpleCallback) => void;
-  onZoneRegistryUpdate: (callback: SimpleCallback) => void;
+  onAreaRegistryUpdate: (callback: SimpleCallback) => RemoveCallback;
+  onDeviceRegistryUpdate: (callback: SimpleCallback) => RemoveCallback;
+  onEntityRegistryUpdate: (callback: SimpleCallback) => RemoveCallback;
+  onFloorRegistryUpdate: (callback: SimpleCallback) => RemoveCallback;
+  onLabelRegistryUpdate: (callback: SimpleCallback) => RemoveCallback;
+  onZoneRegistryUpdate: (callback: SimpleCallback) => RemoveCallback;
 };
 
 export type HassFloorService = {

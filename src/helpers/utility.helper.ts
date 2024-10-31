@@ -106,6 +106,13 @@ function isDomain<DOMAIN extends ALL_DOMAINS>(
 }
 
 is.domain = isDomain;
+is.removeFn = (remove: () => void) => {
+  const out = remove as RemoveCallback;
+  out.remove = remove;
+  return out;
+};
+
+export type RemoveCallback = { remove: () => void; (): void };
 
 declare module "@digital-alchemy/core" {
   export interface IsIt {
@@ -113,6 +120,7 @@ declare module "@digital-alchemy/core" {
      * Check to see if an entity matches
      */
     domain: typeof isDomain;
+    removeFn: (remove: () => void) => RemoveCallback;
   }
 }
 

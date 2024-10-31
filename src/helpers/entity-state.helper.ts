@@ -11,6 +11,7 @@ import {
   ENTITY_STATE,
   GetDomain,
   PICK_ENTITY,
+  RemoveCallback,
 } from "./utility.helper";
 
 export interface HassEntityContext {
@@ -40,9 +41,7 @@ export type TEntityUpdateCallback<ENTITY_ID extends ANY_ENTITY> = (
 
 export type RemovableCallback<ENTITY_ID extends ANY_ENTITY> = (
   callback: TEntityUpdateCallback<ENTITY_ID>,
-) => {
-  remove: () => void;
-};
+) => RemoveCallback;
 
 export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & {
   entity_id: ENTITY_ID;
@@ -57,7 +56,7 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & 
   /**
    * Run callback once, for next update
    */
-  once: (callback: TEntityUpdateCallback<ENTITY_ID>) => void;
+  once: (callback: TEntityUpdateCallback<ENTITY_ID>) => RemoveCallback;
   /**
    * Will resolve with the next state of the next value. No time limit
    */
