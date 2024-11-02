@@ -70,9 +70,15 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & 
    */
   previous: ENTITY_STATE<ENTITY_ID>;
   /**
-   * Remove all `.onUpdate` listeners for this entity
+   * add a listener that can be removed with the removeAllListeners call
    *
-   * If you want to remove a particular one, use use the return value of the `.onUpdate` call instead
+   * for use by other libraries
+   */
+  addListener: (remove: RemoveCallback) => void;
+  /**
+   * Remove all resources related to this particular proxy
+   *
+   * Will interrupt methods like "nextState", causing them to never return
    */
   removeAllListeners: () => void;
 } & (GetDomain<ENTITY_ID> extends ALL_SERVICE_DOMAINS
