@@ -26,6 +26,7 @@ import {
   PICK_FROM_FLOOR,
   PICK_FROM_LABEL,
   PICK_FROM_PLATFORM,
+  RemoveCallback,
 } from "../helpers";
 
 /**
@@ -185,6 +186,13 @@ export function ReferenceService({
               listeners.add(remove);
 
               return is.removeFn(remove);
+            };
+          }
+
+          // #MARK: addListener
+          case "addListener": {
+            return function (remove: RemoveCallback) {
+              listeners.add(remove);
             };
           }
 
