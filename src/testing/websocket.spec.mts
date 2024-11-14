@@ -21,9 +21,7 @@ describe("Websocket", () => {
     it("should emit a socket message with subscribeEvents", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass, context }) => {
-        const spy = vi
-          .spyOn(hass.socket, "sendMessage")
-          .mockImplementation(async () => undefined);
+        const spy = vi.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
         lifecycle.onReady(async () => {
           await hass.socket.subscribe({
             context,
@@ -43,9 +41,7 @@ describe("Websocket", () => {
     it("should emit a socket message with fireEvent", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = vi
-          .spyOn(hass.socket, "sendMessage")
-          .mockImplementation(async () => undefined);
+        const spy = vi.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
         lifecycle.onReady(async () => {
           const data = { example: "data" };
           await hass.socket.fireEvent("test_event", data);

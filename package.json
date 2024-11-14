@@ -8,7 +8,7 @@
   "scripts": {
     "build": "rm -rf dist/; tsc",
     "lint": "eslint src",
-    "test": "./scripts/test.sh",
+    "test": "vitest",
     "prepublishOnly": "yarn build",
     "upgrade": "yarn up '@digital-alchemy/*'"
   },

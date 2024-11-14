@@ -1,4 +1,5 @@
 import { env } from "process";
+import { MockInstance } from "vitest";
 
 import { hassTestRunner } from "../mock_assistant/index.mts";
 
@@ -107,7 +108,7 @@ describe("Config", () => {
         .spyOn(process, "exit")
         // @ts-expect-error testing
         .mockImplementation(() => {});
-      let spy: vi.SpyInstance;
+      let spy: MockInstance;
 
       await hassTestRunner
         .configure({
@@ -116,9 +117,9 @@ describe("Config", () => {
         .run(({ internal, hass }) => {
           const logger = internal.boilerplate.logger.getBaseLogger();
           spy = vi.spyOn(logger, "info").mockImplementation(() => {});
-          vi
-            .spyOn(hass.fetch, "checkCredentials")
-            .mockImplementation(async () => ({ message: "ok" }));
+          vi.spyOn(hass.fetch, "checkCredentials").mockImplementation(async () => ({
+            message: "ok",
+          }));
         });
 
       expect(exitSpy).toHaveBeenCalledWith(1);
@@ -127,7 +128,7 @@ describe("Config", () => {
 
     // # Should error log on bad token
     it("should error log on bad token", async () => {
-      let spy: vi.SpyInstance;
+      let spy: MockInstance;
       const exitSpy = vi
         .spyOn(process, "exit")
         // @ts-expect-error testing
@@ -138,8 +139,7 @@ describe("Config", () => {
         .run(({ internal, hass }) => {
           const logger = internal.boilerplate.logger.getBaseLogger();
           spy = vi.spyOn(logger, "error").mockImplementation(() => {});
-          vi
-            .spyOn(hass.fetch, "checkCredentials")
+          vi.spyOn(hass.fetch, "checkCredentials")
             // anything that isn't the success works
             .mockImplementation(async () => ({ message: "big_bad_error" }));
         });
@@ -155,7 +155,7 @@ describe("Config", () => {
     // # Should error log on bad url
     it("should error log on bad url", async () => {
       const error = new Error("BOOM");
-      let spy: vi.SpyInstance;
+      let spy: MockInstance;
       const exitSpy = vi
         .spyOn(process, "exit")
         // @ts-expect-error testing
@@ -169,8 +169,7 @@ describe("Config", () => {
         .run(({ internal, hass }) => {
           const logger = internal.boilerplate.logger.getBaseLogger();
           spy = vi.spyOn(logger, "error").mockImplementation(() => {});
-          vi
-            .spyOn(hass.fetch, "checkCredentials")
+          vi.spyOn(hass.fetch, "checkCredentials")
             // anything that isn't the success works
             .mockImplementation(async () => {
               throw error;

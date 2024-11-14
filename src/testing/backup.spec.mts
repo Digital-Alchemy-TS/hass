@@ -44,9 +44,7 @@ describe("Backup", () => {
     expect.assertions(1);
     await hassTestRunner.run(({ lifecycle, hass }) => {
       lifecycle.onReady(async () => {
-        const spy = vi
-          .spyOn(hass.socket, "sendMessage")
-          .mockImplementation(async () => undefined);
+        const spy = vi.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
         await hass.backup.download("test", "/foo/bar");
         expect(spy).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -145,9 +143,7 @@ describe("Backup", () => {
         ] as BackupResponse[];
         const length = responses.length;
 
-        const spy = vi
-          .spyOn(hass.backup, "list")
-          .mockImplementation(async () => responses.shift());
+        const spy = vi.spyOn(hass.backup, "list").mockImplementation(async () => responses.shift());
 
         await hass.backup.generate();
         expect(spy).toHaveBeenCalledTimes(length - SINGLE);

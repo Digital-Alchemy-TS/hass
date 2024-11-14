@@ -1,6 +1,6 @@
 import { CreateApplication, TServiceParams } from "@digital-alchemy/core";
 
-import { LIB_HASS } from ".";
+import { LIB_HASS } from "./index.mts";
 
 /**
  * Use from the node command line to probe apis

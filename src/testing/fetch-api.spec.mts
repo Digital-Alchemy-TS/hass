@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { MockInstance } from "vitest";
 
 import { HassConfig } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
@@ -122,7 +123,7 @@ describe("FetchAPI", () => {
 
     // TODO: this results in an open handle
     // not sure why
-    xit("exits for low version at boot", async () => {
+    it.skip("exits for low version at boot", async () => {
       expect.assertions(2);
       const exitSpy = vi.spyOn(process, "exit");
 
@@ -146,8 +147,8 @@ describe("FetchAPI", () => {
     // TODO: Need a way to make this pass without breaking all other tests
     it.skip("passes for valid version", async () => {
       expect.assertions(2);
-      let mock: vi.SpyInstance;
-      let exitSpy: vi.SpyInstance;
+      let mock: MockInstance;
+      let exitSpy: MockInstance;
       try {
         await hassTestRunner.run(({ hass }) => {
           mock = vi

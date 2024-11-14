@@ -11,7 +11,7 @@ describe("Entity", () => {
 
   describe("API", () => {
     describe("Updates", () => {
-      xit("should debounce updates properly", async () => {
+      it.skip("should debounce updates properly", async () => {
         expect.assertions(1);
         await new Promise<void>(async done => {
           await hassTestRunner.run(({ hass }) => {
