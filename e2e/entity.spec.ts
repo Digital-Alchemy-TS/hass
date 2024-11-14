@@ -6,8 +6,8 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { PICK_ENTITY } from "../helpers";
-import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import { PICK_ENTITY } from "../helpers/index.mts";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant/index.mts";
 import { BASE_URL, TOKEN } from "./utils";
 
 describe("Entity E2E", () => {

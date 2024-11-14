@@ -60,18 +60,17 @@
     "@digital-alchemy/core": "^24.11.1",
     "@digital-alchemy/synapse": "^24.11.1",
     "@digital-alchemy/type-writer": "^24.10.2",
-    "@eslint/compat": "^1.2.2",
+    "@eslint/compat": "^1.2.3",
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.14.0",
     "@faker-js/faker": "^9.2.0",
-    "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.9.0",
     "@types/node-cron": "^3.0.11",
     "@types/semver": "^7.5.8",
     "@types/ws": "^8.5.13",
-    "@typescript-eslint/eslint-plugin": "8.13.0",
-    "@typescript-eslint/parser": "8.13.0",
+    "@typescript-eslint/eslint-plugin": "8.14.0",
+    "@typescript-eslint/parser": "8.14.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "eslint": "9.14.0",
@@ -85,15 +84,11 @@
     "eslint-plugin-sonarjs": "^2.0.4",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-unicorn": "^56.0.0",
-    "globals": "^15.12.0",
-    "jest": "^29.7.0",
-    "jest-environment-node": "^29.7.0",
     "node-cron": "^3.0.3",
     "prettier": "^3.3.3",
     "semver": "^7.6.3",
-    "ts-jest": "^29.2.5",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3",
+    "typescript": "^5.7.0-beta",
     "uuid": "^11.0.3",
     "ws": "^8.18.0"
   },
@@ -103,44 +98,11 @@
     "semver": "^7.6.3",
     "type-fest": "^4.26.1",
     "uuid": "^11.0.3",
+    "vitest": "^2.1.5",
     "ws": "^8.18.0"
   },
-  "jest": {
-    "extensionsToTreatAsEsm": [
-      ".ts"
-    ],
-    "collectCoverage": true,
-    "coverageReporters": [
-      "text",
-      "cobertura"
-    ],
-    "coveragePathIgnorePatterns": [
-      "testing/",
-      "src/mock_assistant"
-    ],
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json",
-      "node"
-    ],
-    "testMatch": [
-      "**/testing/?(*.)+(spec|test).ts"
-    ],
-    "setupFiles": [
-      "<rootDir>/test-setup.ts"
-    ],
-    "transform": {
-      "^.+\\.ts$": [
-        "ts-jest",
-        {
-          "tsconfig": "tsconfig.spec.json",
-          "useESM": true
-        }
-      ]
-    }
-  },
-  "packageManager": "yarn@4.5.0"
+  "packageManager": "yarn@4.5.1",
+  "resolutions": {
+    "@digital-alchemy/core": "portal:/home/zoe/DigitalAlchemyTS/core"
+  }
 }

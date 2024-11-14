@@ -9,8 +9,8 @@
     "esModuleInterop": true
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.spec.ts",
+    "src/**/*.mts",
+    "src/**/*.spec.mts",
     "src/e2e/**/*ts"
   ],
   "exclude": [

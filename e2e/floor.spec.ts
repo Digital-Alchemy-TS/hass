@@ -6,9 +6,9 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { TFloorId } from "../dynamic";
-import { FLOOR_REGISTRY_UPDATED } from "../helpers";
-import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import { TFloorId } from "../dynamic.mts";
+import { FLOOR_REGISTRY_UPDATED } from "../helpers/index.mts";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant/index.mts";
 import { BASE_URL, TOKEN } from "./utils";
 
 describe("Floor E2E", () => {

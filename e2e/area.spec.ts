@@ -6,9 +6,9 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { TAreaId } from "../dynamic";
-import { AREA_REGISTRY_UPDATED, AreaDetails } from "../helpers";
-import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import { TAreaId } from "../dynamic.mts";
+import { AREA_REGISTRY_UPDATED, AreaDetails } from "../helpers/index.mts";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant/index.mts";
 import { BASE_URL, TOKEN } from "./utils";
 
 describe("Area E2E", () => {

@@ -6,7 +6,7 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant/index.mts";
 import { BASE_URL, TOKEN } from "./utils";
 
 const SETTLE_TIMEOUT = 1000;

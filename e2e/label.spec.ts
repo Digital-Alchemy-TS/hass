@@ -6,9 +6,9 @@ import {
   TServiceParams,
 } from "@digital-alchemy/core";
 
-import { TLabelId } from "../dynamic";
-import { LABEL_REGISTRY_UPDATED } from "../helpers";
-import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant";
+import { TLabelId } from "../dynamic.mts";
+import { LABEL_REGISTRY_UPDATED } from "../helpers/index.mts";
+import { CreateTestingApplication, SILENT_BOOT } from "../mock_assistant/index.mts";
 import { BASE_URL, TOKEN } from "./utils";
 
 describe("Label E2E", () => {

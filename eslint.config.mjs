@@ -46,9 +46,9 @@ export default [
       "plugin:prettier/recommended",
       "plugin:@cspell/recommended",
     )
-    .map((config) => ({ ...config, files: ["src/**/*.ts"] })),
+    .map((config) => ({ ...config, files: ["src/**/*.mts"] })),
   {
-    files: ["src/**/*.ts"],
+    files: ["src/**/*.mts"],
     languageOptions: {
       parser: tsParser,
       ecmaVersion: 5,
@@ -127,7 +127,7 @@ export default [
   },
   // module definitions
   {
-    files: ["src/**/*.module.ts"],
+    files: ["src/**/*.module.mts"],
     languageOptions: {
       parser: tsParser,
       ecmaVersion: 5,
@@ -141,7 +141,7 @@ export default [
     },
   },
   {
-    files: ["src/**/*.spec.ts"],
+    files: ["src/**/*.spec.mts"],
     languageOptions: {
       parser: tsParser,
       ecmaVersion: 5,
