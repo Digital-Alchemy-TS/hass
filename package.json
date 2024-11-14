@@ -51,8 +51,8 @@
     "node": ">=20"
   },
   "exports": {
-    ".": "./dist/index.js",
-    "./mock-assistant": "./dist/mock_assistant/index.js"
+    ".": "./dist/index.mjs",
+    "./mock-assistant": "./dist/mock_assistant/index.mjs"
   },
   "license": "MIT",
   "devDependencies": {
@@ -90,6 +90,7 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.0-beta",
     "uuid": "^11.0.3",
+    "vitest": "^2.1.5",
     "ws": "^8.18.0"
   },
   "dependencies": {
@@ -98,7 +99,6 @@
     "semver": "^7.6.3",
     "type-fest": "^4.26.1",
     "uuid": "^11.0.3",
-    "vitest": "^2.1.5",
     "ws": "^8.18.0"
   },
   "packageManager": "yarn@4.5.1",
