@@ -20,14 +20,16 @@
     "noUncheckedIndexedAccess": true,
     "sourceMap": true,
     "outDir": "./dist",
+    "types": ["vitest/globals"],
     "strict": false,
     "strictBindCallApply": true,
+    "rewriteRelativeImportExtensions": true,
     "strictFunctionTypes": true,
     "target": "ESNext",
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.mts"
   ],
   "exclude": [
     "node_modules",

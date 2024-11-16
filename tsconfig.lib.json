@@ -4,13 +4,13 @@
     "noImplicitAny": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.mts"
   ],
   "exclude": [
     "node_modules",
     "tmp",
     "dist",
     "src/testing",
-    "src/**/*.spec.ts"
+    "src/**/*.spec.mts"
   ]
 }
