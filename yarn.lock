@@ -2231,15 +2231,15 @@ __metadata:
   linkType: soft
 
 "@digital-alchemy/synapse@npm:^24.11.1":
-  version: 24.11.1
-  resolution: "@digital-alchemy/synapse@npm:24.11.1"
+  version: 24.11.3
+  resolution: "@digital-alchemy/synapse@npm:24.11.3"
   peerDependencies:
     "@digital-alchemy/core": "*"
     "@digital-alchemy/hass": "*"
     better-sqlite3: ^11
     dayjs: "*"
     uuid: "*"
-  checksum: 10/44249c004d596ef61cc7e0fa7011f991abeaec430a388a062cbb1ec1e84def60d991b68e2ae761e7f7d7a9dda3f07e2ef34e9abc31d10a1c2d776d44c46b6486
+  checksum: 10/1a0bfc98f5a0b9ebaa0bf6d13f82b47bc02ffa9ec68e79952182eaeb7ea0ccb4291b76d635f131d886ad36cf9d7a3a819f300ff3bee73539c781799177ec5408
   languageName: node
   linkType: hard
 
