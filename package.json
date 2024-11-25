@@ -57,7 +57,7 @@
   "license": "MIT",
   "devDependencies": {
     "@cspell/eslint-plugin": "^8.16.0",
-    "@digital-alchemy/core": "^24.11.3",
+    "@digital-alchemy/core": "^24.11.4",
     "@digital-alchemy/synapse": "^24.11.4",
     "@digital-alchemy/type-writer": "^24.11.3",
     "@eslint/compat": "^1.2.3",
@@ -65,7 +65,7 @@
     "@eslint/js": "^9.15.0",
     "@faker-js/faker": "^9.2.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.9.1",
+    "@types/node": "^22.9.3",
     "@types/node-cron": "^3.0.11",
     "@types/semver": "^7.5.8",
     "@types/ws": "^8.5.13",
@@ -88,16 +88,16 @@
     "prettier": "^3.3.3",
     "semver": "^7.6.3",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.0-beta",
+    "typescript": "^5.7.2",
     "uuid": "^11.0.3",
     "vitest": "^2.1.5",
     "ws": "^8.18.0"
   },
   "dependencies": {
-    "@digital-alchemy/core": "^24.11.3",
+    "@digital-alchemy/core": "^24.11.4",
     "dayjs": "^1.11.13",
     "semver": "^7.6.3",
-    "type-fest": "^4.27.0",
+    "type-fest": "^4.28.0",
     "uuid": "^11.0.3",
     "ws": "^8.18.0"
   },
