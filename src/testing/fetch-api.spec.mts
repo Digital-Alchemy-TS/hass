@@ -9,7 +9,7 @@ describe("FetchAPI", () => {
   const TOKEN =
     // TODO: Replace hard coded token w/ faker when avail
     // https://github.com/faker-js/faker/pull/2936
-    // eslint-disable-next-line @cspell/spellchecker
+    // eslint-disable-next-line @cspell/spellchecker, sonarjs/no-hardcoded-secrets
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6Imh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dhdGNoP3Y9ZFF3NHc5V2dYY1EifQ.gPIttZEaLZgov3VZziu3LovcgtDbj8H0-XfBg4f08Y0";
 
   hassTestRunner.configure({
