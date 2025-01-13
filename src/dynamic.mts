@@ -2,7 +2,6 @@
 /* eslint-disable sonarjs/redundant-type-aliases */
 /* eslint-disable @cspell/spellchecker */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable sonarjs/no-redundant-type-constituents */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 
 // @ts-nocheck
@@ -14,6 +13,7 @@ import {
   NotificationData,
   PICK_ENTITY,
 } from "./helpers/index.mts";
+import { DynamicMergeAttributes } from "./merge.mts";
 
 type PICK_FROM_PLATFORM<ID extends TPlatformId, DOMAIN extends TRawDomains = TRawDomains> = Extract<
   REGISTRY_SETUP["platform"][`_${ID}`],
@@ -25,9 +25,7 @@ export type ENTITY_SETUP = {
   "button.example": {
     state: string;
     entity_id: "button.example";
-    attributes: {
-      friendly_name: "Example button";
-    };
+    attributes: DynamicMergeAttributes<"button.example", { friendly_name: "Example button" }>;
   };
   "binary_sensor.hass_e2e_online": {
     attributes: {
