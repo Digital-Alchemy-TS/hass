@@ -70,7 +70,7 @@
     "@types/semver": "^7.5.8",
     "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "8.19.1",
-    "@typescript-eslint/parser": "8.19.1",
+    "@typescript-eslint/parser": "8.22.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "eslint": "9.18.0",
