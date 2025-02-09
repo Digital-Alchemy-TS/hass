@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import {
-  asyncNoop,
-  INCREMENT,
-  is,
-  SECOND,
-  sleep,
-  START,
-  TServiceParams,
-} from "@digital-alchemy/core";
+import { asyncNoop, INCREMENT, SECOND, sleep, START, TServiceParams } from "@digital-alchemy/core";
 import { env } from "process";
 
 import { iCallService } from "../dynamic.mts";
@@ -31,6 +23,7 @@ export function Configure({
   config,
   internal,
 }: TServiceParams): HassConfigService {
+  const { is } = internal.utils;
   lifecycle.onPreInit(() => {
     // HASSIO_TOKEN provided by home assistant to addons
     // SUPERVISOR_TOKEN used as alias elsewhere

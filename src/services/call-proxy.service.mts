@@ -1,4 +1,4 @@
-import { is, TServiceParams } from "@digital-alchemy/core";
+import { TServiceParams } from "@digital-alchemy/core";
 
 import { iCallService } from "../dynamic.mts";
 import { ALL_SERVICE_DOMAINS, PICK_SERVICE, PICK_SERVICE_PARAMETERS } from "../helpers/index.mts";
@@ -10,6 +10,7 @@ export function CallProxy({
   hass,
   config,
 }: TServiceParams): iCallService {
+  const { is } = internal.utils;
   let loaded = false;
   const rawProxy = {} as Record<string, Record<string, unknown>>;
   /**

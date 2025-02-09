@@ -1,6 +1,5 @@
 import {
   InternalError,
-  is,
   SECOND,
   sleep,
   START,
@@ -27,6 +26,14 @@ const CONNECTION_FAILED = 2;
 let messageCount = START;
 export const SOCKET_CONNECTED = "SOCKET_CONNECTED";
 
+type WaitingMap = Map<
+  number,
+  {
+    sent: unknown;
+    callback: (result: unknown) => TBlackHole;
+  }
+>;
+
 export function WebsocketAPI({
   context,
   event,
@@ -37,6 +44,8 @@ export function WebsocketAPI({
   logger,
   scheduler,
 }: TServiceParams): HassWebsocketAPI {
+  const { is } = internal.utils;
+
   /**
    * Local attachment points for socket events
    */
@@ -45,7 +54,7 @@ export function WebsocketAPI({
 
   let MESSAGE_TIMESTAMPS: number[] = [];
   let onSocketReady: () => void;
-  const waitingCallback = new Map<number, (result: unknown) => TBlackHole>();
+  const waitingCallback: WaitingMap = new Map();
   const isOld = (date: Dayjs) =>
     is.undefined(date) || date.diff(dayjs(), "s") >= config.hass.RETRY_INTERVAL;
 
@@ -248,7 +257,10 @@ export function WebsocketAPI({
       return undefined;
     }
     return await new Promise<RESPONSE_VALUE>(async done => {
-      waitingCallback.set(id, done as (result: unknown) => TBlackHole);
+      waitingCallback.set(id, {
+        callback: done as (result: unknown) => TBlackHole,
+        sent: data,
+      });
       await hass.socket.waitForReply(id, data, sentAt);
     });
   }
@@ -258,6 +270,7 @@ export function WebsocketAPI({
     if (!waitingCallback.has(id)) {
       return;
     }
+    const { sent } = waitingCallback.get(id);
     // this could happen around dropped connections, or a number of other reasons
     //
     // discard the promise so whatever flow is depending on this can get garbage collected
@@ -266,6 +279,7 @@ export function WebsocketAPI({
       {
         message: data,
         name: waitForReply,
+        sent,
         sentAt: internal.utils.relativeDate(sentAt),
       },
       `sent message, did not receive reply`,
@@ -464,21 +478,22 @@ export function WebsocketAPI({
       return;
     }
     if (waitingCallback.has(id)) {
-      const f = waitingCallback.get(id);
+      const { callback } = waitingCallback.get(id);
       waitingCallback.delete(id);
-      f(message.event.result);
+      callback(message.event.result);
     }
     socketEvents.emit(message.event.event_type, message.event);
   }
 
   function onMessageResult(id: number, message: SocketMessageDTO) {
     if (waitingCallback.has(id)) {
-      if (message.error) {
-        logger.error({ message, name: onMessageResult });
-      }
-      const f = waitingCallback.get(id);
+      const { callback, sent } = waitingCallback.get(id);
       waitingCallback.delete(id);
-      f(message.result);
+      if (message.error) {
+        logger.error({ message, name: "onMessageResult", sent }, "message result error");
+        return;
+      }
+      callback(message.result);
     }
   }
 
