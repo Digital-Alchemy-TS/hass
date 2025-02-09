@@ -1,4 +1,4 @@
-import { BootstrapException, is, TServiceParams } from "@digital-alchemy/core";
+import { BootstrapException, TServiceParams } from "@digital-alchemy/core";
 import { existsSync, readFileSync } from "fs";
 
 import { ANY_ENTITY, ENTITY_STATE } from "../../helpers/index.mts";
@@ -17,6 +17,7 @@ export function MockFixtures({
   context,
   mock_assistant,
 }: TServiceParams) {
+  const { is } = internal.utils;
   // This file DELIBERATELY breaks some rules
   // Setup actions that depend on config are not NORMALLY expected to run inside constructor
 

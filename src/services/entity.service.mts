@@ -3,7 +3,6 @@ import {
   each,
   eachSeries,
   INCREMENT,
-  is,
   SECOND,
   sleep,
   START,
@@ -38,6 +37,7 @@ export function EntityManager({
   context,
   internal,
 }: TServiceParams): HassEntityManager {
+  const { is } = internal.utils;
   // #MARK: Local vars
   /**
    * MASTER_STATE.switch.desk_light = {entity_id,state,attributes,...}

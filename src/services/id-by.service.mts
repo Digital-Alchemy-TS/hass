@@ -1,4 +1,4 @@
-import { is, TServiceParams } from "@digital-alchemy/core";
+import { TServiceParams } from "@digital-alchemy/core";
 
 import {
   TAreaId,
@@ -22,14 +22,20 @@ import {
   PICK_FROM_PLATFORM,
 } from "../helpers/index.mts";
 
-const check = <RAW extends ANY_ENTITY>(raw: RAW[], domains: ALL_DOMAINS[]) => {
-  if (!is.empty(domains)) {
-    raw = raw.filter(entity => is.domain(entity, domains));
-  }
-  return raw;
-};
+export function IDByExtension({
+  hass,
+  logger,
+  internal: {
+    utils: { is },
+  },
+}: TServiceParams): IDByInterface {
+  const check = <RAW extends ANY_ENTITY>(raw: RAW[], domains: ALL_DOMAINS[]) => {
+    if (!is.empty(domains)) {
+      raw = raw.filter(entity => is.domain(entity, domains));
+    }
+    return raw;
+  };
 
-export function IDByExtension({ hass, logger }: TServiceParams): IDByInterface {
   // * byDomain
   function byDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
     const MASTER_STATE = hass.entity._masterState();

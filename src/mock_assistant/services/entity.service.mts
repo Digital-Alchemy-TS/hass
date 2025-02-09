@@ -1,4 +1,4 @@
-import { deepExtend, InternalError, is, sleep, TServiceParams } from "@digital-alchemy/core";
+import { deepExtend, InternalError, sleep, TServiceParams } from "@digital-alchemy/core";
 
 import { TRawEntityIds } from "../../dynamic.mts";
 import { ENTITY_STATE, PICK_ENTITY } from "../../helpers/index.mts";
@@ -11,6 +11,7 @@ export function MockEntityExtension({
   config,
   mock_assistant,
 }: TServiceParams) {
+  const { is } = internal.utils;
   let entities = new Map<TRawEntityIds, ENTITY_STATE<TRawEntityIds>>();
 
   const origGetAll = hass.fetch.getAllEntities;

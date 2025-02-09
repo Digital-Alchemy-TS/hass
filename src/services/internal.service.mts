@@ -1,4 +1,4 @@
-import { FIRST, InternalError, is, TServiceParams } from "@digital-alchemy/core";
+import { FIRST, InternalError, TServiceParams } from "@digital-alchemy/core";
 import { createWriteStream } from "fs";
 import { pipeline } from "stream";
 import { promisify } from "util";
@@ -10,13 +10,17 @@ import {
   FetcherOptions,
   FetchProcessTypes,
   FetchWith,
+  isDomain,
   MaybeHttpError,
   TFetchBody,
 } from "../helpers/index.mts";
 
 const streamPipeline = promisify(pipeline);
 
-export function FetchInternals({ logger, context: parentContext }: TServiceParams) {
+export function FetchInternals({ internal, logger, context: parentContext }: TServiceParams) {
+  const { is } = internal.utils;
+  is.domain = isDomain;
+
   return ({ headers: base_headers, baseUrl: base_url, context: logContext }: FetcherOptions) => {
     const capabilities: string[] = [];
 

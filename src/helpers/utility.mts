@@ -97,7 +97,7 @@ export type GetDomain<ENTITY extends ANY_ENTITY> = ENTITY extends `${infer domai
   ? domain
   : never;
 
-function isDomain<DOMAIN extends ALL_DOMAINS>(
+export function isDomain<DOMAIN extends ALL_DOMAINS>(
   entity: string,
   domain: DOMAIN | DOMAIN[],
 ): entity is PICK_ENTITY<DOMAIN> {
@@ -105,7 +105,6 @@ function isDomain<DOMAIN extends ALL_DOMAINS>(
   return [domain].flat().includes(test);
 }
 
-is.domain = isDomain;
 is.removeFn = (remove: () => void) => {
   const out = remove as RemoveCallback;
   out.remove = remove;

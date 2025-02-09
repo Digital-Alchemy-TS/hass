@@ -1,4 +1,4 @@
-import { DOWN, is, NONE, sleep, TAnyFunction, TServiceParams, UP } from "@digital-alchemy/core";
+import { DOWN, NONE, sleep, TAnyFunction, TServiceParams, UP } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import { Get } from "type-fest";
 
@@ -86,6 +86,7 @@ export function ReferenceService({
   internal,
   event,
 }: TServiceParams): HassReferenceService {
+  const { is } = internal.utils;
   // #MARK:proxyGetLogic
   function proxyGetLogic<ENTITY extends ANY_ENTITY = ANY_ENTITY, PROPERTY extends string = string>(
     entity: ENTITY,

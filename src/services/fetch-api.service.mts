@@ -1,4 +1,4 @@
-import { DOWN, is, NO_CHANGE, SECOND, TServiceParams, UP } from "@digital-alchemy/core";
+import { DOWN, NO_CHANGE, SECOND, TServiceParams, UP } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import { lt } from "semver";
 
@@ -25,7 +25,16 @@ type SendBody<STATE extends string | number = string, ATTRIBUTES extends object 
   state?: STATE;
 };
 
-export function FetchAPI({ logger, lifecycle, context, hass, config }: TServiceParams) {
+export function FetchAPI({
+  logger,
+  lifecycle,
+  context,
+  hass,
+  config,
+  internal: {
+    utils: { is },
+  },
+}: TServiceParams) {
   const fetcher = hass.internals({ context });
   const { download: downloader } = fetcher;
 
