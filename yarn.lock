@@ -2023,17 +2023,17 @@ __metadata:
   linkType: soft
 
 "@digital-alchemy/synapse@npm:^25.1.1":
-  version: 25.1.1
-  resolution: "@digital-alchemy/synapse@npm:25.1.1"
+  version: 25.2.1
+  resolution: "@digital-alchemy/synapse@npm:25.2.1"
   dependencies:
-    better-sqlite3: "npm:^11.7.2"
+    better-sqlite3: "npm:^11.8.1"
   peerDependencies:
     "@digital-alchemy/core": "*"
     "@digital-alchemy/hass": "*"
     better-sqlite3: ^11
     dayjs: "*"
     uuid: "*"
-  checksum: 10/03a04944768773152937d878620d728eaf7decfbf4491a0d97c08b02dbb84b8703d6ddf1e3847c57c98925b20a93093f0ac195f989efe458213048ff74ac4a6b
+  checksum: 10/059d18d7d630d64ad19a4323efac36c2cf40765fd2152e236057cdf2167d3d5edbc08eaed73a272b1f1861155fb8099ed145db2724347ef20e653385b1e1c4ef
   languageName: node
   linkType: hard
 
@@ -3496,7 +3496,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"better-sqlite3@npm:^11.7.2":
+"better-sqlite3@npm:^11.8.1":
   version: 11.8.1
   resolution: "better-sqlite3@npm:11.8.1"
   dependencies:
