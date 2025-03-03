@@ -1,5 +1,4 @@
-import { TPlatformId } from "../../dynamic.mts";
-import { ALL_DOMAINS } from "../utility.mts";
+import { ALL_DOMAINS, TPlatformId } from "../../user.mts";
 
 export interface ServiceListSelectorTarget {
   domain?: ALL_DOMAINS;

@@ -1,26 +1,23 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import {
-  TAreaId,
-  TDeviceId,
-  TFloorId,
-  TLabelId,
-  TPlatformId,
-  TUniqueId,
-  TUniqueIDMapping,
-} from "../dynamic.mts";
+import { EntityRegistryItem, IDByInterface } from "../index.mts";
 import {
   ALL_DOMAINS,
   ANY_ENTITY,
-  EntityRegistryItem,
-  IDByInterface,
+  HassUniqueIdMapping,
   PICK_ENTITY,
   PICK_FROM_AREA,
   PICK_FROM_DEVICE,
   PICK_FROM_FLOOR,
   PICK_FROM_LABEL,
   PICK_FROM_PLATFORM,
-} from "../helpers/index.mts";
+  TAreaId,
+  TDeviceId,
+  TFloorId,
+  TLabelId,
+  TPlatformId,
+  TUniqueId,
+} from "../user.mts";
 
 export function IDByExtension({
   hass,
@@ -47,8 +44,8 @@ export function IDByExtension({
   // * unique_id
   function unique_id<
     UNIQUE_ID extends TUniqueId,
-    ENTITY_ID extends Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
-      TUniqueIDMapping[UNIQUE_ID],
+    ENTITY_ID extends Extract<HassUniqueIdMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
+      HassUniqueIdMapping[UNIQUE_ID],
       ANY_ENTITY
     >,
   >(unique_id: UNIQUE_ID): ENTITY_ID {

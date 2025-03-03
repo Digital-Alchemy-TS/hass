@@ -3,22 +3,19 @@ import { Dayjs } from "dayjs";
 import { Except } from "type-fest";
 
 import {
+  ALL_DOMAINS,
+  ANY_ENTITY,
+  GetDomain,
   iCallService,
+  PICK_ENTITY,
   TAreaId,
   TDeviceId,
   TLabelId,
   TPlatformId,
   TRawDomains,
-} from "../dynamic.mts";
+} from "../user.mts";
 import { SensorUnitOfMeasurement } from "./registry.mts";
-import {
-  ALL_DOMAINS,
-  ALL_SERVICE_DOMAINS,
-  ANY_ENTITY,
-  ENTITY_STATE,
-  GetDomain,
-  PICK_ENTITY,
-} from "./utility.mts";
+import { ALL_SERVICE_DOMAINS, ENTITY_STATE } from "./utility.mts";
 
 export interface HassEntityContext {
   id: string | null;

@@ -1,4 +1,13 @@
 import {
+  ALL_DOMAINS,
+  ANY_ENTITY,
+  HassUniqueIdMapping,
+  PICK_ENTITY,
+  PICK_FROM_AREA,
+  PICK_FROM_DEVICE,
+  PICK_FROM_FLOOR,
+  PICK_FROM_LABEL,
+  PICK_FROM_PLATFORM,
   TAreaId,
   TDeviceId,
   TFloorId,
@@ -6,18 +15,7 @@ import {
   TPlatformId,
   TRawEntityIds,
   TUniqueId,
-  TUniqueIDMapping,
-} from "../dynamic.mts";
-import {
-  ALL_DOMAINS,
-  ANY_ENTITY,
-  PICK_ENTITY,
-  PICK_FROM_AREA,
-  PICK_FROM_DEVICE,
-  PICK_FROM_FLOOR,
-  PICK_FROM_LABEL,
-  PICK_FROM_PLATFORM,
-} from "./utility.mts";
+} from "../user.mts";
 
 export type IDByInterface = {
   area: <AREA extends TAreaId, DOMAIN extends ALL_DOMAINS>(
@@ -43,8 +41,8 @@ export type IDByInterface = {
   ) => PICK_FROM_PLATFORM<PLATFORM, DOMAIN>[];
   unique_id: <
     UNIQUE_ID extends TUniqueId,
-    ENTITY_ID extends Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
-      TUniqueIDMapping[UNIQUE_ID],
+    ENTITY_ID extends Extract<HassUniqueIdMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
+      HassUniqueIdMapping[UNIQUE_ID],
       TRawEntityIds
     >,
   >(

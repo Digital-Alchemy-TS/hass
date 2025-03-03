@@ -1,9 +1,10 @@
 import { TBlackHole, TContext } from "@digital-alchemy/core";
 import { Dayjs } from "dayjs";
 
+import { ALL_DOMAINS, ANY_ENTITY, PICK_ENTITY } from "../user.mts";
 import { HassSocketMessageTypes } from "./constants.mts";
 import { EntityUpdateEvent } from "./entity-state.mts";
-import { ALL_DOMAINS, ANY_ENTITY, ENTITY_STATE, PICK_ENTITY } from "./utility.mts";
+import { ENTITY_STATE } from "./utility.mts";
 
 export interface SignRequestResponse {
   path: string;

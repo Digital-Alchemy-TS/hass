@@ -6,7 +6,6 @@ import { MIN_SUPPORTED_HASS_VERSION } from "../helpers/constants.mts";
 import { FetchArguments, FilteredFetchArguments, TFetchBody } from "../helpers/fetch.mts";
 import {
   ALL_SERVICE_DOMAINS,
-  ANY_ENTITY,
   CalendarEvent,
   CalendarFetchOptions,
   CheckConfigResult,
@@ -19,6 +18,7 @@ import {
   PostConfigPriorities,
   RawCalendarEvent,
 } from "../helpers/index.mts";
+import { ANY_ENTITY } from "../user.mts";
 
 type SendBody<STATE extends string | number = string, ATTRIBUTES extends object = object> = {
   attributes?: ATTRIBUTES;

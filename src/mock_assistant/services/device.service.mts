@@ -1,7 +1,7 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { TDeviceId } from "../../dynamic.mts";
 import { DEVICE_REGISTRY_UPDATED, DeviceDetails } from "../../helpers/index.mts";
+import { TDeviceId } from "../../user.mts";
 
 export function MockDeviceExtension({ mock_assistant }: TServiceParams) {
   let devices = new Map<TDeviceId, DeviceDetails>();
