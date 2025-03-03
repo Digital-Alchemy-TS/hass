@@ -1,7 +1,7 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { TLabelId } from "../../dynamic.mts";
 import { LabelDefinition } from "../../helpers/index.mts";
+import { TLabelId } from "../../user.mts";
 
 export function MockLabelExtension({ mock_assistant }: TServiceParams) {
   let labels = new Map<TLabelId, LabelDefinition>();

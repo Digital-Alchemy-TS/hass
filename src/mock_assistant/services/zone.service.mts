@@ -1,7 +1,7 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { TZoneId } from "../../dynamic.mts";
 import { ZoneDetails } from "../../helpers/index.mts";
+import { TZoneId } from "../../user.mts";
 
 export function MockZoneExtension({ mock_assistant }: TServiceParams) {
   let zones = new Map<TZoneId, ZoneDetails>();
@@ -38,15 +38,18 @@ export function MockZoneExtension({ mock_assistant }: TServiceParams) {
     },
   );
 
-  mock_assistant.socket.onMessage<ZoneDetails>("config/zone_registry/update", message => {
-    zones.set(message.id as TZoneId, message);
-    sendUpdate();
-    mock_assistant.socket.sendMessage({
-      id: message.id,
-      result: null,
-      type: "result",
-    });
-  });
+  mock_assistant.socket.onMessage<ZoneDetails>(
+    "config/zone_registry/update",
+    (message: ZoneDetails) => {
+      zones.set(message.id as TZoneId, message);
+      sendUpdate();
+      mock_assistant.socket.sendMessage({
+        id: message.id,
+        result: null,
+        type: "result",
+      });
+    },
+  );
 
   const sendUpdate = () =>
     mock_assistant.socket.sendMessage({

@@ -1,5 +1,4 @@
 import {
-  ANY_ENTITY,
   AreaDetails,
   DeviceDetails,
   ENTITY_STATE,
@@ -9,6 +8,7 @@ import {
   HassServiceDTO as HassServiceDefinition,
   LabelDefinition,
 } from "../../helpers/index.mts";
+import { ANY_ENTITY } from "../../user.mts";
 
 export type ScannerCacheData = {
   areas: AreaDetails[];

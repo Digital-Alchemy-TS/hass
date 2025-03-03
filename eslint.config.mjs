@@ -42,7 +42,6 @@ export default [
     .extends(
       "plugin:@typescript-eslint/recommended",
       "plugin:jsonc/recommended-with-jsonc",
-      "plugin:unicorn/recommended",
       "plugin:prettier/recommended",
       "plugin:@cspell/recommended",
     )
@@ -87,21 +86,7 @@ export default [
         }
       ],
       "sonarjs/prefer-immediate-return": "off",
-      "unicorn/prevent-abbreviations": [
-        "error",
-        {
-          "replacements": {
-            "docs": false,
-            "e": false,
-            "dir": false,
-            "i": false,
-            "params": false,
-            "props": false,
-            "ref": false,
-            "temp": false
-          }
-        }
-      ],
+      "unicorn/prevent-abbreviations": "off",
       "no-case-declarations": "off",
       "no-async-promise-executor": "off",
       "unicorn/prefer-node-protocol": "off",
