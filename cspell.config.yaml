@@ -20,6 +20,7 @@ words:
   - websockets
   - rgbw
   - rgbww
+  - hacs
   - rrule
   - rtsp
   - sonarjs

@@ -508,7 +508,7 @@ export function WebsocketAPI({
     } else {
       socketEvents.on(event, callback);
     }
-    return is.removeFn(() => {
+    return internal.removeFn(() => {
       logger.trace({ context, event, name: onEvent }, `removing socket event listener`);
       socketEvents.removeListener(event, callback);
     });
@@ -542,7 +542,7 @@ export function WebsocketAPI({
       // attach anyways, for restarts or whatever
     }
     event.on(SOCKET_CONNECTED, wrapped);
-    return is.removeFn(() => event.removeListener(SOCKET_CONNECTED, wrapped));
+    return internal.removeFn(() => event.removeListener(SOCKET_CONNECTED, wrapped));
   }
 
   // #MARK: return object

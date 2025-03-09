@@ -3,7 +3,16 @@ import EventEmitter from "events";
 import WS from "ws";
 
 import {
+  ALL_DOMAINS,
+  ANY_ENTITY,
+  HassUniqueIdMapping,
   iCallService,
+  PICK_ENTITY,
+  PICK_FROM_AREA,
+  PICK_FROM_DEVICE,
+  PICK_FROM_FLOOR,
+  PICK_FROM_LABEL,
+  PICK_FROM_PLATFORM,
   TAreaId,
   TDeviceId,
   TFloorId,
@@ -12,13 +21,11 @@ import {
   TRawDomains,
   TRawEntityIds,
   TUniqueId,
-  TUniqueIDMapping,
-} from "../dynamic.mts";
+} from "../user.mts";
 import { BackupResponse, HomeAssistantBackup } from "./backup.mts";
 import { DeviceDetails } from "./device.mts";
 import { ByIdProxy } from "./entity-state.mts";
-import { AreaCreate, AreaDetails, ConfigEntry, HassConfig } from "./fetch/configuration.mts";
-import { HassServiceDTO } from "./fetch/service-list.mts";
+import { AreaCreate, AreaDetails, ConfigEntry, HassConfig, HassServiceDTO } from "./index.mts";
 import {
   EditAliasOptions,
   EditLabelOptions,
@@ -33,18 +40,7 @@ import {
   ZoneDetails,
   ZoneOptions,
 } from "./registry.mts";
-import {
-  ALL_DOMAINS,
-  ALL_SERVICE_DOMAINS,
-  ANY_ENTITY,
-  ENTITY_STATE,
-  PICK_ENTITY,
-  PICK_FROM_AREA,
-  PICK_FROM_DEVICE,
-  PICK_FROM_FLOOR,
-  PICK_FROM_LABEL,
-  PICK_FROM_PLATFORM,
-} from "./utility.mts";
+import { ALL_SERVICE_DOMAINS, ENTITY_STATE } from "./utility.mts";
 import {
   EntityHistoryDTO,
   EntityHistoryResult,
@@ -324,8 +320,8 @@ export type HassReferenceService = {
   ) => ByIdProxy<PICK_FROM_PLATFORM<PLATFORM, DOMAINS>>[];
   unique_id: <
     UNIQUE_ID extends TUniqueId,
-    ENTITY_ID extends Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
-      TUniqueIDMapping[UNIQUE_ID],
+    ENTITY_ID extends Extract<HassUniqueIdMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
+      HassUniqueIdMapping[UNIQUE_ID],
       ANY_ENTITY
     >,
   >(

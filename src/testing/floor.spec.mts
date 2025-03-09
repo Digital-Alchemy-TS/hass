@@ -1,8 +1,8 @@
 import { sleep } from "@digital-alchemy/core";
 
-import { TFloorId } from "../dynamic.mts";
 import { FLOOR_REGISTRY_UPDATED, FloorDetails } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
+import { TFloorId } from "../user.mts";
 
 describe("Floor", () => {
   const EXAMPLE_FLOOR = {

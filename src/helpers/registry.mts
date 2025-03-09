@@ -1,5 +1,12 @@
-import { TAreaId, TDeviceId, TFloorId, TLabelId, TPlatformId, TZoneId } from "../dynamic.mts";
-import { ANY_ENTITY } from "./utility.mts";
+import {
+  ANY_ENTITY,
+  TAreaId,
+  TDeviceId,
+  TFloorId,
+  TLabelId,
+  TPlatformId,
+  TZoneId,
+} from "../user.mts";
 
 export type LabelOptions = {
   name: string;

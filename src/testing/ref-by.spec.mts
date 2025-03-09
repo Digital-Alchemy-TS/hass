@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
 
-import { ANY_ENTITY, ENTITY_STATE } from "../helpers/index.mts";
+import { ENTITY_STATE } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
+import { ANY_ENTITY } from "../user.mts";
 
 describe("References", () => {
   afterEach(async () => {

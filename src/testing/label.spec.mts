@@ -1,8 +1,8 @@
 import { sleep } from "@digital-alchemy/core";
 
-import { TLabelId } from "../dynamic.mts";
 import { LABEL_REGISTRY_UPDATED, LabelDefinition } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
+import { TLabelId } from "../user.mts";
 
 describe("Label", () => {
   const EXAMPLE_LABEL = {

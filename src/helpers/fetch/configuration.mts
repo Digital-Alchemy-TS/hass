@@ -1,4 +1,4 @@
-import { TAreaId, TFloorId, TLabelId } from "../../dynamic.mts";
+import { TAreaId, TFloorId, TLabelId } from "../../user.mts";
 
 export interface HassUnitSystem {
   length: "mi";

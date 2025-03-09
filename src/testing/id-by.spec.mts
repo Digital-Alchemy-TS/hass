@@ -1,5 +1,5 @@
-import { PICK_ENTITY } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
+import { PICK_ENTITY } from "../user.mts";
 
 describe("ID By", () => {
   afterEach(async () => {

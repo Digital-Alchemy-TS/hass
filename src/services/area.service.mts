@@ -1,15 +1,14 @@
 import { debounce, eachSeries, InternalError, TServiceParams } from "@digital-alchemy/core";
 
-import { TAreaId } from "../dynamic.mts";
 import {
-  ANY_ENTITY,
   AREA_REGISTRY_UPDATED,
   AreaCreate,
   AreaDetails,
   EARLY_ON_READY,
   ENTITY_REGISTRY_UPDATED,
   HassAreaService,
-} from "../helpers/index.mts";
+} from "../index.mts";
+import { ANY_ENTITY, TAreaId } from "../user.mts";
 
 export function Area({
   hass,

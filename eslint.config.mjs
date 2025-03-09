@@ -86,21 +86,7 @@ export default [
         }
       ],
       "sonarjs/prefer-immediate-return": "off",
-      "unicorn/prevent-abbreviations": [
-        "error",
-        {
-          "replacements": {
-            "docs": false,
-            "e": false,
-            "dir": false,
-            "i": false,
-            "params": false,
-            "props": false,
-            "ref": false,
-            "temp": false
-          }
-        }
-      ],
+      "unicorn/prevent-abbreviations": "off",
       "no-case-declarations": "off",
       "no-async-promise-executor": "off",
       "unicorn/prefer-node-protocol": "off",

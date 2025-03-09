@@ -1,6 +1,5 @@
 import { debounce, TServiceParams } from "@digital-alchemy/core";
 
-import { TLabelId } from "../dynamic.mts";
 import {
   EARLY_ON_READY,
   HassLabelService,
@@ -8,6 +7,7 @@ import {
   LabelDefinition,
   LabelOptions,
 } from "../helpers/index.mts";
+import { TLabelId } from "../user.mts";
 
 export function Label({
   hass,
