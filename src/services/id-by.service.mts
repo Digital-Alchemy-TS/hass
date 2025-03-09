@@ -1,6 +1,6 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import { FIRST, SINGLE, TServiceParams } from "@digital-alchemy/core";
 
-import { EntityRegistryItem, IDByInterface } from "../index.mts";
+import { domain, EntityRegistryItem, IDByInterface } from "../index.mts";
 import {
   ALL_DOMAINS,
   ANY_ENTITY,
@@ -41,7 +41,17 @@ export function IDByExtension({
     );
   }
 
-  // * unique_id
+  /**
+   * unique_id
+   *
+   * ## Dev note on logic here
+   *
+   * unique_ids are not ACTUALLY unique when iterating through the registry from here
+   * hacs does this a bunch, using a sensor with the same unique_id as an update entity
+   *
+   * The logic here will look up ALL entities with the "unique"_id, then check to see if there are multiple results
+   * It is assumed by both this code and type-writer that the unique_id lookup will refer to the not update entity
+   */
   function unique_id<
     UNIQUE_ID extends TUniqueId,
     ENTITY_ID extends Extract<HassUniqueIdMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
@@ -50,13 +60,34 @@ export function IDByExtension({
     >,
   >(unique_id: UNIQUE_ID): ENTITY_ID {
     hass.entity.warnEarly("byUniqueId");
-    const entity = hass.entity.registry.current.find(
+    let list = hass.entity.registry.current.filter(
       i => i.unique_id === unique_id,
-    ) as EntityRegistryItem<ENTITY_ID>;
-    if (!entity) {
+    ) as EntityRegistryItem<ENTITY_ID>[];
+    if (is.empty(list)) {
       logger.error({ name: unique_id, unique_id }, `could not find an entity`);
       return undefined;
     }
+    if (list.length > SINGLE) {
+      const trimmed = list.filter(
+        i =>
+          // @ts-expect-error issue in dev types
+          domain(i.entity_id) !== "update",
+      );
+      if (trimmed.length > SINGLE) {
+        logger.warn(
+          { available_entity_ids: trimmed.map(i => i.entity_id), unique_id },
+          `unique_id collision during lookup (chose first in list)`,
+        );
+      } else {
+        logger.trace(
+          { unique_id },
+          `chose {%s} over update entity during lookup`,
+          trimmed[FIRST].entity_id,
+        );
+      }
+      list = trimmed;
+    }
+    const [entity] = list;
     return entity?.entity_id;
   }
 
