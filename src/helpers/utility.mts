@@ -49,10 +49,10 @@ export function domain(entity: { entity_id: ANY_ENTITY } | ANY_ENTITY): ALL_DOMA
   return entity_split(entity).shift() as ALL_DOMAINS;
 }
 
-export type ENTITY_PROP<ENTITY_ID extends PICK_ENTITY, PROP extends "state" | "attributes"> = Get<
-  HassEntitySetupMapping,
-  `${ENTITY_ID}.${PROP}`
->;
+export type ENTITY_PROP<
+  ENTITY_ID extends PICK_ENTITY,
+  PROP extends "state" | "attributes",
+> = HassEntitySetupMapping[ENTITY_ID][PROP];
 
 /**
  * Type definitions to match a specific entity.
