@@ -3,6 +3,22 @@ import dayjs, { Dayjs } from "dayjs";
 import { Get } from "type-fest";
 
 import {
+  ALL_SERVICE_DOMAINS,
+  ByIdProxy,
+  domain,
+  ENTITY_STATE,
+  HassReferenceService,
+  RemoveCallback,
+} from "../helpers/index.mts";
+import {
+  ANY_ENTITY,
+  HassUniqueIdMapping,
+  PICK_ENTITY,
+  PICK_FROM_AREA,
+  PICK_FROM_DEVICE,
+  PICK_FROM_FLOOR,
+  PICK_FROM_LABEL,
+  PICK_FROM_PLATFORM,
   TAreaId,
   TDeviceId,
   TFloorId,
@@ -10,23 +26,7 @@ import {
   TPlatformId,
   TRawDomains,
   TUniqueId,
-  TUniqueIDMapping,
-} from "../dynamic.mts";
-import {
-  ALL_SERVICE_DOMAINS,
-  ANY_ENTITY,
-  ByIdProxy,
-  domain,
-  ENTITY_STATE,
-  HassReferenceService,
-  PICK_ENTITY,
-  PICK_FROM_AREA,
-  PICK_FROM_DEVICE,
-  PICK_FROM_FLOOR,
-  PICK_FROM_LABEL,
-  PICK_FROM_PLATFORM,
-  RemoveCallback,
-} from "../helpers/index.mts";
+} from "../user.mts";
 import { SERVICE_LIST_UPDATED } from "./config.service.mts";
 import { SOCKET_CONNECTED } from "./websocket-api.service.mts";
 
@@ -187,7 +187,7 @@ export function ReferenceService({
               event.on(SOCKET_CONNECTED, removableCallback);
               listeners.add(remove);
 
-              return is.removeFn(remove);
+              return internal.removeFn(remove);
             };
           }
 
@@ -227,7 +227,7 @@ export function ReferenceService({
               };
               listeners.add(remove);
               event.once(entity_id, wrapped);
-              return is.removeFn(remove);
+              return internal.removeFn(remove);
             };
           }
 
@@ -304,6 +304,7 @@ export function ReferenceService({
                 listeners.add(remove);
 
                 const complete = (entity: ENTITY_STATE<ENTITY_ID>) => {
+                  // eslint-disable-next-line sonarjs/different-types-comparison
                   if (entity.state !== state) {
                     logger.trace(
                       {
@@ -339,7 +340,7 @@ export function ReferenceService({
         // #MARK: service calls
         if (hass.configure.isService(entity_domain, property)) {
           return async function (data = {}) {
-            // @ts-expect-error it's fine
+            // @ts-expect-error i don't care, this is fine
             return await hass.call[entity_domain][property]({
               entity_id,
               ...data,
@@ -434,8 +435,8 @@ export function ReferenceService({
 
     unique_id: <
       UNIQUE_ID extends TUniqueId,
-      ENTITY_ID extends Extract<TUniqueIDMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
-        TUniqueIDMapping[UNIQUE_ID],
+      ENTITY_ID extends Extract<HassUniqueIdMapping[UNIQUE_ID], ANY_ENTITY> = Extract<
+        HassUniqueIdMapping[UNIQUE_ID],
         ANY_ENTITY
       >,
     >(

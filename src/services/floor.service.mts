@@ -1,6 +1,5 @@
 import { debounce, TServiceParams } from "@digital-alchemy/core";
 
-import { TFloorId } from "../dynamic.mts";
 import {
   EARLY_ON_READY,
   FLOOR_REGISTRY_UPDATED,
@@ -8,6 +7,7 @@ import {
   FloorDetails,
   HassFloorService,
 } from "../helpers/index.mts";
+import { TFloorId } from "../user.mts";
 
 export function Floor({
   hass,

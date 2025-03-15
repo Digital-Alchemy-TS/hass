@@ -1,7 +1,8 @@
 import { BootstrapException, TServiceParams } from "@digital-alchemy/core";
 import { existsSync, readFileSync } from "fs";
 
-import { ANY_ENTITY, ENTITY_STATE } from "../../helpers/index.mts";
+import { ENTITY_STATE } from "../../index.mts";
+import { ANY_ENTITY } from "../../user.mts";
 import { ScannerCacheData } from "../helpers/index.mts";
 
 type StateOptions = Partial<{

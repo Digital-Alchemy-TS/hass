@@ -3,13 +3,13 @@
   "name": "@digital-alchemy/hass",
   "repository": "https://github.com/Digital-Alchemy-TS/hass",
   "homepage": "https://docs.digital-alchemy.app",
-  "version": "25.2.2",
+  "version": "25.3.1",
   "description": "Typescript APIs for Home Assistant. Includes rest & websocket bindings",
   "scripts": {
     "build": "rm -rf dist/; tsc",
     "lint": "eslint src",
     "test": "vitest",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "tsc --project ./tsconfig.lib.json",
     "upgrade": "yarn up '@digital-alchemy/*'"
   },
   "bugs": {
@@ -52,7 +52,8 @@
   },
   "exports": {
     ".": "./dist/index.mjs",
-    "./mock-assistant": "./dist/mock_assistant/index.mjs"
+    "./mock-assistant": "./dist/mock_assistant/index.mjs",
+    "./dev-types": "./dist/dev/index.mjs"
   },
   "license": "MIT",
   "devDependencies": {
@@ -62,15 +63,15 @@
     "@digital-alchemy/type-writer": "^25.2.1",
     "@eslint/compat": "^1.2.7",
     "@eslint/eslintrc": "^3.3.0",
-    "@eslint/js": "^9.21.0",
-    "@faker-js/faker": "^9.5.0",
+    "@eslint/js": "^9.22.0",
+    "@faker-js/faker": "^9.6.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.13.5",
+    "@types/node": "^22.13.10",
     "@types/node-cron": "^3.0.11",
     "@types/semver": "^7.5.8",
-    "@types/ws": "^8.5.14",
-    "@typescript-eslint/eslint-plugin": "8.26.0",
-    "@typescript-eslint/parser": "8.26.0",
+    "@types/ws": "^8.18.0",
+    "@typescript-eslint/eslint-plugin": "8.26.1",
+    "@typescript-eslint/parser": "8.26.1",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "eslint": "9.22.0",
@@ -85,21 +86,21 @@
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-unicorn": "^57.0.0",
     "node-cron": "^3.0.3",
-    "prettier": "^3.5.2",
+    "prettier": "^3.5.3",
     "semver": "^7.7.1",
     "tsx": "^4.19.3",
-    "typescript": "^5.7.3",
+    "typescript": "^5.8.2",
     "uuid": "^11.1.0",
-    "vitest": "^3.0.6",
+    "vitest": "^3.0.8",
     "ws": "^8.18.1"
   },
   "dependencies": {
     "@digital-alchemy/core": "^25.2.2",
     "dayjs": "^1.11.13",
     "semver": "^7.7.1",
-    "type-fest": "^4.35.0",
+    "type-fest": "^4.37.0",
     "uuid": "^11.1.0",
     "ws": "^8.18.1"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.7.0"
 }

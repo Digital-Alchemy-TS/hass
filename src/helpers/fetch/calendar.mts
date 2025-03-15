@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
 
-import { PICK_ENTITY } from "../utility.mts";
+import { PICK_ENTITY } from "../../user.mts";
 
 export type CalendarFetchOptions = {
   /**

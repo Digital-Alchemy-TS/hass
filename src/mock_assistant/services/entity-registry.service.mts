@@ -1,7 +1,7 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { TRawEntityIds } from "../../dynamic.mts";
 import { EntityRegistryItem } from "../../helpers/index.mts";
+import { TRawEntityIds } from "../../user.mts";
 
 export function MockEntityRegistryExtension({ mock_assistant, hass }: TServiceParams) {
   let entityRegistry = new Map<TRawEntityIds, EntityRegistryItem<TRawEntityIds>>();

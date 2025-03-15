@@ -1,7 +1,7 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { iCallService } from "../dynamic.mts";
 import { ALL_SERVICE_DOMAINS, PICK_SERVICE, PICK_SERVICE_PARAMETERS } from "../helpers/index.mts";
+import { iCallService } from "../user.mts";
 
 export function CallProxy({
   logger,
@@ -86,7 +86,7 @@ export function CallProxy({
   }
 
   function buildCallProxy(): iCallService {
-    return new Proxy(rawProxy as iCallService, {
+    return new Proxy(rawProxy as unknown as iCallService, {
       get: (_, domain: ALL_SERVICE_DOMAINS) => {
         // oddities in the way proxies work
         // this situation isn't testable afaik

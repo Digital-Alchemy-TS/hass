@@ -2,13 +2,13 @@
 import { asyncNoop, INCREMENT, SECOND, sleep, START, TServiceParams } from "@digital-alchemy/core";
 import { env } from "process";
 
-import { iCallService } from "../dynamic.mts";
 import {
   ALL_SERVICE_DOMAINS,
   HassConfigService,
   HassServiceDTO,
   PostConfigPriorities,
 } from "../helpers/index.mts";
+import { iCallService } from "../user.mts";
 
 const MAX_ATTEMPTS = 50;
 const FAILED = 1;
