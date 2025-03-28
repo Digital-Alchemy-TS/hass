@@ -1,4 +1,5 @@
 import { LiteralUnion } from "type-fest";
+
 import { ALL_DOMAINS, TPlatformId } from "../../user.mts";
 import { ColorMode } from "../features.mts";
 
@@ -38,8 +39,8 @@ export interface ServiceListSelector {
 }
 
 export interface ServiceListFilter {
-  supported_features?: number[]
-  supported_color_modes?: LiteralUnion<`${ColorMode}`,string>[]
+  supported_features?: number[];
+  supported_color_modes?: LiteralUnion<`${ColorMode}`, string>[];
 }
 
 export interface ServiceListFieldDescription {
@@ -47,7 +48,7 @@ export interface ServiceListFieldDescription {
   default?: unknown;
   description?: string;
   example?: string | number;
-  filter?: ServiceListFilter
+  filter?: ServiceListFilter;
   name?: string;
   required?: boolean;
   selector?: ServiceListSelector;
