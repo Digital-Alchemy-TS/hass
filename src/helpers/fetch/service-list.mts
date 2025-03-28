@@ -1,13 +1,25 @@
+import { LiteralUnion } from "type-fest";
+
 import { ALL_DOMAINS, TPlatformId } from "../../user.mts";
+import { ColorMode } from "../features.mts";
 
 export interface ServiceListSelectorTarget {
   domain?: ALL_DOMAINS;
   integration?: TPlatformId;
   multiple?: boolean;
 }
+
 export interface ServiceListSelector {
+  addon?: null;
+  backup_location?: null;
   boolean?: null;
+  color_rgb?: null;
+  color_temp?: { unit: "kelvin"; min: number; max: number };
+  conversation_agent?: null;
+  date?: null;
+  datetime?: null;
   entity?: ServiceListSelectorTarget;
+  icon?: null;
   number?: {
     max: number;
     min: number;
@@ -17,10 +29,18 @@ export interface ServiceListSelector {
   };
   object?: null;
   select?: {
+    custom_value?: boolean;
+    multiple?: boolean;
     options: Record<"label" | "value", string>[] | string[];
   };
-  text?: null;
+  text?: null | { type: "password" };
+  theme?: { include_defaults?: boolean };
   time?: null;
+}
+
+export interface ServiceListFilter {
+  supported_features?: number[];
+  supported_color_modes?: LiteralUnion<`${ColorMode}`, string>[];
 }
 
 export interface ServiceListFieldDescription {
@@ -28,6 +48,7 @@ export interface ServiceListFieldDescription {
   default?: unknown;
   description?: string;
   example?: string | number;
+  filter?: ServiceListFilter;
   name?: string;
   required?: boolean;
   selector?: ServiceListSelector;
