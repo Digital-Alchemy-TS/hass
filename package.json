@@ -9,6 +9,7 @@
     "build": "rm -rf dist/; tsc",
     "lint": "eslint src",
     "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "prepublishOnly": "tsc --project ./tsconfig.lib.json",
     "upgrade": "yarn up '@digital-alchemy/*'"
   },
@@ -72,6 +73,7 @@
     "@types/ws": "^8.18.0",
     "@typescript-eslint/eslint-plugin": "8.28.0",
     "@typescript-eslint/parser": "8.28.0",
+    "@vitest/coverage-v8": "^3.1.1",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "eslint": "9.23.0",
