@@ -22,6 +22,7 @@ import {
 export function IDByExtension({
   hass,
   logger,
+  config,
   internal: {
     utils: { is },
   },
@@ -32,6 +33,11 @@ export function IDByExtension({
     }
     return raw;
   };
+
+  const getEntities = () =>
+    config.hass.FILTER_DISABLED_ENTITIES_ID_BY
+      ? hass.entity.registry.current.filter(i => is.empty(i.disabled_by))
+      : hass.entity.registry.current;
 
   // * byDomain
   function byDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
@@ -88,6 +94,12 @@ export function IDByExtension({
       list = trimmed;
     }
     const [entity] = list;
+    if (config.hass.FILTER_DISABLED_ENTITIES_ID_BY && !is.empty(entity?.disabled_by)) {
+      logger.debug(
+        { entity_id: entity?.entity_id, unique_id },
+        `access disabled entity by unique_id`,
+      );
+    }
     return entity?.entity_id;
   }
 
@@ -98,7 +110,7 @@ export function IDByExtension({
   ) {
     hass.entity.warnEarly("label");
     return check(
-      hass.entity.registry.current
+      getEntities()
         .filter(i => i.labels.includes(label))
         .map(i => i.entity_id as PICK_FROM_LABEL<LABEL, DOMAIN>),
       domains,
@@ -113,9 +125,8 @@ export function IDByExtension({
     hass.entity.warnEarly("area");
 
     // find entities are associated with the area directly
-    const fromEntity = hass.entity.registry.current
-      .filter(i => i.area_id === area)
-      .map(i => i.entity_id);
+    const entites = getEntities();
+    const fromEntity = entites.filter(i => i.area_id === area).map(i => i.entity_id);
 
     // identify devices
     const devices = new Set(
@@ -123,7 +134,7 @@ export function IDByExtension({
     );
 
     // extract entities associated with device, that have not been assigned to a room
-    const fromDevice = hass.entity.registry.current
+    const fromDevice = entites
       .filter(entity => devices.has(entity.device_id) && is.empty(entity.area_id))
       .map(i => i.entity_id);
 
@@ -141,7 +152,7 @@ export function IDByExtension({
   ): PICK_FROM_DEVICE<DEVICE, DOMAIN>[] {
     hass.entity.warnEarly("device");
     return check(
-      hass.entity.registry.current
+      getEntities()
         .filter(i => i.device_id === device)
         .map(i => i.entity_id as PICK_FROM_DEVICE<DEVICE, DOMAIN>),
       domains,
@@ -158,7 +169,7 @@ export function IDByExtension({
       hass.area.current.filter(i => i.floor_id === floor).map(i => i.area_id),
     );
     return check(
-      hass.entity.registry.current
+      getEntities()
         .filter(i => areas.has(i.area_id))
         .map(i => i.entity_id as PICK_FROM_FLOOR<FLOOR, DOMAIN>),
       domains,
@@ -172,7 +183,7 @@ export function IDByExtension({
   ): PICK_FROM_PLATFORM<PLATFORM, DOMAIN>[] {
     hass.entity.warnEarly("platform");
     return check(
-      hass.entity.registry.current
+      getEntities()
         .filter(i => i.platform === platform)
         .map(i => i.entity_id as PICK_FROM_PLATFORM<PLATFORM, DOMAIN>),
       domains,
