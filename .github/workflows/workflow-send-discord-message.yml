@@ -2,7 +2,9 @@ name: Generic Discord Notification
 
 on:
   workflow_call:
-
+  pull_request:
+    branches:
+      - main
 
 jobs:
   send_notification:
