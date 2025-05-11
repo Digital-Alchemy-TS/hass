@@ -1,12 +1,12 @@
 import { hassTestRunner } from "../mock_assistant/index.mts";
 import { PICK_ENTITY } from "../user.mts";
 
-describe("ID By", () => {
-  afterEach(async () => {
-    await hassTestRunner.teardown();
-    vi.restoreAllMocks();
-  });
+afterEach(async () => {
+  await hassTestRunner.teardown();
+  vi.restoreAllMocks();
+});
 
+describe("enabled entities", () => {
   describe("area", () => {
     it("find entities by area", async () => {
       expect.assertions(2);
@@ -133,6 +133,101 @@ describe("ID By", () => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.floor("downstairs", "light");
           expect(synapse.length).toBe(0);
+        });
+      });
+    });
+  });
+});
+
+describe("disabled entities", () => {
+  beforeAll(() => {
+    hassTestRunner
+      // .emitLogs()
+      .configure({
+        hass: {
+          FILTER_DISABLED_ENTITIES_ID_BY: false,
+        },
+      });
+  });
+  describe("area", () => {
+    it("find entities by area", async () => {
+      expect.assertions(2);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const bedroom = hass.idBy.area("bedroom");
+          const kitchen = hass.idBy.area("kitchen");
+          expect(bedroom.length).toBe(4);
+          expect(kitchen.length).toBe(3);
+        });
+      });
+    });
+
+    it("find entities by area limiting by domain", async () => {
+      expect.assertions(2);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const bedroom = hass.idBy.area("bedroom", "light");
+          const kitchen = hass.idBy.area("kitchen", "light");
+          expect(bedroom.length).toBe(1);
+          expect(kitchen.length).toBe(1);
+        });
+      });
+    });
+  });
+
+  describe("label", () => {
+    it("find entities by label", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const synapse = hass.idBy.label("synapse");
+          expect(synapse.length).toBe(9);
+        });
+      });
+    });
+  });
+
+  describe("device", () => {
+    it("find entities by device", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const synapse = hass.idBy.device("308e39cf50a9fc6c30b4110724ed1f2e");
+          expect(synapse.length).toBe(12);
+        });
+      });
+    });
+  });
+
+  describe("platform", () => {
+    it("find entities by platform", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const synapse = hass.idBy.platform("synapse");
+          expect(synapse.length).toBe(8);
+        });
+      });
+    });
+  });
+
+  describe("floor", () => {
+    it("find entities by floor", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const synapse = hass.idBy.floor("downstairs");
+          expect(synapse.length).toBe(6);
+        });
+      });
+    });
+
+    it("find entities by floor limiting by domain", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const synapse = hass.idBy.floor("downstairs", "light");
+          expect(synapse.length).toBe(1);
         });
       });
     });

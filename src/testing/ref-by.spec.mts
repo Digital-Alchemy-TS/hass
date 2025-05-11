@@ -30,7 +30,7 @@ describe("References", () => {
         await hassTestRunner.run(({ lifecycle, hass }) => {
           lifecycle.onReady(() => {
             const sensor = hass.refBy.domain("sensor");
-            expect(sensor.length).toBe(8);
+            expect(sensor.length).toBe(11);
           });
         });
       });

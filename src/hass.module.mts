@@ -59,6 +59,17 @@ export const LIB_HASS = CreateLibrary({
     },
 
     /**
+     * This is reflected in type-writer, make sure to keep your runtime & types in sync
+     *
+     * By default disabled entities are removed to help keep file bloat down
+     */
+    FILTER_DISABLED_ENTITIES_ID_BY: {
+      default: true,
+      description: "Filter events from disabled entities in id",
+      type: "boolean",
+    },
+
+    /**
      * General purpose variable, adds delays to things when retrying
      *
      * > **NOTE**: this is best set to `0` for unit tests
