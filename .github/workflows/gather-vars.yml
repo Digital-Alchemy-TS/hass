@@ -19,6 +19,9 @@ on:
         description: "The pull request link, if any"
         value: ${{ jobs.prepare_data.outputs.pr_link }}
 
+permissions:
+  contents: read
+
 jobs:
   prepare_data:
     runs-on: ubuntu-latest
