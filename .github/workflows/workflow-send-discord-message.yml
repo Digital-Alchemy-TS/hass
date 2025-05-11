@@ -2,8 +2,6 @@ name: Generic Discord Notification
 
 on:
   workflow_call:
-    permissions:
-      contents: read
   pull_request:
     branches:
       - main
@@ -23,7 +21,7 @@ jobs:
         if: ${{ !github.event.inputs.package_name }}
 
       - name: Set up Node.js (if needed)
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
         if: ${{ !github.event.inputs.package_name }}
