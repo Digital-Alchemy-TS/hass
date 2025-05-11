@@ -1,0 +1,39 @@
+name: Generic Discord Notification
+
+on:
+  workflow_call:
+
+
+jobs:
+  send_notification:
+    needs: build
+    uses: ./.github/workflows/prepare_notification.yml
+    secrets:
+      inherit
+
+
+  notify_discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Format Discord message
+        id: discord_message
+        run: |
+          PACKAGE_NAME_FINAL="${{ needs.send_notification.outputs.package_name }}"
+          PACKAGE_VERSION_FINAL="${{ needs.send_notification.outputs.package_version }}"
+          COMMIT_MESSAGE_FINAL="${{ needs.send_notification.outputs.commit_message }}"
+          PR_NUMBER_FINAL="${{ needs.send_notification.outputs.pr_number }}"
+          PR_LINK_FINAL="${{ needs.send_notification.outputs.pr_link }}"
+          PR_MARKDOWN=""
+          if [[ -n "$PR_NUMBER_FINAL" && -n "$PR_LINK_FINAL" ]]; then
+            PR_MARKDOWN="([#${PR_NUMBER_FINAL}](${PR_LINK_FINAL}))"
+          fi
+
+          MESSAGE="- ${PACKAGE_NAME_FINAL} ${PACKAGE_VERSION_FINAL} ${PR_MARKDOWN} :: ${COMMIT_MESSAGE_FINAL}"
+          MESSAGE="$MESSAGE\n> ${COMMIT_MESSAGE_FINAL}"
+          echo "MESSAGE=$(echo "$MESSAGE" | jq -sRr '.')" >> $GITHUB_OUTPUT
+
+      - name: Send Discord notification
+        uses: appleboy/discord-action@1.5.1
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          content: ${{ steps.discord_message.outputs.MESSAGE }}

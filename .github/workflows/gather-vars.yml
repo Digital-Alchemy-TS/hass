@@ -1,0 +1,70 @@
+name: Prepare Notification Data
+
+on:
+  workflow_call:
+    outputs:
+      package_name:
+        description: "The name of the package"
+        value: ${{ jobs.prepare_data.outputs.package_name }}
+      package_version:
+        description: "The version of the package"
+        value: ${{ jobs.prepare_data.outputs.package_version }}
+      commit_message:
+        description: "The latest commit message"
+        value: ${{ jobs.prepare_data.outputs.commit_message }}
+      pr_number:
+        description: "The pull request number, if any"
+        value: ${{ jobs.prepare_data.outputs.pr_number }}
+      pr_link:
+        description: "The pull request link, if any"
+        value: ${{ jobs.prepare_data.outputs.pr_link }}
+
+jobs:
+  prepare_data:
+    runs-on: ubuntu-latest
+    outputs:
+      package_name: ${{ steps.package_info.outputs.PACKAGE_NAME }}
+      package_version: ${{ steps.package_info.outputs.PACKAGE_VERSION }}
+      commit_message: ${{ steps.commit_message.outputs.COMMIT_MESSAGE }}
+      pr_number: ${{ steps.pr_number.outputs.PR_NUMBER }}
+      pr_link: ${{ steps.pr_link.outputs.PR_LINK }}
+    steps:
+      - name: Checkout repository (if not already checked out)
+        uses: actions/checkout@v4
+        if: ${{ !github.event.inputs.package_name }}
+
+      - name: Set up Node.js (if needed)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+        if: ${{ !github.event.inputs.package_name }}
+
+      - name: Get package name and version
+        id: package_info
+        if: ${{ !github.event.inputs.package_name }}
+        run: |
+          PACKAGE_NAME=$(jq -r .name package.json)
+          PACKAGE_VERSION=$(jq -r .version package.json)
+          echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get latest commit message
+        id: commit_message
+        run: |
+          COMMIT_MESSAGE=$(git log -n 1 --pretty='%s')
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+
+      - name: Extract PR number
+        id: pr_number
+        run: |
+          PR_NUMBER_BRANCH=$(echo "${{ github.head_ref }}" | sed -n 's/.*\(#[0-9]*\).*/\1/p' | sed 's/#//' || true)
+          PR_NUMBER_COMMIT=$(echo "${{ steps.commit_message.outputs.COMMIT_MESSAGE }}" | sed -n 's/.*\(#[0-9]*\).*/\1/p' | sed 's/#//' || true)
+          PR_NUMBER="${{ PR_NUMBER_BRANCH || PR_NUMBER_COMMIT }}"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Set PR link (if PR number exists)
+        id: pr_link
+        if: ${{ steps.pr_number.outputs.PR_NUMBER != '' }}
+        run: |
+          PR_LINK="https://github.com/${{ github.event.repository.full_name }}/pull/${{ steps.pr_number.outputs.PR_NUMBER }}"
+          echo "PR_LINK=$PR_LINK" >> $GITHUB_OUTPUT
