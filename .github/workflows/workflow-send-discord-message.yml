@@ -2,22 +2,21 @@ name: Generic Discord Notification
 
 on:
   workflow_call:
+    permissions:
+      contents: read
   pull_request:
     branches:
       - main
 
-permissions:
-  contents: read
-
 jobs:
   send_notification:
-    needs: build
     uses: ./.github/workflows/gather-vars.yml
     secrets:
       inherit
 
 
   notify_discord:
+    needs: send_notification
     runs-on: ubuntu-latest
     steps:
       - name: Format Discord message

@@ -2,6 +2,8 @@ name: Prepare Notification Data
 
 on:
   workflow_call:
+    permissions:
+      contents: read
     outputs:
       package_name:
         description: "The name of the package"
@@ -18,9 +20,6 @@ on:
       pr_link:
         description: "The pull request link, if any"
         value: ${{ jobs.prepare_data.outputs.pr_link }}
-
-permissions:
-  contents: read
 
 jobs:
   prepare_data:
