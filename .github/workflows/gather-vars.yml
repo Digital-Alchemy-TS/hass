@@ -51,7 +51,7 @@ jobs:
       - name: Get latest commit message
         id: commit_message
         run: |
-          COMMIT_MESSAGE=$(git log -n 1 --pretty='%s')
+          COMMIT_MESSAGE=$(git log develop -n 1 --pretty='%s')
           echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
       - name: Extract PR number
