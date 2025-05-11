@@ -123,8 +123,8 @@ export function IDByExtension({
     hass.entity.warnEarly("area");
 
     // find entities are associated with the area directly
-    const entites = getEntities();
-    const fromEntity = entites.filter(i => i.area_id === area).map(i => i.entity_id);
+    const entities = getEntities();
+    const fromEntity = entities.filter(i => i.area_id === area).map(i => i.entity_id);
 
     // identify devices
     const devices = new Set(
@@ -132,7 +132,7 @@ export function IDByExtension({
     );
 
     // extract entities associated with device, that have not been assigned to a room
-    const fromDevice = entites
+    const fromDevice = entities
       .filter(entity => devices.has(entity.device_id) && is.empty(entity.area_id))
       .map(i => i.entity_id);
 
