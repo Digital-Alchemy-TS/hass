@@ -9,7 +9,7 @@ on:
 jobs:
   send_notification:
     needs: build
-    uses: ./.github/workflows/prepare_notification.yml
+    uses: ./.github/workflows/gather-vars.yml
     secrets:
       inherit
 
