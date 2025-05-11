@@ -9,24 +9,69 @@ on:
       - main
 
 jobs:
-  send_notification:
-    uses: ./.github/workflows/gather-vars.yml
-    secrets:
-      inherit
+  prepare_data:
+    runs-on: ubuntu-latest
+    outputs:
+      package_name: ${{ steps.package_info.outputs.PACKAGE_NAME }}
+      package_version: ${{ steps.package_info.outputs.PACKAGE_VERSION }}
+      commit_message: ${{ steps.commit_message.outputs.COMMIT_MESSAGE }}
+      pr_number: ${{ steps.pr_number.outputs.PR_NUMBER }}
+      pr_link: ${{ steps.pr_link.outputs.PR_LINK }}
+    steps:
+      - name: Checkout repository (if not already checked out)
+        uses: actions/checkout@v4
+        if: ${{ !github.event.inputs.package_name }}
 
+      - name: Set up Node.js (if needed)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+        if: ${{ !github.event.inputs.package_name }}
+
+      - name: Get package name and version
+        id: package_info
+        if: ${{ !github.event.inputs.package_name }}
+        run: |
+          PACKAGE_NAME=$(jq -r .name package.json)
+          PACKAGE_VERSION=$(jq -r .version package.json)
+          echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get latest commit message
+        id: commit_message
+        run: |
+          COMMIT_MESSAGE=$(git log develop -n 1 --pretty='%s')
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+
+      - name: Extract PR number
+        id: pr_number
+        run: |
+          PR_NUMBER_BRANCH=$(echo "${{ github.head_ref }}" | sed -n 's/.*\(#[0-9]*\).*/\1/p' | sed 's/#//' || true)
+          PR_NUMBER_COMMIT=$(echo "${{ steps.commit_message.outputs.COMMIT_MESSAGE }}" | sed -n 's/.*\(#[0-9]*\).*/\1/p' | sed 's/#//' || true)
+          PR_NUMBER="${{ PR_NUMBER_BRANCH || PR_NUMBER_COMMIT }}"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Set PR link (if PR number exists)
+        id: pr_link
+        if: ${{ steps.pr_number.outputs.PR_NUMBER != '' }}
+        run: |
+          PR_LINK="https://github.com/${{ github.event.repository.full_name }}/pull/${{ steps.pr_number.outputs.PR_NUMBER }}"
+          echo "PR_LINK=$PR_LINK" >> $GITHUB_OUTPUT
 
   notify_discord:
-    needs: send_notification
+    needs: prepare_data
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Format Discord message
         id: discord_message
         run: |
-          PACKAGE_NAME_FINAL="${{ needs.send_notification.outputs.package_name }}"
-          PACKAGE_VERSION_FINAL="${{ needs.send_notification.outputs.package_version }}"
-          COMMIT_MESSAGE_FINAL="${{ needs.send_notification.outputs.commit_message }}"
-          PR_NUMBER_FINAL="${{ needs.send_notification.outputs.pr_number }}"
-          PR_LINK_FINAL="${{ needs.send_notification.outputs.pr_link }}"
+          PACKAGE_NAME_FINAL="${{ needs.prepare_data.outputs.package_name }}"
+          PACKAGE_VERSION_FINAL="${{ needs.prepare_data.outputs.package_version }}"
+          COMMIT_MESSAGE_FINAL="${{ needs.prepare_data.outputs.commit_message }}"
+          PR_NUMBER_FINAL="${{ needs.prepare_data.outputs.pr_number }}"
+          PR_LINK_FINAL="${{ needs.prepare_data.outputs.pr_link }}"
           PR_MARKDOWN=""
           if [[ -n "$PR_NUMBER_FINAL" && -n "$PR_LINK_FINAL" ]]; then
             PR_MARKDOWN="([#${PR_NUMBER_FINAL}](${PR_LINK_FINAL}))"
