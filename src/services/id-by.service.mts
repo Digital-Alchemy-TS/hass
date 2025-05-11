@@ -5,7 +5,6 @@ import {
   ALL_DOMAINS,
   ANY_ENTITY,
   HassUniqueIdMapping,
-  PICK_ENTITY,
   PICK_FROM_AREA,
   PICK_FROM_DEVICE,
   PICK_FROM_FLOOR,
@@ -40,11 +39,10 @@ export function IDByExtension({
       : hass.entity.registry.current;
 
   // * byDomain
-  function byDomain<DOMAIN extends ALL_DOMAINS>(domain: DOMAIN) {
-    const MASTER_STATE = hass.entity._masterState();
-    return Object.keys(MASTER_STATE[domain] ?? {}).map(
-      id => `${domain}.${id}` as PICK_ENTITY<DOMAIN>,
-    );
+  function byDomain<DOMAIN extends ALL_DOMAINS>(target: DOMAIN) {
+    return getEntities()
+      .map(i => i.entity_id)
+      .filter(i => is.domain(i, target));
   }
 
   /**
