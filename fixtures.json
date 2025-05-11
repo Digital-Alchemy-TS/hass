@@ -119,6 +119,159 @@
   ],
   "entities": [
     {
+      "entity_id": "sensor.living_room_disabled_temp",
+      "state": "unknown",
+      "attributes": {
+        "id": "digital_alchemy",
+        "user_id": "disabled_test_1",
+        "friendly_name": "Living Room Disabled Temp"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "ctx1",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "sensor.kitchen_disabled_temp",
+      "state": "unknown",
+      "attributes": {
+        "id": "digital_alchemy",
+        "user_id": "disabled_test_2",
+        "friendly_name": "Kitchen Disabled Temp"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "ctx2",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "sensor.bedroom_disabled_temp",
+      "state": "unknown",
+      "attributes": {
+        "id": "digital_alchemy",
+        "user_id": "disabled_test_3",
+        "friendly_name": "Bedroom Disabled Temp"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "ctx3",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "sensor.floor_test_disabled",
+      "state": "unknown",
+      "attributes": {
+        "id": "digital_alchemy",
+        "user_id": "disabled_test_4",
+        "friendly_name": "Floor Test Disabled"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "ctx4",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "sensor.label_test_disabled",
+      "state": "unknown",
+      "attributes": {
+        "id": "digital_alchemy",
+        "user_id": "disabled_test_5",
+        "friendly_name": "Label Test Disabled"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "ctx5",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "sensor.living_room_temperature",
+      "state": "unavailable",
+      "attributes": {
+        "id": "digital_alchemy",
+        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59",
+        "friendly_name": "Living Room Temperature"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "01HWXTSCSBRKJ9T2KV1JNER5KQ",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "light.kitchen_lamp",
+      "state": "off",
+      "attributes": {
+        "id": "digital_alchemy",
+        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59",
+        "friendly_name": "Kitchen Lamp"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "01HWXTSCSBRKJ9T2KV1JNER5KQ",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "binary_sensor.bedroom_window",
+      "state": "on",
+      "attributes": {
+        "id": "digital_alchemy",
+        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59",
+        "friendly_name": "Bedroom Window Sensor"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "01HWXTSCSBRKJ9T2KV1JNER5KQ",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "climate.test_room",
+      "state": "cooling",
+      "attributes": {
+        "id": "digital_alchemy",
+        "user_id": "4dd1cf7e93e94f3fbaf419501f9a3d59",
+        "friendly_name": "Test Room Climate"
+      },
+      "last_changed": "2024-05-02T23:38:39.485125+00:00",
+      "last_reported": "2024-05-02T23:38:44.907957+00:00",
+      "last_updated": "2024-05-02T23:38:44.907957+00:00",
+      "context": {
+        "id": "01HWXTSCSBRKJ9T2KV1JNER5KQ",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
       "entity_id": "person.digital_alchemy",
       "state": "unknown",
       "attributes": {
@@ -523,6 +676,196 @@
     }
   ],
   "entity_registry": [
+    {
+      "area_id": "living_room",
+      "categories": {},
+      "config_entry_id": "disabled_entry",
+      "device_id": "308e39cf50a9fc6c30b4110724ed1f2e",
+      "disabled_by": "integration",
+      "entity_category": null,
+      "entity_id": "sensor.living_room_disabled_temp",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:thermometer",
+      "id": "disabled_1",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Living Room Disabled Temp",
+      "platform": "synapse",
+      "translation_key": null,
+      "unique_id": "disabled_1_uid"
+    },
+    {
+      "area_id": "kitchen",
+      "categories": {},
+      "config_entry_id": "disabled_entry",
+      "device_id": "e58841e47cf86097b310316e55d6bb12",
+      "disabled_by": "integration",
+      "entity_category": null,
+      "entity_id": "sensor.kitchen_disabled_temp",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:thermometer",
+      "id": "disabled_2",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Kitchen Disabled Temp",
+      "platform": "sensor",
+      "translation_key": null,
+      "unique_id": "disabled_2_uid"
+    },
+    {
+      "area_id": "bedroom",
+      "categories": {},
+      "config_entry_id": "disabled_entry",
+      "device_id": "308e39cf50a9fc6c30b4110724ed1f2e",
+      "disabled_by": "integration",
+      "entity_category": null,
+      "entity_id": "sensor.bedroom_disabled_temp",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:thermometer",
+      "id": "disabled_3",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Bedroom Disabled Temp",
+      "platform": "sensor",
+      "translation_key": null,
+      "unique_id": "disabled_3_uid"
+    },
+    {
+      "area_id": "test",
+      "categories": {},
+      "config_entry_id": "disabled_entry",
+      "device_id": "e59941e47cf86097b310316e55d6bb12",
+      "disabled_by": "integration",
+      "entity_category": null,
+      "entity_id": "sensor.floor_test_disabled",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:thermometer",
+      "id": "disabled_4",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Floor Test Disabled",
+      "platform": "sensor",
+      "translation_key": null,
+      "unique_id": "disabled_4_uid"
+    },
+    {
+      "area_id": "test",
+      "categories": {},
+      "config_entry_id": "disabled_entry",
+      "device_id": "e59941e47cf86097b310316e55d6bb12",
+      "disabled_by": "integration",
+      "entity_category": null,
+      "entity_id": "sensor.label_test_disabled",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:thermometer",
+      "id": "disabled_5",
+      "labels": [
+        "synapse",
+        "test"
+      ],
+      "name": null,
+      "options": {},
+      "original_name": "Label Test Disabled",
+      "platform": "sensor",
+      "translation_key": null,
+      "unique_id": "disabled_5_uid"
+    },
+    {
+      "area_id": "living_room",
+      "categories": {},
+      "config_entry_id": "9f1b2c34d0a7498d9ecbbb5d673c5e4a",
+      "device_id": "308e39cf50a9fc6c30b4110724ed1f2e",
+      "disabled_by": "integration",
+      "entity_category": null,
+      "entity_id": "sensor.living_room_temperature",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:thermometer",
+      "id": "entry-001",
+      "labels": [
+        "synapse"
+      ],
+      "name": null,
+      "options": {},
+      "original_name": "Living Room Temperature",
+      "platform": "sensor",
+      "translation_key": null,
+      "unique_id": "entry-001-uid"
+    },
+    {
+      "area_id": "kitchen",
+      "categories": {},
+      "config_entry_id": "9f1b2c34d0a7498d9ecbbb5d673c5e4a",
+      "device_id": "e58841e47cf86097b310316e55d6bb12",
+      "disabled_by": "integration",
+      "entity_category": null,
+      "entity_id": "light.kitchen_lamp",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:lightbulb",
+      "id": "entry-002",
+      "labels": [
+        "test"
+      ],
+      "name": null,
+      "options": {},
+      "original_name": "Kitchen Lamp",
+      "platform": "light",
+      "translation_key": null,
+      "unique_id": "entry-002-uid"
+    },
+    {
+      "area_id": "bedroom",
+      "categories": {},
+      "config_entry_id": "9f1b2c34d0a7498d9ecbbb5d673c5e4a",
+      "device_id": "308e39cf50a9fc6c30b4110724ed1f2e",
+      "disabled_by": "integration",
+      "entity_category": null,
+      "entity_id": "binary_sensor.bedroom_window",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:window-closed-variant",
+      "id": "entry-003",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Bedroom Window Sensor",
+      "platform": "binary_sensor",
+      "translation_key": null,
+      "unique_id": "entry-003-uid"
+    },
+    {
+      "area_id": "test",
+      "categories": {},
+      "config_entry_id": "9f1b2c34d0a7498d9ecbbb5d673c5e4a",
+      "device_id": "e59941e47cf86097b310316e55d6bb12",
+      "disabled_by": "integration",
+      "entity_category": null,
+      "entity_id": "climate.test_room",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": "mdi:thermostat",
+      "id": "entry-004",
+      "labels": [
+        "test",
+        "synapse"
+      ],
+      "name": null,
+      "options": {},
+      "original_name": "Test Room Climate",
+      "platform": "climate",
+      "translation_key": null,
+      "unique_id": "entry-004-uid"
+    },
     {
       "area_id": "living_room",
       "categories": {},
