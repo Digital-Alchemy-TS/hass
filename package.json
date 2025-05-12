@@ -87,7 +87,7 @@
     "eslint-plugin-sonarjs": "^3.0.2",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-unicorn": "^59.0.1",
-    "node-cron": "^3.0.3",
+    "node-cron": "^4.0.3",
     "prettier": "^3.5.3",
     "semver": "^7.7.1",
     "tsx": "^4.19.4",
