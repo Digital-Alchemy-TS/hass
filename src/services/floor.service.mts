@@ -6,6 +6,7 @@ import {
   FloorCreate,
   FloorDetails,
   HassFloorService,
+  perf,
 } from "../helpers/index.mts";
 import { TFloorId } from "../user.mts";
 
@@ -29,10 +30,12 @@ export function Floor({
       context,
       event_type: "floor_registry_updated",
       async exec() {
+        const ms = perf();
         await debounce(FLOOR_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
         hass.floor.current = await hass.floor.list();
         logger.debug(`floor registry updated`);
         event.emit(FLOOR_REGISTRY_UPDATED);
+        hass.diagnostics.floor?.registry_update.publish({ ms: ms() });
       },
     });
   });

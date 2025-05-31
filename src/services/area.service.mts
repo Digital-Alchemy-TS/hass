@@ -7,6 +7,7 @@ import {
   EARLY_ON_READY,
   ENTITY_REGISTRY_UPDATED,
   HassAreaService,
+  perf,
 } from "../index.mts";
 import { ANY_ENTITY, TAreaId } from "../user.mts";
 
@@ -30,10 +31,12 @@ export function Area({
       context,
       event_type: "area_registry_updated",
       async exec() {
+        const ms = perf();
         await debounce(AREA_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
         hass.area.current = await hass.area.list();
         logger.debug(`area registry updated`);
         event.emit(AREA_REGISTRY_UPDATED);
+        hass.diagnostics.area?.registry_update.publish({ ms: ms() });
       },
     });
   });
@@ -44,6 +47,12 @@ export function Area({
     });
   }
 
+  /**
+   * 1. emit delete message
+   * 2. hass does stuff internally
+   * 3. hass emits update message
+   * 4. promise resolves
+   */
   async function deleteArea(area_id: TAreaId) {
     return await new Promise<void>(async done => {
       event.once(AREA_REGISTRY_UPDATED, done);

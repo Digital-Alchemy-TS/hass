@@ -19,6 +19,7 @@ import {
   EntityHistoryResult,
   EntityRegistryItem,
   HassEntityManager,
+  perf,
   TMasterState,
 } from "../index.mts";
 import { ALL_DOMAINS, ANY_ENTITY, PICK_ENTITY } from "../user.mts";
@@ -44,6 +45,7 @@ export function EntityManager({
   const PREVIOUS_STATE = new Map<ANY_ENTITY, ENTITY_STATE<ANY_ENTITY>>();
   let lastRefresh: Dayjs;
   function warnEarly(method: string) {
+    hass.diagnostics.entity?.warn_ready.publish({ method });
     if (!init) {
       lifecycle.onReady(() => {
         if (config.boilerplate.LOG_LEVEL !== "trace") {
@@ -76,12 +78,14 @@ export function EntityManager({
     payload: Omit<EntityHistoryDTO<ENTITES>, "type">,
   ) {
     logger.trace({ payload }, `looking up entity history`);
+    const ms = perf();
     const result = (await hass.socket.sendMessage({
       ...payload,
       end_time: dayjs(payload.end_time).toISOString(),
       start_time: dayjs(payload.start_time).toISOString(),
       type: "history/history_during_period",
     })) as Record<ANY_ENTITY, EntityHistoryItem[]>;
+    hass.diagnostics.entity?.history_lookup.publish({ ms: ms(), payload, result });
 
     const entities = Object.keys(result) as ANY_ENTITY[];
     return Object.fromEntries(
@@ -191,6 +195,7 @@ export function EntityManager({
             internal.utils.object.get(oldState, entity.entity_id),
           ),
       );
+      hass.diagnostics.entity?.refresh_entities.publish({ emitUpdates });
     });
     init = true;
   }
@@ -201,6 +206,7 @@ export function EntityManager({
     new_state: ENTITY_STATE<ENTITY>,
     old_state: ENTITY_STATE<ENTITY>,
   ) {
+    hass.diagnostics.entity?.entity_updated.publish({ entity_id, new_state, old_state });
     PREVIOUS_STATE.set(entity_id, old_state);
     if (new_state === null) {
       logger.warn(
@@ -209,7 +215,11 @@ export function EntityManager({
         entity_id,
       );
       internal.utils.object.del(MASTER_STATE, entity_id);
+      hass.diagnostics.entity?.entity_remove.publish({ entity_id });
       return;
+    }
+    if (old_state === null) {
+      hass.diagnostics.entity?.entity_add.publish({ entity_id });
     }
     internal.utils.object.set(MASTER_STATE, entity_id, new_state);
     if (!hass.socket.pauseMessages) {
@@ -293,10 +303,12 @@ export function EntityManager({
       context,
       event_type: "entity_registry_updated",
       async exec() {
+        const ms = perf();
         await debounce(ENTITY_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
         logger.debug("entity registry updated");
         hass.entity.registry.current = await hass.entity.registry.list();
         event.emit(ENTITY_REGISTRY_UPDATED);
+        hass.diagnostics.entity?.registry_updated.publish({ ms: ms() });
       },
     });
     hass.entity.registry.current = await hass.entity.registry.list();

@@ -3,6 +3,7 @@ export * from "./backup.service.mts";
 export * from "./call-proxy.service.mts";
 export * from "./config.service.mts";
 export * from "./device.service.mts";
+export * from "./diagnostics.service.mts";
 export * from "./entity.service.mts";
 export * from "./events.service.mts";
 export * from "./fetch-api.service.mts";

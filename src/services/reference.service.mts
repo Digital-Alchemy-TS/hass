@@ -8,6 +8,7 @@ import {
   domain,
   ENTITY_STATE,
   HassReferenceService,
+  perf,
   RemoveCallback,
 } from "../helpers/index.mts";
 import {
@@ -164,10 +165,11 @@ export function ReferenceService({
     const listeners = new Set<() => void>();
 
     // just because you can't do generics properly....
-    return new Proxy(thing, {
+    const proxy = new Proxy(thing, {
       // things that shouldn't be needed: this extract
       // eslint-disable-next-line sonarjs/function-return-type
       get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
+        hass.diagnostics.reference?.get_property.publish({ entity_id, property });
         switch (property) {
           // #MARK: onUpdate
           case "onUpdate": {
@@ -304,7 +306,6 @@ export function ReferenceService({
                 listeners.add(remove);
 
                 const complete = (entity: ENTITY_STATE<ENTITY_ID>) => {
-                  // eslint-disable-next-line sonarjs/different-types-comparison
                   if (entity.state !== state) {
                     logger.trace(
                       {
@@ -340,11 +341,20 @@ export function ReferenceService({
         // #MARK: service calls
         if (hass.configure.isService(entity_domain, property)) {
           return async function (data = {}) {
+            const ms = perf();
             // @ts-expect-error i don't care, this is fine
-            return await hass.call[entity_domain][property]({
+            const result = await hass.call[entity_domain][property]({
               entity_id,
               ...data,
             });
+            hass.diagnostics.reference?.call_service.publish({
+              data,
+              entity_domain,
+              entity_id,
+              ms: ms(),
+              property,
+            });
+            return result;
           };
         }
         return proxyGetLogic(entity_id, property);
@@ -392,6 +402,8 @@ export function ReferenceService({
         return false;
       },
     });
+    hass.diagnostics.reference?.create_proxy.publish({ entity_id, proxy });
+    return proxy;
   }
 
   // #MARK: <return>

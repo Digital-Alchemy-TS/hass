@@ -1,3 +1,5 @@
+import { subscribe } from "node:diagnostics_channel";
+
 import { sleep } from "@digital-alchemy/core";
 
 import { ZONE_REGISTRY_UPDATED, ZoneDetails } from "../helpers/index.mts";
@@ -10,11 +12,13 @@ describe("Zone", () => {
   });
 
   const EXAMPLE_ZONE = {
-    icon: "",
-    latitude: 0,
-    longitude: 0,
-    name: "Test",
-    passive: true,
+    icon: "mdi:map-marker",
+    id: "test",
+    latitude: 37.7749,
+    longitude: -122.4194,
+    name: "Example Zone",
+    passive: false,
+    radius: 100,
   } as ZoneDetails;
 
   describe("Lifecycle", () => {
@@ -59,6 +63,26 @@ describe("Zone", () => {
               type: "zone/create",
               ...EXAMPLE_ZONE,
             });
+          });
+        });
+      });
+
+      it("should publish diagnostics on zone registry update", async () => {
+        expect.assertions(1);
+        hassTestRunner.configure({ hass: { EMIT_DIAGNOSTICS: true } });
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          vi.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
+          const spy = vi.fn();
+          subscribe(hass.diagnostics.zone.registry_update.name, spy);
+          lifecycle.onReady(async () => {
+            setImmediate(async () => {
+              hass.socket.socketEvents.emit("zone_registry_updated");
+            });
+            await sleep(100);
+            expect(spy).toHaveBeenCalledWith(
+              expect.objectContaining({ ms: expect.any(Number) }),
+              hass.diagnostics.zone.registry_update.name,
+            );
           });
         });
       });

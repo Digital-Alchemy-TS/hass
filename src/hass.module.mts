@@ -11,6 +11,7 @@ import {
   FetchAPI,
   FetchInternals,
   Floor,
+  HassDiagnosticsService,
   IDByExtension,
   Label,
   ReferenceService,
@@ -30,6 +31,18 @@ export const LIB_HASS = CreateLibrary({
       default: "http://homeassistant.local:8123",
       description: "Url to reach Home Assistant at",
       type: "string",
+    },
+
+    /**
+     * Setting this to true will tell hass.diagnostics to create the related channels & start emitting
+     */
+    EMIT_DIAGNOSTICS: {
+      default: false,
+      description: [
+        "Enable the creation of diagnostics channels",
+        "Value read at bootstrap, cannot be set by env or at runtime",
+      ],
+      type: "boolean",
     },
 
     /**
@@ -160,6 +173,11 @@ export const LIB_HASS = CreateLibrary({
      * device interactions
      */
     device: Device,
+
+    /**
+     *
+     */
+    diagnostics: HassDiagnosticsService,
 
     /**
      * retrieve and interact with home assistant entities

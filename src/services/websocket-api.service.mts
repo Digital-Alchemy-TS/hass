@@ -73,6 +73,7 @@ export function WebsocketAPI({
   // #MARK: setConnectionState
   function setConnectionState(state: ConnectionState) {
     hass.socket.connectionState = state;
+    hass.diagnostics.websocket?.set_connection_state.publish({ state });
   }
 
   // #MARK: handleUnknownConnectionState
@@ -87,6 +88,7 @@ export function WebsocketAPI({
     // send a ping message to force a pong
     logger.trace({ name }, `emitting ping`);
     lastPingAttempt = now;
+    hass.diagnostics.websocket?.send_ping.publish({});
 
     // emit a ping, do not wait for reply (inline)
     hass.socket.sendMessage({ type: "ping" }, false);
@@ -109,6 +111,7 @@ export function WebsocketAPI({
       logger.warn({ name }, "failed to receive expected {pong}");
       return;
     }
+    hass.diagnostics.websocket?.failed_ping.publish({});
     // 🪦 oof, get rid of the current connection and try again
     await hass.socket.teardown();
     logger.warn({ name }, "hass stopped replying {unknown} => {offline}");
@@ -215,11 +218,13 @@ export function WebsocketAPI({
 
   // #MARK: fireEvent
   async function fireEvent(event_type: string, event_data: object = {}) {
-    return await hass.socket.sendMessage({
+    const result = await hass.socket.sendMessage({
       event_data,
       event_type,
       type: "fire_event",
     });
+    hass.diagnostics.websocket?.fire_event.publish({ event_data, event_type, result });
+    return result;
   }
 
   // #MARK: sendMessage
@@ -245,6 +250,7 @@ export function WebsocketAPI({
     if (data.type !== "auth") {
       data.id = id;
     }
+    hass.diagnostics.websocket?.send_message.publish({ data, waitForResponse });
     const json = JSON.stringify(data);
     const sentAt = new Date();
 
@@ -275,6 +281,7 @@ export function WebsocketAPI({
     //
     // discard the promise so whatever flow is depending on this can get garbage collected
     waitingCallback.delete(id);
+    hass.diagnostics.websocket?.missed_reply.publish({ data, sentAt });
     logger.warn(
       {
         message: data,
@@ -398,10 +405,11 @@ export function WebsocketAPI({
    */
   async function onMessage(message: SocketMessageDTO) {
     const id = Number(message.id);
+    setImmediate(() => hass.diagnostics.websocket?.message_received.publish({ message }));
     switch (message.type) {
       case "auth_required": {
         logger.trace({ name: onMessage }, `sending authentication`);
-        hass.socket.sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
+        void hass.socket.sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
         return;
       }
 

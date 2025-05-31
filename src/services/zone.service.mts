@@ -4,6 +4,7 @@ import {
   EARLY_ON_READY,
   HassZoneService,
   ManifestItem,
+  perf,
   ZONE_REGISTRY_UPDATED,
   ZoneDetails,
   ZoneOptions,
@@ -29,10 +30,12 @@ export function Zone({
       context,
       event_type: "zone_registry_updated",
       async exec() {
+        const ms = perf();
         await debounce(ZONE_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
         hass.zone.current = await hass.zone.list();
         logger.debug(`zone registry updated`);
         event.emit(ZONE_REGISTRY_UPDATED);
+        hass.diagnostics.zone?.registry_update.publish({ ms: ms() });
       },
     });
   });
