@@ -1,3 +1,5 @@
+import { subscribe } from "node:diagnostics_channel";
+
 import { sleep } from "@digital-alchemy/core";
 
 import { FLOOR_REGISTRY_UPDATED, FloorDetails } from "../helpers/index.mts";
@@ -100,6 +102,26 @@ describe("Floor", () => {
               type: "config/floor_registry/create",
               ...EXAMPLE_FLOOR,
             });
+          });
+        });
+      });
+
+      it("should publish diagnostics on floor registry update", async () => {
+        expect.assertions(1);
+        hassTestRunner.configure({ hass: { EMIT_DIAGNOSTICS: true } });
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          vi.spyOn(hass.socket, "sendMessage").mockImplementation(async () => undefined);
+          const spy = vi.fn();
+          subscribe(hass.diagnostics.floor.registry_update.name, spy);
+          lifecycle.onReady(async () => {
+            setImmediate(async () => {
+              hass.socket.socketEvents.emit("floor_registry_updated");
+            });
+            await sleep(100);
+            expect(spy).toHaveBeenCalledWith(
+              expect.objectContaining({ ms: expect.any(Number) }),
+              hass.diagnostics.floor.registry_update.name,
+            );
           });
         });
       });
