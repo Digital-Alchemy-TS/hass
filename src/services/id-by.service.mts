@@ -78,8 +78,9 @@ export function IDByExtension({
           domain(i.entity_id) !== "update",
       );
       if (trimmed.length > SINGLE) {
+        const available_entity_ids = trimmed.map(i => i.entity_id);
         logger.warn(
-          { available_entity_ids: trimmed.map(i => i.entity_id), unique_id },
+          { available_entity_ids, unique_id },
           `unique_id collision during lookup (chose first in list)`,
         );
       } else {

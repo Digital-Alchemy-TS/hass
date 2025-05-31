@@ -13,6 +13,7 @@ import {
   HassConfig,
   HassServiceDTO,
   HomeAssistantServerLogItem,
+  perf,
   PICK_SERVICE,
   PICK_SERVICE_PARAMETERS,
   PostConfigPriorities,
@@ -253,6 +254,15 @@ export function FetchAPI({
     });
   }
 
+  async function fetch<T, BODY extends TFetchBody = undefined>(
+    options: Partial<FetchArguments<BODY>>,
+  ) {
+    const ms = perf();
+    const out = await fetcher.exec<T, BODY>(options);
+    hass.diagnostics.fetch?.fetch.publish({ ms: ms(), options, out });
+    return out;
+  }
+
   return {
     _fetcher: fetcher,
     calendarSearch,
@@ -260,8 +270,7 @@ export function FetchAPI({
     checkConfig,
     checkCredentials,
     download,
-    fetch: async <T, BODY extends TFetchBody = undefined>(options: Partial<FetchArguments<BODY>>) =>
-      await fetcher.exec<T, BODY>(options),
+    fetch,
     fetchEntityCustomizations,
     fetchEntityHistory,
     fireEvent,

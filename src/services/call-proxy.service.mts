@@ -1,6 +1,11 @@
 import { TServiceParams } from "@digital-alchemy/core";
 
-import { ALL_SERVICE_DOMAINS, PICK_SERVICE, PICK_SERVICE_PARAMETERS } from "../helpers/index.mts";
+import {
+  ALL_SERVICE_DOMAINS,
+  perf,
+  PICK_SERVICE,
+  PICK_SERVICE_PARAMETERS,
+} from "../helpers/index.mts";
 import { iCallService } from "../user.mts";
 
 export function CallProxy({
@@ -49,6 +54,7 @@ export function CallProxy({
       );
       logger.trace({ name: loadServiceList, services }, `loaded domain [%s]`, value.domain);
     });
+    hass.diagnostics.call?.reload.publish({});
   }
 
   /**
@@ -69,19 +75,20 @@ export function CallProxy({
     const [domain, service] = serviceName.split(".");
     // User can just not await this call if they don't care about the "waitForChange"
 
+    const ms = perf();
     if (!return_response) {
-      return await hass.socket.sendMessage(
-        { domain, service, service_data, type: "call_service" },
-        true,
-      );
+      const payload = { domain, service, service_data, type: "call_service" };
+      const out = await hass.socket.sendMessage(payload, true);
+      hass.diagnostics.call?.fast.publish({ ms: ms(), payload });
+      return out;
     }
-    const result = (await hass.socket.sendMessage(
-      { domain, return_response, service, service_data, type: "call_service" },
-      true,
-    )) as { response: unknown };
+
+    const payload = { domain, return_response, service, service_data, type: "call_service" };
+    const result = (await hass.socket.sendMessage(payload, true)) as { response: unknown };
     if (!result?.response) {
       logger.warn({ result }, `{%s}.{%s} did not return a response`, domain, service);
     }
+    hass.diagnostics.call?.response.publish({ ms: ms(), payload, result });
     return result?.response;
   }
 

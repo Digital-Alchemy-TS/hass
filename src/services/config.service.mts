@@ -24,6 +24,9 @@ export function Configure({
   internal,
 }: TServiceParams): HassConfigService {
   const { is } = internal.utils;
+  let checkedServices = new Map<string, boolean>();
+  let services: HassServiceDTO[];
+
   lifecycle.onPreInit(() => {
     // HASSIO_TOKEN provided by home assistant to addons
     // SUPERVISOR_TOKEN used as alias elsewhere
@@ -70,7 +73,6 @@ export function Configure({
     }
   }, PostConfigPriorities.VALIDATE);
 
-  let services: HassServiceDTO[];
   async function loadServiceList(recursion = START): Promise<void> {
     logger.debug({ name: loadServiceList }, `fetching service list`);
     services = await hass.fetch.listServices();
@@ -85,28 +87,31 @@ export function Configure({
         recursion,
         MAX_ATTEMPTS,
       );
+      hass.diagnostics.config?.load_services_failure.publish({ recursion });
       await sleep(config.hass.RETRY_INTERVAL * SECOND);
       await loadServiceList(recursion + INCREMENT);
-    } else {
-      event.emit(SERVICE_LIST_UPDATED, services);
-      checkedServices = new Map();
+      return;
     }
+    event.emit(SERVICE_LIST_UPDATED, services);
+    checkedServices = new Map();
+    hass.diagnostics.config?.service_list_updated.publish({ recursion });
   }
-  let checkedServices = new Map<string, boolean>();
+
+  function isService<DOMAIN extends ALL_SERVICE_DOMAINS>(
+    domain: DOMAIN,
+    service: string,
+  ): service is Extract<keyof iCallService[DOMAIN], string> {
+    if (checkedServices.has(service)) {
+      return checkedServices.get(service);
+    }
+    const exists = services.some(i => i.domain === domain && !is.undefined(i.services[service]));
+    checkedServices.set(service, exists);
+    return exists;
+  }
 
   return {
     getServices: () => services,
-    isService: <DOMAIN extends ALL_SERVICE_DOMAINS>(
-      domain: DOMAIN,
-      service: string,
-    ): service is Extract<keyof iCallService[DOMAIN], string> => {
-      if (checkedServices.has(service)) {
-        return checkedServices.get(service);
-      }
-      const exists = services.some(i => i.domain === domain && !is.undefined(i.services[service]));
-      checkedServices.set(service, exists);
-      return exists;
-    },
+    isService,
     loadServiceList,
   };
 }

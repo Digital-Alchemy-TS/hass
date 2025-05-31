@@ -129,7 +129,7 @@ export type FilterValueType = string | boolean | number | Date | RegExp | Record
  */
 export enum FILTER_OPERATIONS {
   // "elemMatch" functionality in mongo
-  // eslint-disable-next-line unicorn/prevent-abbreviations
+
   elem = "elem",
   regex = "regex",
   in = "in",

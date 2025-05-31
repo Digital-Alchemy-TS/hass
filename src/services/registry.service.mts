@@ -10,35 +10,35 @@ import {
 } from "../helpers/index.mts";
 
 export function Registry({ hass }: TServiceParams): HassRegistryService {
-  async function ManifestList() {
+  async function manifestList() {
     return await hass.socket.sendMessage<ManifestItem[]>({
       type: "manifest/list",
     });
   }
 
-  async function UpdateCore(options: UpdateCoreOptions) {
+  async function updateCore(options: UpdateCoreOptions) {
     await hass.socket.sendMessage<ZoneDetails[]>({
       ...options,
       type: "config/core/update",
     });
   }
 
-  async function GetConfig() {
+  async function getConfig() {
     return await hass.socket.sendMessage<HassConfig>({
       type: "get_config",
     });
   }
 
-  async function GetConfigEntries() {
+  async function getConfigEntries() {
     return await hass.socket.sendMessage<ConfigEntry[]>({
       type: "config_entries/get",
     });
   }
 
   return {
-    getConfig: GetConfig,
-    getConfigEntries: GetConfigEntries,
-    manifestList: ManifestList,
-    updateCore: UpdateCore,
+    getConfig,
+    getConfigEntries,
+    manifestList,
+    updateCore,
   };
 }

@@ -98,3 +98,8 @@ export const PostConfigPriorities = {
   FETCH: 1,
   VALIDATE: -1,
 } as const;
+
+export const perf = () => {
+  const start = performance.now();
+  return () => performance.now() - start;
+};

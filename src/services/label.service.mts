@@ -6,6 +6,7 @@ import {
   LABEL_REGISTRY_UPDATED,
   LabelDefinition,
   LabelOptions,
+  perf,
 } from "../helpers/index.mts";
 import { TLabelId } from "../user.mts";
 
@@ -29,10 +30,12 @@ export function Label({
       context,
       event_type: "label_registry_updated",
       async exec() {
+        const ms = perf();
         await debounce(LABEL_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
         hass.label.current = await hass.label.list();
         logger.debug(`label registry updated`);
         event.emit(LABEL_REGISTRY_UPDATED);
+        hass.diagnostics.label?.registry_update.publish({ ms: ms() });
       },
     });
   });
