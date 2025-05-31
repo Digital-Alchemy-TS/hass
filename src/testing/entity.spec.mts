@@ -1,4 +1,7 @@
+import { subscribe } from "node:diagnostics_channel";
+
 import { sleep } from "@digital-alchemy/core";
+import dayjs from "dayjs";
 
 import { ENTITY_STATE } from "../index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
@@ -167,6 +170,204 @@ describe("Entity", () => {
 
         lifecycle.onBootstrap(() => expect(spy).toHaveBeenCalledTimes(5));
       });
+    });
+  });
+
+  describe("Diagnostics", () => {
+    it("should publish diagnostics on history lookup", async () => {
+      expect.assertions(2);
+      await hassTestRunner
+        .configure({
+          hass: { EMIT_DIAGNOSTICS: true },
+        })
+        .run(({ lifecycle, hass }) => {
+          const spy = vi.fn();
+          subscribe(hass.diagnostics.entity.history_lookup.name, spy);
+
+          // Mock the socket response
+          const sendMessageSpy = vi.spyOn(hass.socket, "sendMessage").mockResolvedValue({
+            "sensor.magic": [
+              {
+                entity_id: "sensor.magic",
+                last_changed: "2024-01-01T00:00:00Z",
+                last_updated: "2024-01-01T00:00:00Z",
+                state: "test",
+              },
+            ],
+          });
+
+          lifecycle.onReady(async () => {
+            const now = new Date();
+            await hass.entity.history({
+              end_time: now.toISOString(),
+              entity_ids: ["sensor.magic"],
+              start_time: new Date(now.getTime() - 3600000).toISOString(), // 1 hour ago
+            });
+
+            expect(sendMessageSpy).toHaveBeenCalledWith(
+              expect.objectContaining({
+                entity_ids: ["sensor.magic"],
+                type: "history/history_during_period",
+              }),
+            );
+
+            expect(spy).toHaveBeenCalledWith(
+              expect.objectContaining({
+                ms: expect.any(Number),
+                payload: expect.objectContaining({
+                  entity_ids: ["sensor.magic"],
+                }),
+                result: expect.objectContaining({
+                  "sensor.magic": expect.arrayContaining([
+                    expect.objectContaining({
+                      entity_id: "sensor.magic",
+                      state: "test",
+                    }),
+                  ]),
+                }),
+              }),
+              hass.diagnostics.entity.history_lookup.name,
+            );
+          });
+        });
+    });
+
+    it("should publish diagnostics on refresh entities", async () => {
+      expect.assertions(1);
+      await hassTestRunner
+        .configure({
+          hass: { EMIT_DIAGNOSTICS: true },
+        })
+        .run(({ lifecycle, hass }) => {
+          const spy = vi.fn();
+          subscribe(hass.diagnostics.entity.refresh_entities.name, spy);
+
+          lifecycle.onReady(async () => {
+            await hass.entity.refresh();
+            expect(spy).toHaveBeenCalledWith(
+              expect.objectContaining({
+                emitUpdates: [],
+              }),
+              hass.diagnostics.entity.refresh_entities.name,
+            );
+          });
+        });
+    });
+
+    it("should publish diagnostics on entity update", async () => {
+      expect.assertions(1);
+      await hassTestRunner
+        .configure({
+          hass: { EMIT_DIAGNOSTICS: true },
+        })
+        .run(({ lifecycle, hass, mock_assistant }) => {
+          const spy = vi.fn();
+          subscribe(hass.diagnostics.entity.entity_updated.name, spy);
+
+          lifecycle.onReady(async () => {
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "test",
+            });
+            expect(spy).toHaveBeenCalledWith(
+              expect.objectContaining({
+                entity_id: "sensor.magic",
+                new_state: expect.objectContaining({
+                  entity_id: "sensor.magic",
+                  state: "test",
+                }),
+                old_state: expect.objectContaining({
+                  entity_id: "sensor.magic",
+                  state: "unavailable",
+                }),
+              }),
+              hass.diagnostics.entity.entity_updated.name,
+            );
+          });
+        });
+    });
+
+    it("should publish diagnostics on entity remove", async () => {
+      expect.assertions(1);
+      await hassTestRunner
+        .configure({
+          hass: { EMIT_DIAGNOSTICS: true },
+        })
+        .run(({ lifecycle, hass }) => {
+          const spy = vi.fn();
+          subscribe(hass.diagnostics.entity.entity_remove.name, spy);
+
+          lifecycle.onReady(async () => {
+            // Directly call _entityUpdateReceiver with null new_state to trigger entity remove
+            hass.entity._entityUpdateReceiver("sensor.magic", null, {
+              attributes: {
+                friendly_name: "magic",
+                icon: "mdi:satellite-uplink",
+                restored: true,
+                supported_features: 0,
+              },
+              context: {
+                id: "test",
+                parent_id: null,
+                user_id: null,
+              },
+              entity_id: "sensor.magic",
+              last_changed: dayjs("2024-01-01T00:00:00Z"),
+              last_reported: dayjs("2024-01-01T00:00:00Z"),
+              last_updated: dayjs("2024-01-01T00:00:00Z"),
+              state: "test",
+            });
+
+            expect(spy).toHaveBeenCalledWith(
+              expect.objectContaining({
+                entity_id: "sensor.magic",
+              }),
+              hass.diagnostics.entity.entity_remove.name,
+            );
+          });
+        });
+    });
+
+    it("should publish diagnostics on entity add", async () => {
+      expect.assertions(1);
+      await hassTestRunner
+        .configure({
+          hass: { EMIT_DIAGNOSTICS: true },
+        })
+        .run(({ lifecycle, hass }) => {
+          const spy = vi.fn();
+          subscribe(hass.diagnostics.entity.entity_add.name, spy);
+
+          lifecycle.onReady(async () => {
+            // Call _entityUpdateReceiver with null old_state to trigger entity add
+            const newState = {
+              attributes: {
+                friendly_name: "magic" as const,
+                icon: "mdi:satellite-uplink" as const,
+                restored: true as const,
+                supported_features: 0 as const,
+              },
+              context: {
+                id: "test",
+                parent_id: null as null,
+                user_id: null as null,
+              },
+              entity_id: "sensor.magic" as const,
+              last_changed: dayjs("2024-01-01T00:00:00Z"),
+              last_reported: dayjs("2024-01-01T00:00:00Z"),
+              last_updated: dayjs("2024-01-01T00:00:00Z"),
+              state: "test",
+            };
+
+            hass.entity._entityUpdateReceiver("sensor.magic", newState, null);
+
+            expect(spy).toHaveBeenCalledWith(
+              expect.objectContaining({
+                entity_id: "sensor.magic",
+              }),
+              hass.diagnostics.entity.entity_add.name,
+            );
+          });
+        });
     });
   });
 });
