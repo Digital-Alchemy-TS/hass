@@ -21,6 +21,13 @@ declare module "../user.mts" {
     "27b4fc99f35bbdd1a07173caff5b52f86e3bc342db96f48427e47980b0fb6b49": "switch.living_room_mood_lights";
     "8eb8c1f8c760e97cfa49a0a29cd6891313a1e9a45dd046a556a9f317778cf50a": "switch.porch_light";
     "05ecbbc6111791b6baacbbb60397db14": "calendar.united_states_tx";
+    date_example_unique_id: "date.example";
+    datetime_example_unique_id: "datetime.example";
+    lock_example_unique_id: "lock.example";
+    number_example_unique_id: "number.example";
+    select_example_unique_id: "select.example";
+    text_example_unique_id: "text.example";
+    time_example_unique_id: "time.example";
   }
 
   export interface HassZoneMapping {
@@ -32,9 +39,14 @@ declare module "../user.mts" {
     binary_sensor: "binary_sensor.hass_e2e_online" | "binary_sensor.toggles";
     button: "button.example";
     calendar: "calendar.united_states_tx";
+    date: "date.example";
+    datetime: "datetime.example";
     light: "light.bedroom_ceiling_fan";
+    lock: "lock.example";
+    number: "number.example";
     person: "person.digital_alchemy";
     scene: "scene.games_room_auto";
+    select: "select.example";
     sensor:
       | "sensor.magic"
       | "sensor.sun_next_dawn"
@@ -49,6 +61,8 @@ declare module "../user.mts" {
       | "switch.kitchen_cabinets"
       | "switch.living_room_mood_lights"
       | "switch.porch_light";
+    text: "text.example";
+    time: "time.example";
     todo: "todo.shopping_list";
     tts: "tts.google_en_com";
     zone: "zone.home";

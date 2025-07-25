@@ -7,6 +7,73 @@ declare module "../user.mts" {
       entity_id: "button.example";
       attributes: { friendly_name: "Example button" };
     };
+    "date.example": {
+      state: "2024-01-15";
+      entity_id: "date.example";
+      attributes: {
+        friendly_name: "Example date";
+        icon: "mdi:calendar";
+      };
+    };
+    "datetime.example": {
+      state: "2024-01-15T14:30:00";
+      entity_id: "datetime.example";
+      attributes: {
+        friendly_name: "Example datetime";
+        icon: "mdi:calendar-clock";
+      };
+    };
+    "lock.example": {
+      state: "locked";
+      entity_id: "lock.example";
+      attributes: {
+        friendly_name: "Example lock";
+        icon: "mdi:lock";
+        supported_features: 3;
+      };
+    };
+    "number.example": {
+      state: "25.5";
+      entity_id: "number.example";
+      attributes: {
+        friendly_name: "Example number";
+        icon: "mdi:numeric";
+        min: 0;
+        max: 100;
+        step: 0.5;
+        mode: "slider";
+        unit_of_measurement: "°C";
+      };
+    };
+    "select.example": {
+      state: "option1";
+      entity_id: "select.example";
+      attributes: {
+        friendly_name: "Example select";
+        icon: "mdi:format-list-bulleted";
+        options: ["option1", "option2", "option3"];
+      };
+    };
+    "text.example": {
+      state: "Hello World";
+      entity_id: "text.example";
+      attributes: {
+        friendly_name: "Example text";
+        icon: "mdi:text";
+        max: 100;
+        min: 0;
+        mode: "text";
+        pattern: null;
+      };
+    };
+    "time.example": {
+      state: "14:30:00";
+      entity_id: "time.example";
+      attributes: {
+        friendly_name: "Example time";
+        icon: "mdi:clock";
+      };
+    };
     "binary_sensor.hass_e2e_online": {
       attributes: {
         friendly_name: "hass_e2e online";
