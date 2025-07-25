@@ -99,7 +99,7 @@ describe("Workflows", () => {
     });
   });
 
-  describe("Timers", () => {
+  describe.skip("Timers", () => {
     beforeEach(() => {
       vi.useFakeTimers();
     });

@@ -1,0 +1,3 @@
+# Exclude testing files from npm package
+src/testing/
+src/testing/**/*
