@@ -1,8 +1,6 @@
 import { DOWN, NO_CHANGE, SECOND, TServiceParams, UP } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
-import { lt } from "semver";
 
-import { MIN_SUPPORTED_HASS_VERSION } from "../helpers/constants.mts";
 import { FetchArguments, FilteredFetchArguments, TFetchBody } from "../helpers/fetch.mts";
 import {
   ALL_SERVICE_DOMAINS,
