@@ -45,19 +45,6 @@ export function FetchAPI({
     fetcher.base_headers = { Authorization: `Bearer ${config.hass.TOKEN}` };
   }, PostConfigPriorities.FETCH);
 
-  lifecycle.onBootstrap(async () => {
-    const target = await hass.fetch.getConfig();
-    if (lt(target.version.split(".dev")[0], MIN_SUPPORTED_HASS_VERSION)) {
-      logger.fatal(
-        { target: target.version },
-        "minimum supported version of home assistant: %s",
-        MIN_SUPPORTED_HASS_VERSION,
-      );
-      process.exit();
-    }
-    logger.debug(`hass version %s`, target.version);
-  });
-
   async function calendarSearch({
     calendar,
     start = dayjs(),
