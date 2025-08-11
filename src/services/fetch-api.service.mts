@@ -47,7 +47,7 @@ export function FetchAPI({
 
   lifecycle.onBootstrap(async () => {
     const target = await hass.fetch.getConfig();
-    if (lt(target.version, MIN_SUPPORTED_HASS_VERSION)) {
+    if (lt(target.version.split(".dev")[0], MIN_SUPPORTED_HASS_VERSION)) {
       logger.fatal(
         { target: target.version },
         "minimum supported version of home assistant: %s",
