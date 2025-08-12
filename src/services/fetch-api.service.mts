@@ -1,8 +1,6 @@
 import { DOWN, NO_CHANGE, SECOND, TServiceParams, UP } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
-import { lt } from "semver";
 
-import { MIN_SUPPORTED_HASS_VERSION } from "../helpers/constants.mts";
 import { FetchArguments, FilteredFetchArguments, TFetchBody } from "../helpers/fetch.mts";
 import {
   ALL_SERVICE_DOMAINS,
@@ -44,19 +42,6 @@ export function FetchAPI({
     fetcher.base_url = config.hass.BASE_URL;
     fetcher.base_headers = { Authorization: `Bearer ${config.hass.TOKEN}` };
   }, PostConfigPriorities.FETCH);
-
-  lifecycle.onBootstrap(async () => {
-    const target = await hass.fetch.getConfig();
-    if (lt(target.version, MIN_SUPPORTED_HASS_VERSION)) {
-      logger.fatal(
-        { target: target.version },
-        "minimum supported version of home assistant: %s",
-        MIN_SUPPORTED_HASS_VERSION,
-      );
-      process.exit();
-    }
-    logger.debug(`hass version %s`, target.version);
-  });
 
   async function calendarSearch({
     calendar,
