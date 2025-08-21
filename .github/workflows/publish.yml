@@ -1,27 +1,77 @@
 name: Publish
-permissions:
-  contents: read
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published, prereleased]
+
+permissions:
+  contents: read
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    concurrency:
+      group: publish-${{ github.event.release.tag_name }}
+      cancel-in-progress: true
     steps:
     - uses: actions/checkout@v5
     - uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'
         registry-url: 'https://registry.npmjs.org/'
     - run: corepack enable
     - run: yarn config set enableImmutableInstalls false
+
     - run: yarn
-    - run: yarn lint
     - run: yarn build
+    - run: yarn lint
     - run: yarn test src/testing
-    - run: npm publish
+    - name: Check package version
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        IS_PRERELEASE: ${{ github.event.release.prerelease }}
+      run: |
+        PACKAGE_VERSION=$(node -p "require('./package.json').version")
+        echo "Package version: $PACKAGE_VERSION"
+
+        if [[ "$IS_PRERELEASE" == "true" ]]; then
+          # For prereleases, version must contain -beta
+          if [[ "$PACKAGE_VERSION" != *"-beta"* ]]; then
+            echo "❌ Prerelease failed: Package version '$PACKAGE_VERSION' must contain '-beta'"
+            exit 1
+          fi
+          echo "✅ Prerelease version check passed"
+        else
+          # For releases, version must NOT contain -beta
+          if [[ "$PACKAGE_VERSION" == *"-beta"* ]]; then
+            echo "❌ Release failed: Package version '$PACKAGE_VERSION' cannot contain '-beta'"
+            exit 1
+          fi
+          echo "✅ Release version check passed"
+        fi
+    - name: Publish to npm
+      env:
+        IS_PRERELEASE: ${{ github.event.release.prerelease }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        if [[ "$IS_PRERELEASE" == "true" ]]; then
+          npm publish --tag beta
+        else
+          npm publish
+        fi
+    - name: Send Discord Notification
+      if: ${{ !github.event.release.prerelease }}
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        nodetail: true
+        url: ${{ github.event.release.html_url }}
+        title: 🚀 **RELEASE** **@digital-alchemy/hass ${{ github.event.release.tag_name }}** published
+        content: |
+          ${{ github.event.release.name }}
+          ${{ github.event.release.body }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      environment:
+        name: npm
+        url: ${{ github.event.release.html_url }}
