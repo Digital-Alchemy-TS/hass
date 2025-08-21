@@ -71,7 +71,5 @@ jobs:
         url: ${{ github.event.release.html_url }}
         title: 🚀 **RELEASE** **@digital-alchemy/hass ${{ github.event.release.tag_name }}** published
         content: |
-          ${{ github.event.release.name }}
+          (${{ github.event.release.tag_name }}) **${{ github.event.release.name }}**
           ${{ github.event.release.body }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
