@@ -102,7 +102,7 @@
   "dependencies": {
     "dayjs": "^1.11.13",
     "semver": "^7.7.2",
-    "type-fest": "^4.41.0",
+    "type-fest": "^5.1.0",
     "uuid": "^11.1.0",
     "ws": "^8.18.3"
   },

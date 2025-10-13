@@ -666,7 +666,7 @@ __metadata:
     prettier: "npm:^3.6.2"
     semver: "npm:^7.7.2"
     tsx: "npm:^4.20.4"
-    type-fest: "npm:^4.41.0"
+    type-fest: "npm:^5.1.0"
     typescript: "npm:^5.9.2"
     uuid: "npm:^11.1.0"
     vitest: "npm:^3.2.4"
@@ -5836,6 +5836,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tagged-tag@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "tagged-tag@npm:1.0.0"
+  checksum: 10/e37653df3e495daa7ea7790cb161b810b00075bba2e4d6c93fb06a709e747e3ae9da11a120d0489833203926511b39e038a2affbd9d279cfb7a2f3fcccd30b5d
+  languageName: node
+  linkType: hard
+
 "tar-fs@npm:^2.0.0":
   version: 2.1.3
   resolution: "tar-fs@npm:2.1.3"
@@ -5999,6 +6006,15 @@ __metadata:
   version: 4.41.0
   resolution: "type-fest@npm:4.41.0"
   checksum: 10/617ace794ac0893c2986912d28b3065ad1afb484cad59297835a0807dc63286c39e8675d65f7de08fafa339afcb8fe06a36e9a188b9857756ae1e92ee8bda212
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "type-fest@npm:5.1.0"
+  dependencies:
+    tagged-tag: "npm:^1.0.0"
+  checksum: 10/c54997b38f274e795970fed1da0791979909726d6edb6e07b92a128af2be97682523076643ded0f3bc9266999ab48a4dcbacd533199f8829c381464a636de849
   languageName: node
   linkType: hard
 
