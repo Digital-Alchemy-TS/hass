@@ -173,7 +173,7 @@ export type HassWebsocketAPI = {
    *
    * Not the same as `onEvent` (you probably want that)
    */
-  subscribe: <EVENT extends string, PAYLOAD extends  Record<string, unknown> = EmptyObject>({
+  subscribe: <EVENT extends string, PAYLOAD extends Record<string, unknown> = EmptyObject>({
     event_type,
     context,
     exec,
