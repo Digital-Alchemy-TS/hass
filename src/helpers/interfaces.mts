@@ -1,7 +1,7 @@
-import { RemoveCallback, TBlackHole } from "@digital-alchemy/core";
-import EventEmitter from "events";
-import { EmptyObject } from "type-fest";
-import WS from "ws";
+import type { RemoveCallback, TBlackHole } from "@digital-alchemy/core";
+import type EventEmitter from "events";
+import type { EmptyObject } from "type-fest";
+import type WS from "ws";
 
 import type {
   ALL_DOMAINS,

@@ -1,6 +1,6 @@
-import { TBlackHole, TContext } from "@digital-alchemy/core";
-import { Dayjs } from "dayjs";
-import { EmptyObject } from "type-fest";
+import type { TBlackHole, TContext } from "@digital-alchemy/core";
+import type { Dayjs } from "dayjs";
+import type { EmptyObject } from "type-fest";
 
 import type { ALL_DOMAINS, ANY_ENTITY, PICK_ENTITY } from "../user.mts";
 import type { HassSocketMessageTypes } from "./constants.mts";

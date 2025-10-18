@@ -3,7 +3,7 @@ import { InternalError, SECOND, sleep, START } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import EventEmitter from "events";
-import { EmptyObject } from "type-fest";
+import type { EmptyObject } from "type-fest";
 import WS from "ws";
 
 import type {
