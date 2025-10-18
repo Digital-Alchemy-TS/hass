@@ -1,7 +1,7 @@
-import { LiteralUnion } from "type-fest";
+import type { LiteralUnion } from "type-fest";
 
-import { ALL_DOMAINS, TPlatformId } from "../../user.mts";
-import { ColorMode } from "../features.mts";
+import type { ALL_DOMAINS, TPlatformId } from "../../user.mts";
+import type { ColorMode } from "../features.mts";
 
 export interface ServiceListSelectorTarget {
   domain?: ALL_DOMAINS;

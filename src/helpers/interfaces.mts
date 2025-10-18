@@ -1,8 +1,8 @@
-import { RemoveCallback, TBlackHole } from "@digital-alchemy/core";
-import EventEmitter from "events";
-import WS from "ws";
+import type { RemoveCallback, TBlackHole } from "@digital-alchemy/core";
+import type EventEmitter from "events";
+import type WS from "ws";
 
-import {
+import type {
   ALL_DOMAINS,
   ANY_ENTITY,
   HassUniqueIdMapping,
@@ -22,11 +22,11 @@ import {
   TRawEntityIds,
   TUniqueId,
 } from "../user.mts";
-import { BackupResponse, HomeAssistantBackup } from "./backup.mts";
-import { DeviceDetails } from "./device.mts";
-import { ByIdProxy } from "./entity-state.mts";
-import { AreaCreate, AreaDetails, ConfigEntry, HassConfig, HassServiceDTO } from "./index.mts";
-import {
+import type { BackupResponse, HomeAssistantBackup } from "./backup.mts";
+import type { DeviceDetails } from "./device.mts";
+import type { ByIdProxy } from "./entity-state.mts";
+import type { AreaCreate, AreaDetails, ConfigEntry, HassConfig, HassServiceDTO } from "./index.mts";
+import type {
   EditAliasOptions,
   EditLabelOptions,
   EntityRegistryItem,
@@ -40,8 +40,8 @@ import {
   ZoneDetails,
   ZoneOptions,
 } from "./registry.mts";
-import { ALL_SERVICE_DOMAINS, ENTITY_STATE } from "./utility.mts";
-import {
+import type { ALL_SERVICE_DOMAINS, ENTITY_STATE } from "./utility.mts";
+import type {
   EntityHistoryDTO,
   EntityHistoryResult,
   OnHassEventOptions,

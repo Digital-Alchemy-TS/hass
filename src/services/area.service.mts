@@ -1,15 +1,9 @@
-import { debounce, eachSeries, InternalError, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { debounce, eachSeries, InternalError } from "@digital-alchemy/core";
 
-import {
-  AREA_REGISTRY_UPDATED,
-  AreaCreate,
-  AreaDetails,
-  EARLY_ON_READY,
-  ENTITY_REGISTRY_UPDATED,
-  HassAreaService,
-  perf,
-} from "../index.mts";
-import { ANY_ENTITY, TAreaId } from "../user.mts";
+import type { AreaCreate, AreaDetails, HassAreaService } from "../index.mts";
+import { AREA_REGISTRY_UPDATED, EARLY_ON_READY, ENTITY_REGISTRY_UPDATED, perf } from "../index.mts";
+import type { ANY_ENTITY, TAreaId } from "../user.mts";
 
 export function Area({
   hass,

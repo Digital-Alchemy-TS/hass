@@ -1,6 +1,6 @@
 import { SINGLE } from "@digital-alchemy/core";
 
-import { BackupResponse } from "../helpers/index.mts";
+import type { BackupResponse } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
 
 describe("Backup", () => {

@@ -1,4 +1,4 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
 import { channel } from "diagnostics_channel";
 
 function createDiagnostics<CHANNEL extends string>(context: string, channels: CHANNEL[]) {

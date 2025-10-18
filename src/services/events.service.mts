@@ -1,13 +1,12 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
 
+import type { HassEventsService, SimpleCallback } from "../helpers/index.mts";
 import {
   AREA_REGISTRY_UPDATED,
   DEVICE_REGISTRY_UPDATED,
   ENTITY_REGISTRY_UPDATED,
   FLOOR_REGISTRY_UPDATED,
-  HassEventsService,
   LABEL_REGISTRY_UPDATED,
-  SimpleCallback,
   ZONE_REGISTRY_UPDATED,
 } from "../helpers/index.mts";
 

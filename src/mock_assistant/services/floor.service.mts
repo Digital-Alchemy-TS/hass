@@ -1,7 +1,7 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
 
-import { FloorDetails } from "../../helpers/index.mts";
-import { TFloorId } from "../../user.mts";
+import type { FloorDetails } from "../../helpers/index.mts";
+import type { TFloorId } from "../../user.mts";
 
 export function MockFloorExtension({ mock_assistant }: TServiceParams) {
   let floors = new Map<TFloorId, FloorDetails>();

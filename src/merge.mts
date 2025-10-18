@@ -1,4 +1,4 @@
-import { PICK_ENTITY } from "./index.mts";
+import type { PICK_ENTITY } from "./index.mts";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface EntityMergeAttributes {}

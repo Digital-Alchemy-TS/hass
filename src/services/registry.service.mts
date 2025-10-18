@@ -1,6 +1,6 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
 
-import {
+import type {
   ConfigEntry,
   HassConfig,
   HassRegistryService,

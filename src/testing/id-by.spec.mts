@@ -1,5 +1,5 @@
 import { hassTestRunner } from "../mock_assistant/index.mts";
-import { PICK_ENTITY } from "../user.mts";
+import type { PICK_ENTITY } from "../user.mts";
 
 afterEach(async () => {
   await hassTestRunner.teardown();

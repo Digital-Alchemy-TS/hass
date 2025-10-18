@@ -1,5 +1,5 @@
 import { env } from "process";
-import { MockInstance } from "vitest";
+import type { MockInstance } from "vitest";
 
 import { hassTestRunner } from "../mock_assistant/index.mts";
 

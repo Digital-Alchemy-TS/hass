@@ -1,7 +1,8 @@
-import { deepExtend, InternalError, sleep, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { deepExtend, InternalError, sleep } from "@digital-alchemy/core";
 
-import { ENTITY_STATE } from "../../index.mts";
-import { PICK_ENTITY, TRawEntityIds } from "../../user.mts";
+import type { ENTITY_STATE } from "../../index.mts";
+import type { PICK_ENTITY, TRawEntityIds } from "../../user.mts";
 
 export function MockEntityExtension({
   hass,

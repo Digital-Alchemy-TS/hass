@@ -1,28 +1,20 @@
-import {
-  debounce,
-  each,
-  eachSeries,
-  INCREMENT,
-  SECOND,
-  sleep,
-  START,
-  TServiceParams,
-} from "@digital-alchemy/core";
-import dayjs, { Dayjs } from "dayjs";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { debounce, each, eachSeries, INCREMENT, SECOND, sleep, START } from "@digital-alchemy/core";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
-import {
+import type {
   EditLabelOptions,
-  ENTITY_REGISTRY_UPDATED,
   ENTITY_STATE,
   EntityHistoryDTO,
   EntityHistoryItem,
   EntityHistoryResult,
   EntityRegistryItem,
   HassEntityManager,
-  perf,
   TMasterState,
 } from "../index.mts";
-import { ALL_DOMAINS, ANY_ENTITY, PICK_ENTITY } from "../user.mts";
+import { ENTITY_REGISTRY_UPDATED, perf } from "../index.mts";
+import type { ALL_DOMAINS, ANY_ENTITY, PICK_ENTITY } from "../user.mts";
 
 const MAX_ATTEMPTS = 10;
 const RECENT = 5;

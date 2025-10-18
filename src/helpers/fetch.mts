@@ -1,5 +1,6 @@
-import { is, TContext } from "@digital-alchemy/core";
-import { MergeExclusive } from "type-fest";
+import type { TContext } from "@digital-alchemy/core";
+import { is } from "@digital-alchemy/core";
+import type { MergeExclusive } from "type-fest";
 
 /**
  * Defines the types of parameters that can be used in fetch requests.

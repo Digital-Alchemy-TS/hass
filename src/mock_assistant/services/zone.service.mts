@@ -1,7 +1,7 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
 
-import { ZoneDetails } from "../../helpers/index.mts";
-import { TZoneId } from "../../user.mts";
+import type { ZoneDetails } from "../../helpers/index.mts";
+import type { TZoneId } from "../../user.mts";
 
 export function MockZoneExtension({ mock_assistant }: TServiceParams) {
   let zones = new Map<TZoneId, ZoneDetails>();

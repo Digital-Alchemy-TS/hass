@@ -1,9 +1,10 @@
 import { sleep } from "@digital-alchemy/core";
 import { subscribe } from "diagnostics_channel";
 
-import { AREA_REGISTRY_UPDATED, AreaDetails } from "../helpers/index.mts";
+import type { AreaDetails } from "../helpers/index.mts";
+import { AREA_REGISTRY_UPDATED } from "../helpers/index.mts";
 import { hassTestRunner, INTERNAL_MESSAGE } from "../mock_assistant/index.mts";
-import { TAreaId } from "../user.mts";
+import type { TAreaId } from "../user.mts";
 
 const EXAMPLE_AREA = {
   area_id: "empty_area" as TAreaId,

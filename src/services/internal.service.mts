@@ -1,19 +1,19 @@
-import { FIRST, InternalError, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { FIRST, InternalError } from "@digital-alchemy/core";
 import { createWriteStream } from "fs";
 import { pipeline } from "stream";
 import { promisify } from "util";
 
-import {
-  buildFilterString,
+import type {
   DownloadOptions,
   FetchArguments,
   FetcherOptions,
   FetchProcessTypes,
   FetchWith,
-  isDomain,
   MaybeHttpError,
   TFetchBody,
 } from "../helpers/index.mts";
+import { buildFilterString, isDomain } from "../helpers/index.mts";
 
 const streamPipeline = promisify(pipeline);
 

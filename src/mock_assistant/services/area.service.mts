@@ -1,7 +1,7 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
 
-import { AreaDetails } from "../../helpers/index.mts";
-import { TAreaId } from "../../user.mts";
+import type { AreaDetails } from "../../helpers/index.mts";
+import type { TAreaId } from "../../user.mts";
 
 export function MockAreaExtension({ mock_assistant }: TServiceParams) {
   let areas = new Map<TAreaId, AreaDetails>();

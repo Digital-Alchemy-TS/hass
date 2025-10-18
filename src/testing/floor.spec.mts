@@ -2,9 +2,10 @@ import { subscribe } from "node:diagnostics_channel";
 
 import { sleep } from "@digital-alchemy/core";
 
-import { FLOOR_REGISTRY_UPDATED, FloorDetails } from "../helpers/index.mts";
+import type { FloorDetails } from "../helpers/index.mts";
+import { FLOOR_REGISTRY_UPDATED } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
-import { TFloorId } from "../user.mts";
+import type { TFloorId } from "../user.mts";
 
 describe("Floor", () => {
   const EXAMPLE_FLOOR = {

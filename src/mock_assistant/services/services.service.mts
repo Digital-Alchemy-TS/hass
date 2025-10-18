@@ -1,6 +1,6 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
 
-import { HassServiceDTO } from "../../helpers/index.mts";
+import type { HassServiceDTO } from "../../helpers/index.mts";
 
 export function MockServices({ hass }: TServiceParams) {
   let services: HassServiceDTO[];

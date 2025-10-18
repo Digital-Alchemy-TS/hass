@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 /* eslint-disable @cspell/spellchecker */
 
-import {
+import type {
   AndroidNotificationData,
   AppleNotificationData,
   NotificationData,
