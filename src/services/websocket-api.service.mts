@@ -3,6 +3,7 @@ import { InternalError, SECOND, sleep, START } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import EventEmitter from "events";
+import type { EmptyObject } from "type-fest";
 import WS from "ws";
 
 import type {
@@ -518,11 +519,10 @@ export function WebsocketAPI({
   }
 
   // #MARK: subscribe
-  async function subscribe<EVENT extends string>({
-    event_type,
-    context,
-    exec,
-  }: SocketSubscribeOptions<EVENT>) {
+  async function subscribe<
+    EVENT extends string,
+    PAYLOAD extends Record<string, unknown> = EmptyObject,
+  >({ event_type, context, exec }: SocketSubscribeOptions<EVENT, PAYLOAD>) {
     await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
     return hass.socket.onEvent({
       context,
