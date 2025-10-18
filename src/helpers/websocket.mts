@@ -1,5 +1,6 @@
 import { TBlackHole, TContext } from "@digital-alchemy/core";
 import { Dayjs } from "dayjs";
+import { EmptyObject } from "type-fest";
 
 import { ALL_DOMAINS, ANY_ENTITY, PICK_ENTITY } from "../user.mts";
 import { HassSocketMessageTypes } from "./constants.mts";
@@ -19,10 +20,10 @@ export interface SocketMessageDTO {
   type: `${HassSocketMessageTypes}`;
 }
 
-export type SocketSubscribeOptions<EVENT extends string> = {
+export type SocketSubscribeOptions<EVENT extends string, PAYLOAD extends object = EmptyObject> = {
   event_type: EVENT;
   context: TContext;
-  exec: (data: SocketSubscribeData<EVENT>) => TBlackHole;
+  exec: (data: SocketSubscribeData<EVENT> & PAYLOAD) => TBlackHole;
 };
 
 export type SocketSubscribeData<EVENT extends string> = {
