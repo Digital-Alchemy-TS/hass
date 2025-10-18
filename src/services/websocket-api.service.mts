@@ -8,6 +8,7 @@ import {
 } from "@digital-alchemy/core";
 import dayjs, { Dayjs } from "dayjs";
 import EventEmitter from "events";
+import { EmptyObject } from "type-fest";
 import WS from "ws";
 
 import {
@@ -523,11 +524,11 @@ export function WebsocketAPI({
   }
 
   // #MARK: subscribe
-  async function subscribe<EVENT extends string>({
+  async function subscribe<EVENT extends string, PAYLOAD extends object = EmptyObject>({
     event_type,
     context,
     exec,
-  }: SocketSubscribeOptions<EVENT>) {
+  }: SocketSubscribeOptions<EVENT, PAYLOAD>) {
     await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
     return hass.socket.onEvent({
       context,
