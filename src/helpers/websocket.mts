@@ -20,7 +20,10 @@ export interface SocketMessageDTO {
   type: `${HassSocketMessageTypes}`;
 }
 
-export type SocketSubscribeOptions<EVENT extends string, PAYLOAD extends object = EmptyObject> = {
+export type SocketSubscribeOptions<
+  EVENT extends string,
+  PAYLOAD extends Record<string, unknown> = EmptyObject,
+> = {
   event_type: EVENT;
   context: TContext;
   exec: (data: PAYLOAD & SocketSubscribeData<EVENT>) => TBlackHole;

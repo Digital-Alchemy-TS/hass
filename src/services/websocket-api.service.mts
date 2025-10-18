@@ -519,11 +519,10 @@ export function WebsocketAPI({
   }
 
   // #MARK: subscribe
-  async function subscribe<EVENT extends string, PAYLOAD extends object = EmptyObject>({
-    event_type,
-    context,
-    exec,
-  }: SocketSubscribeOptions<EVENT, PAYLOAD>) {
+  async function subscribe<
+    EVENT extends string,
+    PAYLOAD extends Record<string, unknown> = EmptyObject,
+  >({ event_type, context, exec }: SocketSubscribeOptions<EVENT, PAYLOAD>) {
     await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
     return hass.socket.onEvent({
       context,
