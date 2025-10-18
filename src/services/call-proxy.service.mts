@@ -1,12 +1,12 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
 
-import {
+import type {
   ALL_SERVICE_DOMAINS,
-  perf,
   PICK_SERVICE,
   PICK_SERVICE_PARAMETERS,
 } from "../helpers/index.mts";
-import { iCallService } from "../user.mts";
+import { perf } from "../helpers/index.mts";
+import type { iCallService } from "../user.mts";
 
 export function CallProxy({
   logger,

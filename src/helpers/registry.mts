@@ -1,4 +1,4 @@
-import {
+import type {
   ANY_ENTITY,
   TAreaId,
   TDeviceId,

@@ -1,4 +1,5 @@
-import { CreateApplication, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { CreateApplication } from "@digital-alchemy/core";
 
 import { LIB_HASS } from "./index.mts";
 

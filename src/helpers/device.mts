@@ -1,4 +1,4 @@
-import { TDeviceId } from "../user.mts";
+import type { TDeviceId } from "../user.mts";
 
 export interface DeviceDetails {
   area_id: null | string;

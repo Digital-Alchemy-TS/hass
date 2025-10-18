@@ -1,11 +1,7 @@
-import { TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
 
-import {
-  EditAliasOptions,
-  HassConversationService,
-  ToggleExpose,
-  UPDATE_REGISTRY,
-} from "../helpers/index.mts";
+import type { EditAliasOptions, HassConversationService, ToggleExpose } from "../helpers/index.mts";
+import { UPDATE_REGISTRY } from "../helpers/index.mts";
 
 export function Conversation({ hass, logger }: TServiceParams): HassConversationService {
   async function addAlias({ entity, alias }: EditAliasOptions) {

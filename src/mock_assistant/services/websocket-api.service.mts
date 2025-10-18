@@ -1,9 +1,10 @@
-import { START, TBlackHole, TServiceParams } from "@digital-alchemy/core";
+import type { TBlackHole, TServiceParams } from "@digital-alchemy/core";
+import { START } from "@digital-alchemy/core";
 import EventEmitter from "events";
-import { PartialDeep, WritableDeep } from "type-fest";
-import WS from "ws";
+import type { PartialDeep, WritableDeep } from "type-fest";
+import type WS from "ws";
 
-import { SocketMessageDTO } from "../../helpers/index.mts";
+import type { SocketMessageDTO } from "../../helpers/index.mts";
 
 const CONNECTION_CLOSED = 0;
 // const CONNECTION_OPEN = 1;

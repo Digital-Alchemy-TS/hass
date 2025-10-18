@@ -1,8 +1,8 @@
-import { FIRST, RemoveCallback, TBlackHole } from "@digital-alchemy/core";
-import { Dayjs } from "dayjs";
-import { Except } from "type-fest";
+import type { FIRST, RemoveCallback, TBlackHole } from "@digital-alchemy/core";
+import type { Dayjs } from "dayjs";
+import type { Except } from "type-fest";
 
-import {
+import type {
   ALL_DOMAINS,
   ANY_ENTITY,
   GetDomain,
@@ -14,8 +14,8 @@ import {
   TPlatformId,
   TRawDomains,
 } from "../user.mts";
-import { SensorUnitOfMeasurement } from "./registry.mts";
-import { ALL_SERVICE_DOMAINS, ENTITY_STATE } from "./utility.mts";
+import type { SensorUnitOfMeasurement } from "./registry.mts";
+import type { ALL_SERVICE_DOMAINS, ENTITY_STATE } from "./utility.mts";
 
 export interface HassEntityContext {
   id: string | null;

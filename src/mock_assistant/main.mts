@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-import { CreateApplication, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { CreateApplication } from "@digital-alchemy/core";
 import { writeFileSync } from "fs";
 import { join } from "path";
 import { cwd } from "process";
 
 import { LIB_HASS } from "../index.mts";
-import { ScannerCacheData } from "./helpers/index.mts";
+import type { ScannerCacheData } from "./helpers/index.mts";
 
 const writeFixtures = CreateApplication({
   configuration: {

@@ -2,7 +2,7 @@ import { subscribe } from "node:diagnostics_channel";
 
 import { sleep } from "@digital-alchemy/core";
 
-import { DeviceDetails } from "../helpers/index.mts";
+import type { DeviceDetails } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
 
 describe("Device", () => {

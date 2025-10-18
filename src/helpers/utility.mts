@@ -1,8 +1,9 @@
-import { is, TBlackHole } from "@digital-alchemy/core";
-import { Dayjs } from "dayjs";
-import { Get } from "type-fest";
+import type { TBlackHole } from "@digital-alchemy/core";
+import { is } from "@digital-alchemy/core";
+import type { Dayjs } from "dayjs";
+import type { Get } from "type-fest";
 
-import {
+import type {
   ALL_DOMAINS,
   ANY_ENTITY,
   HassEntitySetupMapping,
@@ -10,7 +11,7 @@ import {
   PICK_ENTITY,
   TRawEntityIds,
 } from "../user.mts";
-import { HassEntityContext } from "./entity-state.mts";
+import type { HassEntityContext } from "./entity-state.mts";
 
 // ? Casting by domain turns things from "equiv to ANY_ENTITY" to "scene.*" type generics
 // These are no longer valid comparisons against ANY_ENTITY though

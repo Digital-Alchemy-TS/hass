@@ -1,7 +1,9 @@
-import { FIRST, SINGLE, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { FIRST, SINGLE } from "@digital-alchemy/core";
 
-import { domain, EntityRegistryItem, IDByInterface } from "../index.mts";
-import {
+import type { EntityRegistryItem, IDByInterface } from "../index.mts";
+import { domain } from "../index.mts";
+import type {
   ALL_DOMAINS,
   ANY_ENTITY,
   HassUniqueIdMapping,

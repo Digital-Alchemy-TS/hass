@@ -1,12 +1,8 @@
-import { debounce, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { debounce } from "@digital-alchemy/core";
 
-import {
-  DEVICE_REGISTRY_UPDATED,
-  DeviceDetails,
-  EARLY_ON_READY,
-  HassDeviceService,
-  perf,
-} from "../helpers/index.mts";
+import type { DeviceDetails, HassDeviceService } from "../helpers/index.mts";
+import { DEVICE_REGISTRY_UPDATED, EARLY_ON_READY, perf } from "../helpers/index.mts";
 
 export function Device({
   hass,
