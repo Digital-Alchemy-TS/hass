@@ -97,7 +97,7 @@
     "ws": "^8.18.3"
   },
   "peerDependencies": {
-    "@digital-alchemy/core": "^25.5.1"
+    "@digital-alchemy/core": "*"
   },
   "dependencies": {
     "dayjs": "^1.11.18",

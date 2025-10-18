@@ -672,7 +672,7 @@ __metadata:
     vitest: "npm:^3.2.4"
     ws: "npm:^8.18.3"
   peerDependencies:
-    "@digital-alchemy/core": ^25.5.1
+    "@digital-alchemy/core": "*"
   bin:
     mock-assistant: ./scripts/mock-assistant.sh
   languageName: unknown
