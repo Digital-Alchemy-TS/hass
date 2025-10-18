@@ -23,7 +23,7 @@ export interface SocketMessageDTO {
 export type SocketSubscribeOptions<EVENT extends string, PAYLOAD extends object = EmptyObject> = {
   event_type: EVENT;
   context: TContext;
-  exec: (data: SocketSubscribeData<EVENT> & PAYLOAD) => TBlackHole;
+  exec: (data: PAYLOAD & SocketSubscribeData<EVENT>) => TBlackHole;
 };
 
 export type SocketSubscribeData<EVENT extends string> = {

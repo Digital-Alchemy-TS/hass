@@ -1,5 +1,6 @@
 import { RemoveCallback, TBlackHole } from "@digital-alchemy/core";
 import EventEmitter from "events";
+import { EmptyObject } from "type-fest";
 import WS from "ws";
 
 import {
@@ -172,11 +173,11 @@ export type HassWebsocketAPI = {
    *
    * Not the same as `onEvent` (you probably want that)
    */
-  subscribe: <EVENT extends string>({
+  subscribe: <EVENT extends string, PAYLOAD extends object = EmptyObject>({
     event_type,
     context,
     exec,
-  }: SocketSubscribeOptions<EVENT>) => Promise<RemoveCallback>;
+  }: SocketSubscribeOptions<EVENT, PAYLOAD>) => Promise<RemoveCallback>;
   /**
    * remove the current socket connection to home assistant
    *
