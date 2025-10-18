@@ -1,16 +1,11 @@
-import {
-  InternalError,
-  SECOND,
-  sleep,
-  START,
-  TBlackHole,
-  TServiceParams,
-} from "@digital-alchemy/core";
-import dayjs, { Dayjs } from "dayjs";
+import type { TBlackHole, TServiceParams } from "@digital-alchemy/core";
+import { InternalError, SECOND, sleep, START } from "@digital-alchemy/core";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import EventEmitter from "events";
 import WS from "ws";
 
-import {
+import type {
   ConnectionState,
   EntityUpdateEvent,
   HassWebsocketAPI,

@@ -70,6 +70,7 @@ export default [
       "unicorn/no-process-exit": "off",
       "sonarjs/no-skipped-test": "off",
       "unicorn/no-await-expression-member": "off",
+      "@typescript-eslint/consistent-type-imports": "error",
       "sonarjs/no-invalid-await": "off",
       "sonarjs/no-nested-functions": "off",
       "sonarjs/no-empty-function": "off",

@@ -3,9 +3,9 @@ import { subscribe } from "node:diagnostics_channel";
 import { sleep } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
-import { ENTITY_STATE } from "../index.mts";
+import type { ENTITY_STATE } from "../index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
-import { ANY_ENTITY } from "../user.mts";
+import type { ANY_ENTITY } from "../user.mts";
 
 describe("Entity", () => {
   afterEach(async () => {

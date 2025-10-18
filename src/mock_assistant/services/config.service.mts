@@ -1,6 +1,7 @@
-import { deepExtend, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { deepExtend } from "@digital-alchemy/core";
 
-import { HassConfig } from "../../helpers/index.mts";
+import type { HassConfig } from "../../helpers/index.mts";
 
 export function MockConfig({ hass }: TServiceParams) {
   let config = { components: ["synapse"], version: "2024.4.1" } as HassConfig;

@@ -1,4 +1,4 @@
-import {
+import type {
   ALL_DOMAINS,
   ANY_ENTITY,
   HassUniqueIdMapping,

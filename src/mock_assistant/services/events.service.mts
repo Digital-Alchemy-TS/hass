@@ -1,7 +1,8 @@
-import { sleep, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { sleep } from "@digital-alchemy/core";
 
-import { ENTITY_STATE, EntityUpdateEvent } from "../../index.mts";
-import { ANY_ENTITY } from "../../user.mts";
+import type { ENTITY_STATE, EntityUpdateEvent } from "../../index.mts";
+import type { ANY_ENTITY } from "../../user.mts";
 
 const SUPER_SHORT = 1;
 

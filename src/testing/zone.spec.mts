@@ -2,7 +2,8 @@ import { subscribe } from "node:diagnostics_channel";
 
 import { sleep } from "@digital-alchemy/core";
 
-import { ZONE_REGISTRY_UPDATED, ZoneDetails } from "../helpers/index.mts";
+import type { ZoneDetails } from "../helpers/index.mts";
+import { ZONE_REGISTRY_UPDATED } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
 
 describe("Zone", () => {

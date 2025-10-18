@@ -1,14 +1,8 @@
-import { debounce, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { debounce } from "@digital-alchemy/core";
 
-import {
-  EARLY_ON_READY,
-  HassZoneService,
-  ManifestItem,
-  perf,
-  ZONE_REGISTRY_UPDATED,
-  ZoneDetails,
-  ZoneOptions,
-} from "../helpers/index.mts";
+import type { HassZoneService, ManifestItem, ZoneDetails, ZoneOptions } from "../helpers/index.mts";
+import { EARLY_ON_READY, perf, ZONE_REGISTRY_UPDATED } from "../helpers/index.mts";
 
 export function Zone({
   config,

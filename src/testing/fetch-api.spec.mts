@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import { MockInstance } from "vitest";
+import type { MockInstance } from "vitest";
 
-import { HassConfig } from "../helpers/index.mts";
+import type { HassConfig } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
 
 describe("FetchAPI", () => {

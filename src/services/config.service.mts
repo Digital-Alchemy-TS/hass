@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { asyncNoop, INCREMENT, SECOND, sleep, START, TServiceParams } from "@digital-alchemy/core";
+import type { TServiceParams } from "@digital-alchemy/core";
+import { asyncNoop, INCREMENT, SECOND, sleep, START } from "@digital-alchemy/core";
 import { env } from "process";
 
-import {
-  ALL_SERVICE_DOMAINS,
-  HassConfigService,
-  HassServiceDTO,
-  PostConfigPriorities,
-} from "../helpers/index.mts";
-import { iCallService } from "../user.mts";
+import type { ALL_SERVICE_DOMAINS, HassConfigService, HassServiceDTO } from "../helpers/index.mts";
+import { PostConfigPriorities } from "../helpers/index.mts";
+import type { iCallService } from "../user.mts";
 
 const MAX_ATTEMPTS = 50;
 const FAILED = 1;
