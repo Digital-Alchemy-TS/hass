@@ -298,6 +298,7 @@ export function WebsocketAPI({
     callback: (message: T) => TBlackHole,
   ) {
     const handlers = messageHandlers.get(type) ?? [];
+    logger.trace({ type }, "register socket message handler");
     if (!messageHandlers.has(type)) {
       messageHandlers.set(type, []);
     }
