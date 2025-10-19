@@ -46,7 +46,6 @@ import type {
   EntityHistoryDTO,
   EntityHistoryResult,
   OnHassEventOptions,
-  SocketMessageDTO,
   SocketSubscribeOptions,
 } from "./websocket.mts";
 
@@ -139,7 +138,7 @@ export type HassWebsocketAPI = {
    *
    * for unit testing
    */
-  onMessage: (message: SocketMessageDTO) => Promise<void>;
+  onMessage: <T extends { type: string }>(message: T) => Promise<void>;
   /**
    * when true:
    * - outgoing socket messages are blocked
@@ -164,6 +163,13 @@ export type HassWebsocketAPI = {
    * internal
    */
   setConnectionState: (state: ConnectionState) => void;
+  /**
+   * Register a handler for incoming websocket messages by type
+   */
+  registerMessageHandler: <T extends { type: string }>(
+    type: string,
+    callback: (message: T) => TBlackHole,
+  ) => void;
   /**
    * internal
    */
