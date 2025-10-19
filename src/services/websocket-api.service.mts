@@ -413,7 +413,7 @@ export function WebsocketAPI({
    * ## result
    * Response to an outgoing emit
    */
-  async function onMessage(message: SocketMessageDTO) {
+  async function onMessage<T extends { type: string }>(message: T) {
     setImmediate(() => hass.diagnostics.websocket?.message_received.publish({ message }));
 
     const handlers = messageHandlers.get(message.type);

@@ -139,7 +139,7 @@ export type HassWebsocketAPI = {
    *
    * for unit testing
    */
-  onMessage: (message: SocketMessageDTO) => Promise<void>;
+  onMessage: <T extends { type: string }>(message: T) => Promise<void>;
   /**
    * when true:
    * - outgoing socket messages are blocked
