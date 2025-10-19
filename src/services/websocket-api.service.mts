@@ -528,12 +528,12 @@ export function WebsocketAPI({
 
   lifecycle.onPreInit(() => {
     // Register all current message handlers
-    hass.socket.registerMessageHandler("auth_required", async (_message: SocketMessageDTO) => {
+    hass.socket.registerMessageHandler("auth_required", async () => {
       logger.trace({ name: onMessage }, `sending authentication`);
       void hass.socket.sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
     });
 
-    hass.socket.registerMessageHandler("auth_ok", async (_message: SocketMessageDTO) => {
+    hass.socket.registerMessageHandler("auth_ok", async () => {
       // * Flag as valid connection
       logger.trace({ name: onMessage }, `event subscriptions starting`);
       await hass.socket.sendMessage({ type: "subscribe_events" }, false);
@@ -546,7 +546,7 @@ export function WebsocketAPI({
       return await onMessageEvent(id, message);
     });
 
-    hass.socket.registerMessageHandler("pong", async (_message: SocketMessageDTO) => {
+    hass.socket.registerMessageHandler("pong", async () => {
       // nothing in particular needs to be done, just don't log an error (default)
     });
 

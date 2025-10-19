@@ -46,7 +46,6 @@ import type {
   EntityHistoryDTO,
   EntityHistoryResult,
   OnHassEventOptions,
-  SocketMessageDTO,
   SocketSubscribeOptions,
 } from "./websocket.mts";
 
