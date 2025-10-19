@@ -165,6 +165,13 @@ export type HassWebsocketAPI = {
    */
   setConnectionState: (state: ConnectionState) => void;
   /**
+   * Register a handler for incoming websocket messages by type
+   */
+  registerMessageHandler: <T extends { type: string }>(
+    type: string,
+    callback: (message: T) => TBlackHole,
+  ) => void;
+  /**
    * internal
    */
   socketEvents: EventEmitter;

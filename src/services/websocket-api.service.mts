@@ -30,6 +30,8 @@ type WaitingMap = Map<
   }
 >;
 
+type MessageHandlerMap = Map<string, Array<(message: { type: string }) => TBlackHole>>;
+
 export function WebsocketAPI({
   context,
   event,
@@ -51,6 +53,7 @@ export function WebsocketAPI({
   let MESSAGE_TIMESTAMPS: number[] = [];
   let onSocketReady: () => void;
   const waitingCallback: WaitingMap = new Map();
+  const messageHandlers: MessageHandlerMap = new Map();
   const isOld = (date: Dayjs) =>
     is.undefined(date) || date.diff(dayjs(), "s") >= config.hass.RETRY_INTERVAL;
 
@@ -289,6 +292,17 @@ export function WebsocketAPI({
     );
   }
 
+  // #MARK: registerMessageHandler
+  function registerMessageHandler<T extends { type: string }>(
+    type: string,
+    callback: (message: T) => TBlackHole,
+  ) {
+    if (!messageHandlers.has(type)) {
+      messageHandlers.set(type, []);
+    }
+    messageHandlers.get(type)!.push(callback as (message: { type: string }) => TBlackHole);
+  }
+
   // #MARK: countMessage
   function countMessage(): void | never {
     messageCount++;
@@ -400,53 +414,17 @@ export function WebsocketAPI({
    * Response to an outgoing emit
    */
   async function onMessage(message: SocketMessageDTO) {
-    const id = Number(message.id);
     setImmediate(() => hass.diagnostics.websocket?.message_received.publish({ message }));
-    switch (message.type) {
-      case "auth_required": {
-        logger.trace({ name: onMessage }, `sending authentication`);
-        void hass.socket.sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
-        return;
-      }
 
-      case "auth_ok": {
-        // * Flag as valid connection
-        logger.trace({ name: onMessage }, `event subscriptions starting`);
-        await hass.socket.sendMessage({ type: "subscribe_events" }, false);
-        onSocketReady?.();
-        event.emit(SOCKET_CONNECTED);
-        return;
-      }
+    const handlers = messageHandlers.get(message.type);
+    if (is.empty(handlers)) {
+      logger.error(`unknown websocket message type: ${message.type}`);
+      return;
+    }
 
-      case "event": {
-        return await onMessageEvent(id, message);
-      }
-
-      // 👾
-      case "pong": {
-        // nothing in particular needs to be done, just don't log an error (default)
-        return;
-      }
-
-      case "result": {
-        return await onMessageResult(id, message);
-      }
-
-      case "auth_invalid": {
-        hass.socket.setConnectionState("invalid");
-        logger.fatal(
-          { message, name: onMessage },
-          "received auth invalid {connecting} => {invalid}",
-        );
-        // ? If you have a use case for making this exit configurable, open a ticket
-        process.exit();
-        return;
-      }
-
-      default: {
-        // Code error probably?
-        logger.error({ name: onMessage }, `unknown websocket message type: ${message.type}`);
-      }
+    // Execute all registered handlers for this message type
+    for (const handler of handlers) {
+      await handler(message as { type: string });
     }
   }
 
@@ -548,6 +526,43 @@ export function WebsocketAPI({
     return internal.removeFn(() => event.removeListener(SOCKET_CONNECTED, wrapped));
   }
 
+  lifecycle.onPreInit(() => {
+    // Register all current message handlers
+    hass.socket.registerMessageHandler("auth_required", async (_message: SocketMessageDTO) => {
+      logger.trace({ name: onMessage }, `sending authentication`);
+      void hass.socket.sendMessage({ access_token: config.hass.TOKEN, type: "auth" }, false);
+    });
+
+    hass.socket.registerMessageHandler("auth_ok", async (_message: SocketMessageDTO) => {
+      // * Flag as valid connection
+      logger.trace({ name: onMessage }, `event subscriptions starting`);
+      await hass.socket.sendMessage({ type: "subscribe_events" }, false);
+      onSocketReady?.();
+      event.emit(SOCKET_CONNECTED);
+    });
+
+    hass.socket.registerMessageHandler("event", async (message: SocketMessageDTO) => {
+      const id = Number(message.id);
+      return await onMessageEvent(id, message);
+    });
+
+    hass.socket.registerMessageHandler("pong", async (_message: SocketMessageDTO) => {
+      // nothing in particular needs to be done, just don't log an error (default)
+    });
+
+    hass.socket.registerMessageHandler("result", async (message: SocketMessageDTO) => {
+      const id = Number(message.id);
+      return await onMessageResult(id, message);
+    });
+
+    hass.socket.registerMessageHandler("auth_invalid", async (message: SocketMessageDTO) => {
+      hass.socket.setConnectionState("invalid");
+      logger.fatal({ message, name: onMessage }, "received auth invalid {connecting} => {invalid}");
+      // ? If you have a use case for making this exit configurable, open a ticket
+      process.exit();
+    });
+  });
+
   // #MARK: return object
   return {
     attachScheduledFunctions,
@@ -560,6 +575,7 @@ export function WebsocketAPI({
     onEvent,
     onMessage,
     pauseMessages: false,
+    registerMessageHandler,
     sendMessage,
     setConnectionState,
     socketEvents,
