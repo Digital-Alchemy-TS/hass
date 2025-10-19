@@ -297,10 +297,12 @@ export function WebsocketAPI({
     type: string,
     callback: (message: T) => TBlackHole,
   ) {
+    const handlers = messageHandlers.get(type) ?? [];
     if (!messageHandlers.has(type)) {
       messageHandlers.set(type, []);
     }
-    messageHandlers.get(type)!.push(callback as (message: { type: string }) => TBlackHole);
+    handlers.push(callback as (message: { type: string }) => TBlackHole);
+    messageHandlers.set(type, handlers);
   }
 
   // #MARK: countMessage
