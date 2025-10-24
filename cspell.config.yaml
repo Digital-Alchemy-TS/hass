@@ -21,6 +21,7 @@ words:
   - rgbw
   - rgbww
   - hacs
+  - mireds
   - rrule
   - rtsp
   - sonarjs

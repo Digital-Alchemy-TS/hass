@@ -1,41 +1,187 @@
 import type { LiteralUnion } from "type-fest";
 
-import type { ALL_DOMAINS, TPlatformId } from "../../user.mts";
+import type { ALL_DOMAINS, PICK_ENTITY, TPlatformId } from "../../user.mts";
 import type { ColorMode } from "../features.mts";
 
-export interface ServiceListSelectorTarget {
-  domain?: ALL_DOMAINS;
+export type EntityFilterSelector = {
+  integration: TPlatformId;
+  domain: string;
+  device_class: string;
+  supported_features: string[];
+};
+
+export type DeviceFilterSelector = {
+  integration: TPlatformId;
+  manufacturer: string;
+  model: string;
+  model_id: string;
+};
+
+export type LegacyEntitySelector = {
   integration?: TPlatformId;
-  multiple?: boolean;
-}
+  domain?: string[];
+  device_class?: string[];
+  supported_features: string[];
+};
+
+export type LegacyDeviceSelector = {
+  integration?: TPlatformId;
+  manufacturer?: string;
+  model?: string;
+};
 
 export interface ServiceListSelector {
-  addon?: null;
+  action: null;
+  addon: {
+    name?: string;
+    slug?: string;
+  };
+  area: {
+    device?: DeviceFilterSelector[];
+    entity?: EntityFilterSelector[];
+    multiple?: boolean;
+  };
+  attribute: {
+    entity_id?: PICK_ENTITY;
+    hide_attributes?: string[];
+  };
+  assist_pipeline: null;
   backup_location?: null;
   boolean?: null;
   color_rgb?: null;
-  color_temp?: { unit: "kelvin"; min: number; max: number };
-  conversation_agent?: null;
-  date?: null;
-  datetime?: null;
-  entity?: ServiceListSelectorTarget;
-  icon?: null;
-  number?: {
-    max: number;
-    min: number;
-    mode?: string;
-    step?: number;
-    unit_of_measurement: string;
+  color_temp?: {
+    unit?: "kelvin" | "mired";
+    min?: number;
+    max?: number;
+    max_mireds?: number;
+    min_mireds?: number;
   };
-  object?: null;
-  select?: {
-    custom_value?: boolean;
+  config_entry: {
+    integration: TPlatformId;
+  };
+  constant: {
+    label?: string;
+    value: string | number | boolean;
+    translation_key?: string;
+  };
+  conversation_agent?: {
+    language?: string;
+  };
+  country: {
+    countries?: string[];
+    no_sort?: boolean;
+  };
+  date: null;
+  datetime: null;
+  device: LegacyDeviceSelector & {
     multiple?: boolean;
-    options: Record<"label" | "value", string>[] | string[];
+    filter?: DeviceFilterSelector[];
+    entity?: EntityFilterSelector[];
   };
-  text?: null | { type: "password" };
-  theme?: { include_defaults?: boolean };
-  time?: null;
+  duration: {
+    enable_day?: boolean;
+    enable_millisecond?: boolean;
+    allow_negative?: boolean;
+  };
+  entity: LegacyEntitySelector & {
+    exclude_entities: string[];
+    include_entities: string[];
+    multiple?: boolean;
+    reorder?: boolean;
+    filter: EntityFilterSelector[];
+  };
+  file: {
+    accept: string;
+  };
+  floor: {
+    entity?: EntityFilterSelector[];
+    device?: DeviceFilterSelector[];
+    multiple?: boolean;
+  };
+  icon: {
+    placeholder?: string;
+  };
+  label: {
+    multiple?: boolean;
+  };
+  language: {
+    languages?: string[];
+    native_name?: boolean;
+    no_sort?: boolean;
+  };
+  location: {
+    radius?: boolean;
+    icon?: string;
+  };
+  media: {
+    accept: string[];
+  };
+  number: {
+    min?: number;
+    max?: number;
+    mode?: "box" | "slider";
+    translation_key?: string;
+    step?: number | "any";
+    unit_of_measurement?: string;
+  };
+  object: {
+    label_field?: string;
+    description_field?: string;
+    translation_key?: string;
+    multiple?: boolean;
+    // fields?: recursive
+  };
+  qr_code: {
+    data: string;
+    scale?: number;
+    error_correction_level?: unknown;
+  };
+  select: {
+    custom_value: boolean;
+    multiple?: boolean;
+    options: string[] | { label: string; value: string }[];
+    mode?: "dropdown" | "list";
+    translation_key: string;
+  };
+  state: {
+    multiple?: boolean;
+    hide_states?: string[];
+    entity_id?: string;
+  };
+  statistic: {
+    multiple?: true;
+  };
+  target: {
+    entity?: EntityFilterSelector[];
+    device?: DeviceFilterSelector[];
+  };
+  template: null;
+  text: {
+    type?:
+      | "color"
+      | "date"
+      | "datetime-local"
+      | "email"
+      | "month"
+      | "number"
+      | "password"
+      | "search"
+      | "tel"
+      | "text"
+      | "time"
+      | "url"
+      | "week";
+    autocomplete: string;
+    multiline?: boolean;
+    prefix?: string;
+    suffix?: string;
+    multiple?: boolean;
+  };
+  theme: {
+    include_defaults?: boolean;
+  };
+  time: null;
+  trigger: null;
 }
 
 export interface ServiceListFilter {
