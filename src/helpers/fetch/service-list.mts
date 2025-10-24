@@ -46,16 +46,17 @@ export interface ServiceListSelector {
     hide_attributes?: string[];
   };
   assist_pipeline: null;
-  backup_location?: null;
-  boolean?: null;
-  color_rgb?: null;
-  color_temp?: {
+  backup_location: null;
+  boolean: null;
+  color_rgb: null;
+  color_temp: {
     unit?: "kelvin" | "mired";
     min?: number;
     max?: number;
     max_mireds?: number;
     min_mireds?: number;
   };
+  condition: null;
   config_entry: {
     integration: TPlatformId;
   };
@@ -64,7 +65,7 @@ export interface ServiceListSelector {
     value: string | number | boolean;
     translation_key?: string;
   };
-  conversation_agent?: {
+  conversation_agent: {
     language?: string;
   };
   country: {
@@ -84,11 +85,11 @@ export interface ServiceListSelector {
     allow_negative?: boolean;
   };
   entity: LegacyEntitySelector & {
-    exclude_entities: string[];
-    include_entities: string[];
+    exclude_entities?: string[];
+    include_entities?: string[];
     multiple?: boolean;
     reorder?: boolean;
-    filter: EntityFilterSelector[];
+    filter?: EntityFilterSelector[];
   };
   file: {
     accept: string;
@@ -114,7 +115,7 @@ export interface ServiceListSelector {
     icon?: string;
   };
   media: {
-    accept: string[];
+    accept?: string[];
   };
   number: {
     min?: number;
@@ -125,31 +126,39 @@ export interface ServiceListSelector {
     unit_of_measurement?: string;
   };
   object: {
+    fields?: Record<
+      string,
+      {
+        selector: ServiceListSelector;
+        required?: boolean;
+        label?: string;
+      }
+    >;
+    multiple?: boolean;
     label_field?: string;
     description_field?: string;
     translation_key?: string;
-    multiple?: boolean;
-    // fields?: recursive
   };
   qr_code: {
     data: string;
     scale?: number;
-    error_correction_level?: unknown;
+    error_correction_level?: string;
   };
   select: {
-    custom_value: boolean;
-    multiple?: boolean;
     options: string[] | { label: string; value: string }[];
+    multiple?: boolean;
+    custom_value?: boolean;
     mode?: "dropdown" | "list";
-    translation_key: string;
+    translation_key?: string;
+    sort?: boolean;
   };
   state: {
+    entity_id?: string;
     multiple?: boolean;
     hide_states?: string[];
-    entity_id?: string;
   };
   statistic: {
-    multiple?: true;
+    multiple?: boolean;
   };
   target: {
     entity?: EntityFilterSelector[];
@@ -171,7 +180,7 @@ export interface ServiceListSelector {
       | "time"
       | "url"
       | "week";
-    autocomplete: string;
+    autocomplete?: string;
     multiline?: boolean;
     prefix?: string;
     suffix?: string;
