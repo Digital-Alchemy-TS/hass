@@ -126,11 +126,14 @@ export interface ServiceListSelector {
     unit_of_measurement?: string;
   };
   object: {
-    fields?: Record<string, {
-      selector: ServiceListSelector;
-      required?: boolean;
-      label?: string;
-    }>;
+    fields?: Record<
+      string,
+      {
+        selector: ServiceListSelector;
+        required?: boolean;
+        label?: string;
+      }
+    >;
     multiple?: boolean;
     label_field?: string;
     description_field?: string;

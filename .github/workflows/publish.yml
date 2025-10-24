@@ -14,7 +14,7 @@ jobs:
       group: publish-${{ github.event.release.tag_name }}
       cancel-in-progress: true
     environment:
-      name: npm
+      name: ${{ github.event.release.prerelease && 'npm-prerelease' || 'npm' }}
       url: ${{ github.event.release.html_url }}
     steps:
     - uses: actions/checkout@v5
@@ -51,6 +51,7 @@ jobs:
           fi
           echo "✅ Release version check passed"
         fi
+
     - name: Publish to npm
       env:
         IS_PRERELEASE: ${{ github.event.release.prerelease }}
@@ -62,6 +63,7 @@ jobs:
         else
           npm publish
         fi
+
     - name: Send Discord Notification
       if: ${{ !github.event.release.prerelease }}
       uses: sarisia/actions-status-discord@v1
