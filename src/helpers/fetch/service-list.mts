@@ -4,24 +4,24 @@ import type { ALL_DOMAINS, PICK_ENTITY, TPlatformId } from "../../user.mts";
 import type { ColorMode } from "../features.mts";
 
 export type EntityFilterSelector = {
-  integration: TPlatformId;
-  domain: string;
-  device_class: string;
-  supported_features: string[];
+  integration?: TPlatformId;
+  domain?: string | string[];
+  device_class?: string | string[];
+  supported_features?: string | string[];
 };
 
 export type DeviceFilterSelector = {
-  integration: TPlatformId;
-  manufacturer: string;
-  model: string;
-  model_id: string;
+  integration?: TPlatformId;
+  manufacturer?: string;
+  model?: string;
+  model_id?: string;
 };
 
 export type LegacyEntitySelector = {
   integration?: TPlatformId;
-  domain?: string[];
-  device_class?: string[];
-  supported_features: string[];
+  domain?: string | string[];
+  device_class?: string | string[];
+  supported_features?: string | string[];
 };
 
 export type LegacyDeviceSelector = {
@@ -37,8 +37,8 @@ export interface ServiceListSelector {
     slug?: string;
   };
   area: {
-    device?: DeviceFilterSelector[];
-    entity?: EntityFilterSelector[];
+    device?: DeviceFilterSelector | DeviceFilterSelector[];
+    entity?: EntityFilterSelector | EntityFilterSelector[];
     multiple?: boolean;
   };
   attribute: {
@@ -69,15 +69,15 @@ export interface ServiceListSelector {
     language?: string;
   };
   country: {
-    countries?: string[];
+    countries?: string | string[];
     no_sort?: boolean;
   };
   date: null;
   datetime: null;
   device: LegacyDeviceSelector & {
     multiple?: boolean;
-    filter?: DeviceFilterSelector[];
-    entity?: EntityFilterSelector[];
+    filter?: DeviceFilterSelector | DeviceFilterSelector[];
+    entity?: EntityFilterSelector | EntityFilterSelector[];
   };
   duration: {
     enable_day?: boolean;
@@ -85,18 +85,18 @@ export interface ServiceListSelector {
     allow_negative?: boolean;
   };
   entity: LegacyEntitySelector & {
-    exclude_entities?: string[];
-    include_entities?: string[];
+    exclude_entities?: string | string[];
+    include_entities?: string | string[];
     multiple?: boolean;
     reorder?: boolean;
-    filter?: EntityFilterSelector[];
+    filter?: EntityFilterSelector | EntityFilterSelector[];
   };
   file: {
     accept: string;
   };
   floor: {
-    entity?: EntityFilterSelector[];
-    device?: DeviceFilterSelector[];
+    entity?: EntityFilterSelector | EntityFilterSelector[];
+    device?: DeviceFilterSelector | DeviceFilterSelector[];
     multiple?: boolean;
   };
   icon: {
@@ -106,7 +106,7 @@ export interface ServiceListSelector {
     multiple?: boolean;
   };
   language: {
-    languages?: string[];
+    languages?: string | string[];
     native_name?: boolean;
     no_sort?: boolean;
   };
@@ -115,7 +115,7 @@ export interface ServiceListSelector {
     icon?: string;
   };
   media: {
-    accept?: string[];
+    accept?: string | string[];
   };
   number: {
     min?: number;
@@ -161,8 +161,8 @@ export interface ServiceListSelector {
     multiple?: boolean;
   };
   target: {
-    entity?: EntityFilterSelector[];
-    device?: DeviceFilterSelector[];
+    entity?: EntityFilterSelector | EntityFilterSelector[];
+    device?: DeviceFilterSelector | DeviceFilterSelector[];
   };
   template: null;
   text: {
