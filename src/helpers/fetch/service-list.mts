@@ -1,49 +1,208 @@
 import type { LiteralUnion } from "type-fest";
 
-import type { ALL_DOMAINS, TPlatformId } from "../../user.mts";
+import type { ALL_DOMAINS, PICK_ENTITY, TPlatformId } from "../../user.mts";
 import type { ColorMode } from "../features.mts";
 
-export interface ServiceListSelectorTarget {
-  domain?: ALL_DOMAINS;
+export type EntityFilterSelector = {
   integration?: TPlatformId;
-  multiple?: boolean;
-}
+  domain?: ALL_DOMAINS | ALL_DOMAINS[];
+  device_class?: string | string[];
+  supported_features?: string | string[];
+};
+
+export type DeviceFilterSelector = {
+  integration?: TPlatformId;
+  manufacturer?: string;
+  model?: string;
+  model_id?: string;
+};
+
+export type LegacyEntitySelector = {
+  integration?: TPlatformId;
+  domain?: ALL_DOMAINS | ALL_DOMAINS[];
+  device_class?: string | string[];
+  supported_features?: string | string[];
+};
+
+export type LegacyDeviceSelector = {
+  integration?: TPlatformId;
+  manufacturer?: string;
+  model?: string;
+};
 
 export interface ServiceListSelector {
-  addon?: null;
-  backup_location?: null;
-  boolean?: null;
-  color_rgb?: null;
-  color_temp?: { unit: "kelvin"; min: number; max: number };
-  conversation_agent?: null;
-  date?: null;
-  datetime?: null;
-  entity?: ServiceListSelectorTarget;
-  icon?: null;
-  number?: {
-    max: number;
-    min: number;
-    mode?: string;
-    step?: number;
-    unit_of_measurement: string;
+  action: null;
+  addon: {
+    name?: string;
+    slug?: string;
   };
-  object?: null;
-  select?: {
-    custom_value?: boolean;
+  area: {
+    device?: DeviceFilterSelector | DeviceFilterSelector[];
+    entity?: EntityFilterSelector | EntityFilterSelector[];
     multiple?: boolean;
-    options: Record<"label" | "value", string>[] | string[];
   };
-  text?: null | { type: "password" };
-  theme?: { include_defaults?: boolean };
-  time?: null;
+  attribute: {
+    entity_id?: PICK_ENTITY;
+    hide_attributes?: string[];
+  };
+  assist_pipeline: null;
+  backup_location: null;
+  boolean: null;
+  color_rgb: null;
+  color_temp: {
+    unit?: "kelvin" | "mired";
+    min?: number;
+    max?: number;
+    max_mireds?: number;
+    min_mireds?: number;
+  };
+  condition: null;
+  config_entry: {
+    integration: TPlatformId;
+  };
+  constant: {
+    label?: string;
+    value: string | number | boolean;
+    translation_key?: string;
+  };
+  conversation_agent: {
+    language?: string;
+  };
+  country: {
+    countries?: string | string[];
+    no_sort?: boolean;
+  };
+  date: null;
+  datetime: null;
+  device: LegacyDeviceSelector & {
+    multiple?: boolean;
+    filter?: DeviceFilterSelector | DeviceFilterSelector[];
+    entity?: EntityFilterSelector | EntityFilterSelector[];
+  };
+  duration: {
+    enable_day?: boolean;
+    enable_millisecond?: boolean;
+    allow_negative?: boolean;
+  };
+  entity: LegacyEntitySelector & {
+    exclude_entities?: PICK_ENTITY | PICK_ENTITY[];
+    include_entities?: PICK_ENTITY | PICK_ENTITY[];
+    multiple?: boolean;
+    reorder?: boolean;
+    filter?: EntityFilterSelector | EntityFilterSelector[];
+  };
+  file: {
+    accept: string;
+  };
+  floor: {
+    entity?: EntityFilterSelector | EntityFilterSelector[];
+    device?: DeviceFilterSelector | DeviceFilterSelector[];
+    multiple?: boolean;
+  };
+  icon: {
+    placeholder?: string;
+  };
+  label: {
+    multiple?: boolean;
+  };
+  language: {
+    languages?: string | string[];
+    native_name?: boolean;
+    no_sort?: boolean;
+  };
+  location: {
+    radius?: boolean;
+    icon?: string;
+  };
+  media: {
+    accept?: string | string[];
+  };
+  number: {
+    min?: number;
+    max?: number;
+    mode?: "box" | "slider";
+    translation_key?: string;
+    step?: number | "any";
+    unit_of_measurement?: string;
+  };
+  object: {
+    fields?: Record<
+      string,
+      {
+        selector: ServiceListSelector;
+        required?: boolean;
+        label?: string;
+      }
+    >;
+    multiple?: boolean;
+    label_field?: string;
+    description_field?: string;
+    translation_key?: string;
+  };
+  qr_code: {
+    data: string;
+    scale?: number;
+    error_correction_level?: "L" | "M" | "Q" | "H";
+  };
+  select: {
+    options: (string | { label: string; value: string })[];
+    multiple?: boolean;
+    custom_value?: boolean;
+    mode?: "dropdown" | "list";
+    translation_key?: string;
+    sort?: boolean;
+  };
+  state: {
+    entity_id?: PICK_ENTITY;
+    multiple?: boolean;
+    hide_states?: string[];
+  };
+  statistic: {
+    multiple?: boolean;
+  };
+  target: {
+    entity?: EntityFilterSelector | EntityFilterSelector[];
+    device?: DeviceFilterSelector | DeviceFilterSelector[];
+  };
+  template: null;
+  text: {
+    type?:
+      | "color"
+      | "date"
+      | "datetime-local"
+      | "email"
+      | "month"
+      | "number"
+      | "password"
+      | "search"
+      | "tel"
+      | "text"
+      | "time"
+      | "url"
+      | "week";
+    autocomplete?: string;
+    multiline?: boolean;
+    prefix?: string;
+    suffix?: string;
+    multiple?: boolean;
+  };
+  theme: {
+    include_defaults?: boolean;
+  };
+  time: null;
+  trigger: null;
 }
 
 export interface ServiceListFilter {
+  attribute?: Record<string, string[]>;
   supported_features?: number[];
   supported_color_modes?: LiteralUnion<`${ColorMode}`, string>[];
 }
 
 export interface ServiceListFieldDescription {
+  fields?: Record<string, ServiceListFieldDescription>;
+  target?: ServiceListServiceTarget;
+  response?: ResponseOptional;
   advanced?: boolean;
   default?: unknown;
   description?: string;
@@ -54,21 +213,14 @@ export interface ServiceListFieldDescription {
   selector?: ServiceListSelector;
 }
 
-export type ServiceListEntityTarget = {
-  domain?: ALL_DOMAINS[];
-  integration?: TPlatformId;
-  supported_features?: number[];
-};
-
 export interface ServiceListServiceTarget {
-  device?: { integration?: string };
-  entity?: ServiceListEntityTarget[];
-  integration?: string;
+  entity?: EntityFilterSelector[];
+  device?: DeviceFilterSelector[];
 }
 
 export interface ServiceListField {
   description?: string;
-  fields: Record<string, ServiceListFieldDescription>;
+  fields?: Record<string, ServiceListFieldDescription>;
   name?: string;
   target?: ServiceListServiceTarget;
   response?: ResponseOptional;
