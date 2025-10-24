@@ -126,14 +126,11 @@ export interface ServiceListSelector {
     unit_of_measurement?: string;
   };
   object: {
-    fields?: Record<
-      string,
-      {
-        selector: ServiceListSelector;
-        required?: boolean;
-        label?: string;
-      }
-    >;
+    fields?: Record<string, {
+      selector: ServiceListSelector;
+      required?: boolean;
+      label?: string;
+    }>;
     multiple?: boolean;
     label_field?: string;
     description_field?: string;
@@ -194,11 +191,15 @@ export interface ServiceListSelector {
 }
 
 export interface ServiceListFilter {
+  attribute?: Record<string, string[]>;
   supported_features?: number[];
   supported_color_modes?: LiteralUnion<`${ColorMode}`, string>[];
 }
 
 export interface ServiceListFieldDescription {
+  fields?: Record<string, ServiceListFieldDescription>;
+  target?: ServiceListServiceTarget;
+  response?: ResponseOptional;
   advanced?: boolean;
   default?: unknown;
   description?: string;
@@ -209,21 +210,14 @@ export interface ServiceListFieldDescription {
   selector?: ServiceListSelector;
 }
 
-export type ServiceListEntityTarget = {
-  domain?: ALL_DOMAINS[];
-  integration?: TPlatformId;
-  supported_features?: number[];
-};
-
 export interface ServiceListServiceTarget {
-  device?: { integration?: string };
-  entity?: ServiceListEntityTarget[];
-  integration?: string;
+  entity?: EntityFilterSelector[];
+  device?: DeviceFilterSelector[];
 }
 
 export interface ServiceListField {
   description?: string;
-  fields: Record<string, ServiceListFieldDescription>;
+  fields?: Record<string, ServiceListFieldDescription>;
   name?: string;
   target?: ServiceListServiceTarget;
   response?: ResponseOptional;
