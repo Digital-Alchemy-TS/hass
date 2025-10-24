@@ -5,7 +5,7 @@ import type { ColorMode } from "../features.mts";
 
 export type EntityFilterSelector = {
   integration?: TPlatformId;
-  domain?: string | string[];
+  domain?: ALL_DOMAINS | ALL_DOMAINS[];
   device_class?: string | string[];
   supported_features?: string | string[];
 };
@@ -19,7 +19,7 @@ export type DeviceFilterSelector = {
 
 export type LegacyEntitySelector = {
   integration?: TPlatformId;
-  domain?: string | string[];
+  domain?: ALL_DOMAINS | ALL_DOMAINS[];
   device_class?: string | string[];
   supported_features?: string | string[];
 };
@@ -85,8 +85,8 @@ export interface ServiceListSelector {
     allow_negative?: boolean;
   };
   entity: LegacyEntitySelector & {
-    exclude_entities?: string | string[];
-    include_entities?: string | string[];
+    exclude_entities?: PICK_ENTITY | PICK_ENTITY[];
+    include_entities?: PICK_ENTITY | PICK_ENTITY[];
     multiple?: boolean;
     reorder?: boolean;
     filter?: EntityFilterSelector | EntityFilterSelector[];
@@ -142,10 +142,10 @@ export interface ServiceListSelector {
   qr_code: {
     data: string;
     scale?: number;
-    error_correction_level?: string;
+    error_correction_level?: "L" | "M" | "Q" | "H";
   };
   select: {
-    options: string[] | { label: string; value: string }[];
+    options: (string | { label: string; value: string })[];
     multiple?: boolean;
     custom_value?: boolean;
     mode?: "dropdown" | "list";
@@ -153,7 +153,7 @@ export interface ServiceListSelector {
     sort?: boolean;
   };
   state: {
-    entity_id?: string;
+    entity_id?: PICK_ENTITY;
     multiple?: boolean;
     hide_states?: string[];
   };
