@@ -252,7 +252,7 @@ export const TEXT = {
 /**
  * homeassistant/components/todo/const.py
  */
-export const TODO_LIST = {
+export const TODO = {
   CREATE_TODO_ITEM: 1,
   DELETE_TODO_ITEM: 2,
   UPDATE_TODO_ITEM: 4,
@@ -309,7 +309,7 @@ export const SUPPORTED_FEATURES = {
   SIREN,
   SWITCH,
   TEXT,
-  TODO_LIST,
+  TODO,
   UPDATE,
   VACUUM,
   VALVE,

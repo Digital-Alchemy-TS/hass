@@ -1,5 +1,7 @@
 /* eslint-disable @cspell/spellchecker */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+import type { CLIMATE, LIGHT, TODO } from "../helpers/supported-features.mts";
+
 declare module "../user.mts" {
   export interface HassEntitySetupMapping {
     "button.example": {
@@ -392,6 +394,242 @@ declare module "../user.mts" {
       };
       entity_id: "zone.home";
       state: "0";
+    };
+    "binary_sensor.bedroom_window": {
+      attributes: {
+        id: "digital_alchemy";
+        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59";
+        friendly_name: "Bedroom Window Sensor";
+      };
+      context: {
+        id: "01HWXTSCSBRKJ9T2KV1JNER5KQ";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "binary_sensor.bedroom_window";
+      state: "on";
+    };
+    "binary_sensor.garage_door": {
+      attributes: {
+        device_class: "door";
+        friendly_name: "Garage Door Sensor";
+      };
+      context: {
+        id: "05FGHIJKLMNO4PQR5STUV6789WX";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "binary_sensor.garage_door";
+      state: "off";
+    };
+    "climate.hallway_thermostat": {
+      attributes: {
+        current_temperature: 22;
+        target_temperature: 20;
+        hvac_mode: "cool";
+        friendly_name: "Hallway Thermostat";
+        supported_features: 1;
+      };
+      context: {
+        id: "04MNOPQRSTUV8WX9YZABCDE123";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "climate.hallway_thermostat";
+      state: "cool";
+    };
+    "climate.test_room": {
+      attributes: {
+        id: "digital_alchemy";
+        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59";
+        friendly_name: "Test Room Climate";
+      };
+      context: {
+        id: "01HWXTSCSBRKJ9T2KV1JNER5KQ";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "climate.test_room";
+      state: "cooling";
+    };
+    "light.bedroom_light": {
+      attributes: {
+        brightness: 255;
+        friendly_name: "Bedroom Light";
+        supported_features: 41;
+      };
+      context: {
+        id: "03UVWXYZABCDE123FGHI456JKL7";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "light.bedroom_light";
+      state: "on";
+    };
+    "light.kitchen_lamp": {
+      attributes: {
+        id: "digital_alchemy";
+        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59";
+        friendly_name: "Kitchen Lamp";
+      };
+      context: {
+        id: "01HWXTSCSBRKJ9T2KV1JNER5KQ";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "light.kitchen_lamp";
+      state: "off";
+    };
+    "sensor.bedroom_disabled_temp": {
+      attributes: {
+        id: "digital_alchemy";
+        user_id: "disabled_test_3";
+        friendly_name: "Bedroom Disabled Temp";
+      };
+      context: {
+        id: "ctx3";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.bedroom_disabled_temp";
+      state: "unknown";
+    };
+    "sensor.floor_test_disabled": {
+      attributes: {
+        id: "digital_alchemy";
+        user_id: "disabled_test_4";
+        friendly_name: "Floor Test Disabled";
+      };
+      context: {
+        id: "ctx4";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.floor_test_disabled";
+      state: "unknown";
+    };
+    "sensor.kitchen_disabled_temp": {
+      attributes: {
+        id: "digital_alchemy";
+        user_id: "disabled_test_2";
+        friendly_name: "Kitchen Disabled Temp";
+      };
+      context: {
+        id: "ctx2";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.kitchen_disabled_temp";
+      state: "unknown";
+    };
+    "sensor.label_test_disabled": {
+      attributes: {
+        id: "digital_alchemy";
+        user_id: "disabled_test_5";
+        friendly_name: "Label Test Disabled";
+      };
+      context: {
+        id: "ctx5";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.label_test_disabled";
+      state: "unknown";
+    };
+    "sensor.living_room_disabled_temp": {
+      attributes: {
+        id: "digital_alchemy";
+        user_id: "disabled_test_1";
+        friendly_name: "Living Room Disabled Temp";
+      };
+      context: {
+        id: "ctx1";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.living_room_disabled_temp";
+      state: "unknown";
+    };
+    "sensor.living_room_temperature": {
+      attributes: {
+        id: "digital_alchemy";
+        user_id: "4dd1cf7e93e94f3fbaf419501f9a3d59";
+        friendly_name: "Living Room Temperature";
+      };
+      context: {
+        id: "01HWXTSCSBRKJ9T2KV1JNER5KQ";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.living_room_temperature";
+      state: "unavailable";
+    };
+    "sensor.sun_solar_azimuth": {
+      attributes: {
+        device_class: "angle";
+        friendly_name: "Sun Solar azimuth";
+        unit_of_measurement: "°";
+      };
+      context: {
+        id: "01HWXTS8W2MMADKGWE4A5BMH51";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.sun_solar_azimuth";
+      state: "0.35";
+    };
+    "sensor.sun_solar_elevation": {
+      attributes: {
+        device_class: "angle";
+        friendly_name: "Sun Solar elevation";
+        unit_of_measurement: "°";
+      };
+      context: {
+        id: "01HWXTS8W1J2TDGMN7KKNWP8DV";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.sun_solar_elevation";
+      state: "-21.86";
+    };
+    "sensor.sun_solar_rising": {
+      attributes: {
+        device_class: "timestamp";
+        friendly_name: "Sun Solar rising";
+      };
+      context: {
+        id: "01HWXTS8W2MMADKGWE4A5BMH51";
+        parent_id: null;
+        user_id: null;
+      };
+      entity_id: "sensor.sun_solar_rising";
+      state: "2024-05-03T04:05:17+00:00";
+    };
+    "light.test_light": {
+      attributes: { supported_features: LIGHT.EFFECT | LIGHT.FLASH | LIGHT.TRANSITION };
+      entity_id: "light.test_light";
+      state: "on";
+    };
+    "todo.test_todo": {
+      attributes: {
+        supported_features:
+          | TODO.CREATE_TODO_ITEM
+          | TODO.DELETE_TODO_ITEM
+          | TODO.UPDATE_TODO_ITEM
+          | TODO.MOVE_TODO_ITEM;
+      };
+      entity_id: "todo.test_todo";
+      state: "0";
+    };
+    "climate.test_climate": {
+      attributes: { supported_features: CLIMATE.TARGET_TEMPERATURE };
+      entity_id: "climate.test_climate";
+      state: "cool";
+    };
+    "unsupported.test": {
+      attributes: { supported_features: 1 };
+      entity_id: "unsupported.test";
+      state: "on";
     };
   }
 }

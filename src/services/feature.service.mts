@@ -21,7 +21,7 @@ export function HassFeatureService({
    * Helper function to create supported features from an array of feature numbers
    */
   function createSupportedFeatures<T extends UsedSupportedFeatureDomains>(
-    features: number[] | SupportedEntityFeatures<T>[],
+    features: (number | SupportedEntityFeatures<T>)[],
   ): number {
     return features.reduce((acc: number, feature) => {
       if (is.string(feature)) {
@@ -105,13 +105,17 @@ export function HassFeatureService({
     }
 
     const options = Object.entries(domainFeatures);
-    return supported.map(
-      i =>
-        (inputDomain.toUpperCase() +
-          options.find(([, value]) => value === i)[
+    return supported
+      .map(i => {
+        const found = options.find(([, value]) => value === i);
+        if (!found) return null;
+        return (inputDomain.toUpperCase() +
+          "." +
+          found[
             LABEL
-          ]) as `${Uppercase<DOMAIN>}.${Extract<keyof SUPPORTED_FEATURES[Uppercase<DOMAIN>], string>}`,
-    );
+          ]) as `${Uppercase<DOMAIN>}.${Extract<keyof SUPPORTED_FEATURES[Uppercase<DOMAIN>], string>}`;
+      })
+      .filter(Boolean);
   }
 
   return {

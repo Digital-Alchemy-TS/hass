@@ -673,6 +673,70 @@
         "parent_id": null,
         "user_id": null
       }
+    },
+    {
+      "entity_id": "light.test_light",
+      "state": "on",
+      "attributes": {
+        "supported_features": 44,
+        "friendly_name": "Test Light"
+      },
+      "last_changed": "2024-05-02T23:38:40.897074+00:00",
+      "last_reported": "2024-05-02T23:38:40.897074+00:00",
+      "last_updated": "2024-05-02T23:38:40.897074+00:00",
+      "context": {
+        "id": "01HWXTS8W1J2TDGMN7KKNWP8DV",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "todo.test_todo",
+      "state": "0",
+      "attributes": {
+        "supported_features": 15,
+        "friendly_name": "Test Todo"
+      },
+      "last_changed": "2024-05-02T23:38:40.931953+00:00",
+      "last_reported": "2024-05-02T23:38:40.931953+00:00",
+      "last_updated": "2024-05-02T23:38:40.931953+00:00",
+      "context": {
+        "id": "01HWXTS8X3D417XC4YJTG8QJWB",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "climate.test_climate",
+      "state": "cool",
+      "attributes": {
+        "supported_features": 1,
+        "friendly_name": "Test Climate"
+      },
+      "last_changed": "2024-05-02T23:38:40.897074+00:00",
+      "last_reported": "2024-05-02T23:38:40.897074+00:00",
+      "last_updated": "2024-05-02T23:38:40.897074+00:00",
+      "context": {
+        "id": "01HWXTS8W1J2TDGMN7KKNWP8DV",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "unsupported.test",
+      "state": "on",
+      "attributes": {
+        "supported_features": 1,
+        "friendly_name": "Test Unsupported"
+      },
+      "last_changed": "2024-05-02T23:38:40.897074+00:00",
+      "last_reported": "2024-05-02T23:38:40.897074+00:00",
+      "last_updated": "2024-05-02T23:38:40.897074+00:00",
+      "context": {
+        "id": "01HWXTS8W1J2TDGMN7KKNWP8DV",
+        "parent_id": null,
+        "user_id": null
+      }
     }
   ],
   "entity_registry": [
