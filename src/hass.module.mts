@@ -12,6 +12,7 @@ import {
   FetchInternals,
   Floor,
   HassDiagnosticsService,
+  HassFeatureService,
   IDByExtension,
   Label,
   ReferenceService,
@@ -188,6 +189,11 @@ export const LIB_HASS = CreateLibrary({
      * named event attachments
      */
     events: EventsService,
+
+    /**
+     * feature flag checking for entities
+     */
+    feature: HassFeatureService,
 
     /**
      * rest api commands

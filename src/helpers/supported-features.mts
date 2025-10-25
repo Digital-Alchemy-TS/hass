@@ -1,50 +1,68 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 
-// Light Features
-export const LIGHT_FEATURES = {
-  SUPPORT_BRIGHTNESS: 1,
-  SUPPORT_COLOR_TEMP: 2,
+import type { ALL_DOMAINS } from "../user.mts";
+
+// Light Features (from homeassistant/components/light/const.py)
+export const LIGHT = {
   SUPPORT_EFFECT: 4,
   SUPPORT_FLASH: 8,
-  SUPPORT_COLOR: 16,
   SUPPORT_TRANSITION: 32,
-  SUPPORT_WHITE_VALUE: 64,
-  SUPPORT_COLOR_MODE: 128,
-  SUPPORT_XY_COLOR: 256,
-  SUPPORT_RGB_COLOR: 512,
-  SUPPORT_RGBW_COLOR: 1024,
-  SUPPORT_RGBWW_COLOR: 2048,
-  SUPPORT_HS_COLOR: 4096,
-  SUPPORT_COLOR_TEMP_KELVIN: 8192,
-  SUPPORT_BRIGHTNESS_PCT: 16384,
-  SUPPORT_BRIGHTNESS_SLIDER: 32768,
-  SUPPORT_BRIGHTNESS_STEP: 65536,
-  SUPPORT_BRIGHTNESS_TRANSITION: 131072,
-  SUPPORT_BRIGHTNESS_AUTO: 262144,
-  SUPPORT_BRIGHTNESS_MANUAL: 524288,
-  SUPPORT_BRIGHTNESS_RESTORE: 1048576,
-  SUPPORT_BRIGHTNESS_SAVE: 2097152,
-  SUPPORT_BRIGHTNESS_RECALL: 4194304,
-  SUPPORT_BRIGHTNESS_TOGGLE: 8388608,
-  SUPPORT_BRIGHTNESS_PRESET: 16777216,
-  SUPPORT_BRIGHTNESS_SCENE: 33554432,
-  SUPPORT_BRIGHTNESS_GROUP: 67108864,
-  SUPPORT_BRIGHTNESS_ZONE: 134217728,
-  SUPPORT_BRIGHTNESS_AREA: 268435456,
-  SUPPORT_BRIGHTNESS_FLOOR: 536870912,
-  SUPPORT_BRIGHTNESS_LABEL: 1073741824,
-  SUPPORT_BRIGHTNESS_DEVICE: 2147483648,
 } as const;
 
-// Switch Features
-export const SWITCH_FEATURES = {
-  SUPPORT_FLASH: 1,
-  SUPPORT_TRANSITION: 2,
+// Vacuum Features (from homeassistant/components/vacuum/__init__.py)
+export const VACUUM = {
+  SUPPORT_TURN_ON: 1, // Deprecated
+  SUPPORT_TURN_OFF: 2, // Deprecated
+  SUPPORT_PAUSE: 4,
+  SUPPORT_STOP: 8,
+  SUPPORT_RETURN_HOME: 16,
+  SUPPORT_FAN_SPEED: 32,
+  SUPPORT_BATTERY: 64,
+  SUPPORT_STATUS: 128, // Deprecated
+  SUPPORT_SEND_COMMAND: 256,
+  SUPPORT_LOCATE: 512,
+  SUPPORT_CLEAN_SPOT: 1024,
+  SUPPORT_MAP: 2048,
+  SUPPORT_STATE: 4096,
+  SUPPORT_START: 8192,
 } as const;
 
-// Cover Features
-export const COVER_FEATURES = {
+// Water Heater Features (from homeassistant/components/water_heater/__init__.py)
+export const WATER_HEATER = {
+  SUPPORT_TARGET_TEMPERATURE: 1,
+  SUPPORT_OPERATION_MODE: 2,
+  SUPPORT_AWAY_MODE: 4,
+  SUPPORT_ON_OFF: 8,
+} as const;
+
+// Valve Features (from homeassistant/components/valve/__init__.py)
+export const VALVE = {
+  SUPPORT_OPEN: 1,
+  SUPPORT_CLOSE: 2,
+  SUPPORT_SET_POSITION: 4,
+  SUPPORT_STOP: 8,
+} as const;
+
+// Weather Features (from homeassistant/components/weather/const.py)
+export const WEATHER = {
+  SUPPORT_FORECAST_DAILY: 1,
+  SUPPORT_FORECAST_HOURLY: 2,
+  SUPPORT_FORECAST_TWICE_DAILY: 4,
+} as const;
+
+// AI Task Features (from homeassistant/components/ai_task/const.py)
+export const AI_TASK = {
+  SUPPORT_ATTACHMENTS: 2,
+} as const;
+
+// Switch Features (from homeassistant/components/switch/__init__.py)
+export const SWITCH = {
+  SUPPORT_TURN_ON: 1,
+  SUPPORT_TURN_OFF: 2,
+} as const;
+
+// Cover Features (from homeassistant/components/cover/__init__.py)
+export const COVER = {
   SUPPORT_OPEN: 1,
   SUPPORT_CLOSE: 2,
   SUPPORT_SET_POSITION: 4,
@@ -55,36 +73,31 @@ export const COVER_FEATURES = {
   SUPPORT_SET_TILT_POSITION: 128,
 } as const;
 
-// Fan Features
-export const FAN_FEATURES = {
+// Fan Features (from homeassistant/components/fan/__init__.py)
+export const FAN = {
   SUPPORT_SET_SPEED: 1,
   SUPPORT_OSCILLATE: 2,
   SUPPORT_DIRECTION: 4,
   SUPPORT_PRESET_MODE: 8,
+  SUPPORT_TURN_OFF: 16,
+  SUPPORT_TURN_ON: 32,
 } as const;
 
-// Climate Features
-export const CLIMATE_FEATURES = {
+// Climate Features (from homeassistant/components/climate/const.py)
+export const CLIMATE = {
   SUPPORT_TARGET_TEMPERATURE: 1,
   SUPPORT_TARGET_TEMPERATURE_RANGE: 2,
   SUPPORT_TARGET_HUMIDITY: 4,
-  SUPPORT_TARGET_HUMIDITY_LOW: 8,
-  SUPPORT_TARGET_HUMIDITY_HIGH: 16,
-  SUPPORT_FAN_MODE: 32,
-  SUPPORT_PRESET_MODE: 64,
-  SUPPORT_SWING_MODE: 128,
-  SUPPORT_AUX_HEAT: 256,
+  SUPPORT_FAN_MODE: 8,
+  SUPPORT_PRESET_MODE: 16,
+  SUPPORT_SWING_MODE: 32,
+  SUPPORT_TURN_OFF: 128,
+  SUPPORT_TURN_ON: 256,
+  SUPPORT_SWING_HORIZONTAL_MODE: 512,
 } as const;
 
-// Water Heater Features
-export const WATER_HEATER_FEATURES = {
-  SUPPORT_TARGET_TEMPERATURE: 1,
-  SUPPORT_OPERATION_MODE: 2,
-  SUPPORT_AWAY_MODE: 4,
-} as const;
-
-// Media Player Features
-export const MEDIA_PLAYER_FEATURES = {
+// Media Player Features (from homeassistant/components/media_player/const.py)
+export const MEDIA_PLAYER = {
   SUPPORT_PAUSE: 1,
   SUPPORT_SEEK: 2,
   SUPPORT_VOLUME_SET: 4,
@@ -104,78 +117,45 @@ export const MEDIA_PLAYER_FEATURES = {
   SUPPORT_BROWSE_MEDIA: 131072,
   SUPPORT_REPEAT_SET: 262144,
   SUPPORT_GROUPING: 524288,
+  SUPPORT_MEDIA_ANNOUNCE: 1048576,
+  SUPPORT_MEDIA_ENQUEUE: 2097152,
+  SUPPORT_SEARCH_MEDIA: 4194304,
 } as const;
 
-// Camera Features
-export const CAMERA_FEATURES = {
+// Camera Features (from homeassistant/components/camera/__init__.py)
+export const CAMERA = {
   SUPPORT_ON_OFF: 1,
   SUPPORT_STREAM: 2,
 } as const;
 
-// Lock Features
-export const LOCK_FEATURES = {
+// Lock Features (from homeassistant/components/lock/__init__.py)
+export const LOCK = {
   SUPPORT_OPEN: 1,
 } as const;
 
-// Vacuum Features
-export const VACUUM_FEATURES = {
+// Alarm Control Panel Features (from homeassistant/components/alarm_control_panel/__init__.py)
+export const ALARM_CONTROL_PANEL = {
+  SUPPORT_ARM_HOME: 1,
+  SUPPORT_ARM_AWAY: 2,
+  SUPPORT_ARM_NIGHT: 4,
+  SUPPORT_ARM_VACATION: 8,
+  SUPPORT_ARM_CUSTOM_BYPASS: 16,
+} as const;
+
+// Binary Sensor Features (from homeassistant/components/binary_sensor/__init__.py)
+export const BINARY_SENSOR = {
   SUPPORT_TURN_ON: 1,
   SUPPORT_TURN_OFF: 2,
-  SUPPORT_PAUSE: 4,
-  SUPPORT_STOP: 8,
-  SUPPORT_RETURN_HOME: 16,
-  SUPPORT_FAN_SPEED: 32,
-  SUPPORT_BATTERY: 64,
-  SUPPORT_STATUS: 128,
-  SUPPORT_SEND_COMMAND: 256,
-  SUPPORT_LOCATE: 512,
-  SUPPORT_CLEAN_SPOT: 1024,
-  SUPPORT_MAP: 2048,
-  SUPPORT_STATE: 4096,
-  SUPPORT_START: 8192,
-  SUPPORT_RESTART: 16384,
-  SUPPORT_RESUME: 32768,
-  SUPPORT_EDGE: 65536,
-  SUPPORT_CLEANING_TIME: 131072,
-  SUPPORT_CLEANING_AREA: 262144,
-  SUPPORT_CLEANING_COUNT: 524288,
-  SUPPORT_CLEANING_CYCLE: 1048576,
-  SUPPORT_CLEANING_MODE: 2097152,
-  SUPPORT_CLEANING_PATTERN: 4194304,
-  SUPPORT_CLEANING_SEQUENCE: 8388608,
-  SUPPORT_CLEANING_SCHEDULE: 16777216,
-  SUPPORT_CLEANING_TIMER: 33554432,
-  SUPPORT_CLEANING_ZONE: 67108864,
-  SUPPORT_CLEANING_ROOM: 134217728,
-  SUPPORT_CLEANING_FLOOR: 268435456,
-  SUPPORT_CLEANING_SURFACE: 536870912,
-  SUPPORT_CLEANING_TYPE: 1073741824,
-  SUPPORT_CLEANING_INTENSITY: 2147483648,
 } as const;
 
-// Alarm Control Panel Features
-export const ALARM_CONTROL_PANEL_FEATURES = {
-  SUPPORT_ALARM_ARM_HOME: 1,
-  SUPPORT_ALARM_ARM_AWAY: 2,
-  SUPPORT_ALARM_ARM_NIGHT: 4,
-  SUPPORT_ALARM_ARM_VACATION: 8,
-  SUPPORT_ALARM_ARM_CUSTOM_BYPASS: 16,
-  SUPPORT_ALARM_TRIGGER: 32,
-  SUPPORT_ALARM_CLEAR_CODE: 64,
+// Sensor Features (from homeassistant/components/sensor/__init__.py)
+export const SENSOR = {
+  SUPPORT_TURN_ON: 1,
+  SUPPORT_TURN_OFF: 2,
 } as const;
 
-// Binary Sensor Features
-export const BINARY_SENSOR_FEATURES = {
-  SUPPORT_BATTERY: 1,
-} as const;
-
-// Sensor Features
-export const SENSOR_FEATURES = {
-  SUPPORT_LAST_RESET: 1,
-} as const;
-
-// Update Features
-export const UPDATE_FEATURES = {
+// Update Features (from homeassistant/components/update/const.py)
+export const UPDATE = {
   SUPPORT_INSTALL: 1,
   SUPPORT_SPECIFIC_VERSION: 2,
   SUPPORT_PROGRESS: 4,
@@ -183,72 +163,108 @@ export const UPDATE_FEATURES = {
   SUPPORT_RELEASE_NOTES: 16,
 } as const;
 
-// Button Features
-export const BUTTON_FEATURES = {
-  SUPPORT_PRESS: 1,
-} as const;
-
-// Number Features
-export const NUMBER_FEATURES = {
-  SUPPORT_SET_VALUE: 1,
-} as const;
-
-// Select Features
-export const SELECT_FEATURES = {
-  SUPPORT_SELECT_OPTION: 1,
-} as const;
-
-// Siren Features
-export const SIREN_FEATURES = {
+// Button Features (from homeassistant/components/button/__init__.py)
+export const BUTTON = {
   SUPPORT_TURN_ON: 1,
   SUPPORT_TURN_OFF: 2,
-  SUPPORT_DURATION: 4,
+} as const;
+
+// Number Features (from homeassistant/components/number/__init__.py)
+export const NUMBER = {
+  SUPPORT_TURN_ON: 1,
+  SUPPORT_TURN_OFF: 2,
+} as const;
+
+// Select Features (from homeassistant/components/select/__init__.py)
+export const SELECT = {
+  SUPPORT_TURN_ON: 1,
+  SUPPORT_TURN_OFF: 2,
+} as const;
+
+// Siren Features (from homeassistant/components/siren/const.py)
+export const SIREN = {
+  SUPPORT_TURN_ON: 1,
+  SUPPORT_TURN_OFF: 2,
+  SUPPORT_TONES: 4,
   SUPPORT_VOLUME_SET: 8,
-  SUPPORT_TONES: 16,
+  SUPPORT_DURATION: 16,
 } as const;
 
-// Text Features
-export const TEXT_FEATURES = {
-  SUPPORT_SET_VALUE: 1,
+// Text Features (from homeassistant/components/text/__init__.py)
+export const TEXT = {
+  SUPPORT_TURN_ON: 1,
+  SUPPORT_TURN_OFF: 2,
 } as const;
 
-export function hasFeature(features: number, feature: number): boolean {
-  return (features & feature) !== 0;
-}
+// Todo List Features (from homeassistant/components/todo/const.py)
+export const TODO_LIST = {
+  SUPPORT_CREATE_TODO_ITEM: 1,
+  SUPPORT_DELETE_TODO_ITEM: 2,
+  SUPPORT_UPDATE_TODO_ITEM: 4,
+  SUPPORT_MOVE_TODO_ITEM: 8,
+  SUPPORT_SET_DUE_DATE_ON_ITEM: 16,
+  SUPPORT_SET_DUE_DATETIME_ON_ITEM: 32,
+  SUPPORT_SET_DESCRIPTION_ON_ITEM: 64,
+} as const;
 
-export function getSupportedFeatures(features: number): number[] {
-  const supported: number[] = [];
-  let bit = 1;
-  while (bit <= features) {
-    if ((features & bit) !== 0) {
-      supported.push(bit);
-    }
-    bit <<= 1;
-  }
-  return supported;
-}
+// Humidifier Features (from homeassistant/components/humidifier/const.py)
+export const HUMIDIFIER = {
+  SUPPORT_MODES: 1,
+} as const;
 
-export function createSupportedFeatures(features: number[]): number {
-  return features.reduce((acc, feature) => acc | feature, 0);
-}
+// Remote Features (from homeassistant/components/remote/__init__.py)
+export const REMOTE = {
+  SUPPORT_LEARN_COMMAND: 1,
+  SUPPORT_DELETE_COMMAND: 2,
+  SUPPORT_ACTIVITY: 4,
+} as const;
 
-// Type definitions for feature checking
-export type LightFeature = keyof typeof LIGHT_FEATURES;
-export type SwitchFeature = keyof typeof SWITCH_FEATURES;
-export type CoverFeature = keyof typeof COVER_FEATURES;
-export type FanFeature = keyof typeof FAN_FEATURES;
-export type ClimateFeature = keyof typeof CLIMATE_FEATURES;
-export type WaterHeaterFeature = keyof typeof WATER_HEATER_FEATURES;
-export type MediaPlayerFeature = keyof typeof MEDIA_PLAYER_FEATURES;
-export type CameraFeature = keyof typeof CAMERA_FEATURES;
-export type LockFeature = keyof typeof LOCK_FEATURES;
-export type VacuumFeature = keyof typeof VACUUM_FEATURES;
-export type AlarmControlPanelFeature = keyof typeof ALARM_CONTROL_PANEL_FEATURES;
-export type BinarySensorFeature = keyof typeof BINARY_SENSOR_FEATURES;
-export type SensorFeature = keyof typeof SENSOR_FEATURES;
-export type UpdateFeature = keyof typeof UPDATE_FEATURES;
-export type ButtonFeature = keyof typeof BUTTON_FEATURES;
-export type NumberFeature = keyof typeof NUMBER_FEATURES;
-export type SelectFeature = keyof typeof SELECT_FEATURES;
-export type SirenFeature = keyof typeof SIREN_FEATURES;
-export type TextFeature = keyof typeof TEXT_FEATURES;
+// Notify Features (from homeassistant/components/notify/__init__.py)
+export const NOTIFY = {
+  SUPPORT_TITLE: 1,
+} as const;
+
+export const SUPPORTED_FEATURES = {
+  AI_TASK,
+  ALARM_CONTROL_PANEL,
+  BINARY_SENSOR,
+  BUTTON,
+  CAMERA,
+  CLIMATE,
+  COVER,
+  FAN,
+  HUMIDIFIER,
+  LIGHT,
+  LOCK,
+  MEDIA_PLAYER,
+  NOTIFY,
+  NUMBER,
+  REMOTE,
+  SELECT,
+  SENSOR,
+  SIREN,
+  SWITCH,
+  TEXT,
+  TODO_LIST,
+  UPDATE,
+  VACUUM,
+  VALVE,
+  WATER_HEATER,
+  WEATHER,
+};
+
+// <
+//     DOMAIN extends UsedSupportedFeatureDomains = UsedSupportedFeatureDomains,
+//   >(
+//     input: PICK_ENTITY<DOMAIN> | ByIdProxy<PICK_ENTITY<DOMAIN>>,
+//   ): `${Uppercase<DOMAIN>}.${Extract<keyof SUPPORTED_FEATURES[Uppercase<DOMAIN>], string>}`
+
+export type SUPPORTED_FEATURES = typeof SUPPORTED_FEATURES;
+export type SupportedFeatureDomains = Extract<keyof SUPPORTED_FEATURES, string>;
+export type UsedSupportedFeatureDomains = Extract<Lowercase<SupportedFeatureDomains>, ALL_DOMAINS>;
+
+export type SupportedFeatures<DOMAIN extends SupportedFeatureDomains = SupportedFeatureDomains> =
+  `${DOMAIN}.${Extract<keyof SUPPORTED_FEATURES[DOMAIN], string>}`;
+export type SupportedEntityFeatures<
+  DOMAIN extends UsedSupportedFeatureDomains = UsedSupportedFeatureDomains,
+> = `${Uppercase<DOMAIN>}.${Extract<keyof SUPPORTED_FEATURES[Uppercase<DOMAIN>], string>}`;
