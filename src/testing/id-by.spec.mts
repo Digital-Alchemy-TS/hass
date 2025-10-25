@@ -100,7 +100,7 @@ describe("enabled entities", () => {
       await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.platform("synapse");
-          expect(synapse.length).toBe(7);
+          expect(synapse.length).toBe(11);
         });
       });
     });
@@ -110,7 +110,7 @@ describe("enabled entities", () => {
       await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.platform("synapse", "light");
-          expect(synapse.length).toBe(0);
+          expect(synapse.length).toBe(1);
         });
       });
     });
@@ -205,7 +205,7 @@ describe("disabled entities", () => {
       await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(() => {
           const synapse = hass.idBy.platform("synapse");
-          expect(synapse.length).toBe(8);
+          expect(synapse.length).toBe(12);
         });
       });
     });

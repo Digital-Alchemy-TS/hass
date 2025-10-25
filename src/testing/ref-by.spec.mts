@@ -126,7 +126,7 @@ describe("References", () => {
         await hassTestRunner.run(({ lifecycle, hass }) => {
           lifecycle.onReady(() => {
             const synapse = hass.refBy.platform("synapse");
-            expect(synapse.length).toBe(7);
+            expect(synapse.length).toBe(11);
           });
         });
       });
@@ -136,7 +136,7 @@ describe("References", () => {
         await hassTestRunner.run(({ lifecycle, hass }) => {
           lifecycle.onReady(() => {
             const synapse = hass.refBy.platform("synapse", "light");
-            expect(synapse.length).toBe(0);
+            expect(synapse.length).toBe(1);
           });
         });
       });
