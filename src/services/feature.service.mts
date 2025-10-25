@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-
 import { LABEL, type TServiceParams } from "@digital-alchemy/core";
 
 import type { ByIdProxy } from "../helpers/entity-state.mts";
