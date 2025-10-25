@@ -219,6 +219,7 @@ export interface ServiceListFieldDescription<
   selector?: {
     [K in TYPE]: { [P in K]: ServiceListSelector[P] } & { [P in Exclude<TYPE, K>]?: never };
   }[TYPE];
+}
 
 export interface ServiceListServiceTarget {
   entity?: EntityFilterSelector | EntityFilterSelector[];

@@ -36,7 +36,11 @@ declare module "../user.mts" {
 
   export interface HassDomainMapping {
     automation: "automation.example";
-    binary_sensor: "binary_sensor.bedroom_window" | "binary_sensor.garage_door" | "binary_sensor.hass_e2e_online" | "binary_sensor.toggles";
+    binary_sensor:
+      | "binary_sensor.bedroom_window"
+      | "binary_sensor.garage_door"
+      | "binary_sensor.hass_e2e_online"
+      | "binary_sensor.toggles";
     button: "button.example";
     calendar: "calendar.united_states_tx";
     climate: "climate.hallway_thermostat" | "climate.test_room";
