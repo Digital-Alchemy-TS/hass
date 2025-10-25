@@ -211,10 +211,14 @@ export interface ServiceListFieldDescription<
   filter?: ServiceListFilter;
   name?: string;
   required?: boolean;
+  /**
+   * The `selector` field is a discriminated union that ensures only one key of `ServiceListSelector`
+   * can be present at a time. This mapped type enforces mutual exclusivity at the type level,
+   * so that only a single selector type is allowed for each field description.
+   */
   selector?: {
     [K in TYPE]: { [P in K]: ServiceListSelector[P] } & { [P in Exclude<TYPE, K>]?: never };
   }[TYPE];
-}
 
 export interface ServiceListServiceTarget {
   entity?: EntityFilterSelector | EntityFilterSelector[];
