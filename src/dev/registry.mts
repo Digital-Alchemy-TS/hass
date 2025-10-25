@@ -1,7 +1,5 @@
 /* eslint-disable @cspell/spellchecker */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import type { CLIMATE, LIGHT, TODO } from "../helpers/supported-features.mts";
-
 declare module "../user.mts" {
   export interface HassEntitySetupMapping {
     "button.example": {
@@ -606,23 +604,19 @@ declare module "../user.mts" {
       state: "2024-05-03T04:05:17+00:00";
     };
     "light.test_light": {
-      attributes: { supported_features: LIGHT.EFFECT | LIGHT.FLASH | LIGHT.TRANSITION };
+      attributes: { supported_features: 44 };
       entity_id: "light.test_light";
       state: "on";
     };
     "todo.test_todo": {
       attributes: {
-        supported_features:
-          | TODO.CREATE_TODO_ITEM
-          | TODO.DELETE_TODO_ITEM
-          | TODO.UPDATE_TODO_ITEM
-          | TODO.MOVE_TODO_ITEM;
+        supported_features: 15;
       };
       entity_id: "todo.test_todo";
       state: "0";
     };
     "climate.test_climate": {
-      attributes: { supported_features: CLIMATE.TARGET_TEMPERATURE };
+      attributes: { supported_features: 1 };
       entity_id: "climate.test_climate";
       state: "cool";
     };

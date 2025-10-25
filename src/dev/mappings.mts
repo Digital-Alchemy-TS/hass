@@ -28,6 +28,10 @@ declare module "../user.mts" {
     select_example_unique_id: "select.example";
     text_example_unique_id: "text.example";
     time_example_unique_id: "time.example";
+    light_test_light_unique_id: "light.test_light";
+    todo_test_todo_unique_id: "todo.test_todo";
+    climate_test_climate_unique_id: "climate.test_climate";
+    unsupported_test_unique_id: "unsupported.test";
   }
 
   export interface HassZoneMapping {
@@ -43,10 +47,14 @@ declare module "../user.mts" {
       | "binary_sensor.toggles";
     button: "button.example";
     calendar: "calendar.united_states_tx";
-    climate: "climate.hallway_thermostat" | "climate.test_room";
+    climate: "climate.hallway_thermostat" | "climate.test_room" | "climate.test_climate";
     date: "date.example";
     datetime: "datetime.example";
-    light: "light.bedroom_ceiling_fan" | "light.bedroom_light" | "light.kitchen_lamp";
+    light:
+      | "light.bedroom_ceiling_fan"
+      | "light.bedroom_light"
+      | "light.kitchen_lamp"
+      | "light.test_light";
     lock: "lock.example";
     number: "number.example";
     person: "person.digital_alchemy";
@@ -77,8 +85,9 @@ declare module "../user.mts" {
       | "switch.porch_light";
     text: "text.example";
     time: "time.example";
-    todo: "todo.shopping_list";
+    todo: "todo.shopping_list" | "todo.test_todo";
     tts: "tts.google_en_com";
+    unsupported: "unsupported.test";
     zone: "zone.home";
   }
 
@@ -104,7 +113,11 @@ declare module "../user.mts" {
       | "switch.bedroom_lamp"
       | "switch.kitchen_cabinets"
       | "switch.living_room_mood_lights"
-      | "switch.porch_light";
+      | "switch.porch_light"
+      | "light.test_light"
+      | "todo.test_todo"
+      | "climate.test_climate"
+      | "unsupported.test";
     _holiday: "calendar.united_states_tx";
   }
 
@@ -138,7 +151,11 @@ declare module "../user.mts" {
       | "switch.bedroom_lamp"
       | "switch.kitchen_cabinets"
       | "switch.living_room_mood_lights"
-      | "switch.porch_light";
+      | "switch.porch_light"
+      | "light.test_light"
+      | "todo.test_todo"
+      | "climate.test_climate"
+      | "unsupported.test";
     _test: never;
   }
 
