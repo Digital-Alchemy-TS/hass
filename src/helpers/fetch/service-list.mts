@@ -198,8 +198,9 @@ export interface ServiceListFilter {
   supported_features?: number[];
   supported_color_modes?: LiteralUnion<`${ColorMode}`, string>[];
 }
-
-export interface ServiceListFieldDescription {
+export interface ServiceListFieldDescription<
+  TYPE extends keyof ServiceListSelector = keyof ServiceListSelector,
+> {
   fields?: Record<string, ServiceListFieldDescription>;
   target?: ServiceListServiceTarget;
   response?: ResponseOptional;
@@ -210,12 +211,14 @@ export interface ServiceListFieldDescription {
   filter?: ServiceListFilter;
   name?: string;
   required?: boolean;
-  selector?: ServiceListSelector;
+  selector?: {
+    [K in TYPE]: { [P in K]: ServiceListSelector[P] } & { [P in Exclude<TYPE, K>]?: never };
+  }[TYPE];
 }
 
 export interface ServiceListServiceTarget {
-  entity?: EntityFilterSelector[];
-  device?: DeviceFilterSelector[];
+  entity?: EntityFilterSelector | EntityFilterSelector[];
+  device?: DeviceFilterSelector | DeviceFilterSelector[];
 }
 
 export interface ServiceListField {

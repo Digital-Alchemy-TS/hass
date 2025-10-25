@@ -1,0 +1,254 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable sort-keys-fix/sort-keys-fix */
+
+// Light Features
+export const LIGHT_FEATURES = {
+  SUPPORT_BRIGHTNESS: 1,
+  SUPPORT_COLOR_TEMP: 2,
+  SUPPORT_EFFECT: 4,
+  SUPPORT_FLASH: 8,
+  SUPPORT_COLOR: 16,
+  SUPPORT_TRANSITION: 32,
+  SUPPORT_WHITE_VALUE: 64,
+  SUPPORT_COLOR_MODE: 128,
+  SUPPORT_XY_COLOR: 256,
+  SUPPORT_RGB_COLOR: 512,
+  SUPPORT_RGBW_COLOR: 1024,
+  SUPPORT_RGBWW_COLOR: 2048,
+  SUPPORT_HS_COLOR: 4096,
+  SUPPORT_COLOR_TEMP_KELVIN: 8192,
+  SUPPORT_BRIGHTNESS_PCT: 16384,
+  SUPPORT_BRIGHTNESS_SLIDER: 32768,
+  SUPPORT_BRIGHTNESS_STEP: 65536,
+  SUPPORT_BRIGHTNESS_TRANSITION: 131072,
+  SUPPORT_BRIGHTNESS_AUTO: 262144,
+  SUPPORT_BRIGHTNESS_MANUAL: 524288,
+  SUPPORT_BRIGHTNESS_RESTORE: 1048576,
+  SUPPORT_BRIGHTNESS_SAVE: 2097152,
+  SUPPORT_BRIGHTNESS_RECALL: 4194304,
+  SUPPORT_BRIGHTNESS_TOGGLE: 8388608,
+  SUPPORT_BRIGHTNESS_PRESET: 16777216,
+  SUPPORT_BRIGHTNESS_SCENE: 33554432,
+  SUPPORT_BRIGHTNESS_GROUP: 67108864,
+  SUPPORT_BRIGHTNESS_ZONE: 134217728,
+  SUPPORT_BRIGHTNESS_AREA: 268435456,
+  SUPPORT_BRIGHTNESS_FLOOR: 536870912,
+  SUPPORT_BRIGHTNESS_LABEL: 1073741824,
+  SUPPORT_BRIGHTNESS_DEVICE: 2147483648,
+} as const;
+
+// Switch Features
+export const SWITCH_FEATURES = {
+  SUPPORT_FLASH: 1,
+  SUPPORT_TRANSITION: 2,
+} as const;
+
+// Cover Features
+export const COVER_FEATURES = {
+  SUPPORT_OPEN: 1,
+  SUPPORT_CLOSE: 2,
+  SUPPORT_SET_POSITION: 4,
+  SUPPORT_STOP: 8,
+  SUPPORT_OPEN_TILT: 16,
+  SUPPORT_CLOSE_TILT: 32,
+  SUPPORT_STOP_TILT: 64,
+  SUPPORT_SET_TILT_POSITION: 128,
+} as const;
+
+// Fan Features
+export const FAN_FEATURES = {
+  SUPPORT_SET_SPEED: 1,
+  SUPPORT_OSCILLATE: 2,
+  SUPPORT_DIRECTION: 4,
+  SUPPORT_PRESET_MODE: 8,
+} as const;
+
+// Climate Features
+export const CLIMATE_FEATURES = {
+  SUPPORT_TARGET_TEMPERATURE: 1,
+  SUPPORT_TARGET_TEMPERATURE_RANGE: 2,
+  SUPPORT_TARGET_HUMIDITY: 4,
+  SUPPORT_TARGET_HUMIDITY_LOW: 8,
+  SUPPORT_TARGET_HUMIDITY_HIGH: 16,
+  SUPPORT_FAN_MODE: 32,
+  SUPPORT_PRESET_MODE: 64,
+  SUPPORT_SWING_MODE: 128,
+  SUPPORT_AUX_HEAT: 256,
+} as const;
+
+// Water Heater Features
+export const WATER_HEATER_FEATURES = {
+  SUPPORT_TARGET_TEMPERATURE: 1,
+  SUPPORT_OPERATION_MODE: 2,
+  SUPPORT_AWAY_MODE: 4,
+} as const;
+
+// Media Player Features
+export const MEDIA_PLAYER_FEATURES = {
+  SUPPORT_PAUSE: 1,
+  SUPPORT_SEEK: 2,
+  SUPPORT_VOLUME_SET: 4,
+  SUPPORT_VOLUME_MUTE: 8,
+  SUPPORT_PREVIOUS_TRACK: 16,
+  SUPPORT_NEXT_TRACK: 32,
+  SUPPORT_TURN_ON: 128,
+  SUPPORT_TURN_OFF: 256,
+  SUPPORT_PLAY_MEDIA: 512,
+  SUPPORT_VOLUME_STEP: 1024,
+  SUPPORT_SELECT_SOURCE: 2048,
+  SUPPORT_STOP: 4096,
+  SUPPORT_CLEAR_PLAYLIST: 8192,
+  SUPPORT_PLAY: 16384,
+  SUPPORT_SHUFFLE_SET: 32768,
+  SUPPORT_SELECT_SOUND_MODE: 65536,
+  SUPPORT_BROWSE_MEDIA: 131072,
+  SUPPORT_REPEAT_SET: 262144,
+  SUPPORT_GROUPING: 524288,
+} as const;
+
+// Camera Features
+export const CAMERA_FEATURES = {
+  SUPPORT_ON_OFF: 1,
+  SUPPORT_STREAM: 2,
+} as const;
+
+// Lock Features
+export const LOCK_FEATURES = {
+  SUPPORT_OPEN: 1,
+} as const;
+
+// Vacuum Features
+export const VACUUM_FEATURES = {
+  SUPPORT_TURN_ON: 1,
+  SUPPORT_TURN_OFF: 2,
+  SUPPORT_PAUSE: 4,
+  SUPPORT_STOP: 8,
+  SUPPORT_RETURN_HOME: 16,
+  SUPPORT_FAN_SPEED: 32,
+  SUPPORT_BATTERY: 64,
+  SUPPORT_STATUS: 128,
+  SUPPORT_SEND_COMMAND: 256,
+  SUPPORT_LOCATE: 512,
+  SUPPORT_CLEAN_SPOT: 1024,
+  SUPPORT_MAP: 2048,
+  SUPPORT_STATE: 4096,
+  SUPPORT_START: 8192,
+  SUPPORT_RESTART: 16384,
+  SUPPORT_RESUME: 32768,
+  SUPPORT_EDGE: 65536,
+  SUPPORT_CLEANING_TIME: 131072,
+  SUPPORT_CLEANING_AREA: 262144,
+  SUPPORT_CLEANING_COUNT: 524288,
+  SUPPORT_CLEANING_CYCLE: 1048576,
+  SUPPORT_CLEANING_MODE: 2097152,
+  SUPPORT_CLEANING_PATTERN: 4194304,
+  SUPPORT_CLEANING_SEQUENCE: 8388608,
+  SUPPORT_CLEANING_SCHEDULE: 16777216,
+  SUPPORT_CLEANING_TIMER: 33554432,
+  SUPPORT_CLEANING_ZONE: 67108864,
+  SUPPORT_CLEANING_ROOM: 134217728,
+  SUPPORT_CLEANING_FLOOR: 268435456,
+  SUPPORT_CLEANING_SURFACE: 536870912,
+  SUPPORT_CLEANING_TYPE: 1073741824,
+  SUPPORT_CLEANING_INTENSITY: 2147483648,
+} as const;
+
+// Alarm Control Panel Features
+export const ALARM_CONTROL_PANEL_FEATURES = {
+  SUPPORT_ALARM_ARM_HOME: 1,
+  SUPPORT_ALARM_ARM_AWAY: 2,
+  SUPPORT_ALARM_ARM_NIGHT: 4,
+  SUPPORT_ALARM_ARM_VACATION: 8,
+  SUPPORT_ALARM_ARM_CUSTOM_BYPASS: 16,
+  SUPPORT_ALARM_TRIGGER: 32,
+  SUPPORT_ALARM_CLEAR_CODE: 64,
+} as const;
+
+// Binary Sensor Features
+export const BINARY_SENSOR_FEATURES = {
+  SUPPORT_BATTERY: 1,
+} as const;
+
+// Sensor Features
+export const SENSOR_FEATURES = {
+  SUPPORT_LAST_RESET: 1,
+} as const;
+
+// Update Features
+export const UPDATE_FEATURES = {
+  SUPPORT_INSTALL: 1,
+  SUPPORT_SPECIFIC_VERSION: 2,
+  SUPPORT_PROGRESS: 4,
+  SUPPORT_BACKUP: 8,
+  SUPPORT_RELEASE_NOTES: 16,
+} as const;
+
+// Button Features
+export const BUTTON_FEATURES = {
+  SUPPORT_PRESS: 1,
+} as const;
+
+// Number Features
+export const NUMBER_FEATURES = {
+  SUPPORT_SET_VALUE: 1,
+} as const;
+
+// Select Features
+export const SELECT_FEATURES = {
+  SUPPORT_SELECT_OPTION: 1,
+} as const;
+
+// Siren Features
+export const SIREN_FEATURES = {
+  SUPPORT_TURN_ON: 1,
+  SUPPORT_TURN_OFF: 2,
+  SUPPORT_DURATION: 4,
+  SUPPORT_VOLUME_SET: 8,
+  SUPPORT_TONES: 16,
+} as const;
+
+// Text Features
+export const TEXT_FEATURES = {
+  SUPPORT_SET_VALUE: 1,
+} as const;
+
+export function hasFeature(features: number, feature: number): boolean {
+  return (features & feature) !== 0;
+}
+
+export function getSupportedFeatures(features: number): number[] {
+  const supported: number[] = [];
+  let bit = 1;
+  while (bit <= features) {
+    if ((features & bit) !== 0) {
+      supported.push(bit);
+    }
+    bit <<= 1;
+  }
+  return supported;
+}
+
+export function createSupportedFeatures(features: number[]): number {
+  return features.reduce((acc, feature) => acc | feature, 0);
+}
+
+// Type definitions for feature checking
+export type LightFeature = keyof typeof LIGHT_FEATURES;
+export type SwitchFeature = keyof typeof SWITCH_FEATURES;
+export type CoverFeature = keyof typeof COVER_FEATURES;
+export type FanFeature = keyof typeof FAN_FEATURES;
+export type ClimateFeature = keyof typeof CLIMATE_FEATURES;
+export type WaterHeaterFeature = keyof typeof WATER_HEATER_FEATURES;
+export type MediaPlayerFeature = keyof typeof MEDIA_PLAYER_FEATURES;
+export type CameraFeature = keyof typeof CAMERA_FEATURES;
+export type LockFeature = keyof typeof LOCK_FEATURES;
+export type VacuumFeature = keyof typeof VACUUM_FEATURES;
+export type AlarmControlPanelFeature = keyof typeof ALARM_CONTROL_PANEL_FEATURES;
+export type BinarySensorFeature = keyof typeof BINARY_SENSOR_FEATURES;
+export type SensorFeature = keyof typeof SENSOR_FEATURES;
+export type UpdateFeature = keyof typeof UPDATE_FEATURES;
+export type ButtonFeature = keyof typeof BUTTON_FEATURES;
+export type NumberFeature = keyof typeof NUMBER_FEATURES;
+export type SelectFeature = keyof typeof SELECT_FEATURES;
+export type SirenFeature = keyof typeof SIREN_FEATURES;
+export type TextFeature = keyof typeof TEXT_FEATURES;

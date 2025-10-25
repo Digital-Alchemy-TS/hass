@@ -9,5 +9,6 @@ export * from "./id-by.mts";
 export * from "./interfaces.mts";
 export * from "./notify.mts";
 export * from "./registry.mts";
+export * from "./supported-features.mts";
 export * from "./utility.mts";
 export * from "./websocket.mts";
