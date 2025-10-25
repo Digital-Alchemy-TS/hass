@@ -6,6 +6,7 @@ export * from "./device.service.mts";
 export * from "./diagnostics.service.mts";
 export * from "./entity.service.mts";
 export * from "./events.service.mts";
+export * from "./feature.service.mts";
 export * from "./fetch-api.service.mts";
 export * from "./floor.service.mts";
 export * from "./id-by.service.mts";

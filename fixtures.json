@@ -673,6 +673,70 @@
         "parent_id": null,
         "user_id": null
       }
+    },
+    {
+      "entity_id": "light.test_light",
+      "state": "on",
+      "attributes": {
+        "supported_features": 44,
+        "friendly_name": "Test Light"
+      },
+      "last_changed": "2024-05-02T23:38:40.897074+00:00",
+      "last_reported": "2024-05-02T23:38:40.897074+00:00",
+      "last_updated": "2024-05-02T23:38:40.897074+00:00",
+      "context": {
+        "id": "01HWXTS8W1J2TDGMN7KKNWP8DV",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "todo.test_todo",
+      "state": "0",
+      "attributes": {
+        "supported_features": 15,
+        "friendly_name": "Test Todo"
+      },
+      "last_changed": "2024-05-02T23:38:40.931953+00:00",
+      "last_reported": "2024-05-02T23:38:40.931953+00:00",
+      "last_updated": "2024-05-02T23:38:40.931953+00:00",
+      "context": {
+        "id": "01HWXTS8X3D417XC4YJTG8QJWB",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "climate.test_climate",
+      "state": "cool",
+      "attributes": {
+        "supported_features": 1,
+        "friendly_name": "Test Climate"
+      },
+      "last_changed": "2024-05-02T23:38:40.897074+00:00",
+      "last_reported": "2024-05-02T23:38:40.897074+00:00",
+      "last_updated": "2024-05-02T23:38:40.897074+00:00",
+      "context": {
+        "id": "01HWXTS8W1J2TDGMN7KKNWP8DV",
+        "parent_id": null,
+        "user_id": null
+      }
+    },
+    {
+      "entity_id": "unsupported.test",
+      "state": "on",
+      "attributes": {
+        "supported_features": 1,
+        "friendly_name": "Test Unsupported"
+      },
+      "last_changed": "2024-05-02T23:38:40.897074+00:00",
+      "last_reported": "2024-05-02T23:38:40.897074+00:00",
+      "last_updated": "2024-05-02T23:38:40.897074+00:00",
+      "context": {
+        "id": "01HWXTS8W1J2TDGMN7KKNWP8DV",
+        "parent_id": null,
+        "user_id": null
+      }
     }
   ],
   "entity_registry": [
@@ -1439,6 +1503,86 @@
       "platform": "holiday",
       "translation_key": null,
       "unique_id": "05ecbbc6111791b6baacbbb60397db14"
+    },
+    {
+      "area_id": null,
+      "categories": {},
+      "config_entry_id": "test_entry_light",
+      "device_id": null,
+      "disabled_by": null,
+      "entity_category": null,
+      "entity_id": "light.test_light",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": null,
+      "id": "test_light_registry_id",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Test Light",
+      "platform": "synapse",
+      "translation_key": null,
+      "unique_id": "light_test_light_unique_id"
+    },
+    {
+      "area_id": null,
+      "categories": {},
+      "config_entry_id": "test_entry_todo",
+      "device_id": null,
+      "disabled_by": null,
+      "entity_category": null,
+      "entity_id": "todo.test_todo",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": null,
+      "id": "test_todo_registry_id",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Test Todo",
+      "platform": "synapse",
+      "translation_key": null,
+      "unique_id": "todo_test_todo_unique_id"
+    },
+    {
+      "area_id": null,
+      "categories": {},
+      "config_entry_id": "test_entry_climate",
+      "device_id": null,
+      "disabled_by": null,
+      "entity_category": null,
+      "entity_id": "climate.test_climate",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": null,
+      "id": "test_climate_registry_id",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Test Climate",
+      "platform": "synapse",
+      "translation_key": null,
+      "unique_id": "climate_test_climate_unique_id"
+    },
+    {
+      "area_id": null,
+      "categories": {},
+      "config_entry_id": "test_entry_unsupported",
+      "device_id": null,
+      "disabled_by": null,
+      "entity_category": null,
+      "entity_id": "unsupported.test",
+      "has_entity_name": true,
+      "hidden_by": null,
+      "icon": null,
+      "id": "test_unsupported_registry_id",
+      "labels": [],
+      "name": null,
+      "options": {},
+      "original_name": "Test Unsupported",
+      "platform": "synapse",
+      "translation_key": null,
+      "unique_id": "unsupported_test_unique_id"
     }
   ],
   "floors": [
