@@ -23,7 +23,7 @@ export interface AddonDetails {
 
 export function AddonService({ hass, logger }: TServiceParams) {
   async function list() {
-    logger.trace("fetching addon list");
+    logger.trace({ name: "list" }, "fetching addon list");
     return await hass.socket.sendMessage<AddonDetails[]>({
       endpoint: "/addons",
       method: "get",
