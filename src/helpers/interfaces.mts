@@ -25,7 +25,7 @@ import type {
   TRawEntityIds,
   TUniqueId,
 } from "../user.mts";
-import type { FindEntryIdByTitle, TConfigEntryTitle } from "../user.mts";
+import type { FindEntryIdByTitle, TConfigEntryId, TConfigEntryTitle } from "../user.mts";
 import type { BackupResponse, HomeAssistantBackup } from "./backup.mts";
 import type { DeviceDetails } from "./device.mts";
 import type { ByIdProxy } from "./entity-state.mts";
@@ -98,9 +98,11 @@ export type HassBackupService = {
 };
 
 export type HassConfigService = {
+  current: () => ConfigEntry<TConfigEntryId>[];
+  get: () => Promise<ConfigEntry<TConfigEntryId>[]>;
   getConfigEntryByTitle: <TITLE extends TConfigEntryTitle>(
     title: TITLE,
-  ) => Promise<ConfigEntry<FindEntryIdByTitle<TITLE>>>;
+  ) => ConfigEntry<FindEntryIdByTitle<TITLE>> | undefined;
   getServices: () => HassServiceDTO[];
   isService: <DOMAIN extends ALL_SERVICE_DOMAINS>(
     domain: DOMAIN,

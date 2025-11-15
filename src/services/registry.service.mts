@@ -29,6 +29,9 @@ export function Registry({ hass }: TServiceParams): HassRegistryService {
     });
   }
 
+  /**
+   * @deprecated Use hass.config.get() instead. This method will be removed in a future version.
+   */
   async function getConfigEntries() {
     return await hass.socket.sendMessage<ConfigEntry[]>({
       type: "config_entries/get",
