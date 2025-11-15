@@ -12,6 +12,7 @@ import {
   FetchAPI,
   FetchInternals,
   Floor,
+  FrontendService,
   HassDiagnosticsService,
   HassFeatureService,
   IDByExtension,
@@ -207,6 +208,11 @@ export const LIB_HASS = CreateLibrary({
      * floors, like groups of areas
      */
     floor: Floor,
+
+    /**
+     * frontend interactions
+     */
+    frontend: FrontendService,
 
     /**
      * search for entity ids in a type safe way

@@ -34,7 +34,9 @@ describe("Addon Service", () => {
       ];
 
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        const spy = vi.spyOn(hass.socket, "sendMessage").mockImplementation(async () => mockAddons);
+        const spy = vi
+          .spyOn(hass.socket, "sendMessage")
+          .mockImplementation(async () => ({ addons: mockAddons }));
 
         lifecycle.onReady(async () => {
           const result = await hass.addon.list();
@@ -51,7 +53,7 @@ describe("Addon Service", () => {
     it("should return empty array when no addons are available", async () => {
       expect.assertions(1);
       await hassTestRunner.run(({ lifecycle, hass }) => {
-        vi.spyOn(hass.socket, "sendMessage").mockImplementation(async () => []);
+        vi.spyOn(hass.socket, "sendMessage").mockImplementation(async () => ({ addons: [] }));
 
         lifecycle.onReady(async () => {
           const result = await hass.addon.list();

@@ -3,10 +3,11 @@ import type EventEmitter from "events";
 import type { EmptyObject } from "type-fest";
 import type WS from "ws";
 
-import type { AddonDetails } from "../index.mts";
+import type { AddonDetails, ThemeDefinition } from "../index.mts";
 import type {
   ALL_DOMAINS,
   ANY_ENTITY,
+  HassThemeMapping,
   HassUniqueIdMapping,
   iCallService,
   PICK_ENTITY,
@@ -52,6 +53,10 @@ import type {
 
 export type HassAddonService = {
   list: () => Promise<AddonDetails[]>;
+};
+
+export type HassFrontendService = {
+  getThemes: () => Promise<Record<keyof HassThemeMapping, ThemeDefinition>>;
 };
 
 export type HassAreaService = {

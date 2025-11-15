@@ -7,6 +7,7 @@ export * from "./entity-state.mts";
 export * from "./features.mts";
 export * from "./fetch.mts";
 export * from "./fetch/index.mts";
+export * from "./frontend.mts";
 export * from "./id-by.mts";
 export * from "./interfaces.mts";
 export * from "./languages.mts";
