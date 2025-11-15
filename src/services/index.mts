@@ -1,3 +1,4 @@
+export * from "./addon.service.mts";
 export * from "./area.service.mts";
 export * from "./backup.service.mts";
 export * from "./call-proxy.service.mts";
