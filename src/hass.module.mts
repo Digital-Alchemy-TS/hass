@@ -6,7 +6,7 @@ import {
   Backup,
   CallProxy,
   Configure,
-  Conversation,
+  ConversationService,
   Device,
   EntityManager,
   EventsService,
@@ -178,7 +178,7 @@ export const LIB_HASS = CreateLibrary({
     /**
      * conversation agent interactions
      */
-    conversation: Conversation,
+    conversation: ConversationService,
 
     /**
      * device interactions

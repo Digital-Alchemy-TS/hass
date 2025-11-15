@@ -8,7 +8,7 @@ import type {
 } from "../helpers/index.mts";
 import { UPDATE_REGISTRY } from "../helpers/index.mts";
 
-export function Conversation({ hass, logger }: TServiceParams): HassConversationService {
+export function ConversationService({ hass, logger }: TServiceParams): HassConversationService {
   async function addAlias({ entity, alias }: EditAliasOptions) {
     const current = await hass.entity.registry.get(entity);
     if (current?.aliases?.includes(alias)) {
