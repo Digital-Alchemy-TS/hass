@@ -192,4 +192,19 @@ declare module "../user.mts" {
     "LCARS Breen": true;
     "Minimal Ninja": "light" | "dark";
   }
+
+  export interface HassConfigEntryMapping {
+    "01JJJ3NAS9JAW1SESXZRHG7YH7": { title: "Sun"; domain: "sun" };
+    "01JJJ3NAVSK3WCDRZQADJVMDRH": { title: "Supervisor"; domain: "hassio" };
+    "01JJJ3NAVSPAHW2THWYBHM1X8F": {
+      title: "Intel Corporate 0a2b (7C:2A:31:0C:B1:9B)";
+      domain: "bluetooth";
+    };
+    "01JJJ4TT048V3TMDZHN29D3X5D": { title: "Shopping list"; domain: "shopping_list" };
+    "01JJJ4TT0BD1GFQQSGN295AH7G": {
+      title: "Google Translate text-to-speech";
+      domain: "google_translate";
+    };
+    "01JJJ4TT1VM15JJQ1YXC6MJKRF": { title: "Radio Browser"; domain: "radio_browser" };
+  }
 }

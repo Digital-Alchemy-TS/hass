@@ -149,4 +149,10 @@ export default [
       "sonarjs/prefer-promise-shorthand": "off"
     },
   },
+  {
+    files: ["src/dev/**/*.mts"],
+    rules: {
+      "@cspell/spellchecker": "off",
+    },
+  },
 ];

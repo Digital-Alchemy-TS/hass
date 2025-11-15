@@ -50,12 +50,26 @@ export interface HassThemeMapping {
   // "{theme_name}": true | "light" | "dark" | "light" | "dark"
 }
 
+export interface HassConfigEntryMapping {
+  // "{entry_id}": { title: string; domain: string }
+}
+
+// Reverse lookup: find entry_id by title
+export type FindEntryIdByTitle<
+  TITLE extends HassConfigEntryMapping[keyof HassConfigEntryMapping]["title"],
+> = {
+  [K in keyof HassConfigEntryMapping]: HassConfigEntryMapping[K]["title"] extends TITLE ? K : never;
+}[keyof HassConfigEntryMapping];
+
+export type TConfigEntryTitle = HassConfigEntryMapping[keyof HassConfigEntryMapping]["title"];
+
 // #MARK: extract
 export type TAreaId = UnPrefix<keyof HassAreaMapping>;
 export type TDeviceId = UnPrefix<keyof HassDeviceMapping>;
 export type TFloorId = UnPrefix<keyof HassFloorMapping>;
 export type TLabelId = UnPrefix<keyof HassLabelMapping>;
 export type TPlatformId = UnPrefix<keyof HassPlatformMapping>;
+export type TConfigEntryId = keyof HassConfigEntryMapping;
 
 export type TRawDomains = keyof HassDomainMapping;
 export type TZoneId = keyof HassZoneMapping;

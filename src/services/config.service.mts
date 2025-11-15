@@ -3,9 +3,14 @@ import type { TServiceParams } from "@digital-alchemy/core";
 import { asyncNoop, INCREMENT, SECOND, sleep, START } from "@digital-alchemy/core";
 import { env } from "process";
 
-import type { ALL_SERVICE_DOMAINS, HassConfigService, HassServiceDTO } from "../helpers/index.mts";
+import type {
+  ALL_SERVICE_DOMAINS,
+  ConfigEntry,
+  HassConfigService,
+  HassServiceDTO,
+} from "../helpers/index.mts";
 import { PostConfigPriorities } from "../helpers/index.mts";
-import type { iCallService } from "../user.mts";
+import type { FindEntryIdByTitle, iCallService, TConfigEntryTitle } from "../user.mts";
 
 const MAX_ATTEMPTS = 50;
 const FAILED = 1;
@@ -106,7 +111,17 @@ export function Configure({
     return exists;
   }
 
+  async function getConfigEntryByTitle<TITLE extends TConfigEntryTitle>(
+    title: TITLE,
+  ): Promise<ConfigEntry<FindEntryIdByTitle<TITLE>>> {
+    logger.trace({ name: getConfigEntryByTitle, title }, `looking up config entry by title`);
+    const entries = await hass.registry.getConfigEntries();
+    const entry = entries.find(e => e.title === title);
+    return entry as ConfigEntry<FindEntryIdByTitle<TITLE>>;
+  }
+
   return {
+    getConfigEntryByTitle,
     getServices: () => services,
     isService,
     loadServiceList,
