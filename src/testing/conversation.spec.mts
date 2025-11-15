@@ -14,6 +14,7 @@ describe("Conversation Service", () => {
         {
           id: "conversation.home_assistant",
           name: "Home Assistant",
+          supported_languages: ["en", "es", "fr"],
         },
       ];
 

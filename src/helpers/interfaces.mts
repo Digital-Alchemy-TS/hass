@@ -29,6 +29,7 @@ import type { BackupResponse, HomeAssistantBackup } from "./backup.mts";
 import type { DeviceDetails } from "./device.mts";
 import type { ByIdProxy } from "./entity-state.mts";
 import type { AreaCreate, AreaDetails, ConfigEntry, HassConfig, HassServiceDTO } from "./index.mts";
+import type { SupportedLanguages } from "./languages.mts";
 import type {
   EditAliasOptions,
   EditLabelOptions,
@@ -218,6 +219,7 @@ export type ConnectionState = `${keyof typeof WebsocketConnectionState}`;
 export type ConversationAgent = {
   id: string;
   name: string;
+  supported_languages: SupportedLanguages[];
 };
 
 export type HassConversationService = {
