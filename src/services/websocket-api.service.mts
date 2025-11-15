@@ -12,6 +12,7 @@ import type {
   HassWebsocketAPI,
   OnHassEventOptions,
   SocketMessageDTO,
+  SocketSubscribeData,
   SocketSubscribeOptions,
 } from "../index.mts";
 
@@ -41,6 +42,7 @@ export function WebsocketAPI({
   lifecycle,
   logger,
   scheduler,
+  als,
 }: TServiceParams): HassWebsocketAPI {
   const { is } = internal.utils;
 
@@ -56,6 +58,9 @@ export function WebsocketAPI({
   const messageHandlers: MessageHandlerMap = new Map();
   const isOld = (date: Dayjs) =>
     is.undefined(date) || date.diff(dayjs(), "s") >= config.hass.RETRY_INTERVAL;
+
+  // Track all subscriptions for re-establishment on reconnect
+  const subscriptionRegistry: Array<SocketSubscribeOptions<string, Record<string, unknown>>> = [];
 
   // Start the socket
   lifecycle.onBootstrap(async () => {
@@ -504,7 +509,35 @@ export function WebsocketAPI({
     EVENT extends string,
     PAYLOAD extends Record<string, unknown> = EmptyObject,
   >({ event_type, context, exec }: SocketSubscribeOptions<EVENT, PAYLOAD>) {
+    // Memory leak detection: warn if subscribe is called during onConnect using ALS
+    const store = als.getStore();
+    if (store?.logs?.hassOnConnect) {
+      logger.warn(
+        { context, event_type, name: subscribe },
+        `⚠️ MEMORY LEAK DETECTED: subscribe() called during onConnect callback. ` +
+          `This will create duplicate subscriptions on each reconnect. ` +
+          `Move subscription to root level using lifecycle hooks instead.`,
+      );
+    }
+
+    // Check if this subscription already exists
+    const existing = subscriptionRegistry.find(
+      sub => sub.event_type === event_type && sub.context === context,
+    );
+
+    if (!existing) {
+      // Add to registry
+      subscriptionRegistry.push({
+        context,
+        event_type,
+        exec: exec as (data: Record<string, unknown> & SocketSubscribeData<string>) => TBlackHole,
+      } as SocketSubscribeOptions<string, Record<string, unknown>>);
+    }
+
+    // Send subscription message to Home Assistant
     await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
+
+    // Register event handler
     return hass.socket.onEvent({
       context,
       event: event_type,
@@ -515,7 +548,51 @@ export function WebsocketAPI({
   // #MARK: onConnect
   function onConnect(callback: () => TBlackHole) {
     const wrapped = async () => {
-      await internal.safeExec(async () => await callback());
+      // Get current store or create new one
+      const currentStore = als.getStore();
+      const baseData = currentStore || { logs: {} };
+
+      // Set ALS flag to indicate we're in a connect callback
+      als.enterWith({
+        ...baseData,
+        logs: {
+          ...baseData.logs,
+          hassOnConnect: true,
+        },
+      });
+
+      try {
+        await internal.safeExec(async () => await callback());
+
+        // Re-establish all registered subscriptions
+        logger.trace(
+          { name: onConnect },
+          `re-establishing [%s] subscriptions`,
+          subscriptionRegistry.length,
+        );
+        await Promise.all(
+          subscriptionRegistry.map(subscription =>
+            hass.socket.sendMessage({
+              event_type: subscription.event_type,
+              type: "subscribe_events",
+            }),
+          ),
+        );
+        // Note: onEvent handlers are already registered, we just need to re-subscribe to Home Assistant
+      } finally {
+        // Restore previous ALS context (or clear if none)
+        if (currentStore) {
+          als.enterWith({
+            ...currentStore,
+            logs: {
+              ...currentStore.logs,
+              hassOnConnect: false,
+            },
+          });
+        } else {
+          als.enterWith({ logs: {} });
+        }
+      }
     };
     if (hass.socket.connectionState === "connected") {
       logger.debug(
