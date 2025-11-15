@@ -1,6 +1,11 @@
 import type { TServiceParams } from "@digital-alchemy/core";
 
-import type { EditAliasOptions, HassConversationService, ToggleExpose } from "../helpers/index.mts";
+import type {
+  ConversationAgent,
+  EditAliasOptions,
+  HassConversationService,
+  ToggleExpose,
+} from "../helpers/index.mts";
 import { UPDATE_REGISTRY } from "../helpers/index.mts";
 
 export function Conversation({ hass, logger }: TServiceParams): HassConversationService {
@@ -25,6 +30,14 @@ export function Conversation({ hass, logger }: TServiceParams): HassConversation
     await hass.socket.sendMessage({ entity_id: entity, type: UPDATE_REGISTRY });
   }
 
+  async function listAgents() {
+    logger.trace({ name: "listAgents" }, "fetching conversation agents");
+    const result = await hass.socket.sendMessage<{ agents: ConversationAgent[] }>({
+      type: "conversation/agent/list",
+    });
+    return result.agents;
+  }
+
   async function setConversational({ entity_ids, assistants, should_expose }: ToggleExpose) {
     await hass.socket.sendMessage({
       assistants: [assistants].flat(),
@@ -36,6 +49,7 @@ export function Conversation({ hass, logger }: TServiceParams): HassConversation
 
   return {
     addAlias,
+    listAgents,
     removeAlias,
     setConversational,
   };

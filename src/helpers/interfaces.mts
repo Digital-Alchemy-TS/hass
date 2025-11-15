@@ -215,8 +215,14 @@ export enum WebsocketConnectionState {
 
 export type ConnectionState = `${keyof typeof WebsocketConnectionState}`;
 
+export type ConversationAgent = {
+  id: string;
+  name: string;
+};
+
 export type HassConversationService = {
   addAlias: (options: EditAliasOptions) => Promise<void>;
+  listAgents: () => Promise<ConversationAgent[]>;
   removeAlias: (options: EditAliasOptions) => Promise<void>;
   setConversational: (options: ToggleExpose) => Promise<void>;
 };
