@@ -1,5 +1,6 @@
 export * from "./backup.mts";
 export * from "./constants.mts";
+export * from "./countries.mts";
 export * from "./device.mts";
 export * from "./entity-state.mts";
 export * from "./features.mts";
@@ -7,6 +8,7 @@ export * from "./fetch.mts";
 export * from "./fetch/index.mts";
 export * from "./id-by.mts";
 export * from "./interfaces.mts";
+export * from "./languages.mts";
 export * from "./notify.mts";
 export * from "./registry.mts";
 export * from "./supported-features.mts";

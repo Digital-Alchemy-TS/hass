@@ -1,6 +1,7 @@
 import { CreateLibrary } from "@digital-alchemy/core";
 
 import {
+  AddonService,
   Area,
   Backup,
   CallProxy,
@@ -150,6 +151,8 @@ export const LIB_HASS = CreateLibrary({
   // no internal dependency ones first
   priorityInit: ["internals", "fetch", "socket"],
   services: {
+    addon: AddonService,
+
     /**
      * home assistant areas
      */
