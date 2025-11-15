@@ -46,6 +46,10 @@ export interface HassZoneMapping {
   // "zone": true
 }
 
+export interface HassThemeMapping {
+  // "{theme_name}": true | "light" | "dark" | "light" | "dark"
+}
+
 // #MARK: extract
 export type TAreaId = UnPrefix<keyof HassAreaMapping>;
 export type TDeviceId = UnPrefix<keyof HassDeviceMapping>;
