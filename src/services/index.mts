@@ -10,6 +10,7 @@ export * from "./events.service.mts";
 export * from "./feature.service.mts";
 export * from "./fetch-api.service.mts";
 export * from "./floor.service.mts";
+export * from "./frontend.service.mts";
 export * from "./id-by.service.mts";
 export * from "./internal.service.mts";
 export * from "./label.service.mts";

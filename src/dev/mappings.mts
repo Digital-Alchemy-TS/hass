@@ -163,4 +163,33 @@ declare module "../user.mts" {
     _downstairs: "switch.kitchen_cabinets" | "switch.living_room_mood_lights";
     _upstairs: "switch.bedroom_lamp";
   }
+
+  export interface HassThemeMapping {
+    "(DO NOT USE/MODIFY)=== LCARS variables": true;
+    "(DO NOT USE/MODIFY)=== Base customizations": true;
+    "(DO NOT USE/MODIFY)=== card-mod CSS": true;
+    "LCARS Default": true;
+    "LCARS Classic": true;
+    "LCARS Nemesis Blue": true;
+    "LCARS Lower Decks I": true;
+    "LCARS Lower Decks II": true;
+    "LCARS Romulus": true;
+    "LCARS Kronos": true;
+    "LCARS Cardassia": true;
+    "LCARS Zeldaar": true;
+    "LCARS Modern": true;
+    "LCARS Picard I": true;
+    "LCARS Picard II": true;
+    "LCARS Red Alert": true;
+    "LCARS TNG": true;
+    "LCARS TNGbuttons": true;
+    "LCARS Transporter": true;
+    "LCARS Navigation": true;
+    "LCARS 25C": true;
+    "LCARS 25C (Red Alert)": true;
+    "LCARS 25C (Yellow Alert)": true;
+    "LCARS 25C (Blue Alert)": true;
+    "LCARS Breen": true;
+    "Minimal Ninja": "light" | "dark";
+  }
 }

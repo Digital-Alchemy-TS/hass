@@ -22,9 +22,13 @@ words:
   - rgbww
   - hacs
   - mireds
+  - gbuttons
   - rrule
   - rtsp
   - sonarjs
+  - cardassia
+  - zeldaar
+  - breen
   - mbit
   - datetime
   - kbit
@@ -32,6 +36,7 @@ words:
   - ssdp
   - systype
   - tvshow
+  - lcars
   - zeroconf
   - templow
   - partlycloudy
