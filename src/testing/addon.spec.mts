@@ -1,5 +1,5 @@
+import type { AddonDetails } from "../helpers/index.mts";
 import { hassTestRunner } from "../mock_assistant/index.mts";
-import type { AddonDetails } from "../services/addon.service.mts";
 
 describe("Addon Service", () => {
   afterEach(async () => {

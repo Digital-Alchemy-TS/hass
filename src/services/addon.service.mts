@@ -1,27 +1,8 @@
 import type { TServiceParams } from "@digital-alchemy/core";
 
-export interface AddonDetails {
-  name: string;
-  slug: string;
-  description: string;
-  advanced: boolean;
-  stage: string;
-  version: string;
-  version_latest: string;
-  update_available: boolean;
-  available: boolean;
-  detached: boolean;
-  homeassistant: string;
-  state: "started" | "stopped" | "error";
-  repository: string;
-  build: boolean;
-  url: string;
-  icon: boolean;
-  logo: boolean;
-  system_managed: boolean;
-}
+import type { AddonDetails, HassAddonService } from "../index.mts";
 
-export function AddonService({ hass, logger }: TServiceParams) {
+export function AddonService({ hass, logger }: TServiceParams): HassAddonService {
   async function list() {
     logger.trace({ name: "list" }, "fetching addon list");
     return await hass.socket.sendMessage<AddonDetails[]>({

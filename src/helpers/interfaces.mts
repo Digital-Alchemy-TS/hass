@@ -3,6 +3,7 @@ import type EventEmitter from "events";
 import type { EmptyObject } from "type-fest";
 import type WS from "ws";
 
+import type { AddonDetails } from "../index.mts";
 import type {
   ALL_DOMAINS,
   ANY_ENTITY,
@@ -48,6 +49,10 @@ import type {
   OnHassEventOptions,
   SocketSubscribeOptions,
 } from "./websocket.mts";
+
+export type HassAddonService = {
+  list: () => Promise<AddonDetails[]>;
+};
 
 export type HassAreaService = {
   apply: (

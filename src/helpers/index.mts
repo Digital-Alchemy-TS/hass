@@ -1,3 +1,4 @@
+export * from "./addon.mts";
 export * from "./backup.mts";
 export * from "./constants.mts";
 export * from "./countries.mts";
