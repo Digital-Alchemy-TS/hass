@@ -13,6 +13,7 @@ describe("Config", () => {
     delete env.HASSIO_TOKEN;
     delete env.SUPERVISOR_TOKEN;
     delete env.HASS_SERVER;
+    hassTestRunner.configure({ hass: { VALIDATE_CONFIGURATION: false } });
   });
 
   afterEach(async () => {
@@ -563,7 +564,6 @@ describe("Config", () => {
       ];
 
       await hassTestRunner
-        .emitLogs()
         .configure({ hass: { EVENT_DEBOUNCE_MS: 10 } })
         .run(({ lifecycle, hass, mock_assistant }) => {
           let configEntryCallCount = 0;
