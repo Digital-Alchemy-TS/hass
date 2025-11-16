@@ -100,7 +100,7 @@ export type HassBackupService = {
 export type HassConfigService = {
   current: () => ConfigEntry<TConfigEntryId>[];
   get: () => Promise<ConfigEntry<TConfigEntryId>[]>;
-  getConfigEntryByTitle: <TITLE extends TConfigEntryTitle>(
+  byTitle: <TITLE extends TConfigEntryTitle>(
     title: TITLE,
   ) => ConfigEntry<FindEntryIdByTitle<TITLE>> | undefined;
   getServices: () => HassServiceDTO[];
