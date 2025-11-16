@@ -1,5 +1,5 @@
 import type { TBlackHole, TServiceParams } from "@digital-alchemy/core";
-import { InternalError, SECOND, sleep, START } from "@digital-alchemy/core";
+import { INCREMENT, InternalError, NONE, SECOND, sleep, START } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import EventEmitter from "events";
@@ -41,6 +41,7 @@ export function WebsocketAPI({
   lifecycle,
   logger,
   scheduler,
+  als,
 }: TServiceParams): HassWebsocketAPI {
   const { is } = internal.utils;
 
@@ -56,6 +57,10 @@ export function WebsocketAPI({
   const messageHandlers: MessageHandlerMap = new Map();
   const isOld = (date: Dayjs) =>
     is.undefined(date) || date.diff(dayjs(), "s") >= config.hass.RETRY_INTERVAL;
+
+  // Track all subscriptions for re-establishment on reconnect
+  // Map of event_type to count of active subscriptions
+  const subscriptionRegistry = new Map<string, number>();
 
   // Start the socket
   lifecycle.onBootstrap(async () => {
@@ -298,7 +303,7 @@ export function WebsocketAPI({
     callback: (message: T) => TBlackHole,
   ) {
     const handlers = messageHandlers.get(type) ?? [];
-    logger.trace({ type }, "register socket message handler");
+    logger.trace("register socket message handler [%s]", type);
     if (!messageHandlers.has(type)) {
       messageHandlers.set(type, []);
     }
@@ -504,18 +509,73 @@ export function WebsocketAPI({
     EVENT extends string,
     PAYLOAD extends Record<string, unknown> = EmptyObject,
   >({ event_type, context, exec }: SocketSubscribeOptions<EVENT, PAYLOAD>) {
-    await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
-    return hass.socket.onEvent({
+    // Memory leak detection: warn if subscribe is called during onConnect using ALS
+    const store = als.getStore();
+    if (store?.logs?.hassOnConnect) {
+      logger.warn(
+        { context, event_type, name: subscribe },
+        `⚠️ MEMORY LEAK DETECTED: subscribe() called during onConnect callback. ` +
+          `This will create duplicate subscriptions on each reconnect. ` +
+          `Move subscription to root level using lifecycle hooks instead.`,
+      );
+    }
+
+    const current = subscriptionRegistry.get(event_type) ?? NONE;
+    if (current == NONE && hass.socket.connectionState === "connected") {
+      await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
+    }
+    subscriptionRegistry.set(event_type, current + INCREMENT);
+
+    // Register event handler
+    const { remove } = hass.socket.onEvent({
       context,
       event: event_type,
       exec,
+    });
+
+    return internal.removeFn(() => {
+      remove();
+      const current = subscriptionRegistry.get(event_type) - INCREMENT;
+      if (current === NONE) {
+        subscriptionRegistry.delete(event_type);
+        return;
+      }
+      subscriptionRegistry.set(event_type, current);
     });
   }
 
   // #MARK: onConnect
   function onConnect(callback: () => TBlackHole) {
     const wrapped = async () => {
-      await internal.safeExec(async () => await callback());
+      // Get current store or create new one
+      const currentStore = als.getStore();
+      const baseData = currentStore || { logs: {} };
+
+      // Set ALS flag to indicate we're in a connect callback
+      als.enterWith({
+        ...baseData,
+        logs: {
+          ...baseData.logs,
+          hassOnConnect: true,
+        },
+      });
+
+      try {
+        await internal.safeExec(async () => await callback());
+      } finally {
+        // Restore previous ALS context (or clear if none)
+        if (currentStore) {
+          als.enterWith({
+            ...currentStore,
+            logs: {
+              ...currentStore.logs,
+              hassOnConnect: false,
+            },
+          });
+        } else {
+          als.enterWith({ logs: {} });
+        }
+      }
     };
     if (hass.socket.connectionState === "connected") {
       logger.debug(
@@ -542,6 +602,27 @@ export function WebsocketAPI({
       await hass.socket.sendMessage({ type: "subscribe_events" }, false);
       onSocketReady?.();
       event.emit(SOCKET_CONNECTED);
+    });
+
+    // Re-establish all registered subscriptions once per connection
+    hass.socket.onConnect(async () => {
+      if (is.empty(subscriptionRegistry)) {
+        return;
+      }
+      const subscriptions = [...subscriptionRegistry.keys()];
+      logger.trace(
+        { name: onConnect, subscriptions },
+        `re-establishing [%s] subscriptions`,
+        subscriptionRegistry.size,
+      );
+      await Promise.all(
+        subscriptions.map(event_type =>
+          hass.socket.sendMessage({
+            event_type,
+            type: "subscribe_events",
+          }),
+        ),
+      );
     });
 
     hass.socket.registerMessageHandler("event", async (message: SocketMessageDTO) => {

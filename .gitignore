@@ -126,3 +126,4 @@ dynamic.d.ts
 hass/config
 test.d.ts
 .yarn/install-state.gz
+.env

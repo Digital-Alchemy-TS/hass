@@ -258,6 +258,10 @@ export const LIB_HASS = CreateLibrary({
 });
 
 declare module "@digital-alchemy/core" {
+  export interface AsyncLogData {
+    hassOnConnect?: boolean;
+  }
+
   export interface LoadedModules {
     /**
      * tools for interacting with home assistant
