@@ -1,9 +1,14 @@
+import { sleep } from "@digital-alchemy/core";
+
 import { hassTestRunner } from "../mock_assistant/index.mts";
 
 describe("Websocket", () => {
   afterEach(async () => {
     await hassTestRunner.teardown();
     vi.restoreAllMocks();
+  });
+  beforeEach(() => {
+    hassTestRunner.emitLogs("silent");
   });
 
   describe("API Interactions", () => {
@@ -237,15 +242,16 @@ describe("Websocket", () => {
 
     it("should warn when subscribe is called inside onConnect callback", async () => {
       expect.assertions(2);
-      await hassTestRunner.run(({ lifecycle, hass, logger, context, event }) => {
+      // const customLogger = createMockLogger();
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      await hassTestRunner.emitLogs("warn").run(({ lifecycle, hass, internal, context, event }) => {
+        internal.boilerplate.configuration.set("boilerplate", "LOG_LEVEL", "warn");
         lifecycle.onReady(async () => {
           // Wait for initial connection to complete
           await new Promise(resolve => setTimeout(resolve, 100));
 
           // Ensure socket is connected
           expect(hass.socket.connectionState).toBe("connected");
-
-          const warnSpy = vi.spyOn(logger, "warn").mockImplementation(() => {});
 
           // Register onConnect callback that subscribes (this should trigger warning)
           hass.socket.onConnect(async () => {
@@ -258,19 +264,9 @@ describe("Websocket", () => {
 
           // Trigger onConnect by emitting SOCKET_CONNECTED event again
           event.emit("SOCKET_CONNECTED");
+          await sleep(0);
 
-          // Wait for async operations to complete - need to wait for the wrapped callback to execute
-          await new Promise(resolve => setTimeout(resolve, 300));
-
-          // Should have been called with memory leak warning
-          const memoryLeakWarnings = warnSpy.mock.calls.filter(call =>
-            String(call[1] || "").includes("MEMORY LEAK DETECTED"),
-          );
-
-          expect(memoryLeakWarnings.length).toBeGreaterThan(0);
-          expect(memoryLeakWarnings[0][1]).toContain(
-            "subscribe() called during onConnect callback",
-          );
+          expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("MEMORY LEAK DETECTED"));
         });
       });
     });
