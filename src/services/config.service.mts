@@ -90,6 +90,7 @@ export function Configure({
       if (recursion > MAX_ATTEMPTS) {
         logger.fatal({ name: loadServiceList }, `failed to load service list from Home Assistant`);
         process.exit(FAILED);
+        return;
       }
       logger.warn(
         { name: loadServiceList },
@@ -111,11 +112,14 @@ export function Configure({
     domain: DOMAIN,
     service: string,
   ): service is Extract<keyof iCallService[DOMAIN], string> {
-    if (checkedServices.has(service)) {
-      return checkedServices.get(service);
+    const key = [domain, service].join(".");
+    if (checkedServices.has(key)) {
+      return checkedServices.get(key);
     }
-    const exists = services.some(i => i.domain === domain && !is.undefined(i.services[service]));
-    checkedServices.set(service, exists);
+    const exists = services.some(
+      i => i?.domain === domain && !is.undefined(i?.services?.[service]),
+    );
+    checkedServices.set(key, exists);
     return exists;
   }
 
