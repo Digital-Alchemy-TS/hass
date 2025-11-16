@@ -17,24 +17,9 @@ import { buildFilterString, isDomain } from "../helpers/index.mts";
 
 const streamPipeline = promisify(pipeline);
 
-export function FetchInternals({
-  internal,
-  logger,
-  context: parentContext,
-  config,
-  lifecycle,
-}: TServiceParams) {
+export function FetchInternals({ internal, logger, context: parentContext }: TServiceParams) {
   const { is } = internal.utils;
   is.domain = isDomain;
-
-  // Enable ALS in logger if configured
-  lifecycle.onPostConfig(() => {
-    if (config.hass.ENABLE_ALS) {
-      internal.boot.options.loggerOptions ??= {};
-      internal.boot.options.loggerOptions.als = true;
-      logger.trace({ name: FetchInternals }, "ALS enabled in logger");
-    }
-  });
 
   return ({ headers: base_headers, baseUrl: base_url, context: logContext }: FetcherOptions) => {
     const capabilities: string[] = [];

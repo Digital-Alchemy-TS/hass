@@ -50,20 +50,6 @@ export const LIB_HASS = CreateLibrary({
     },
 
     /**
-     * Enable AsyncLocalStorage (ALS) integration for logger.
-     *
-     * This exists because the default value for loggerOptions.als is false for performance reasons.
-     * When enabled, ALS context will be automatically included in log messages, enabling request
-     * correlation and contextual logging across async operations.
-     */
-    ENABLE_ALS: {
-      default: true,
-      description:
-        "Enable AsyncLocalStorage integration in logger. Default is false in core for performance, but enabled here by default for better debugging",
-      type: "boolean",
-    },
-
-    /**
      * When adding new integrations, app will receive 1 update event for everything that changes.
      * This can result in a flood of updates where only a single one is needed at the very end.
      *
