@@ -242,7 +242,6 @@ describe("Websocket", () => {
 
     it("should warn when subscribe is called inside onConnect callback", async () => {
       expect.assertions(2);
-      // const customLogger = createMockLogger();
       const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
       await hassTestRunner.emitLogs("warn").run(({ lifecycle, hass, internal, context, event }) => {
         internal.boilerplate.configuration.set("boilerplate", "LOG_LEVEL", "warn");
