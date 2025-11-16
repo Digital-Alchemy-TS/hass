@@ -537,7 +537,6 @@ export function WebsocketAPI({
       remove();
       const current = subscriptionRegistry.get(event_type) - INCREMENT;
       if (current === NONE) {
-        // logger
         subscriptionRegistry.delete(event_type);
         return;
       }
