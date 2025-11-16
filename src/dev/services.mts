@@ -1,6 +1,5 @@
 /* eslint-disable sonarjs/class-name */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-/* eslint-disable @cspell/spellchecker */
 
 import type {
   AndroidNotificationData,
