@@ -117,7 +117,7 @@ export function Configure({
       return checkedServices.get(key);
     }
     const exists = services.some(
-      i => i?.domain === domain && !is.undefined(i?.services?.[service]),
+      i => i.domain === domain && !is.undefined(i.services[service]),
     );
     checkedServices.set(key, exists);
     return exists;
