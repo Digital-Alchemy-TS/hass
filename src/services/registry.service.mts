@@ -1,7 +1,7 @@
+/* eslint-disable sonarjs/deprecation */
 import type { TServiceParams } from "@digital-alchemy/core";
 
 import type {
-  ConfigEntry,
   HassConfig,
   HassRegistryService,
   ManifestItem,
@@ -29,10 +29,11 @@ export function Registry({ hass }: TServiceParams): HassRegistryService {
     });
   }
 
+  /**
+   * @deprecated Use hass.configure.get() instead. This method will be removed in a future version.
+   */
   async function getConfigEntries() {
-    return await hass.socket.sendMessage<ConfigEntry[]>({
-      type: "config_entries/get",
-    });
+    return await hass.configure.get();
   }
 
   return {

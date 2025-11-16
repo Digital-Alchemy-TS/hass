@@ -143,10 +143,17 @@ export default [
     rules:  {
       "@typescript-eslint/unbound-method": "off",
       "@typescript-eslint/no-magic-numbers": "off",
+      "@cspell/spellchecker": "off",
       "sonarjs/no-duplicate-string": "off",
       "sonarjs/no-unused-collection": "warn",
       "unicorn/consistent-function-scoping": "off",
       "sonarjs/prefer-promise-shorthand": "off"
+    },
+  },
+  {
+    files: ["src/dev/**/*.mts"],
+    rules: {
+      "@cspell/spellchecker": "off",
     },
   },
 ];

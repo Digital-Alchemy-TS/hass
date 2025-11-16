@@ -1,4 +1,3 @@
-/* eslint-disable @cspell/spellchecker */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 declare module "../user.mts" {
   export interface HassEntitySetupMapping {

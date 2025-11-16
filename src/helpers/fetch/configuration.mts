@@ -1,4 +1,10 @@
-import type { TAreaId, TFloorId, TLabelId } from "../../user.mts";
+import type {
+  HassConfigEntryMapping,
+  TAreaId,
+  TConfigEntryId,
+  TFloorId,
+  TLabelId,
+} from "../../user.mts";
 
 export interface HassUnitSystem {
   length: "mi";
@@ -52,10 +58,10 @@ export type AreaCreate = {
   picture?: string;
 };
 
-export interface ConfigEntry {
-  entry_id: string;
-  domain: string;
-  title: string;
+export interface ConfigEntry<ENTRY_ID extends TConfigEntryId = TConfigEntryId> {
+  entry_id: ENTRY_ID;
+  domain: HassConfigEntryMapping[ENTRY_ID]["domain"];
+  title: HassConfigEntryMapping[ENTRY_ID]["title"];
   source: string;
   state: State;
   supports_options: boolean;
