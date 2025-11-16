@@ -1,5 +1,5 @@
 import type { TBlackHole, TServiceParams } from "@digital-alchemy/core";
-import { InternalError, SECOND, sleep, START } from "@digital-alchemy/core";
+import { INCREMENT, InternalError, NONE, SECOND, sleep, START } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import EventEmitter from "events";
@@ -12,7 +12,6 @@ import type {
   HassWebsocketAPI,
   OnHassEventOptions,
   SocketMessageDTO,
-  SocketSubscribeData,
   SocketSubscribeOptions,
 } from "../index.mts";
 
@@ -60,7 +59,8 @@ export function WebsocketAPI({
     is.undefined(date) || date.diff(dayjs(), "s") >= config.hass.RETRY_INTERVAL;
 
   // Track all subscriptions for re-establishment on reconnect
-  const subscriptionRegistry: Array<SocketSubscribeOptions<string, Record<string, unknown>>> = [];
+  // Map of event_type to count of active subscriptions
+  const subscriptionRegistry = new Map<string, number>();
 
   // Start the socket
   lifecycle.onBootstrap(async () => {
@@ -303,7 +303,7 @@ export function WebsocketAPI({
     callback: (message: T) => TBlackHole,
   ) {
     const handlers = messageHandlers.get(type) ?? [];
-    logger.trace({ type }, "register socket message handler");
+    logger.trace("register socket message handler [%s]", type);
     if (!messageHandlers.has(type)) {
       messageHandlers.set(type, []);
     }
@@ -520,28 +520,28 @@ export function WebsocketAPI({
       );
     }
 
-    // Check if this subscription already exists
-    const existing = subscriptionRegistry.find(
-      sub => sub.event_type === event_type && sub.context === context,
-    );
-
-    if (!existing) {
-      // Add to registry
-      subscriptionRegistry.push({
-        context,
-        event_type,
-        exec: exec as (data: Record<string, unknown> & SocketSubscribeData<string>) => TBlackHole,
-      } as SocketSubscribeOptions<string, Record<string, unknown>>);
+    const current = subscriptionRegistry.get(event_type) ?? NONE;
+    if (current == NONE && hass.socket.connectionState === "connected") {
+      await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
     }
-
-    // Send subscription message to Home Assistant
-    await hass.socket.sendMessage({ event_type, type: "subscribe_events" });
+    subscriptionRegistry.set(event_type, current + INCREMENT);
 
     // Register event handler
-    return hass.socket.onEvent({
+    const { remove } = hass.socket.onEvent({
       context,
       event: event_type,
       exec,
+    });
+
+    return internal.removeFn(() => {
+      remove();
+      const current = subscriptionRegistry.get(event_type) - INCREMENT;
+      if (current === NONE) {
+        // logger
+        subscriptionRegistry.delete(event_type);
+        return;
+      }
+      subscriptionRegistry.set(event_type, current);
     });
   }
 
@@ -563,22 +563,6 @@ export function WebsocketAPI({
 
       try {
         await internal.safeExec(async () => await callback());
-
-        // Re-establish all registered subscriptions
-        logger.trace(
-          { name: onConnect },
-          `re-establishing [%s] subscriptions`,
-          subscriptionRegistry.length,
-        );
-        await Promise.all(
-          subscriptionRegistry.map(subscription =>
-            hass.socket.sendMessage({
-              event_type: subscription.event_type,
-              type: "subscribe_events",
-            }),
-          ),
-        );
-        // Note: onEvent handlers are already registered, we just need to re-subscribe to Home Assistant
       } finally {
         // Restore previous ALS context (or clear if none)
         if (currentStore) {
@@ -619,6 +603,27 @@ export function WebsocketAPI({
       await hass.socket.sendMessage({ type: "subscribe_events" }, false);
       onSocketReady?.();
       event.emit(SOCKET_CONNECTED);
+    });
+
+    // Re-establish all registered subscriptions once per connection
+    hass.socket.onConnect(async () => {
+      if (is.empty(subscriptionRegistry)) {
+        return;
+      }
+      const subscriptions = [...subscriptionRegistry.keys()];
+      logger.trace(
+        { name: onConnect, subscriptions },
+        `re-establishing [%s] subscriptions`,
+        subscriptionRegistry.size,
+      );
+      await Promise.all(
+        subscriptions.map(event_type =>
+          hass.socket.sendMessage({
+            event_type,
+            type: "subscribe_events",
+          }),
+        ),
+      );
     });
 
     hass.socket.registerMessageHandler("event", async (message: SocketMessageDTO) => {
