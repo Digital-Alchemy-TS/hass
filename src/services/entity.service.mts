@@ -290,19 +290,20 @@ export function EntityManager({
   }
 
   // #MARK: onConnect
+  void hass.socket.subscribe({
+    context,
+    event_type: "entity_registry_updated",
+    async exec() {
+      const ms = perf();
+      await debounce(ENTITY_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
+      logger.debug("entity registry updated");
+      hass.entity.registry.current = await hass.entity.registry.list();
+      event.emit(ENTITY_REGISTRY_UPDATED);
+      hass.diagnostics.entity?.registry_updated.publish({ ms: ms() });
+    },
+  });
+
   hass.socket.onConnect(async () => {
-    hass.socket.subscribe({
-      context,
-      event_type: "entity_registry_updated",
-      async exec() {
-        const ms = perf();
-        await debounce(ENTITY_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
-        logger.debug("entity registry updated");
-        hass.entity.registry.current = await hass.entity.registry.list();
-        event.emit(ENTITY_REGISTRY_UPDATED);
-        hass.diagnostics.entity?.registry_updated.publish({ ms: ms() });
-      },
-    });
     hass.entity.registry.current = await hass.entity.registry.list();
   });
 

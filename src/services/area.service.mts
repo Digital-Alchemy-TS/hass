@@ -13,6 +13,19 @@ export function Area({
   event,
   lifecycle,
 }: TServiceParams): HassAreaService {
+  void hass.socket.subscribe({
+    context,
+    event_type: "area_registry_updated",
+    async exec() {
+      const ms = perf();
+      await debounce(AREA_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
+      hass.area.current = await hass.area.list();
+      logger.debug(`area registry updated`);
+      event.emit(AREA_REGISTRY_UPDATED);
+      hass.diagnostics.area?.registry_update.publish({ ms: ms() });
+    },
+  });
+
   hass.socket.onConnect(async () => {
     let loading = new Promise<void>(async done => {
       hass.area.current = await hass.area.list();
@@ -20,19 +33,6 @@ export function Area({
       done();
     });
     lifecycle.onReady(async () => loading && (await loading), EARLY_ON_READY);
-
-    hass.socket.subscribe({
-      context,
-      event_type: "area_registry_updated",
-      async exec() {
-        const ms = perf();
-        await debounce(AREA_REGISTRY_UPDATED, config.hass.EVENT_DEBOUNCE_MS);
-        hass.area.current = await hass.area.list();
-        logger.debug(`area registry updated`);
-        event.emit(AREA_REGISTRY_UPDATED);
-        hass.diagnostics.area?.registry_update.publish({ ms: ms() });
-      },
-    });
   });
 
   async function list() {
