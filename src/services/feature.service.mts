@@ -38,7 +38,9 @@ export function HassFeatureService({
     }, 0);
   }
 
-  function lookup(input: PICK_ENTITY | ByIdProxy<PICK_ENTITY>) {
+  function lookup<T extends UsedSupportedFeatureDomains>(
+    input: PICK_ENTITY | ByIdProxy<PICK_ENTITY<T>>,
+  ) {
     const ref = is.string(input) ? hass.refBy.id(input) : input;
     const attributes = ref.attributes as { supported_features: number };
     return attributes?.supported_features ?? 0;
@@ -69,7 +71,9 @@ export function HassFeatureService({
    * Helper function to get all supported features as an array
    * Can accept a number (bitmask), entity ID, or entity proxy
    */
-  function getSupportedFeatures(input: number | PICK_ENTITY | ByIdProxy<PICK_ENTITY>): number[] {
+  function getSupportedFeatures<T extends UsedSupportedFeatureDomains>(
+    input: number | PICK_ENTITY | ByIdProxy<PICK_ENTITY<T>>,
+  ): number[] {
     const features = is.number(input) ? input : lookup(input);
 
     const supported: number[] = [];
@@ -84,10 +88,9 @@ export function HassFeatureService({
   }
 
   function listEntityFeatures<
-    DOMAIN extends UsedSupportedFeatureDomains = UsedSupportedFeatureDomains,
-  >(
-    input: PICK_ENTITY<DOMAIN> | ByIdProxy<PICK_ENTITY<DOMAIN>>,
-  ): SupportedEntityFeatures<DOMAIN>[] {
+    DOMAIN extends UsedSupportedFeatureDomains,
+    ENTITY extends PICK_ENTITY<DOMAIN> = PICK_ENTITY<DOMAIN>,
+  >(input: ENTITY | ByIdProxy<ENTITY>): SupportedEntityFeatures<DOMAIN>[] {
     const inputDomain = domain(is.string(input) ? input : input.entity_id);
     const domainFeatures = SUPPORTED_FEATURES[inputDomain.toUpperCase() as SupportedFeatureDomains];
     if (!domainFeatures) {

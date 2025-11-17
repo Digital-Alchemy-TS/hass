@@ -1,4 +1,4 @@
-import type { TAnyFunction, TServiceParams } from "@digital-alchemy/core";
+import type { TAnyFunction, TOffset, TServiceParams } from "@digital-alchemy/core";
 import { DOWN, NONE, sleep, UP } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
@@ -9,6 +9,7 @@ import type {
   ByIdProxy,
   ENTITY_STATE,
   HassReferenceService,
+  OnStateForOptions,
   RemoveCallback,
 } from "../helpers/index.mts";
 import { domain, perf } from "../helpers/index.mts";
@@ -86,6 +87,7 @@ export function ReferenceService({
   hass,
   logger,
   internal,
+  scheduler,
   event,
 }: TServiceParams): HassReferenceService {
   const { is } = internal.utils;
@@ -94,6 +96,9 @@ export function ReferenceService({
     entity: ENTITY,
     property: PROPERTY,
   ): Get<ENTITY_STATE<ENTITY>, PROPERTY> {
+    if (!is.string(property)) {
+      return undefined;
+    }
     const valid = ["state", "attributes", "last"].some(i => property.startsWith(i));
     if (!valid) {
       logger.error({ entity, name: proxyGetLogic, property }, `invalid property lookup`);
@@ -134,6 +139,7 @@ export function ReferenceService({
         "last",
         "nextState",
         "once",
+        "onStateFor",
         "onUpdate",
         "previous",
         "removeAllListeners",
@@ -170,8 +176,62 @@ export function ReferenceService({
       // things that shouldn't be needed: this extract
       // eslint-disable-next-line sonarjs/function-return-type
       get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
+        // Handle Symbol properties (e.g., when vitest formats test output)
+        if (!is.string(property)) {
+          return undefined;
+        }
         hass.diagnostics.reference?.get_property.publish({ entity_id, property });
         switch (property) {
+          // #MARK: runAfter
+          case "onStateFor": {
+            return function ({
+              context,
+              ...options
+            }: OnStateForOptions<ENTITY_ID>): RemoveCallback {
+              let timerRemove: RemoveCallback;
+              const remove = proxy.onUpdate((new_state, old_state) => {
+                const matches = options.matches
+                  ? options.matches(new_state, old_state)
+                  : options.state === new_state.state;
+                if (!matches) {
+                  if (timerRemove) {
+                    timerRemove();
+                    timerRemove = undefined;
+                    logger.trace({ context, entity_id }, "cleared timer - state no longer matches");
+                  }
+                  return;
+                }
+
+                if (timerRemove) {
+                  logger.trace({ context, entity_id }, "timer already running, skipping");
+                  return;
+                }
+                timerRemove = scheduler.setTimeout(async () => {
+                  logger.trace(
+                    { context, entity_id, for: options.for },
+                    "timer fired - executing callback",
+                  );
+                  internal.safeExec({
+                    context,
+                    exec: async () => await options.exec(proxy),
+                  });
+                }, options.for);
+                logger.trace(
+                  { context, entity_id, for: options.for },
+                  "started timer for state condition",
+                );
+              });
+
+              return internal.removeFn(() => {
+                if (timerRemove) {
+                  timerRemove();
+                }
+                remove();
+                logger.trace({ context, entity_id }, "removed [onStateFor] listener");
+              });
+            };
+          }
+
           // #MARK: onUpdate
           case "onUpdate": {
             return (callback: TAnyFunction) => {
@@ -246,7 +306,7 @@ export function ReferenceService({
 
           // #MARK: nextState
           case "nextState": {
-            return async (timeout?: number) =>
+            return async (timeout?: TOffset) =>
               await new Promise<ENTITY_STATE<ENTITY_ID>>(async done => {
                 // - set up cleanup function
                 const remove = () => {
@@ -274,9 +334,13 @@ export function ReferenceService({
 
                 // - race!
                 let wait: ReturnType<typeof sleep>;
-                if (is.number(timeout) && timeout > NONE) {
+                if (is.undefined(timeout)) {
+                  return;
+                }
+                const duration = internal.utils.getIntervalMs(timeout);
+                if (duration > NONE) {
                   // keep track of sleep so it can be cleaned up also
-                  wait = sleep(timeout);
+                  wait = sleep(duration);
                   await wait;
                   wait = undefined;
                   if (done) {
@@ -290,7 +354,7 @@ export function ReferenceService({
 
           // #MARK: waitForState
           case "waitForState": {
-            return async (state: string | number, timeout?: number) =>
+            return async (state: string | number, timeout?: TOffset) =>
               await new Promise<ENTITY_STATE<ENTITY_ID>>(async done => {
                 const remove = () => {
                   done = undefined;
@@ -326,8 +390,12 @@ export function ReferenceService({
 
                 event.on(entity_id, complete);
                 let wait: ReturnType<typeof sleep>;
-                if (is.number(timeout) && timeout > NONE) {
-                  wait = sleep(timeout);
+                if (is.undefined(timeout)) {
+                  return;
+                }
+                const duration = internal.utils.getIntervalMs(timeout);
+                if (duration > NONE) {
+                  wait = sleep(duration);
                   await wait;
                   wait = undefined;
                   if (done) {

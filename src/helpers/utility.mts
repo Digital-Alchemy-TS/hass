@@ -1,6 +1,6 @@
 import type { TBlackHole } from "@digital-alchemy/core";
 import { is } from "@digital-alchemy/core";
-import type { Dayjs } from "dayjs";
+import { type Dayjs } from "dayjs";
 import type { Get } from "type-fest";
 
 import type {

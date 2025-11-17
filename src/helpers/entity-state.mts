@@ -1,4 +1,4 @@
-import type { FIRST, RemoveCallback, TBlackHole } from "@digital-alchemy/core";
+import type { FIRST, RemoveCallback, TBlackHole, TContext, TOffset } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
 import type { Except } from "type-fest";
 
@@ -46,6 +46,17 @@ export type RemovableCallback<ENTITY_ID extends ANY_ENTITY> = (
   callback: TEntityUpdateCallback<ENTITY_ID>,
 ) => RemoveCallback;
 
+export type OnStateForOptions<ENTITY_ID extends ANY_ENTITY> = (
+  | (Pick<ENTITY_STATE<ENTITY_ID>, "state"> & { matches?: never })
+  | ({
+      matches: (new_state: ENTITY_STATE<ENTITY_ID>, old_state: ENTITY_STATE<ENTITY_ID>) => boolean;
+    } & { state?: never })
+) & {
+  for: TOffset;
+  context?: TContext;
+  exec: (state: ByIdProxy<ENTITY_ID>) => TBlackHole;
+};
+
 export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & {
   entity_id: ENTITY_ID;
   /**
@@ -63,11 +74,17 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & 
   /**
    * Will resolve with the next state of the next value. No time limit
    */
-  nextState: (timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
+  nextState: (timeout?: TOffset) => Promise<ENTITY_STATE<ENTITY_ID>>;
+  /**
+   * Runs on state change -
+   * If state matches the indicated target, then a timer will be initiated
+   * As long as the condition holds true, the callback will be executed at end of the timer
+   */
+  onStateFor: (options: OnStateForOptions<ENTITY_ID>) => RemoveCallback;
   /**
    * Will resolve when state
    */
-  waitForState: (state: string | number, timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
+  waitForState: (state: string | number, timeout?: TOffset) => Promise<ENTITY_STATE<ENTITY_ID>>;
   /**
    * Access the immediate previous entity state
    */

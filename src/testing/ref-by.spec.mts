@@ -14,9 +14,15 @@ describe("References", () => {
     describe("refBy.id", () => {
       it("can grab references by id", async () => {
         expect.assertions(2);
-        await hassTestRunner.run(({ lifecycle, hass }) => {
+        await hassTestRunner.run(({ lifecycle, hass, logger, context }) => {
           lifecycle.onReady(() => {
             const sensor = hass.refBy.id("sensor.magic");
+            sensor.onStateFor({
+              context,
+              exec: () => logger.info("HIT"),
+              for: "5h",
+              matches: new_state => new_state.state === "test",
+            });
             expect(sensor).toBeDefined();
             expect(sensor.state).toBe("unavailable");
           });
@@ -168,7 +174,7 @@ describe("References", () => {
   describe("functionality", () => {
     describe("operators", () => {
       it("has", async () => {
-        expect.assertions(15);
+        expect.assertions(16);
         await hassTestRunner.run(({ lifecycle, hass }) => {
           lifecycle.onReady(() => {
             const entity = hass.refBy.id("switch.bedroom_lamp");
@@ -181,6 +187,7 @@ describe("References", () => {
               "last",
               "nextState",
               "once",
+              "onStateFor",
               "onUpdate",
               "previous",
               "removeAllListeners",
@@ -215,6 +222,7 @@ describe("References", () => {
               "last",
               "nextState",
               "once",
+              "onStateFor",
               "onUpdate",
               "previous",
               "removeAllListeners",
@@ -295,6 +303,958 @@ describe("References", () => {
             expect(out).toBe(result);
           });
         });
+      });
+
+      it("returns undefined for non-string property access", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(() => {
+            const sensor = hass.refBy.id("sensor.magic");
+            const symbolProperty = Symbol("test");
+            // Accessing with a Symbol should return undefined
+            // This tests the proxyGetLogic non-string check
+            expect(Reflect.get(sensor, symbolProperty)).toBeUndefined();
+          });
+        });
+      });
+
+      it("nextState returns early when timeout is undefined", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const sensor = hass.refBy.id("sensor.magic");
+            // Call nextState without timeout - should wait indefinitely for state change
+            const nextStatePromise = sensor.nextState();
+
+            // Emit a state update - promise should resolve with the new state
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            const result = await nextStatePromise;
+            // Should resolve with the updated state when timeout is undefined
+            expect(result?.state).toBe("updated");
+          });
+        });
+      });
+
+      it("nextState kills timer when removed before timeout", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(async () => {
+            const sensor = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            // Call nextState with timeout
+            const nextStatePromise = sensor.nextState("0.1s");
+            nextStatePromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Remove all listeners before timeout completes - should kill the timer
+            sensor.removeAllListeners();
+
+            // Advance time past the timeout - promise should not resolve
+            await vi.advanceTimersByTimeAsync(100);
+
+            // Give a small delay to check if promise resolved
+            await vi.advanceTimersByTimeAsync(1);
+
+            // The promise should not resolve because done was set to undefined and timer was killed
+            expect(promiseResolved).toBe(false);
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("nextState complete function checks if done exists before calling", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const sensor = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            // Call nextState without timeout
+            const nextStatePromise = sensor.nextState();
+            nextStatePromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Remove all listeners - this sets done = undefined
+            sensor.removeAllListeners();
+
+            // Emit an update - complete function should check if done exists
+            // Since done is undefined, it should not call done()
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            // Give a small delay to check if promise resolved
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+            // The promise should not resolve because done was set to undefined
+            // and the complete function checks if (done) before calling it
+            expect(promiseResolved).toBe(false);
+          });
+        });
+      });
+
+      it("returns previous entity state", async () => {
+        expect.assertions(3);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity_id = "sensor.magic";
+            const entity = hass.refBy.id(entity_id);
+            const startState = entity.state;
+
+            // Emit an update
+            await mock_assistant.events.emitEntityUpdate(entity_id, {
+              state: "updated",
+            });
+
+            const updatedState = entity.state;
+            const previousState = entity.previous;
+
+            expect(updatedState).toBe("updated");
+            expect(startState).not.toBe("updated");
+            expect(previousState.state).toBe(startState);
+          });
+        });
+      });
+    });
+
+    describe("waitForState", () => {
+      it("resolves when state matches", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const waitPromise = entity.waitForState("target", "1s");
+
+            // Emit update with matching state
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+
+            const result = await waitPromise;
+            expect(result?.state).toBe("target");
+            expect(result).toBeDefined();
+          });
+        });
+      });
+
+      it("does not resolve when state does not match", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            // Call waitForState without timeout - should wait indefinitely
+            const waitPromise = entity.waitForState("target");
+            waitPromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Emit update with non-matching state
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "other",
+            });
+
+            // Give a small delay to check if promise resolved
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+            // Promise should not resolve because state didn't match
+            expect(promiseResolved).toBe(false);
+          });
+        });
+      });
+
+      it("resolves with undefined when timeout expires", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const waitPromise = entity.waitForState("target", "0.1s");
+
+            // Advance time past timeout without matching state
+            await vi.advanceTimersByTimeAsync(100);
+
+            const result = await waitPromise;
+            expect(result).toBeUndefined();
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("returns early when timeout is undefined", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            // Call waitForState without timeout - should wait indefinitely
+            const waitPromise = entity.waitForState("target");
+
+            // Emit update with matching state - promise should resolve
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+
+            const result = await waitPromise;
+            expect(result?.state).toBe("target");
+          });
+        });
+      });
+
+      it("works with numeric state values", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const waitPromise = entity.waitForState("42", "1s");
+
+            // Emit update with matching numeric state
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "42",
+            });
+
+            const result = await waitPromise;
+            expect(result?.state).toBe("42");
+          });
+        });
+      });
+
+      it("kills timer when removed before timeout", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            const waitPromise = entity.waitForState("target", "0.1s");
+            waitPromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Remove all listeners before timeout completes - should kill the timer
+            entity.removeAllListeners();
+
+            // Advance time past the timeout - promise should not resolve
+            await vi.advanceTimersByTimeAsync(100);
+
+            // Give a small delay to check if promise resolved
+            await vi.advanceTimersByTimeAsync(1);
+
+            // The promise should not resolve because done was set to undefined and timer was killed
+            expect(promiseResolved).toBe(false);
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("complete function checks if done exists before calling", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            const waitPromise = entity.waitForState("target", "1s");
+            waitPromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Remove all listeners - this sets done = undefined
+            entity.removeAllListeners();
+
+            // Emit an update with matching state - complete function should check if done exists
+            // Since done is undefined, it should not call done()
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+
+            // Give a small delay to check if promise resolved
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+            // The promise should not resolve because done was set to undefined
+            // and the complete function checks if (done) before calling it
+            expect(promiseResolved).toBe(false);
+          });
+        });
+      });
+
+      it("only resolves when state matches, ignores non-matching updates", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const waitPromise = entity.waitForState("target", "1s");
+
+            // Emit update with non-matching state - should not resolve
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "other1",
+            });
+
+            // Emit another non-matching update - should not resolve
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "other2",
+            });
+
+            // Emit update with matching state - should resolve
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+
+            const result = await waitPromise;
+            expect(result?.state).toBe("target");
+            expect(result).toBeDefined();
+          });
+        });
+      });
+    });
+
+    describe("listener management", () => {
+      it("addListener registers a remove callback", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(() => {
+            const entity = hass.refBy.id("sensor.magic");
+            const removeCallback = Object.assign(vi.fn(), { remove: vi.fn() });
+
+            entity.addListener(removeCallback);
+
+            // Call removeAllListeners - should call the registered callback
+            entity.removeAllListeners();
+
+            expect(removeCallback).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+
+      it("removeAllListeners calls all registered callbacks", async () => {
+        expect.assertions(3);
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(() => {
+            const entity = hass.refBy.id("sensor.magic");
+            const removeCallback1 = Object.assign(vi.fn(), { remove: vi.fn() });
+            const removeCallback2 = Object.assign(vi.fn(), { remove: vi.fn() });
+            const removeCallback3 = Object.assign(vi.fn(), { remove: vi.fn() });
+
+            entity.addListener(removeCallback1);
+            entity.addListener(removeCallback2);
+            entity.addListener(removeCallback3);
+
+            entity.removeAllListeners();
+
+            expect(removeCallback1).toHaveBeenCalledTimes(1);
+            expect(removeCallback2).toHaveBeenCalledTimes(1);
+            expect(removeCallback3).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+
+      it("removeAllListeners cleans up onUpdate listeners", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onUpdate(callback);
+
+            // Remove all listeners
+            entity.removeAllListeners();
+
+            // Emit an update - callback should not be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+      });
+
+      it("removeAllListeners cleans up once listeners", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.once(callback);
+
+            // Remove all listeners
+            entity.removeAllListeners();
+
+            // Emit an update - callback should not be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+      });
+
+      it("removeAllListeners cleans up onStateFor listeners", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            // Remove all listeners
+            entity.removeAllListeners();
+
+            // Change state to match
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
+            await vi.advanceTimersByTimeAsync(100);
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("removeAllListeners cleans up both addListener and built-in listeners", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const addListenerCallback = Object.assign(vi.fn(), { remove: vi.fn() });
+            const onUpdateCallback = vi.fn();
+
+            entity.addListener(addListenerCallback);
+            entity.onUpdate(onUpdateCallback);
+
+            // Remove all listeners
+            entity.removeAllListeners();
+
+            // Emit an update - callbacks should not be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(addListenerCallback).toHaveBeenCalledTimes(1);
+            expect(onUpdateCallback).not.toHaveBeenCalled();
+          });
+        });
+      });
+    });
+
+    describe("once", () => {
+      it("calls callback once on next entity update", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.once(callback);
+
+            // Emit first update - callback should be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "first",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+
+            // Emit second update - callback should not be called again
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "second",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+
+      it("passes new_state and old_state to callback", async () => {
+        expect.assertions(3);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.once(callback);
+
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+            expect(callback).toHaveBeenCalledWith(
+              expect.objectContaining({ state: "updated" }),
+              expect.any(Object),
+            );
+            expect(callback.mock.calls[0]).toHaveLength(2);
+          });
+        });
+      });
+
+      it("removes listener after callback is called", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.once(callback);
+
+            // First update - callback should be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "first",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+
+            // Second update - callback should not be called (listener removed)
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "second",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+
+      it("remove function prevents callback from being called", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            const remove = entity.once(callback);
+
+            // Remove the listener before update
+            remove();
+
+            // Emit update - callback should not be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+      });
+
+      it("handles multiple once listeners independently", async () => {
+        expect.assertions(4);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback1 = vi.fn();
+            const callback2 = vi.fn();
+
+            entity.once(callback1);
+            entity.once(callback2);
+
+            // First update - both callbacks should be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "first",
+            });
+
+            expect(callback1).toHaveBeenCalledTimes(1);
+            expect(callback2).toHaveBeenCalledTimes(1);
+
+            // Second update - neither callback should be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "second",
+            });
+
+            expect(callback1).toHaveBeenCalledTimes(1);
+            expect(callback2).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+    });
+
+    describe("onStateFor", () => {
+      it("executes callback when state matches for duration", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            // Change state to match
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+
+            // Advance timers to let the sleep(1ms) inside emitEntityUpdate complete
+            await vi.advanceTimersByTimeAsync(1);
+
+            // Now await the emitEntityUpdate to complete
+            await updatePromise;
+
+            // Advance timers to trigger the callback (0.1s = 100ms)
+            await vi.advanceTimersByTimeAsync(100);
+
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("does not execute callback if state changes before duration", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            // Change state to match
+            const updatePromise1 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise1;
+            await vi.advanceTimersByTimeAsync(50);
+
+            // Change state away before timer completes
+            const updatePromise2 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "off",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise2;
+            await vi.advanceTimersByTimeAsync(100);
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("restarts timer when state changes back to matching", async () => {
+        expect.assertions(2);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            // Change state to match
+            const updatePromise1 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise1;
+            await vi.advanceTimersByTimeAsync(50);
+
+            // Change state away
+            const updatePromise2 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "off",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise2;
+            await vi.advanceTimersByTimeAsync(50);
+
+            // Change back to matching - should start new timer
+            const updatePromise3 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise3;
+            await vi.advanceTimersByTimeAsync(50);
+            expect(callback).not.toHaveBeenCalled();
+
+            // Complete the timer
+            await vi.advanceTimersByTimeAsync(50);
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("uses custom matches function when provided", async () => {
+        expect.assertions(3);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+            const matches = vi.fn((new_state, old_state) => {
+              return new_state.state === "target" && old_state.state !== "target";
+            });
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              matches,
+            });
+
+            // Change to non-matching state - matches should return false, so no timer
+            const updatePromise1 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "other",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise1;
+            // Verify matches was called and returned false (no timer should be set)
+            expect(matches).toHaveBeenCalled();
+            // Advance timers - callback should not be called
+            await vi.advanceTimersByTimeAsync(100);
+            expect(callback).not.toHaveBeenCalled();
+
+            // Change to matching state (target from different state) - matches should return true
+            const updatePromise2 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise2;
+            // Advance timers to trigger the callback
+            await vi.advanceTimersByTimeAsync(100);
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("prevents duplicate timers when state matches multiple times", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            // Change state to match
+            const updatePromise1 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise1;
+            await vi.advanceTimersByTimeAsync(50);
+
+            // Change to same matching state again - should not start new timer
+            const updatePromise2 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise2;
+            await vi.advanceTimersByTimeAsync(50);
+
+            // Complete original timer
+            await vi.advanceTimersByTimeAsync(50);
+
+            // Should only be called once
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("cleans up timer and listener when remove is called", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            const remove = entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            // Change state to match
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
+            await vi.advanceTimersByTimeAsync(50);
+
+            // Remove the listener
+            remove();
+
+            // Advance time past when timer would have fired
+            await vi.advanceTimersByTimeAsync(100);
+
+            // Callback should not have been called
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("handles cleanup when timer is already running", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            const remove = entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            // Change state to match - starts timer
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
+            await vi.advanceTimersByTimeAsync(50);
+
+            // Remove should clean up the running timer
+            remove();
+
+            // Advance time past when timer would have fired
+            await vi.advanceTimersByTimeAsync(100);
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("works with numeric state values", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "42",
+            });
+
+            // Change state to match numeric value
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "42",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
+            await vi.advanceTimersByTimeAsync(100);
+
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("passes proxy to exec callback", async () => {
+        expect.assertions(3);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn(proxy => {
+              expect(proxy.entity_id).toBe("sensor.magic");
+              expect(proxy.state).toBe("on");
+            });
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
+            await vi.advanceTimersByTimeAsync(100);
+
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("handles multiple onStateFor listeners on same entity", async () => {
+        expect.assertions(2);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback1 = vi.fn();
+            const callback2 = vi.fn();
+
+            entity.onStateFor({
+              context,
+              exec: callback1,
+              for: "0.1s",
+              state: "on",
+            });
+
+            entity.onStateFor({
+              context,
+              exec: callback2,
+              for: ".15s",
+              state: "on",
+            });
+
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
+            await vi.advanceTimersByTimeAsync(100);
+            expect(callback1).toHaveBeenCalledTimes(1);
+
+            await vi.advanceTimersByTimeAsync(50);
+            expect(callback2).toHaveBeenCalledTimes(1);
+          });
+        });
+        vi.useRealTimers();
       });
     });
   });
