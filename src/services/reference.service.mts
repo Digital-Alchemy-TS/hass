@@ -136,6 +136,7 @@ export function ReferenceService({
         "last",
         "nextState",
         "once",
+        "onStateFor",
         "onUpdate",
         "previous",
         "removeAllListeners",
