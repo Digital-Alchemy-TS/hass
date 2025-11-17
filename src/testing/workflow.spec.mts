@@ -5,7 +5,7 @@ import { hassTestRunner } from "../mock_assistant/index.mts";
 
 describe("Workflows", () => {
   beforeAll(() => {
-    hassTestRunner.appendService(({ hass, scheduler }) => {
+    hassTestRunner.bootLibrariesFirst().appendService(({ hass, scheduler }) => {
       scheduler.cron({
         async exec() {
           await hass.call.switch.turn_on({

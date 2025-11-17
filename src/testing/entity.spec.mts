@@ -242,8 +242,23 @@ describe("Entity", () => {
           const spy = vi.fn();
           subscribe(hass.diagnostics.entity.refresh_entities.name, spy);
 
+          // Mock getAllEntities to return entities so refresh doesn't call process.exit()
+          vi.spyOn(hass.fetch, "getAllEntities").mockResolvedValue([
+            {
+              attributes: {},
+              context: { id: "test", parent_id: null, user_id: null },
+              entity_id: "sensor.magic",
+              last_changed: dayjs(),
+              last_reported: dayjs(),
+              last_updated: dayjs(),
+              state: "unavailable",
+            } as ENTITY_STATE<ANY_ENTITY>,
+          ]);
+
           lifecycle.onReady(async () => {
             await hass.entity.refresh();
+            // Wait for setImmediate to complete
+            await sleep(10);
             expect(spy).toHaveBeenCalledWith(
               expect.objectContaining({
                 emitUpdates: [],
