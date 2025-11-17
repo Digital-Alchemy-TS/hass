@@ -367,6 +367,37 @@ describe("References", () => {
         vi.useRealTimers();
       });
 
+      it("nextState complete function checks if done exists before calling", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const sensor = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            // Call nextState without timeout
+            const nextStatePromise = sensor.nextState();
+            nextStatePromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Remove all listeners - this sets done = undefined
+            sensor.removeAllListeners();
+
+            // Emit an update - complete function should check if done exists
+            // Since done is undefined, it should not call done()
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            // Give a small delay to check if promise resolved
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+            // The promise should not resolve because done was set to undefined
+            // and the complete function checks if (done) before calling it
+            expect(promiseResolved).toBe(false);
+          });
+        });
+      });
+
       it("returns previous entity state", async () => {
         expect.assertions(3);
         await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
