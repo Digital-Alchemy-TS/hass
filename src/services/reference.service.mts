@@ -9,9 +9,10 @@ import type {
   ByIdProxy,
   ENTITY_STATE,
   HassReferenceService,
+  OnStateForOptions,
   RemoveCallback,
 } from "../helpers/index.mts";
-import { domain, perf } from "../helpers/index.mts";
+import { domain, getNextTime, perf } from "../helpers/index.mts";
 import type {
   ANY_ENTITY,
   HassUniqueIdMapping,
@@ -86,6 +87,7 @@ export function ReferenceService({
   hass,
   logger,
   internal,
+  scheduler,
   event,
 }: TServiceParams): HassReferenceService {
   const { is } = internal.utils;
@@ -172,6 +174,55 @@ export function ReferenceService({
       get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
         hass.diagnostics.reference?.get_property.publish({ entity_id, property });
         switch (property) {
+          // #MARK: runAfter
+          case "onStateFor": {
+            return function ({
+              context,
+              ...options
+            }: OnStateForOptions<ENTITY_ID>): RemoveCallback {
+              let timerRemove: RemoveCallback;
+              const remove = proxy.onUpdate((new_state, old_state) => {
+                const matches = options.matches
+                  ? options.matches(new_state, old_state)
+                  : options.state === new_state.state;
+                const target = getNextTime(options.for);
+                if (!matches && timerRemove) {
+                  timerRemove();
+                  timerRemove = undefined;
+                  logger.trace("cleared timer");
+                  return;
+                }
+
+                const now = dayjs();
+                if (timerRemove) {
+                  if (now.isAfter(target)) {
+                    timerRemove();
+                    timerRemove = undefined;
+                    return;
+                  }
+                  return;
+                }
+                timerRemove = scheduler.setTimeout(
+                  async () => {
+                    logger.trace("hit");
+                    internal.safeExec({
+                      context,
+                      exec: async () => await options.exec(proxy),
+                    });
+                  },
+                  target.diff(now, "ms"),
+                );
+              });
+
+              return internal.removeFn(() => {
+                if (timerRemove) {
+                  timerRemove();
+                }
+                remove();
+              });
+            };
+          }
+
           // #MARK: onUpdate
           case "onUpdate": {
             return (callback: TAnyFunction) => {

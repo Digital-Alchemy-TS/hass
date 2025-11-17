@@ -1,5 +1,6 @@
-import type { FIRST, RemoveCallback, TBlackHole } from "@digital-alchemy/core";
+import type { FIRST, RemoveCallback, TBlackHole, TContext } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
+import type { Duration, DurationUnitsObjectType, DurationUnitType } from "dayjs/plugin/duration";
 import type { Except } from "type-fest";
 
 import type {
@@ -47,14 +48,24 @@ export type RemovableCallback<ENTITY_ID extends ANY_ENTITY> = (
 ) => RemoveCallback;
 
 type Part<CHAR extends string> = `${number}${CHAR}` | "";
-type ISO_8601_PARTIAL = `${Part<"H" | "h">}${Part<"M" | "m">}${Part<"S" | "s">}`;
+type ISO_8601_PARTIAL = Exclude<`${Part<"H" | "h">}${Part<"M" | "m">}${Part<"S" | "s">}`, "">;
+export type OffsetTypes =
+  | Duration
+  | number
+  | DurationUnitsObjectType
+  | ISO_8601_PARTIAL
+  | [quantity: number, unit: DurationUnitType];
+export type TOffset = OffsetTypes | (() => OffsetTypes);
 
-export type RunAfterOptions<ENTITY_ID extends ANY_ENTITY> = (
-  | Pick<ENTITY_STATE<ENTITY_ID>, "state">
-  | { matches: (new_state: ENTITY_STATE<ENTITY_ID>, old_state: ENTITY_STATE<ENTITY_ID>) => boolean }
+export type OnStateForOptions<ENTITY_ID extends ANY_ENTITY> = (
+  | (Pick<ENTITY_STATE<ENTITY_ID>, "state"> & { matches?: never })
+  | ({
+      matches: (new_state: ENTITY_STATE<ENTITY_ID>, old_state: ENTITY_STATE<ENTITY_ID>) => boolean;
+    } & { state?: never })
 ) & {
-  after: ISO_8601_PARTIAL | number;
-  exec: (state: ENTITY_STATE<ENTITY_ID>) => TBlackHole;
+  for: TOffset;
+  context?: TContext;
+  exec: (state: ByIdProxy<ENTITY_ID>) => TBlackHole;
 };
 
 export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & {
@@ -76,9 +87,11 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & 
    */
   nextState: (timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
   /**
-   *
+   * Runs on state change -
+   * If state matches the indicated target, then a timer will be initiated
+   * As long as the condition holds true, the callback will be executed at end of the timer
    */
-  runAfter: (options: RunAfterOptions<ENTITY_ID>) => RemoveCallback;
+  onStateFor: (options: OnStateForOptions<ENTITY_ID>) => RemoveCallback;
   /**
    * Will resolve when state
    */

@@ -14,15 +14,14 @@ describe("References", () => {
     describe("refBy.id", () => {
       it("can grab references by id", async () => {
         expect.assertions(2);
-        await hassTestRunner.run(({ lifecycle, hass }) => {
+        await hassTestRunner.run(({ lifecycle, hass, logger, context }) => {
           lifecycle.onReady(() => {
             const sensor = hass.refBy.id("sensor.magic");
-            sensor.runAfter({
-              after: "4h",
-              exec() {
-                //
-              },
-              state: "",
+            sensor.onStateFor({
+              context,
+              exec: () => logger.info("HIT"),
+              for: "5h",
+              matches: new_state => new_state.state === "test",
             });
             expect(sensor).toBeDefined();
             expect(sensor.state).toBe("unavailable");
