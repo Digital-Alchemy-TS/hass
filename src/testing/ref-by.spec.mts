@@ -304,6 +304,19 @@ describe("References", () => {
           });
         });
       });
+
+      it("returns undefined for non-string property access", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(() => {
+            const sensor = hass.refBy.id("sensor.magic");
+            const symbolProperty = Symbol("test");
+            // Accessing with a Symbol should return undefined
+            // This tests the proxyGetLogic non-string check
+            expect(Reflect.get(sensor, symbolProperty)).toBeUndefined();
+          });
+        });
+      });
     });
 
     describe("onStateFor", () => {
