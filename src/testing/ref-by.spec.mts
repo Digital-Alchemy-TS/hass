@@ -317,6 +317,26 @@ describe("References", () => {
           });
         });
       });
+
+      it("nextState returns early when timeout is undefined", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const sensor = hass.refBy.id("sensor.magic");
+            // Call nextState without timeout - should wait indefinitely for state change
+            const nextStatePromise = sensor.nextState();
+
+            // Emit a state update - promise should resolve with the new state
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            const result = await nextStatePromise;
+            // Should resolve with the updated state when timeout is undefined
+            expect(result?.state).toBe("updated");
+          });
+        });
+      });
     });
 
     describe("onStateFor", () => {
