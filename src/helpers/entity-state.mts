@@ -46,6 +46,17 @@ export type RemovableCallback<ENTITY_ID extends ANY_ENTITY> = (
   callback: TEntityUpdateCallback<ENTITY_ID>,
 ) => RemoveCallback;
 
+type Part<CHAR extends string> = `${number}${CHAR}` | "";
+type ISO_8601_PARTIAL = `${Part<"H" | "h">}${Part<"M" | "m">}${Part<"S" | "s">}`;
+
+export type RunAfterOptions<ENTITY_ID extends ANY_ENTITY> = (
+  | Pick<ENTITY_STATE<ENTITY_ID>, "state">
+  | { matches: (new_state: ENTITY_STATE<ENTITY_ID>, old_state: ENTITY_STATE<ENTITY_ID>) => boolean }
+) & {
+  after: ISO_8601_PARTIAL | number;
+  exec: (state: ENTITY_STATE<ENTITY_ID>) => TBlackHole;
+};
+
 export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & {
   entity_id: ENTITY_ID;
   /**
@@ -64,6 +75,10 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & 
    * Will resolve with the next state of the next value. No time limit
    */
   nextState: (timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
+  /**
+   *
+   */
+  runAfter: (options: RunAfterOptions<ENTITY_ID>) => RemoveCallback;
   /**
    * Will resolve when state
    */

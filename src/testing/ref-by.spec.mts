@@ -17,6 +17,13 @@ describe("References", () => {
         await hassTestRunner.run(({ lifecycle, hass }) => {
           lifecycle.onReady(() => {
             const sensor = hass.refBy.id("sensor.magic");
+            sensor.runAfter({
+              after: "4h",
+              exec() {
+                //
+              },
+              state: "",
+            });
             expect(sensor).toBeDefined();
             expect(sensor.state).toBe("unavailable");
           });
