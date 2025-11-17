@@ -422,6 +422,195 @@ describe("References", () => {
       });
     });
 
+    describe("waitForState", () => {
+      it("resolves when state matches", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const waitPromise = entity.waitForState("target", "1s");
+
+            // Emit update with matching state
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+
+            const result = await waitPromise;
+            expect(result?.state).toBe("target");
+            expect(result).toBeDefined();
+          });
+        });
+      });
+
+      it("does not resolve when state does not match", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            // Call waitForState without timeout - should wait indefinitely
+            const waitPromise = entity.waitForState("target");
+            waitPromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Emit update with non-matching state
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "other",
+            });
+
+            // Give a small delay to check if promise resolved
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+            // Promise should not resolve because state didn't match
+            expect(promiseResolved).toBe(false);
+          });
+        });
+      });
+
+      it("resolves with undefined when timeout expires", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const waitPromise = entity.waitForState("target", "0.1s");
+
+            // Advance time past timeout without matching state
+            await vi.advanceTimersByTimeAsync(100);
+
+            const result = await waitPromise;
+            expect(result).toBeUndefined();
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("returns early when timeout is undefined", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            // Call waitForState without timeout - should wait indefinitely
+            const waitPromise = entity.waitForState("target");
+
+            // Emit update with matching state - promise should resolve
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+
+            const result = await waitPromise;
+            expect(result?.state).toBe("target");
+          });
+        });
+      });
+
+      it("works with numeric state values", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const waitPromise = entity.waitForState("42", "1s");
+
+            // Emit update with matching numeric state
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "42",
+            });
+
+            const result = await waitPromise;
+            expect(result?.state).toBe("42");
+          });
+        });
+      });
+
+      it("kills timer when removed before timeout", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            const waitPromise = entity.waitForState("target", "0.1s");
+            waitPromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Remove all listeners before timeout completes - should kill the timer
+            entity.removeAllListeners();
+
+            // Advance time past the timeout - promise should not resolve
+            await vi.advanceTimersByTimeAsync(100);
+
+            // Give a small delay to check if promise resolved
+            await vi.advanceTimersByTimeAsync(1);
+
+            // The promise should not resolve because done was set to undefined and timer was killed
+            expect(promiseResolved).toBe(false);
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("complete function checks if done exists before calling", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            const waitPromise = entity.waitForState("target", "1s");
+            waitPromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Remove all listeners - this sets done = undefined
+            entity.removeAllListeners();
+
+            // Emit an update with matching state - complete function should check if done exists
+            // Since done is undefined, it should not call done()
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+
+            // Give a small delay to check if promise resolved
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+            // The promise should not resolve because done was set to undefined
+            // and the complete function checks if (done) before calling it
+            expect(promiseResolved).toBe(false);
+          });
+        });
+      });
+
+      it("only resolves when state matches, ignores non-matching updates", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const waitPromise = entity.waitForState("target", "1s");
+
+            // Emit update with non-matching state - should not resolve
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "other1",
+            });
+
+            // Emit another non-matching update - should not resolve
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "other2",
+            });
+
+            // Emit update with matching state - should resolve
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+
+            const result = await waitPromise;
+            expect(result?.state).toBe("target");
+            expect(result).toBeDefined();
+          });
+        });
+      });
+    });
+
     describe("listener management", () => {
       it("addListener registers a remove callback", async () => {
         expect.assertions(1);
