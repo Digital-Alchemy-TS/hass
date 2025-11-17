@@ -96,6 +96,9 @@ export function ReferenceService({
     entity: ENTITY,
     property: PROPERTY,
   ): Get<ENTITY_STATE<ENTITY>, PROPERTY> {
+    if (!is.string(property)) {
+      return undefined;
+    }
     const valid = ["state", "attributes", "last"].some(i => property.startsWith(i));
     if (!valid) {
       logger.error({ entity, name: proxyGetLogic, property }, `invalid property lookup`);
@@ -173,6 +176,10 @@ export function ReferenceService({
       // things that shouldn't be needed: this extract
       // eslint-disable-next-line sonarjs/function-return-type
       get: (_, property: Extract<keyof ByIdProxy<ENTITY_ID>, string>) => {
+        // Handle Symbol properties (e.g., when vitest formats test output)
+        if (!is.string(property)) {
+          return undefined;
+        }
         hass.diagnostics.reference?.get_property.publish({ entity_id, property });
         switch (property) {
           // #MARK: runAfter
@@ -186,10 +193,12 @@ export function ReferenceService({
                 const matches = options.matches
                   ? options.matches(new_state, old_state)
                   : options.state === new_state.state;
-                if (!matches && timerRemove) {
-                  timerRemove();
-                  timerRemove = undefined;
-                  logger.trace("cleared timer");
+                if (!matches) {
+                  if (timerRemove) {
+                    timerRemove();
+                    timerRemove = undefined;
+                    logger.trace("cleared timer");
+                  }
                   return;
                 }
 

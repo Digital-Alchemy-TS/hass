@@ -1,4 +1,3 @@
-import { CronExpression, MINUTE, TestRunner } from "@digital-alchemy/core";
 import dayjs from "dayjs";
 
 import type { ENTITY_STATE } from "../helpers/index.mts";
@@ -308,68 +307,40 @@ describe("References", () => {
     });
 
     describe("onStateFor", () => {
-      // describe("cron", () => {
-      it.only("runs a cron schedule", async () => {
+      it("executes callback when state matches for duration", async () => {
+        expect.assertions(1);
         vi.useFakeTimers();
-        const spy = vi.fn();
-        const app = await hassTestRunner.run(({ scheduler }) => {
-          scheduler.cron({
-            exec: spy,
-            schedule: CronExpression.EVERY_MINUTE,
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            // Change state to match
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+
+            // Advance timers to let the sleep(1ms) inside emitEntityUpdate complete
+            await vi.advanceTimersByTimeAsync(1);
+
+            // Now await the emitEntityUpdate to complete
+            await updatePromise;
+
+            // Advance timers to trigger the callback (0.1s = 100ms)
+            await vi.advanceTimersByTimeAsync(100);
+
+            expect(callback).toHaveBeenCalledTimes(1);
           });
         });
-        vi.advanceTimersByTime(60 * MINUTE);
-        await app.teardown();
-        expect(spy).toHaveBeenCalledTimes(60);
         vi.useRealTimers();
       });
-      it.only("runs a cron schedule", async () => {
-        vi.useFakeTimers();
-        const spy = vi.fn();
-        const app = await TestRunner().run(({ scheduler }) => {
-          scheduler.cron({
-            exec: spy,
-            schedule: CronExpression.EVERY_MINUTE,
-          });
-        });
-        vi.advanceTimersByTime(60 * MINUTE);
-        await app.teardown();
-        expect(spy).toHaveBeenCalledTimes(60);
-        vi.useRealTimers();
-      });
-      // });
-
-      // it("executes callback when state matches for duration", async () => {
-      //   expect.assertions(1);
-      //   vi.useFakeTimers();
-      //   let callback: ReturnType<typeof vi.fn>;
-      //   let mock_assistant: any;
-
-      //   await hassTestRunner.run(({ lifecycle, hass, mock_assistant: ma, context }) => {
-      //     mock_assistant = ma;
-      //     lifecycle.onReady(async () => {
-      //       const entity = hass.refBy.id("sensor.magic");
-      //       callback = vi.fn();
-
-      //       entity.onStateFor({
-      //         context,
-      //         exec: callback,
-      //         for: "0.1s",
-      //         state: "on",
-      //       });
-
-      //       // Change state to match
-      //       await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
-      //     });
-      //   });
-
-      //   // Advance timers OUTSIDE the run callback (after it resolves)
-      //   await vi.advanceTimersByTimeAsync(100);
-      //   await vi.runAllTimersAsync();
-
-      //   expect(callback).toHaveBeenCalledTimes(1);
-      //   vi.useRealTimers();
-      // });
 
       it("does not execute callback if state changes before duration", async () => {
         expect.assertions(1);
@@ -387,11 +358,19 @@ describe("References", () => {
             });
 
             // Change state to match
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
+            const updatePromise1 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise1;
             await vi.advanceTimersByTimeAsync(50);
 
             // Change state away before timer completes
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "off" });
+            const updatePromise2 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "off",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise2;
             await vi.advanceTimersByTimeAsync(100);
 
             expect(callback).not.toHaveBeenCalled();
@@ -416,15 +395,27 @@ describe("References", () => {
             });
 
             // Change state to match
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
+            const updatePromise1 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise1;
             await vi.advanceTimersByTimeAsync(50);
 
             // Change state away
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "off" });
+            const updatePromise2 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "off",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise2;
             await vi.advanceTimersByTimeAsync(50);
 
             // Change back to matching - should start new timer
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
+            const updatePromise3 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise3;
             await vi.advanceTimersByTimeAsync(50);
             expect(callback).not.toHaveBeenCalled();
 
@@ -437,7 +428,7 @@ describe("References", () => {
       });
 
       it("uses custom matches function when provided", async () => {
-        expect.assertions(1);
+        expect.assertions(3);
         vi.useFakeTimers();
         await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
           lifecycle.onReady(async () => {
@@ -454,16 +445,27 @@ describe("References", () => {
               matches,
             });
 
-            // Change to non-matching state
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "other" });
+            // Change to non-matching state - matches should return false, so no timer
+            const updatePromise1 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "other",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise1;
+            // Verify matches was called and returned false (no timer should be set)
+            expect(matches).toHaveBeenCalled();
+            // Advance timers - callback should not be called
             await vi.advanceTimersByTimeAsync(100);
             expect(callback).not.toHaveBeenCalled();
 
-            // Change to matching state (target from different state)
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "target" });
+            // Change to matching state (target from different state) - matches should return true
+            const updatePromise2 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "target",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise2;
+            // Advance timers to trigger the callback
             await vi.advanceTimersByTimeAsync(100);
             expect(callback).toHaveBeenCalledTimes(1);
-            expect(matches).toHaveBeenCalled();
           });
         });
         vi.useRealTimers();
@@ -485,11 +487,19 @@ describe("References", () => {
             });
 
             // Change state to match
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
+            const updatePromise1 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise1;
             await vi.advanceTimersByTimeAsync(50);
 
             // Change to same matching state again - should not start new timer
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
+            const updatePromise2 = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise2;
             await vi.advanceTimersByTimeAsync(50);
 
             // Complete original timer
@@ -518,7 +528,11 @@ describe("References", () => {
             });
 
             // Change state to match
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
             await vi.advanceTimersByTimeAsync(50);
 
             // Remove the listener
@@ -550,7 +564,11 @@ describe("References", () => {
             });
 
             // Change state to match - starts timer
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
             await vi.advanceTimersByTimeAsync(50);
 
             // Remove should clean up the running timer
@@ -581,7 +599,11 @@ describe("References", () => {
             });
 
             // Change state to match numeric value
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "42" });
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "42",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
             await vi.advanceTimersByTimeAsync(100);
 
             expect(callback).toHaveBeenCalledTimes(1);
@@ -591,7 +613,7 @@ describe("References", () => {
       });
 
       it("passes proxy to exec callback", async () => {
-        expect.assertions(2);
+        expect.assertions(3);
         vi.useFakeTimers();
         await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
           lifecycle.onReady(async () => {
@@ -608,7 +630,11 @@ describe("References", () => {
               state: "on",
             });
 
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
             await vi.advanceTimersByTimeAsync(100);
 
             expect(callback).toHaveBeenCalledTimes(1);
@@ -640,7 +666,11 @@ describe("References", () => {
               state: "on",
             });
 
-            await mock_assistant.events.emitEntityUpdate("sensor.magic", { state: "on" });
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
             await vi.advanceTimersByTimeAsync(100);
             expect(callback1).toHaveBeenCalledTimes(1);
 
