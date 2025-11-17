@@ -337,6 +337,29 @@ describe("References", () => {
           });
         });
       });
+
+      it("returns previous entity state", async () => {
+        expect.assertions(3);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity_id = "sensor.magic";
+            const entity = hass.refBy.id(entity_id);
+            const startState = entity.state;
+
+            // Emit an update
+            await mock_assistant.events.emitEntityUpdate(entity_id, {
+              state: "updated",
+            });
+
+            const updatedState = entity.state;
+            const previousState = entity.previous;
+
+            expect(updatedState).toBe("updated");
+            expect(startState).not.toBe("updated");
+            expect(previousState.state).toBe(startState);
+          });
+        });
+      });
     });
 
     describe("listener management", () => {
