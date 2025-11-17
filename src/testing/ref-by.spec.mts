@@ -338,6 +338,35 @@ describe("References", () => {
         });
       });
 
+      it("nextState kills timer when removed before timeout", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(async () => {
+            const sensor = hass.refBy.id("sensor.magic");
+            let promiseResolved = false;
+            // Call nextState with timeout
+            const nextStatePromise = sensor.nextState("0.1s");
+            nextStatePromise.then(() => {
+              promiseResolved = true;
+            });
+
+            // Remove all listeners before timeout completes - should kill the timer
+            sensor.removeAllListeners();
+
+            // Advance time past the timeout - promise should not resolve
+            await vi.advanceTimersByTimeAsync(100);
+
+            // Give a small delay to check if promise resolved
+            await vi.advanceTimersByTimeAsync(1);
+
+            // The promise should not resolve because done was set to undefined and timer was killed
+            expect(promiseResolved).toBe(false);
+          });
+        });
+        vi.useRealTimers();
+      });
+
       it("returns previous entity state", async () => {
         expect.assertions(3);
         await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
