@@ -1,8 +1,6 @@
 import type { TBlackHole } from "@digital-alchemy/core";
 import { is } from "@digital-alchemy/core";
-import { type Dayjs, isDuration } from "dayjs";
-import dayjs from "dayjs";
-import type { Duration, DurationUnitsObjectType } from "dayjs/plugin/duration";
+import { type Dayjs } from "dayjs";
 import type { Get } from "type-fest";
 
 import type {
@@ -13,7 +11,7 @@ import type {
   PICK_ENTITY,
   TRawEntityIds,
 } from "../user.mts";
-import type { HassEntityContext, TOffset } from "./entity-state.mts";
+import type { HassEntityContext } from "./entity-state.mts";
 
 // ? Casting by domain turns things from "equiv to ANY_ENTITY" to "scene.*" type generics
 // These are no longer valid comparisons against ANY_ENTITY though
@@ -106,31 +104,3 @@ export const perf = () => {
   const start = performance.now();
   return () => performance.now() - start;
 };
-
-export function getNextTime(offset: TOffset): Dayjs {
-  let duration: Duration;
-  // * if function, unwrap
-  if (is.function(offset)) {
-    offset = offset();
-  }
-  // * if tuple, resolve
-  if (is.array(offset)) {
-    const [amount, unit] = offset;
-    duration = dayjs.duration(amount, unit);
-    // * resolve objects, or capture Duration
-  } else if (is.object(offset)) {
-    duration = isDuration(offset)
-      ? (offset as Duration)
-      : dayjs.duration(offset as DurationUnitsObjectType);
-  }
-  // * resolve from partial ISO 8601
-  if (is.string(offset)) {
-    duration = dayjs.duration(`PT${offset.toUpperCase()}`);
-  }
-  // * ms
-  if (is.number(offset)) {
-    duration = dayjs.duration(offset, "ms");
-  }
-  const now = dayjs();
-  return duration ? now.add(duration) : now;
-}

@@ -1,6 +1,5 @@
-import type { FIRST, RemoveCallback, TBlackHole, TContext } from "@digital-alchemy/core";
+import type { FIRST, RemoveCallback, TBlackHole, TContext, TOffset } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
-import type { Duration, DurationUnitsObjectType, DurationUnitType } from "dayjs/plugin/duration";
 import type { Except } from "type-fest";
 
 import type {
@@ -47,16 +46,6 @@ export type RemovableCallback<ENTITY_ID extends ANY_ENTITY> = (
   callback: TEntityUpdateCallback<ENTITY_ID>,
 ) => RemoveCallback;
 
-type Part<CHAR extends string> = `${number}${CHAR}` | "";
-type ISO_8601_PARTIAL = Exclude<`${Part<"H" | "h">}${Part<"M" | "m">}${Part<"S" | "s">}`, "">;
-export type OffsetTypes =
-  | Duration
-  | number
-  | DurationUnitsObjectType
-  | ISO_8601_PARTIAL
-  | [quantity: number, unit: DurationUnitType];
-export type TOffset = OffsetTypes | (() => OffsetTypes);
-
 export type OnStateForOptions<ENTITY_ID extends ANY_ENTITY> = (
   | (Pick<ENTITY_STATE<ENTITY_ID>, "state"> & { matches?: never })
   | ({
@@ -85,7 +74,7 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & 
   /**
    * Will resolve with the next state of the next value. No time limit
    */
-  nextState: (timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
+  nextState: (timeoutMs?: TOffset) => Promise<ENTITY_STATE<ENTITY_ID>>;
   /**
    * Runs on state change -
    * If state matches the indicated target, then a timer will be initiated
@@ -95,7 +84,7 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & 
   /**
    * Will resolve when state
    */
-  waitForState: (state: string | number, timeoutMs?: number) => Promise<ENTITY_STATE<ENTITY_ID>>;
+  waitForState: (state: string | number, timeout?: TOffset) => Promise<ENTITY_STATE<ENTITY_ID>>;
   /**
    * Access the immediate previous entity state
    */

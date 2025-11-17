@@ -1,4 +1,4 @@
-import type { TAnyFunction, TServiceParams } from "@digital-alchemy/core";
+import type { TAnyFunction, TOffset, TServiceParams } from "@digital-alchemy/core";
 import { DOWN, NONE, sleep, UP } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
@@ -12,7 +12,7 @@ import type {
   OnStateForOptions,
   RemoveCallback,
 } from "../helpers/index.mts";
-import { domain, getNextTime, perf } from "../helpers/index.mts";
+import { domain, perf } from "../helpers/index.mts";
 import type {
   ANY_ENTITY,
   HassUniqueIdMapping,
@@ -185,7 +185,6 @@ export function ReferenceService({
                 const matches = options.matches
                   ? options.matches(new_state, old_state)
                   : options.state === new_state.state;
-                const target = getNextTime(options.for);
                 if (!matches && timerRemove) {
                   timerRemove();
                   timerRemove = undefined;
@@ -193,25 +192,16 @@ export function ReferenceService({
                   return;
                 }
 
-                const now = dayjs();
                 if (timerRemove) {
-                  if (now.isAfter(target)) {
-                    timerRemove();
-                    timerRemove = undefined;
-                    return;
-                  }
                   return;
                 }
-                timerRemove = scheduler.setTimeout(
-                  async () => {
-                    logger.trace("hit");
-                    internal.safeExec({
-                      context,
-                      exec: async () => await options.exec(proxy),
-                    });
-                  },
-                  target.diff(now, "ms"),
-                );
+                timerRemove = scheduler.setTimeout(async () => {
+                  logger.trace("hit");
+                  internal.safeExec({
+                    context,
+                    exec: async () => await options.exec(proxy),
+                  });
+                }, options.for);
               });
 
               return internal.removeFn(() => {
@@ -297,7 +287,7 @@ export function ReferenceService({
 
           // #MARK: nextState
           case "nextState": {
-            return async (timeout?: number) =>
+            return async (timeout?: TOffset) =>
               await new Promise<ENTITY_STATE<ENTITY_ID>>(async done => {
                 // - set up cleanup function
                 const remove = () => {
@@ -325,9 +315,13 @@ export function ReferenceService({
 
                 // - race!
                 let wait: ReturnType<typeof sleep>;
-                if (is.number(timeout) && timeout > NONE) {
+                if (is.undefined(timeout)) {
+                  return;
+                }
+                const duration = internal.utils.getIntervalMs(timeout);
+                if (duration > NONE) {
                   // keep track of sleep so it can be cleaned up also
-                  wait = sleep(timeout);
+                  wait = sleep(duration);
                   await wait;
                   wait = undefined;
                   if (done) {
@@ -341,7 +335,7 @@ export function ReferenceService({
 
           // #MARK: waitForState
           case "waitForState": {
-            return async (state: string | number, timeout?: number) =>
+            return async (state: string | number, timeout?: TOffset) =>
               await new Promise<ENTITY_STATE<ENTITY_ID>>(async done => {
                 const remove = () => {
                   done = undefined;
@@ -377,8 +371,12 @@ export function ReferenceService({
 
                 event.on(entity_id, complete);
                 let wait: ReturnType<typeof sleep>;
-                if (is.number(timeout) && timeout > NONE) {
-                  wait = sleep(timeout);
+                if (is.undefined(timeout)) {
+                  return;
+                }
+                const duration = internal.utils.getIntervalMs(timeout);
+                if (duration > NONE) {
+                  wait = sleep(duration);
                   await wait;
                   wait = undefined;
                   if (done) {
