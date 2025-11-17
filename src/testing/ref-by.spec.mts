@@ -339,6 +339,277 @@ describe("References", () => {
       });
     });
 
+    describe("listener management", () => {
+      it("addListener registers a remove callback", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(() => {
+            const entity = hass.refBy.id("sensor.magic");
+            const removeCallback = Object.assign(vi.fn(), { remove: vi.fn() });
+
+            entity.addListener(removeCallback);
+
+            // Call removeAllListeners - should call the registered callback
+            entity.removeAllListeners();
+
+            expect(removeCallback).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+
+      it("removeAllListeners calls all registered callbacks", async () => {
+        expect.assertions(3);
+        await hassTestRunner.run(({ lifecycle, hass }) => {
+          lifecycle.onReady(() => {
+            const entity = hass.refBy.id("sensor.magic");
+            const removeCallback1 = Object.assign(vi.fn(), { remove: vi.fn() });
+            const removeCallback2 = Object.assign(vi.fn(), { remove: vi.fn() });
+            const removeCallback3 = Object.assign(vi.fn(), { remove: vi.fn() });
+
+            entity.addListener(removeCallback1);
+            entity.addListener(removeCallback2);
+            entity.addListener(removeCallback3);
+
+            entity.removeAllListeners();
+
+            expect(removeCallback1).toHaveBeenCalledTimes(1);
+            expect(removeCallback2).toHaveBeenCalledTimes(1);
+            expect(removeCallback3).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+
+      it("removeAllListeners cleans up onUpdate listeners", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onUpdate(callback);
+
+            // Remove all listeners
+            entity.removeAllListeners();
+
+            // Emit an update - callback should not be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+      });
+
+      it("removeAllListeners cleans up once listeners", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.once(callback);
+
+            // Remove all listeners
+            entity.removeAllListeners();
+
+            // Emit an update - callback should not be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+      });
+
+      it("removeAllListeners cleans up onStateFor listeners", async () => {
+        expect.assertions(1);
+        vi.useFakeTimers();
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant, context }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.onStateFor({
+              context,
+              exec: callback,
+              for: "0.1s",
+              state: "on",
+            });
+
+            // Remove all listeners
+            entity.removeAllListeners();
+
+            // Change state to match
+            const updatePromise = mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "on",
+            });
+            await vi.advanceTimersByTimeAsync(1);
+            await updatePromise;
+            await vi.advanceTimersByTimeAsync(100);
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+        vi.useRealTimers();
+      });
+
+      it("removeAllListeners cleans up both addListener and built-in listeners", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const addListenerCallback = Object.assign(vi.fn(), { remove: vi.fn() });
+            const onUpdateCallback = vi.fn();
+
+            entity.addListener(addListenerCallback);
+            entity.onUpdate(onUpdateCallback);
+
+            // Remove all listeners
+            entity.removeAllListeners();
+
+            // Emit an update - callbacks should not be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(addListenerCallback).toHaveBeenCalledTimes(1);
+            expect(onUpdateCallback).not.toHaveBeenCalled();
+          });
+        });
+      });
+    });
+
+    describe("once", () => {
+      it("calls callback once on next entity update", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.once(callback);
+
+            // Emit first update - callback should be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "first",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+
+            // Emit second update - callback should not be called again
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "second",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+
+      it("passes new_state and old_state to callback", async () => {
+        expect.assertions(3);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.once(callback);
+
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+            expect(callback).toHaveBeenCalledWith(
+              expect.objectContaining({ state: "updated" }),
+              expect.any(Object),
+            );
+            expect(callback.mock.calls[0]).toHaveLength(2);
+          });
+        });
+      });
+
+      it("removes listener after callback is called", async () => {
+        expect.assertions(2);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            entity.once(callback);
+
+            // First update - callback should be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "first",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+
+            // Second update - callback should not be called (listener removed)
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "second",
+            });
+
+            expect(callback).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+
+      it("remove function prevents callback from being called", async () => {
+        expect.assertions(1);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback = vi.fn();
+
+            const remove = entity.once(callback);
+
+            // Remove the listener before update
+            remove();
+
+            // Emit update - callback should not be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "updated",
+            });
+
+            expect(callback).not.toHaveBeenCalled();
+          });
+        });
+      });
+
+      it("handles multiple once listeners independently", async () => {
+        expect.assertions(4);
+        await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+          lifecycle.onReady(async () => {
+            const entity = hass.refBy.id("sensor.magic");
+            const callback1 = vi.fn();
+            const callback2 = vi.fn();
+
+            entity.once(callback1);
+            entity.once(callback2);
+
+            // First update - both callbacks should be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "first",
+            });
+
+            expect(callback1).toHaveBeenCalledTimes(1);
+            expect(callback2).toHaveBeenCalledTimes(1);
+
+            // Second update - neither callback should be called
+            await mock_assistant.events.emitEntityUpdate("sensor.magic", {
+              state: "second",
+            });
+
+            expect(callback1).toHaveBeenCalledTimes(1);
+            expect(callback2).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+    });
+
     describe("onStateFor", () => {
       it("executes callback when state matches for duration", async () => {
         expect.assertions(1);
