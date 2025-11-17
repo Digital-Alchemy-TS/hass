@@ -197,21 +197,29 @@ export function ReferenceService({
                   if (timerRemove) {
                     timerRemove();
                     timerRemove = undefined;
-                    logger.trace("cleared timer");
+                    logger.trace({ context, entity_id }, "cleared timer - state no longer matches");
                   }
                   return;
                 }
 
                 if (timerRemove) {
+                  logger.trace({ context, entity_id }, "timer already running, skipping");
                   return;
                 }
                 timerRemove = scheduler.setTimeout(async () => {
-                  logger.trace("hit");
+                  logger.trace(
+                    { context, entity_id, for: options.for },
+                    "timer fired - executing callback",
+                  );
                   internal.safeExec({
                     context,
                     exec: async () => await options.exec(proxy),
                   });
                 }, options.for);
+                logger.trace(
+                  { context, entity_id, for: options.for },
+                  "started timer for state condition",
+                );
               });
 
               return internal.removeFn(() => {
@@ -219,6 +227,7 @@ export function ReferenceService({
                   timerRemove();
                 }
                 remove();
+                logger.trace({ context, entity_id }, "removed [onStateFor] listener");
               });
             };
           }
