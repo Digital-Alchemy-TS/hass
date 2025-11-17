@@ -74,7 +74,7 @@ export type ByIdProxy<ENTITY_ID extends ANY_ENTITY> = ENTITY_STATE<ENTITY_ID> & 
   /**
    * Will resolve with the next state of the next value. No time limit
    */
-  nextState: (timeoutMs?: TOffset) => Promise<ENTITY_STATE<ENTITY_ID>>;
+  nextState: (timeout?: TOffset) => Promise<ENTITY_STATE<ENTITY_ID>>;
   /**
    * Runs on state change -
    * If state matches the indicated target, then a timer will be initiated
