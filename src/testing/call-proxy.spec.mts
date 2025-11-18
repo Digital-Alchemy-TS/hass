@@ -164,7 +164,7 @@ describe("CallProxy", () => {
   describe("early access", () => {
     it("should call console.trace when accessed before load with LOG_LEVEL trace", async () => {
       expect.assertions(1);
-      const traceSpy = vi.spyOn(console, "trace");
+      const traceSpy = vi.spyOn(console, "trace").mockImplementation(() => {});
 
       await hassTestRunner.configure({ boilerplate: { LOG_LEVEL: "trace" } }).run(({ hass }) => {
         hass.call.switch;
@@ -189,6 +189,53 @@ describe("CallProxy", () => {
             expect(traceSpy).not.toHaveBeenCalled();
           });
         });
+    });
+  });
+
+  describe("proxy methods", () => {
+    it("should return true for has when domain exists", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          expect("switch" in hass.call).toBe(true);
+        });
+      });
+    });
+
+    it("should return false for has when domain does not exist", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          expect("nonexistent_domain" in hass.call).toBe(false);
+        });
+      });
+    });
+
+    it("should return ownKeys with all domain keys", async () => {
+      expect.assertions(2);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const keys = Object.keys(hass.call);
+          expect(keys).toContain("switch");
+          expect(keys.length).toBeGreaterThan(0);
+        });
+      });
+    });
+
+    it("should return false when trying to set a property", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          try {
+            // @ts-expect-error testing
+            hass.call.test_domain = {};
+          } catch {
+            // Some environments throw, others return false
+          }
+          // Verify the property was not set
+          expect("test_domain" in hass.call).toBe(false);
+        });
+      });
     });
   });
 });
