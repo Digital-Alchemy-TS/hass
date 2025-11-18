@@ -74,6 +74,7 @@
     "@typescript-eslint/eslint-plugin": "8.46.4",
     "@typescript-eslint/parser": "8.46.4",
     "@vitest/coverage-v8": "^4.0.10",
+    "@vitest/ui": "4.0.10",
     "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
     "eslint": "9.39.1",
