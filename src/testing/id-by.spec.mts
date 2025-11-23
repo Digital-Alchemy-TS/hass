@@ -137,6 +137,56 @@ describe("enabled entities", () => {
       });
     });
   });
+
+  describe("unique_id", () => {
+    it("find entity by unique_id without platform", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const entity = hass.idBy.unique_id(
+            "e1806fdc93296bbd5ab42967003cd38729ff9ba6cfeefc3e15a03ad01ac894fe",
+          );
+          expect(entity).toBe("sensor.magic");
+        });
+      });
+    });
+
+    it("find entity by unique_id with matching platform", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const entity = hass.idBy.unique_id(
+            "e1806fdc93296bbd5ab42967003cd38729ff9ba6cfeefc3e15a03ad01ac894fe",
+            "synapse",
+          );
+          expect(entity).toBe("sensor.magic");
+        });
+      });
+    });
+
+    it("find entity by unique_id with non-matching platform", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const entity = hass.idBy.unique_id(
+            "e1806fdc93296bbd5ab42967003cd38729ff9ba6cfeefc3e15a03ad01ac894fe",
+            "sun",
+          );
+          expect(entity).toBeUndefined();
+        });
+      });
+    });
+
+    it("find entity by unique_id with different platform", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(() => {
+          const entity = hass.idBy.unique_id("5622d76001a335e3ea893c4d60d31b3d-next_dawn", "sun");
+          expect(entity).toBe("sensor.sun_next_dawn");
+        });
+      });
+    });
+  });
 });
 
 describe("disabled entities", () => {

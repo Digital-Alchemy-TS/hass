@@ -174,7 +174,7 @@ describe("References", () => {
   describe("functionality", () => {
     describe("operators", () => {
       it("has", async () => {
-        expect.assertions(16);
+        expect.assertions(18);
         await hassTestRunner.run(({ lifecycle, hass }) => {
           lifecycle.onReady(() => {
             const entity = hass.refBy.id("switch.bedroom_lamp");
@@ -184,7 +184,9 @@ describe("References", () => {
               "attributes",
               "entity_id",
               "history",
-              "last",
+              "last_changed",
+              "last_reported",
+              "last_updated",
               "nextState",
               "once",
               "onStateFor",
@@ -219,7 +221,6 @@ describe("References", () => {
               "last_updated",
               "context",
               "history",
-              "last",
               "nextState",
               "once",
               "onStateFor",

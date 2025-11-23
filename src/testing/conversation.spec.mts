@@ -18,7 +18,7 @@ describe("Conversation Service", () => {
         },
       ];
 
-      await hassTestRunner.run(({ lifecycle, hass }) => {
+      await hassTestRunner.bootLibrariesFirst().run(({ lifecycle, hass }) => {
         const spy = vi
           .spyOn(hass.socket, "sendMessage")
           .mockImplementation(async () => ({ agents: mockAgents }));

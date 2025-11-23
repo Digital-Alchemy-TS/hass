@@ -136,7 +136,9 @@ export function ReferenceService({
         "attributes",
         "entity_id",
         "history",
-        "last",
+        "last_changed",
+        "last_reported",
+        "last_updated",
         "nextState",
         "once",
         "onStateFor",
@@ -184,6 +186,7 @@ export function ReferenceService({
         switch (property) {
           // #MARK: runAfter
           case "onStateFor": {
+            proxy.last_updated
             return function ({
               context,
               ...options

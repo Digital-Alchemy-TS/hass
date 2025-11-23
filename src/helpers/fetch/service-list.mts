@@ -1,7 +1,9 @@
 import type { LiteralUnion } from "type-fest";
 
 import type { ALL_DOMAINS, PICK_ENTITY, TPlatformId } from "../../user.mts";
+import type { SupportedCountries } from "../countries.mts";
 import type { ColorMode } from "../features.mts";
+import type { SupportedLanguages } from "../languages.mts";
 
 export type EntityFilterSelector = {
   integration?: TPlatformId;
@@ -87,7 +89,7 @@ export interface ServiceListSelector {
   };
   country: {
     /** Country code(s) to include in the selector */
-    countries?: string | string[];
+    countries?: SupportedCountries | SupportedCountries[];
     /** Whether to disable sorting of countries */
     no_sort?: boolean;
   };
@@ -110,17 +112,24 @@ export interface ServiceListSelector {
     allow_negative?: boolean;
   };
   entity: LegacyEntitySelector & {
-    /** Entity ID(s) to exclude from the selector */
-    exclude_entities?: PICK_ENTITY | PICK_ENTITY[];
-    /** Entity ID(s) to include in the selector */
-    include_entities?: PICK_ENTITY | PICK_ENTITY[];
     /** Whether multiple entities can be selected */
     multiple?: boolean;
     /** Whether entities can be reordered */
     reorder?: boolean;
     /** Entity filter selector(s) to filter entities */
     filter?: EntityFilterSelector | EntityFilterSelector[];
-  };
+  } & (
+      | {
+          /** Entity ID(s) to exclude from the selector */
+          exclude_entities?: PICK_ENTITY | PICK_ENTITY[];
+          include_entities: never;
+        }
+      | {
+          /** Entity ID(s) to include in the selector */
+          include_entities?: PICK_ENTITY | PICK_ENTITY[];
+          exclude_entities: never;
+        }
+    );
   file: {
     /** MIME type(s) or file extension(s) to accept */
     accept: string;
@@ -143,7 +152,7 @@ export interface ServiceListSelector {
   };
   language: {
     /** Language code(s) to include in the selector */
-    languages?: string | string[];
+    languages?: SupportedLanguages | SupportedLanguages[];
     /** Whether to display native language names */
     native_name?: boolean;
     /** Whether to disable sorting of languages */
@@ -226,12 +235,15 @@ export interface ServiceListSelector {
     /** Whether multiple statistics can be selected */
     multiple?: boolean;
   };
-  target: {
-    /** Entity filter selector(s) to filter targets by entity */
-    entity?: EntityFilterSelector | EntityFilterSelector[];
-    /** Device filter selector(s) to filter targets by device */
-    device?: DeviceFilterSelector | DeviceFilterSelector[];
-  };
+  target:
+    | {
+        /** Entity filter selector(s) to filter targets by entity */
+        entity?: EntityFilterSelector | EntityFilterSelector[];
+      }
+    | {
+        /** Device filter selector(s) to filter targets by device */
+        device?: DeviceFilterSelector | DeviceFilterSelector[];
+      };
   template: null;
   text: {
     /** HTML input type for the text field */

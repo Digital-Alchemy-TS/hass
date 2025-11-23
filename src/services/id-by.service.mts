@@ -64,11 +64,14 @@ export function IDByExtension({
       HassUniqueIdMapping[UNIQUE_ID],
       ANY_ENTITY
     >,
-  >(unique_id: UNIQUE_ID): ENTITY_ID {
+  >(unique_id: UNIQUE_ID, platform?: TPlatformId): ENTITY_ID {
     hass.entity.warnEarly("byUniqueId");
     let list = hass.entity.registry.current.filter(
       i => i.unique_id === unique_id,
     ) as EntityRegistryItem<ENTITY_ID>[];
+    if (!is.empty(platform)) {
+      list = list.filter(i => i.platform === platform);
+    }
     if (is.empty(list)) {
       logger.error({ name: unique_id, unique_id }, `could not find an entity`);
       return undefined;
