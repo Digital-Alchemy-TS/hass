@@ -59,7 +59,7 @@
   "license": "MIT",
   "devDependencies": {
     "@cspell/eslint-plugin": "^9.3.2",
-    "@digital-alchemy/core": "^25.11.19",
+    "@digital-alchemy/core": "^25.11.23",
     "@digital-alchemy/synapse": "^25.8.21",
     "@digital-alchemy/type-writer": "^25.11.16",
     "@eslint/compat": "^2.0.0",
