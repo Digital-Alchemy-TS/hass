@@ -271,6 +271,39 @@ describe("Websocket", () => {
     });
   });
 
+  describe("Auth Message Handlers", () => {
+    it("should handle auth_invalid message and exit", async () => {
+      expect.assertions(3);
+      const exitSpy = vi
+        .spyOn(process, "exit")
+        // @ts-expect-error testing
+        .mockImplementation(() => {});
+
+      await hassTestRunner.run(({ lifecycle, hass, logger }) => {
+        const fatalSpy = vi.spyOn(logger, "fatal").mockImplementation(() => {});
+
+        lifecycle.onReady(async () => {
+          const message = {
+            id: 1,
+            type: "auth_invalid" as const,
+          };
+
+          await hass.socket.onMessage(message);
+
+          expect(exitSpy).toHaveBeenCalled();
+          expect(hass.socket.connectionState).toBe("invalid");
+          expect(fatalSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+              message,
+              name: expect.any(Function),
+            }),
+            "received auth invalid {connecting} => {invalid}",
+          );
+        });
+      });
+    });
+  });
+
   describe("Subscription Registry", () => {
     it("should prevent duplicate subscriptions", async () => {
       expect.assertions(1);

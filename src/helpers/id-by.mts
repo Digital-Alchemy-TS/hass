@@ -47,5 +47,6 @@ export type IDByInterface = {
     >,
   >(
     unique_id: UNIQUE_ID,
+    platform?: TPlatformId,
   ) => ENTITY_ID;
 };
