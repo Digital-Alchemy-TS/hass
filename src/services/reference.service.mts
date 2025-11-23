@@ -359,7 +359,6 @@ export function ReferenceService({
             return async (state: string | number, timeout?: TOffset) =>
               await new Promise<ENTITY_STATE<ENTITY_ID>>(async done => {
                 const remove = () => {
-                  done = undefined;
                   listeners.delete(remove);
                   done = undefined;
                   logger.trace({ entity_id }, "remove [waitForState] listener");

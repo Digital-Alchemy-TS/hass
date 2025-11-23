@@ -611,9 +611,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digital-alchemy/core@npm:^25.11.19":
-  version: 25.11.19
-  resolution: "@digital-alchemy/core@npm:25.11.19"
+"@digital-alchemy/core@npm:^25.11.23":
+  version: 25.11.23
+  resolution: "@digital-alchemy/core@npm:25.11.23"
   dependencies:
     "@dotenvx/dotenvx": "npm:^1.51.1"
     chalk: "npm:^5.6.2"
@@ -623,7 +623,7 @@ __metadata:
     js-yaml: "npm:^4.1.0"
     minimist: "npm:^1.2.8"
     uuid: "npm:^13.0.0"
-  checksum: 10/5b6773477994c00c2b198f557a796c82e61c98dd1e093673ec9bbb06b213dc495ecb3540f42a6068caa2723d9d1d39838954619ce08e5ea050386a5010759a5e
+  checksum: 10/f1bba8d88eee262cb7eac02462d57209ddb809c26e935191ab98828a90127ef49078720acfb2a2fd27cbe0e0e1b93caa2dd2f7c07aa556aee718d37dcf282976
   languageName: node
   linkType: hard
 
@@ -632,7 +632,7 @@ __metadata:
   resolution: "@digital-alchemy/hass@workspace:."
   dependencies:
     "@cspell/eslint-plugin": "npm:^9.3.2"
-    "@digital-alchemy/core": "npm:^25.11.19"
+    "@digital-alchemy/core": "npm:^25.11.23"
     "@digital-alchemy/synapse": "npm:^25.8.21"
     "@digital-alchemy/type-writer": "npm:^25.11.16"
     "@eslint/compat": "npm:^2.0.0"
