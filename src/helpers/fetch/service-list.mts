@@ -235,15 +235,12 @@ export interface ServiceListSelector {
     /** Whether multiple statistics can be selected */
     multiple?: boolean;
   };
-  target:
-    | {
-        /** Entity filter selector(s) to filter targets by entity */
-        entity?: EntityFilterSelector | EntityFilterSelector[];
-      }
-    | {
-        /** Device filter selector(s) to filter targets by device */
-        device?: DeviceFilterSelector | DeviceFilterSelector[];
-      };
+  target: {
+    /** Entity filter selector(s) to filter targets by entity */
+    entity?: EntityFilterSelector | EntityFilterSelector[];
+    /** Device filter selector(s) to filter targets by device */
+    device?: DeviceFilterSelector | DeviceFilterSelector[];
+  };
   template: null;
   text: {
     /** HTML input type for the text field */
