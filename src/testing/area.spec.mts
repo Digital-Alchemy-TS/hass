@@ -263,7 +263,7 @@ describe("API", () => {
 
     it("should skip entities that already have the correct area", async () => {
       expect.assertions(2);
-      await hassTestRunner.run(({ lifecycle, hass, event }) => {
+      await hassTestRunner.run(({ lifecycle, hass }) => {
         lifecycle.onReady(async () => {
           const spy = vi
             .spyOn(hass.socket, "sendMessage")

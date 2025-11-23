@@ -186,7 +186,7 @@ export function ReferenceService({
         switch (property) {
           // #MARK: runAfter
           case "onStateFor": {
-            proxy.last_updated
+            proxy.last_updated;
             return function ({
               context,
               ...options
