@@ -122,12 +122,12 @@ export interface ServiceListSelector {
       | {
           /** Entity ID(s) to exclude from the selector */
           exclude_entities?: PICK_ENTITY | PICK_ENTITY[];
-          include_entities: never;
+          include_entities?: never;
         }
       | {
           /** Entity ID(s) to include in the selector */
           include_entities?: PICK_ENTITY | PICK_ENTITY[];
-          exclude_entities: never;
+          exclude_entities?: never;
         }
     );
   file: {
