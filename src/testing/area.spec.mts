@@ -1,5 +1,6 @@
+import { subscribe } from "node:diagnostics_channel";
+
 import { sleep } from "@digital-alchemy/core";
-import { subscribe } from "diagnostics_channel";
 
 import type { AreaDetails } from "../helpers/index.mts";
 import { AREA_REGISTRY_UPDATED, ENTITY_REGISTRY_UPDATED } from "../helpers/index.mts";

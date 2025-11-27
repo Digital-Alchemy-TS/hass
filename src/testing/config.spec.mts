@@ -1,4 +1,5 @@
-import { env } from "process";
+import { env } from "node:process";
+
 import type { MockInstance } from "vitest";
 
 import type { ConfigEntry, HassServiceDTO } from "../helpers/index.mts";

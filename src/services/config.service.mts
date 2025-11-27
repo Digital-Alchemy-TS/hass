@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+import { env } from "node:process";
+
 import type { TServiceParams } from "@digital-alchemy/core";
 import { asyncNoop, debounce, INCREMENT, SECOND, sleep, START } from "@digital-alchemy/core";
-import { env } from "process";
 
 import type {
   ALL_SERVICE_DOMAINS,

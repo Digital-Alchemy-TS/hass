@@ -1,8 +1,9 @@
+import EventEmitter from "node:events";
+
 import type { TBlackHole, TServiceParams } from "@digital-alchemy/core";
 import { INCREMENT, InternalError, NONE, SECOND, sleep, START } from "@digital-alchemy/core";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import EventEmitter from "events";
 import type { EmptyObject } from "type-fest";
 import WS from "ws";
 

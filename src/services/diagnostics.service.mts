@@ -1,5 +1,6 @@
+import { channel } from "node:diagnostics_channel";
+
 import type { TServiceParams } from "@digital-alchemy/core";
-import { channel } from "diagnostics_channel";
 
 function createDiagnostics<CHANNEL extends string>(context: string, channels: CHANNEL[]) {
   return Object.fromEntries(channels.map(i => [i, channel(`hass:${context}:${i}`)])) as Record<
