@@ -1,5 +1,6 @@
+import type EventEmitter from "node:events";
+
 import type { RemoveCallback, TBlackHole } from "@digital-alchemy/core";
-import type EventEmitter from "events";
 import type { EmptyObject } from "type-fest";
 import type WS from "ws";
 

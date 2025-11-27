@@ -1,6 +1,7 @@
+import { existsSync, readFileSync } from "node:fs";
+
 import type { TServiceParams } from "@digital-alchemy/core";
 import { BootstrapException } from "@digital-alchemy/core";
-import { existsSync, readFileSync } from "fs";
 
 import type { ENTITY_STATE } from "../../index.mts";
 import type { ANY_ENTITY } from "../../user.mts";

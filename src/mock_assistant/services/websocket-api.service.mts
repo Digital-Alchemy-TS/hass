@@ -1,6 +1,7 @@
+import EventEmitter from "node:events";
+
 import type { TBlackHole, TServiceParams } from "@digital-alchemy/core";
 import { START } from "@digital-alchemy/core";
-import EventEmitter from "events";
 import type { PartialDeep, WritableDeep } from "type-fest";
 import type WS from "ws";
 
