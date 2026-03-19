@@ -37,8 +37,8 @@ type GenericEntityAttributes = {
 export type EntityHistoryItem = { a: object; s: unknown; lu: number };
 
 export type TEntityUpdateCallback<ENTITY_ID extends ANY_ENTITY> = (
-  new_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
-  old_state: NonNullable<ENTITY_STATE<ENTITY_ID>>,
+  new_state: ENTITY_STATE<ENTITY_ID> | null,
+  old_state: ENTITY_STATE<ENTITY_ID> | null,
   remove: () => TBlackHole,
 ) => TBlackHole;
 
