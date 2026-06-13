@@ -27,10 +27,9 @@ export default [
   {
     plugins: {
       import: fixupPluginRules(importPlugin),
-      jsonc,
       "no-unsanitized": noUnsanitized,
       "simple-import-sort": simpleImportSort,
-      "sort-keys-fix": sortKeysFix,
+      "sort-keys-fix": fixupPluginRules(sortKeysFix),
       unicorn,
       prettier,
     },
@@ -38,10 +37,10 @@ export default [
       globals: { ...globals.node },
     },
   },
+  ...jsonc.configs["flat/recommended-with-jsonc"],
   ...compat
     .extends(
       "plugin:@typescript-eslint/recommended",
-      "plugin:jsonc/recommended-with-jsonc",
       "plugin:prettier/recommended",
       "plugin:@cspell/recommended",
     )
