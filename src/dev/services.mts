@@ -1072,7 +1072,7 @@ declare module "../user.mts" {
          * >   max: 6500
          * > ```
          */
-        color_temp_kelvin?: unknown;
+        color_temp_kelvin?: number;
         /**
          * ## Profile
          *
@@ -1482,7 +1482,7 @@ declare module "../user.mts" {
          * >   max: 6500
          * > ```
          */
-        color_temp_kelvin?: unknown;
+        color_temp_kelvin?: number;
         /**
          * ## Profile
          *
