@@ -4,9 +4,7 @@ import { sleep } from "@digital-alchemy/core";
 import type { ENTITY_STATE, EntityUpdateEvent } from "../../index.mts";
 import type { ANY_ENTITY } from "../../user.mts";
 
-const SUPER_SHORT = 1;
-
-export function MockEvents({ mock_assistant, hass }: TServiceParams) {
+export function MockEvents({ mock_assistant, hass, config }: TServiceParams) {
   let id = 1000;
 
   async function emitEvent(event: string, data: object) {
@@ -29,7 +27,7 @@ export function MockEvents({ mock_assistant, hass }: TServiceParams) {
     new_state = mock_assistant.fixtures.replace(entity, new_state);
     await emitEvent("state_changed", { new_state, old_state });
     // help ensure all the async flows settle
-    await sleep(SUPER_SHORT);
+    await sleep(config.mock_assistant.EMIT_SLEEP);
   }
 
   return {
