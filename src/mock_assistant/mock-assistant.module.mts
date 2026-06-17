@@ -15,6 +15,7 @@ import {
   MockFloorExtension,
   MockLabelExtension,
   MockServices,
+  MockTime,
   MockWebsocketAPI,
   MockZoneExtension,
 } from "./services/index.mts";
@@ -62,6 +63,7 @@ export const LIB_MOCK_ASSISTANT = CreateLibrary({
     label: MockLabelExtension,
     services: MockServices,
     socket: MockWebsocketAPI,
+    time: MockTime,
     zone: MockZoneExtension,
   },
 });
