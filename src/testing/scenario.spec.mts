@@ -5,8 +5,11 @@
  * - Scripted timeline: at / advanceTo / assert / fireSequence / run ordering
  * - Solver: buildMomentContext / buildMomentTime / findMoment throws when no match
  * - Seeded simulation (F1/F2/F4):
- *   - chaos mode (no provider): reproducible from seed, no anchoring
- *   - anchored mode (provider present): reproducible, worldAt called
+ *   - chaos mode (no provider): reproducible from seed, no anchoring; same seed →
+ *     identical MASTER_STATE world end-to-end; different seed → different draw
+ *   - anchored mode (provider present): reproducible anchorMs across booted runs,
+ *     worldAt called; F1 fake-clock path settled via the WS-B tick-drain primitive
+ *     (mock_assistant.time.advanceBy) so the emitChange→sleep does not hang
  * - Matrix (F3): cartesian completeness, inline values, provider.observedValues path
  * - PRNG: same seed → same sequence (createPRNG)
  *
@@ -30,6 +33,7 @@ import { hassTestRunner } from "../mock_assistant/index.mts";
 import {
   buildMomentContext,
   buildMomentTime,
+  CHAOS_DWELL_WINDOW_MS,
   createPRNG,
 } from "../mock_assistant/services/scenario.service.mts";
 import type { ANY_ENTITY } from "../user.mts";
@@ -53,6 +57,9 @@ const ENTITY_BINARY = "binary_sensor.bedroom_window" as const;
 
 /** Hours offset for worldB anchor (4 hours after ANCHOR_DATE) */
 const WORLD_B_HOUR_OFFSET = 4;
+
+/** Seeded-draw dwell window — re-used from the engine, not re-derived inline. */
+const SIM_DWELL_WINDOW_MS = CHAOS_DWELL_WINDOW_MS;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Fake DataProvider
@@ -460,12 +467,56 @@ describe("mock_assistant.scenario({ seed }).simulate — chaos mode (F4)", () =>
     expect(result1).toEqual(result2);
   });
 
-  it("different seeds produce different sequences (verified at PRNG level)", () => {
-    const prng1 = createPRNG(1);
-    const prng2 = createPRNG(99_999);
-    const seq1 = Array.from({ length: 10 }, () => prng1());
-    const seq2 = Array.from({ length: 10 }, () => prng2());
-    expect(seq1).not.toEqual(seq2);
+  it("same seed → identical MASTER_STATE world across two booted runs (integration reproducibility)", async () => {
+    // The strongest reproducibility assertion: boot the live mock twice, seed via
+    // simulate() through the socket path, and read the resulting world straight out
+    // of MASTER_STATE (hass.entity.getCurrentState) — not the returned initialStates.
+    // Identical seed must yield byte-identical resulting worlds in the canonical store.
+    expect.assertions(1);
+    const entities = [ENTITY_SWITCH, ENTITY_BINARY, ENTITY_SENSOR];
+    const readWorld = async (): Promise<Record<string, string>> => {
+      const world: Record<string, string> = {};
+      await hassTestRunner.run(({ lifecycle, mock_assistant, hass }) => {
+        lifecycle.onReady(async () => {
+          await mock_assistant.scenario({ seed: STABLE_SEED }).simulate({ entities });
+          for (const eid of entities) {
+            world[eid] = String(hass.entity.getCurrentState(eid as ANY_ENTITY)?.state ?? "");
+          }
+        });
+      });
+      await hassTestRunner.teardown();
+      return world;
+    };
+
+    const world1 = await readWorld();
+    const world2 = await readWorld();
+    expect(world1).toEqual(world2);
+  });
+
+  it("different seed → different resulting MASTER_STATE world (or different draw)", async () => {
+    // Different seeds must drive a different draw. We compare the returned initialStates
+    // across many entities so the probability of an accidental collision is negligible.
+    expect.assertions(1);
+    const entities = Array.from({ length: 12 }, (_, i) => `switch.sim_${i}`);
+    const draw = async (seed: number): Promise<Record<string, string>> => {
+      let states: Record<string, string> = {};
+      await hassTestRunner.run(({ lifecycle, mock_assistant }) => {
+        lifecycle.onReady(async () => {
+          // Register the synthetic entities first (WS-A register API) so emitChange's
+          // MISSING_ENTITY guard passes — simulate() seeds existing entities only.
+          for (const eid of entities) {
+            mock_assistant.entity.register(eid as ANY_ENTITY, { state: "off" });
+          }
+          states = (await mock_assistant.scenario({ seed }).simulate({ entities })).initialStates;
+        });
+      });
+      await hassTestRunner.teardown();
+      return states;
+    };
+
+    const drawA = await draw(1);
+    const drawB = await draw(99_999);
+    expect(drawA).not.toEqual(drawB);
   });
 
   it("synthetic events are replayed after initial seeding", async () => {
@@ -532,51 +583,87 @@ describe("mock_assistant.scenario({ seed, anchor: provider }).simulate — ancho
     });
   });
 
-  it("same seed → same anchorMs (reproducibility: verified at PRNG + algorithm level)", () => {
-    // Reproducibility is a pure PRNG + algorithm property.
-    // We verify it directly without running a full module, since the anchor
-    // computation is: pick candidateOffsets[idx] using the PRNG, then subtract from baseMs.
-    // For the same seed and the same baseMs, the result is identical.
-    const CANDIDATE_COUNT = 100;
-    const DWELL_WINDOW = 24 * 60 * MINUTE;
-    const fakeBaseMs = ANCHOR_MS; // fixed base for the test
+  it("same seed → identical anchorMs across two booted runs (integration reproducibility)", async () => {
+    // True integration reproducibility: boot the runner twice under fake timers,
+    // run the anchored simulate() against the live mock each time, and assert the
+    // PRNG-derived anchorMs is identical. anchorMs derives from Date.now(), so we
+    // pin the clock before each run() (both share baseMs == ANCHOR_MS, the F1 contract).
+    expect.assertions(1);
+    let anchor1 = -1;
+    let anchor2 = -1;
+    const provider = makeFakeProvider();
 
-    function computeAnchor(seed: number, baseMs: number): number {
-      const prng = createPRNG(seed);
-      const offsets: number[] = [];
-      for (let i = 0; i < CANDIDATE_COUNT; i++) {
-        offsets.push(Math.floor(prng() * DWELL_WINDOW));
-      }
-      const idx = Math.floor(prng() * CANDIDATE_COUNT);
-      return baseMs - (offsets[idx] ?? 0);
-    }
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(ANCHOR_DATE));
+    await hassTestRunner.run(({ lifecycle, mock_assistant }) => {
+      lifecycle.onReady(async () => {
+        const simPromise = mock_assistant
+          .scenario({ anchor: provider, seed: STABLE_SEED })
+          .simulate({ entities: [ENTITY_SWITCH] });
+        await mock_assistant.time.advanceBy(MINUTE);
+        anchor1 = (await simPromise).anchorMs;
+      });
+    });
+    await hassTestRunner.teardown();
+    vi.useRealTimers();
 
-    const anchor1 = computeAnchor(STABLE_SEED, fakeBaseMs);
-    const anchor2 = computeAnchor(STABLE_SEED, fakeBaseMs);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(ANCHOR_DATE));
+    await hassTestRunner.run(({ lifecycle, mock_assistant }) => {
+      lifecycle.onReady(async () => {
+        const simPromise = mock_assistant
+          .scenario({ anchor: provider, seed: STABLE_SEED })
+          .simulate({ entities: [ENTITY_SWITCH] });
+        await mock_assistant.time.advanceBy(MINUTE);
+        anchor2 = (await simPromise).anchorMs;
+      });
+    });
+    await hassTestRunner.teardown();
+    vi.useRealTimers();
+
     expect(anchor1).toBe(anchor2);
-    expect(anchor1).toBeGreaterThan(0);
   });
 
-  it("F1: fake clock set before simulate — anchorMs is derived from Date.now() (verified via PRNG algorithm)", () => {
-    // F1 contract: with fake timers, Date.now() == ANCHOR_MS, so anchorMs is derived
-    // from baseMs = ANCHOR_MS. We verify the algorithm property directly.
-    // (A full module test with vi.useFakeTimers() + lifecycle.onReady would hang because
-    // the bootstrap uses setImmediate internally; the contract is correct at the algorithm level.)
-    const CANDIDATE_COUNT = 100;
-    const DWELL_WINDOW = 24 * 60 * MINUTE;
-    const baseMs = ANCHOR_MS; // simulates Date.now() under fake timers
+  it("F1: fake clock set before simulate — anchored draw resolves through MASTER_STATE", async () => {
+    // F1 integration contract, driven by the WS-B tick-drain primitive instead of a
+    // bare vi.useFakeTimers() that the original WS-D author claimed would hang.
+    //
+    // The earlier WS-D claim ("emitChange → sleep(EMIT_SLEEP) hangs under fake timers")
+    // was real ONLY because nothing drove the fake clock during that 1ms sleep. WS-B
+    // already solved this: advance the fake clock in ticks while draining the microtask
+    // queue so the awaited sleep resolves. simulate() seeds via emitChange (socket path
+    // → MASTER_STATE), so we kick simulate() off, then drive settle with time.advanceBy.
+    expect.assertions(2);
+    const provider = makeFakeProvider();
 
-    const prng = createPRNG(STABLE_SEED);
-    const offsets: number[] = [];
-    for (let i = 0; i < CANDIDATE_COUNT; i++) {
-      offsets.push(Math.floor(prng() * DWELL_WINDOW));
-    }
-    const idx = Math.floor(prng() * CANDIDATE_COUNT);
-    const computedAnchor = baseMs - (offsets[idx] ?? 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(ANCHOR_DATE));
 
-    // The anchor must be positive and within one day of the set time
-    expect(computedAnchor).toBeGreaterThan(0);
-    expect(Math.abs(computedAnchor - ANCHOR_MS)).toBeLessThanOrEqual(DWELL_WINDOW);
+    let resultAnchorMs = -1;
+    let masterStateValue = "";
+
+    await hassTestRunner.run(({ lifecycle, mock_assistant, hass }) => {
+      lifecycle.onReady(async () => {
+        // Kick the simulation; do NOT await yet — its emitChange awaits a fake-timer
+        // sleep that only resolves once we drive the clock.
+        const simPromise = mock_assistant
+          .scenario({ anchor: provider, seed: STABLE_SEED })
+          .simulate({ entities: [ENTITY_SWITCH] });
+        // Drive the clock to settle the EMIT_SLEEP sleep(s) inside simulate().
+        await mock_assistant.time.advanceBy(MINUTE);
+        const result = await simPromise;
+        resultAnchorMs = result.anchorMs;
+        // The seeded state must have landed in MASTER_STATE via the socket path.
+        masterStateValue = String(hass.entity.getCurrentState(ENTITY_SWITCH)?.state ?? "");
+      });
+    });
+    await hassTestRunner.teardown();
+    vi.useRealTimers();
+
+    // baseMs == Date.now() == ANCHOR_MS under the fake clock → anchor within one day of it.
+    expect(Math.abs(resultAnchorMs - ANCHOR_MS)).toBeLessThanOrEqual(SIM_DWELL_WINDOW_MS);
+    // MASTER_STATE reflects an observed provider value (true integration, not PRNG-only).
+    expect(provider.observedValues(ENTITY_SWITCH)).toContain(masterStateValue);
   });
 });
 

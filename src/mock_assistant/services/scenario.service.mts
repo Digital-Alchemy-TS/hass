@@ -479,5 +479,5 @@ function cartesianProduct(entries: [string, string[]][]): MatrixCombo[] {
 // Re-export helpers for tests
 // ─────────────────────────────────────────────────────────────────────────────
 
-export { buildMomentContext, buildMomentTime, createPRNG };
+export { buildMomentContext, buildMomentTime, CHAOS_DWELL_WINDOW_MS, createPRNG };
 export type { DataProvider, FoundMoment, MomentContext, MomentTime };
