@@ -362,6 +362,16 @@ export function MockScenario({ mock_assistant }: TServiceParams) {
           seedFromChaos(entities, prng, initialStates);
         }
 
+        // Auto-register entities not yet in the mock seed store (chaos contract F4:
+        // simulate() must work standalone without the caller pre-registering each entity).
+        // register() is safe to call after boot and uses the socket path to populate
+        // MASTER_STATE, so no second write path is introduced here.
+        for (const eid of Object.keys(initialStates)) {
+          if (mock_assistant.entity.byId(eid as ANY_ENTITY) === undefined) {
+            mock_assistant.entity.register(eid as ANY_ENTITY, { state: "unknown" });
+          }
+        }
+
         // Seed entity states into the mock via the socket path
         for (const [eid, state] of Object.entries(initialStates)) {
           await mock_assistant.entity.emitChange(eid as ANY_ENTITY, { state });

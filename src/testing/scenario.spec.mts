@@ -519,6 +519,69 @@ describe("mock_assistant.scenario({ seed }).simulate — chaos mode (F4)", () =>
     expect(drawA).not.toEqual(drawB);
   });
 
+  it("chaos-mode simulate() succeeds and lands seeded states in MASTER_STATE for unregistered entities", async () => {
+    // Pillar 4 / F4 contract: simulate({entities, seed}) must work STANDALONE without
+    // the caller pre-registering each entity via mock_assistant.entity.register.
+    // Auto-registration must happen inside simulate() before emitChange is called.
+    // Assert via hass.entity.getCurrentState (canonical MASTER_STATE store), not just
+    // the returned initialStates, to confirm the socket→MASTER_STATE write path landed.
+    expect.assertions(4);
+
+    // Use synthetic entity ids that are definitely not in fixtures.json
+    const CHAOS_SWITCH = "switch.chaos_standalone_a" as ANY_ENTITY;
+    const CHAOS_BINARY = "binary_sensor.chaos_standalone_b" as ANY_ENTITY;
+    const entities = [CHAOS_SWITCH as string, CHAOS_BINARY as string];
+
+    let initialStates: Record<string, string> = {};
+    let switchMasterState = "";
+    let binaryMasterState = "";
+
+    await hassTestRunner.run(({ lifecycle, mock_assistant, hass }) => {
+      lifecycle.onReady(async () => {
+        // Entities are NOT pre-registered — simulate() must handle this itself.
+        const result = await mock_assistant.scenario({ seed: STABLE_SEED }).simulate({ entities });
+
+        initialStates = result.initialStates;
+        switchMasterState = String(hass.entity.getCurrentState(CHAOS_SWITCH)?.state ?? "");
+        binaryMasterState = String(hass.entity.getCurrentState(CHAOS_BINARY)?.state ?? "");
+      });
+    });
+
+    // initialStates must cover both entities with domain-valid chaos values
+    expect(["on", "off"]).toContain(initialStates[CHAOS_SWITCH as string]);
+    expect(["on", "off"]).toContain(initialStates[CHAOS_BINARY as string]);
+
+    // MASTER_STATE must reflect what simulate() seeded (socket→MASTER_STATE path)
+    expect(switchMasterState).toBe(initialStates[CHAOS_SWITCH as string]);
+    expect(binaryMasterState).toBe(initialStates[CHAOS_BINARY as string]);
+  });
+
+  it("same-seed chaos simulate() is reproducible for unregistered entities", async () => {
+    // Auto-registration must not break same-seed reproducibility: seeding an unregistered
+    // entity must yield the same chaos draw as seeding a pre-registered one with the same seed.
+    expect.assertions(1);
+
+    const CHAOS_A = "switch.chaos_repro_a" as ANY_ENTITY;
+    const CHAOS_B = "binary_sensor.chaos_repro_b" as ANY_ENTITY;
+    const entities = [CHAOS_A as string, CHAOS_B as string];
+
+    const readWorld = async (): Promise<Record<string, string>> => {
+      let states: Record<string, string> = {};
+      await hassTestRunner.run(({ lifecycle, mock_assistant }) => {
+        lifecycle.onReady(async () => {
+          states = (await mock_assistant.scenario({ seed: STABLE_SEED }).simulate({ entities }))
+            .initialStates;
+        });
+      });
+      await hassTestRunner.teardown();
+      return states;
+    };
+
+    const world1 = await readWorld();
+    const world2 = await readWorld();
+    expect(world1).toEqual(world2);
+  });
+
   it("synthetic events are replayed after initial seeding", async () => {
     expect.assertions(1);
     const seen: string[] = [];
