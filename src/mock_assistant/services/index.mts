@@ -7,6 +7,7 @@ export * from "./events.service.mts";
 export * from "./fixtures.service.mts";
 export * from "./floor.service.mts";
 export * from "./label.service.mts";
+export * from "./scenario.service.mts";
 export * from "./services.service.mts";
 export * from "./time.service.mts";
 export * from "./websocket-api.service.mts";
