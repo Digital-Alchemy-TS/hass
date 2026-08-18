@@ -62,6 +62,58 @@ describe("Websocket", () => {
     });
   });
 
+  describe("sendMessage replies", () => {
+    it("should resolve when a result arrives", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass }) => {
+        lifecycle.onReady(async () => {
+          const result = await hass.socket.sendMessage({ type: "get_states" });
+          expect(result).toBeNull();
+        });
+      });
+    });
+
+    it("should reject when no reply arrives", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass, internal }) => {
+        lifecycle.onReady(async () => {
+          internal.boilerplate.configuration.set("hass", "EXPECT_RESPONSE_AFTER", 0.05);
+          hass.socket.connection.send = () => undefined;
+          let error: unknown;
+          try {
+            await hass.socket.sendMessage({ type: "get_states" });
+          } catch (caught) {
+            error = caught;
+          }
+          expect(String(error)).toContain("MISSING_REPLY");
+        });
+      });
+    });
+
+    it("should reject when the result contains an error", async () => {
+      expect.assertions(1);
+      await hassTestRunner.run(({ lifecycle, hass, mock_assistant }) => {
+        lifecycle.onReady(async () => {
+          hass.socket.connection.send = (data: string) => {
+            const payload = JSON.parse(data) as { id: number };
+            mock_assistant.socket.sendMessage({
+              error: { code: "failed" },
+              id: payload.id,
+              type: "result",
+            });
+          };
+          let error: unknown;
+          try {
+            await hass.socket.sendMessage({ type: "call_service" });
+          } catch (caught) {
+            error = caught;
+          }
+          expect(String(error)).toContain("RESULT_ERROR");
+        });
+      });
+    });
+  });
+
   describe("Message Handler Registration", () => {
     it("should register and execute message handlers", async () => {
       expect.assertions(4);

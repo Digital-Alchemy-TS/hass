@@ -66,12 +66,13 @@ export const LIB_HASS = CreateLibrary({
      *
      * Home Assistant **should** respond to all sent messages with a reply to confirm it was received.
      *
-     * If this does not happen, then a warning will be emitted into the logs
+     * If this does not happen, the pending `sendMessage` promise will reject
+     * (a warning is also emitted into the logs).
      */
     EXPECT_RESPONSE_AFTER: {
       default: 5,
       description:
-        "If sendMessage was set to expect a response, a warning will be emitted after this delay if one is not received",
+        "If sendMessage was set to expect a response, reject after this delay (seconds) if one is not received",
       type: "number",
     },
 

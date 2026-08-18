@@ -26,8 +26,9 @@ export const SOCKET_CONNECTED = "SOCKET_CONNECTED";
 type WaitingMap = Map<
   number,
   {
-    sent: unknown;
     callback: (result: unknown) => TBlackHole;
+    fail: (error: Error) => void;
+    sent: unknown;
   }
 >;
 
@@ -267,9 +268,10 @@ export function WebsocketAPI({
     if (!waitForResponse) {
       return undefined;
     }
-    return await new Promise<RESPONSE_VALUE>(async done => {
+    return await new Promise<RESPONSE_VALUE>(async (done, fail) => {
       waitingCallback.set(id, {
         callback: done as (result: unknown) => TBlackHole,
+        fail,
         sent: data,
       });
       await hass.socket.waitForReply(id, data, sentAt);
@@ -281,10 +283,8 @@ export function WebsocketAPI({
     if (!waitingCallback.has(id)) {
       return;
     }
-    const { sent } = waitingCallback.get(id);
+    const { fail, sent } = waitingCallback.get(id);
     // this could happen around dropped connections, or a number of other reasons
-    //
-    // discard the promise so whatever flow is depending on this can get garbage collected
     waitingCallback.delete(id);
     hass.diagnostics.websocket?.missed_reply.publish({ data, sentAt });
     logger.warn(
@@ -295,6 +295,13 @@ export function WebsocketAPI({
         sentAt: internal.utils.relativeDate(sentAt),
       },
       `sent message, did not receive reply`,
+    );
+    fail(
+      new InternalError(
+        context,
+        "MISSING_REPLY",
+        `sent message, did not receive reply after ${String(config.hass.EXPECT_RESPONSE_AFTER)}s`,
+      ),
     );
   }
 
@@ -478,10 +485,11 @@ export function WebsocketAPI({
 
   function onMessageResult(id: number, message: SocketMessageDTO) {
     if (waitingCallback.has(id)) {
-      const { callback, sent } = waitingCallback.get(id);
+      const { callback, fail, sent } = waitingCallback.get(id);
       waitingCallback.delete(id);
       if (message.error) {
         logger.error({ message, name: "onMessageResult", sent }, "message result error");
+        fail(new InternalError(context, "RESULT_ERROR", "message result error"));
         return;
       }
       callback(message.result);
