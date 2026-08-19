@@ -15,7 +15,7 @@ describe("Entity", () => {
 
   describe("API", () => {
     describe("Updates", () => {
-      // skipped: depends on real-clock sleep timing for the debounce window, making it unreliable
+      // relies on real-clock sleeps for the debounce window; too flaky to keep enabled
       it.skip("should debounce updates properly", async () => {
         expect.assertions(1);
         await new Promise<void>(async done => {

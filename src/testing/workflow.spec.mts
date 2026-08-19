@@ -99,7 +99,7 @@ describe("Workflows", () => {
     });
   });
 
-  // skipped: fake-timer scheduling assertions are unreliable here; needs rework before re-enabling
+  // fake-timer scheduling assertions are unreliable in this suite
   describe.skip("Timers", () => {
     beforeEach(() => {
       vi.useFakeTimers();

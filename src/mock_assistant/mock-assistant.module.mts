@@ -77,10 +77,9 @@ declare module "@digital-alchemy/core" {
  *
  * Make your own
  */
-// core >= 26.6 wires `.appendLibrary()` libraries BEFORE the module under test
-// (issue #88), which deadlocks against mock_assistant's hard dependency on hass.
-// Building from LIB_MOCK_ASSISTANT instead keeps hass first in the wiring order,
-// so the mocks can monkey-patch fully-constructed hass services.
+// mock services monkey-patch constructed hass services, so hass must wire first;
+// building from LIB_MOCK_ASSISTANT (depends: hass) guarantees that order, while
+// appendLibrary() would wire the mocks before hass
 export const createTestRunner = () =>
   createModule
     .fromLibrary(LIB_MOCK_ASSISTANT)
