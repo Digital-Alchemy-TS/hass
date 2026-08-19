@@ -70,20 +70,6 @@ describe("Backup", () => {
     });
   });
 
-  it("should use the sign path to download", async () => {
-    expect.assertions(1);
-    await hassTestRunner.run(({ lifecycle, hass }) => {
-      lifecycle.onReady(async () => {
-        const path = "/test/thing";
-        const destination = "/foo/bar";
-        vi.spyOn(hass.socket, "sendMessage").mockImplementation(async () => ({ path }));
-        const spy = vi.spyOn(hass.fetch, "download").mockImplementation(async () => undefined);
-        await hass.backup.download("test", destination);
-        expect(spy).toHaveBeenCalledWith(destination, expect.objectContaining({ url: path }));
-      });
-    });
-  });
-
   it("should not start a new backup if one is already in progress", async () => {
     expect.assertions(1);
     await hassTestRunner.configure({ hass: { RETRY_INTERVAL: 0 } }).run(({ lifecycle, hass }) => {

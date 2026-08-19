@@ -77,9 +77,12 @@ declare module "@digital-alchemy/core" {
  *
  * Make your own
  */
+// mock services monkey-patch constructed hass services, so hass must wire first;
+// building from LIB_MOCK_ASSISTANT (depends: hass) guarantees that order, while
+// appendLibrary() would wire the mocks before hass
 export const createTestRunner = () =>
   createModule
-    .fromLibrary(LIB_HASS)
+    .fromLibrary(LIB_MOCK_ASSISTANT)
     .extend()
     .toTest()
     .configure({
@@ -91,7 +94,6 @@ export const createTestRunner = () =>
         env: false,
         file: false,
       },
-    })
-    .appendLibrary(LIB_MOCK_ASSISTANT);
+    });
 
 export const hassTestRunner = createTestRunner();
